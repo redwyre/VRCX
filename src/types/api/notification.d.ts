@@ -4,7 +4,7 @@ export type GetNotifications = (params: {
     offset: number;
     sent: boolean;
     type: string;
-    after: 'five_minutes_ago' | string;
+    after: 'five_minutes_ago' | (string & {}); // 'five_minutes_ago' or ISO8601 
 }) => Promise<{
     json: NotificationResponse[];
     params: any;

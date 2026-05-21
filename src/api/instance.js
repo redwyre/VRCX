@@ -15,9 +15,9 @@ const instanceReq = {
         }).then((json) => {
             const args = {
                 json,
-                params
+                params,
+                ref: instanceStore.applyInstance(json)
             };
-            args.ref = instanceStore.applyInstance(json);
             return args;
         });
     },
@@ -48,13 +48,10 @@ const instanceReq = {
         if (instance.shortName) {
             params.shortName = instance.shortName;
         }
-        return request(
-            `instances/${instance.worldId}:${instance.instanceId}/shortName`,
-            {
-                method: 'GET',
-                params
-            }
-        ).then((json) => {
+        return request(`instances/${instance.worldId}:${instance.instanceId}/shortName`, {
+            method: 'GET',
+            params
+        }).then((json) => {
             const args = {
                 json,
                 instance,
@@ -95,13 +92,10 @@ const instanceReq = {
         if (instance.shortName) {
             params.shortName = instance.shortName;
         }
-        return request(
-            `invite/myself/to/${instance.worldId}:${instance.instanceId}`,
-            {
-                method: 'POST',
-                params
-            }
-        )
+        return request(`invite/myself/to/${instance.worldId}:${instance.instanceId}`, {
+            method: 'POST',
+            params
+        })
             .then((json) => {
                 return {
                     json,

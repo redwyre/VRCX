@@ -227,10 +227,9 @@ const avatarReq = {
     },
 
     /**
-     * @param {{ imageData: string, avatarId: string }}
-     * @param imageData
-     * @param avatarId
-     * @returns {Promise<{json: any, params}>}
+     * @param {string} imageData
+     * @param {string} avatarId
+     * @returns {Promise<{json: any; params: {tag: string, galleryId: string};}>}
      */
     uploadAvatarGalleryImage(imageData, avatarId) {
         const params = {

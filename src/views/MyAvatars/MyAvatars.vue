@@ -657,8 +657,7 @@
     }
 
     /**
-     *
-     * @param blob
+     * @param {Blob} blob
      */
     async function onCropConfirmAvatar(blob) {
         const avatarRef = changeImageAvatarRef.value;

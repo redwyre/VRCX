@@ -46,24 +46,22 @@
         useUiStore,
         useUserStore,
         useVrcxStore
-    } from '../../../stores';
-    import {
-        compareByCreatedAt,
-        localeIncludes,
-        parseLocation,
-        removeFromArray,
-        timeToText
-    } from '../../../shared/utils';
+    } from '@/stores';
+    import { compareByCreatedAt, localeIncludes, parseLocation, removeFromArray, timeToText } from '@/shared/utils';
     import { DataTableLayout } from '../../ui/data-table';
     import { createPreviousInstancesColumns } from './previousInstancesColumns.jsx';
-    import { database } from '../../../services/database';
-    import { useVrcxVueTable } from '../../../lib/table/useVrcxVueTable';
+    import { database } from '@/services/database';
+    import { useVrcxVueTable } from '@/lib/table/useVrcxVueTable';
+
+    /**
+     * @typedef {{ id: string, desc: boolean }} SortBy
+     */
 
     const props = defineProps({
         variant: {
             type: String,
             required: true,
-            validator: (value) => ['user', 'world', 'group'].includes(value)
+            validator: (/** @type string */ value) => ['user', 'world', 'group'].includes(value)
         }
     });
 
@@ -82,6 +80,7 @@
         return previousInstancesListDialog.value;
     });
 
+    /** @returns {{sortBy: SortBy[], search: string, pageSize: number, pageIndex: number}} */
     const getListState = () => {
         const state = previousInstancesListState.value[props.variant];
         if (state) {
@@ -112,6 +111,8 @@
             getListState().search = value;
         }
     });
+
+    /** @type {import('vue').WritableComputedRef<SortBy[]>} */
     const sortBy = computed({
         get: () => getListState().sortBy,
         set: (value) => {
@@ -160,6 +161,9 @@
         });
     });
 
+    /**
+     * @param {{ location: any; events: any; }} row
+     */
     function deleteGameLogInstance(row) {
         if (props.variant === 'user') {
             database.deleteGameLogInstance({
@@ -174,6 +178,9 @@
         removeFromArray(rawRows.value, row);
     }
 
+    /**
+     * @param {{ location: any; events: any; }} row
+     */
     function deleteGameLogInstancePrompt(row) {
         const description =
             props.variant === 'user'
@@ -191,16 +198,18 @@
             .catch(() => {});
     }
 
+    /** @param {string} location */
     const handleShowInfo = (location) => {
         const instanceId = location ?? '';
         showPreviousInstancesInfoDialog(instanceId);
     };
 
     const columns = computed(() =>
+        // @ts-ignore
         createPreviousInstancesColumns(props.variant, {
             shiftHeld,
             currentUserId: currentUser.value?.id,
-            forceUpdateKey: previousInstancesListDialog.value?.forceUpdate,
+            forceUpdateKey: null,
             onLaunch: showLaunchDialog,
             onShowInfo: handleShowInfo,
             onDelete: deleteGameLogInstance,
@@ -214,7 +223,8 @@
             return displayRows.value;
         },
         columns: columns.value,
-        getRowId: (row) => `${row?.location ?? ''}:${row?.created_at ?? ''}`,
+        getRowId: (/** @type {{ location: any; created_at: any; }} */ row) =>
+            `${row?.location ?? ''}:${row?.created_at ?? ''}`,
         initialSorting: sortBy.value,
         initialPagination: {
             pageIndex: pageIndex.value,
@@ -240,14 +250,17 @@
         return table.getFilteredRowModel().rows.length;
     });
 
+    /** @param {number} size */
     const handlePageSizeChange = (size) => {
         pageSize.value = size;
     };
 
+    /** @param {number} page */
     const handlePageChange = (page) => {
         pageIndex.value = Math.max(0, page - 1);
     };
 
+    /** @param {SortBy[]} sorting */
     const handleSortChange = (sorting) => {
         sortBy.value = sorting;
     };

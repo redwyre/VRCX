@@ -26,14 +26,7 @@ export function useGroupBatchOperations(deps) {
      * @param {Function} [options.onComplete] - called after the loop finishes
      * @returns {Promise<void>}
      */
-    async function runBatchOperation({
-        action,
-        logPrefix,
-        successMessage,
-        errorMessage,
-        skipSelf = true,
-        onComplete
-    }) {
+    async function runBatchOperation({ action, logPrefix, successMessage, errorMessage, skipSelf = true, onComplete }) {
         const users = [...deps.groupMemberModeration.value.selectedUsersArray];
         const memberCount = users.length;
         const groupId = deps.groupMemberModeration.value.id;
@@ -58,7 +51,7 @@ export function useGroupBatchOperations(deps) {
         }
 
         if (allSuccess) {
-            toast.success(successMessage.replace('{count}', memberCount));
+            toast.success(successMessage.replace('{count}', memberCount.toString()));
         }
         progressCurrent.value = 0;
         progressTotal.value = 0;
@@ -129,13 +122,9 @@ export function useGroupBatchOperations(deps) {
         await runBatchOperation({
             action: async (user, groupId) => {
                 if (user.managerNotes === noteValue) return;
-                const args = await deps.groupRequest.setGroupMemberProps(
-                    user.userId,
-                    groupId,
-                    {
-                        managerNotes: noteValue
-                    }
-                );
+                const args = await deps.groupRequest.setGroupMemberProps(user.userId, groupId, {
+                    managerNotes: noteValue
+                });
                 deps.handleGroupMemberProps(args);
             },
             logPrefix: 'Setting note for',

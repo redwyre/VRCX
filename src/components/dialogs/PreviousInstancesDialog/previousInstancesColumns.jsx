@@ -45,27 +45,27 @@ const baseDateColumn = () => ({
             label: t('table.previous_instances.date'),
             descFirst: true
         }),
-    cell: ({ row }) => (
-        <span>{formatDateFilter(row.original?.created_at, 'long')}</span>
-    )
+    cell: ({ row }) => <span>{formatDateFilter(row.original?.created_at, 'long')}</span>
 });
 
 const timeColumn = () => ({
     id: 'time',
     accessorFn: (row) => row?.time ?? 0,
     size: 100,
-    header: ({ column }) =>
-        sortButton({ column, label: t('table.previous_instances.time') }),
+    header: ({ column }) => sortButton({ column, label: t('table.previous_instances.time') }),
     cell: ({ row }) => <span>{row.original?.timer ?? ''}</span>
 });
 
-const actionsColumn = ({
-    shiftHeld,
-    onShowInfo,
-    onDelete,
-    onDeletePrompt,
-    onLaunch
-}) => ({
+/**
+ * @param {{
+ *   shiftHeld :boolean | import('vue').Ref<boolean>,
+ *   onShowInfo?: function(string):void,
+ *   onDelete?: function(object):void,
+ *   onDeletePrompt?: function(object):void,
+ *   onLaunch?: function(string):void,
+ *  }} args
+ */
+const actionsColumn = ({ shiftHeld, onShowInfo, onDelete, onDeletePrompt, onLaunch }) => ({
     id: 'actions',
     enableSorting: false,
     size: onLaunch ? 140 : 120,
@@ -127,6 +127,18 @@ const actionsColumn = ({
     }
 });
 
+/**
+ * @param {'user' | 'world' | 'all'} variant
+ * @param {object} config
+ * @param {string} config.currentUserId - required for world variant to properly render display names
+ * @param {number?} config.forceUpdateKey - key for forcing update of display name components
+ * @param {boolean | import('vue').Ref<boolean>} config.shiftHeld - whether the shift key is currently held
+ * @param {function(string):void?} config.onShowInfo - callback for when the info button is clicked
+ * @param {function(string):void?} config.onLaunch - callback for when the launch button is clicked
+ * @param {function(object):void?} config.onDelete - callback for when an instance should be deleted
+ * @param {function(object):void?} config.onDeletePrompt - callback for when the delete confirmation should be shown
+ * @returns {import('@tanstack/vue-table').ColumnDef<any, any>[]}
+ */
 export const createPreviousInstancesColumns = (variant, config) => {
     if (variant === 'user') {
         return [
@@ -156,10 +168,7 @@ export const createPreviousInstancesColumns = (variant, config) => {
                 size: 170,
                 header: () => t('table.previous_instances.instance_creator'),
                 cell: ({ row }) => (
-                    <DisplayName
-                        userid={row.original?.$location?.userId}
-                        location={row.original?.$location?.tag}
-                    />
+                    <DisplayName userid={row.original?.$location?.userId} location={row.original?.$location?.tag} />
                 )
             },
             timeColumn(),
@@ -225,9 +234,7 @@ export const createPreviousInstancesColumns = (variant, config) => {
             },
             cell: ({ row }) => (
                 <Location
-                    location={
-                        row.original?.$location?.tag ?? row.original?.location
-                    }
+                    location={row.original?.$location?.tag ?? row.original?.location}
                     grouphint={row.original?.groupName}
                     hint={row.original?.worldName}
                 />

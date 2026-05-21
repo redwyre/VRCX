@@ -242,9 +242,19 @@ const toolNavDefinitions = toolDefinitions
     }));
 
 const defaultHiddenToolNavKeys = toolNavDefinitions.map((tool) => tool.key);
+
+
+/**
+ * @param {string} key
+ * @returns {boolean} whether the key is a tool nav key
+ */
 const isToolNavKey = (key) =>
     typeof key === 'string' && key.startsWith('tool-');
 
+/**
+ * @param {string} categoryKey
+ * @returns {Array} the tools belonging to the specified category
+ */
 function getToolsByCategory(categoryKey) {
     return toolDefinitions.filter((tool) => tool.category === categoryKey);
 }

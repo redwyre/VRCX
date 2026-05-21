@@ -81,7 +81,7 @@ export function parseResponse(response) {
 /**
  * @template T
  * @param {string} endpoint
- * @param {RequestInit & { params?: any } & {customMsg?: string}} [options]
+ * @param {RequestInit & { params?: any } & {customMsg?: string} & any} [options]
  * @returns {Promise<T>}
  */
 export function request(endpoint, options) {

@@ -5,6 +5,7 @@ export type GetGroup = (params: {
 }) => Promise<{
     json: GetGroupResponse;
     params: { groupId: string; includeRoles?: boolean };
+    ref: any;
 }>;
 
 export type GetCalendars = (params: {

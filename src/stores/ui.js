@@ -81,6 +81,9 @@ export const useUiStore = defineStore('Ui', () => {
         }
     });
 
+    /**
+     * @param {{ type?: any; id: any; tag?: string; shortName?: string; label?: any; }} data
+     */
     function pushDialogCrumb(data) {
         const { type, id, label } = data;
         if (!type || !id) {
@@ -215,6 +218,7 @@ export const useUiStore = defineStore('Ui', () => {
      * @param {string} data.id
      * @param {string} [data.tag]
      * @param {string} [data.shortName]
+     * @param {string} [data.label]
      * @returns {boolean}
      */
     function openDialog(data) {

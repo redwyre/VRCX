@@ -280,9 +280,8 @@ function groupRoleChange(ref, oldRoles, newRoles, oldRoleIds, newRoleIds) {
 }
 
 /**
- *
- * @param groupId
- * @param options
+ * @param {string} groupId
+ * @param {{forceRefresh?: boolean}} options
  */
 export function showGroupDialog(groupId, options = {}) {
     const t = i18n.global.t;
@@ -761,7 +760,7 @@ export async function updateInGameGroupOrder() {
         if (!json) {
             return;
         }
-        groupStore.setInGameGroupOrder(JSON.parse(json));
+        groupStore.setInGameGroupOrder(JSON.parse(json.toString()));
     } catch (err) {
         console.error(err);
     }

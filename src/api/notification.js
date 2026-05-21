@@ -3,20 +3,7 @@ import { useGalleryStore } from '../stores';
 
 const notificationReq = {
     /**
-     * @typedef {{
-     *      n: number,
-     *      offset: number,
-     *      sent: boolean,
-     *      type: string,
-     *      //  (ISO8601 or 'five_minutes_ago')
-     *      after: 'five_minutes_ago' | (string & {})
-     * }} NotificationFetchParameter
-     */
-
-    /**
-     *
-     * @param {NotificationFetchParameter} params
-     * @returns {Promise<{json: any, params}>}
+     * @type {import('../types/api/notification').GetNotifications}
      */
     getNotifications(params) {
         return request('auth/user/notifications', {
@@ -184,12 +171,9 @@ const notificationReq = {
      * @returns { Promise<{json: any, params}> }
      */
     acceptFriendRequestNotification(params) {
-        return request(
-            `auth/user/notifications/${params.notificationId}/accept`,
-            {
-                method: 'PUT'
-            }
-        ).then((json) => {
+        return request(`auth/user/notifications/${params.notificationId}/accept`, {
+            method: 'PUT'
+        }).then((json) => {
             const args = {
                 json,
                 params
@@ -203,12 +187,9 @@ const notificationReq = {
      * @returns { Promise<{json: any, params}> }
      */
     hideNotification(params) {
-        return request(
-            `auth/user/notifications/${params.notificationId}/hide`,
-            {
-                method: 'PUT'
-            }
-        ).then((json) => {
+        return request(`auth/user/notifications/${params.notificationId}/hide`, {
+            method: 'PUT'
+        }).then((json) => {
             const args = {
                 json,
                 params

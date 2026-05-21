@@ -69,6 +69,11 @@ export const useAuthStore = defineStore('Auth', () => {
 
     const twoFactorAuthDialogVisible = ref(false);
 
+    /** 
+     * @typedef {{sdkUnityVersion?: string}} CachedConfig
+     * 
+     * @type {import('vue').Ref<CachedConfig>}
+    */
     const cachedConfig = ref({});
 
     const enableCustomEndpoint = ref(false);
