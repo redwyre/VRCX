@@ -1,5 +1,6 @@
 {
-    "name": "VRCX",
+    "name": "vrcx",
+    "version": "2026.05.03",
     "private": true,
     "description": "Friendship management tool for VRChat",
     "keywords": [
@@ -74,8 +75,8 @@
         "cross-env": "^10.1.0",
         "dayjs": "^1.11.21",
         "echarts": "^6.1.0",
-        "electron": "^41.7.0",
-        "electron-builder": "^26.8.1",
+        "electron": "^41.7.1",
+        "electron-builder": "^26.15.2",
         "embla-carousel-vue": "^8.6.0",
         "eslint": "^10.4.1",
         "eslint-plugin-jsdoc": "^63.0.0",
@@ -119,7 +120,8 @@
     },
     "overrides": {
         "js-cookie": ">=3.0.7",
-        "tmp": ">=0.2.6"
+        "tmp": ">=0.2.6",
+        "yauzl": "^3.3.1"
     },
     "engines": {
         "node": ">=24.15.0",
@@ -196,7 +198,8 @@
                 }
             },
             "maintainer": "rs189 <35667100+rs189@users.noreply.github.com>",
-            "description": "Friendship management tool for VRChat"
+            "description": "Friendship management tool for VRChat",
+            "syncDesktopName": true
         },
         "mac": {
             "artifactName": "VRCX_Version.${ext}",
@@ -206,7 +209,11 @@
             "icon": "images/VRCX.png",
             "category": "public.app-category.utilities",
             "executableName": "VRCX"
+        },
+        "toolsets": {
+            "appimage": "1.0.3"
         }
-    }
+    },
+    "desktopName": "VRCX"
 }
 
