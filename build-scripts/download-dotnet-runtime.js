@@ -1,26 +1,15 @@
-const fs = require('fs');
-const path = require('path');
-const os = require('os');
-const { spawnSync } = require('child_process');
-const { getArchAndPlatform } = require('./utils');
-const { pipeline } = require('stream/promises');
-const { unlink, copyFile, rename } = require('node:fs/promises');
+import fs from 'fs';
+import path from 'path';
+import os from 'os';
+import { spawnSync } from 'child_process';
+import { getArchAndPlatform } from './utils.js';
+import { pipeline } from 'stream/promises';
+import { unlink, copyFile, rename } from 'node:fs/promises';
 
 const DOTNET_VERSION = '10.0.8';
-const DOTNET_RUNTIME_DIR = path.join(
-    __dirname,
-    '..',
-    'build',
-    'Electron',
-    'dotnet-runtime'
-);
+const DOTNET_RUNTIME_DIR = path.join(import.meta.dirname, '..', 'build', 'Electron', 'dotnet-runtime');
 
-const DOTNET_CACHE_DIR = path.join(
-    os.homedir(),
-    '.cache',
-    'vrcx-build',
-    'dotnet-cache'
-);
+const DOTNET_CACHE_DIR = path.join(os.homedir(), '.cache', 'vrcx-build', 'dotnet-cache');
 
 /**
  * Downloads a file from a URL and saves it to a target path
@@ -34,9 +23,7 @@ async function downloadFile(url, targetPath) {
     try {
         const response = await fetch(url);
         if (!response.ok) {
-            throw new Error(
-                `Failed to download, url: ${url} status code: ${response.status}`
-            );
+            throw new Error(`Failed to download, url: ${url} status code: ${response.status}`);
         }
 
         const fileStream = fs.createWriteStream(tempPath);
@@ -70,20 +57,14 @@ async function downloadFile(url, targetPath) {
  */
 async function extractTarGz(tarGzPath, extractDir) {
     return new Promise((resolve, reject) => {
-        const tar = spawnSync(
-            'tar',
-            ['-xzf', tarGzPath, '-C', extractDir, '--strip-components=1'],
-            {
-                stdio: 'inherit'
-            }
-        );
+        const tar = spawnSync('tar', ['-xzf', tarGzPath, '-C', extractDir, '--strip-components=1'], {
+            stdio: 'inherit'
+        });
 
         if (tar.status === 0) {
             resolve();
         } else {
-            reject(
-                new Error(`tar extraction failed with status ${tar.status}`)
-            );
+            reject(new Error(`tar extraction failed with status ${tar.status}`));
         }
     });
 }
@@ -128,9 +109,7 @@ async function downloadDotnetRuntime(arch, platform) {
 
     // Download .NET runtime if it doesn't exist in the cache
     if (!fs.existsSync(cacheFilePath)) {
-        console.log(
-            `Downloading .NET ${DOTNET_VERSION}-${dotnetPlatform}-${arch} runtime...`
-        );
+        console.log(`Downloading .NET ${DOTNET_VERSION}-${dotnetPlatform}-${arch} runtime...`);
         await downloadFile(dotnetRuntimeUrl, cacheFilePath);
         console.log(`Downloaded ${dotnetRuntimeUrl} to ${cacheFilePath}`);
     } else {
@@ -181,9 +160,7 @@ async function downloadDotnetRuntime(arch, platform) {
     // Clean up temp directory
     fs.rmSync(tempExtractDir, { recursive: true, force: true });
 
-    console.log(
-        `.NET runtime downloaded and extracted to: ${DOTNET_RUNTIME_DIR}`
-    );
+    console.log(`.NET runtime downloaded and extracted to: ${DOTNET_RUNTIME_DIR}`);
 }
 
 const { arch, platform } = getArchAndPlatform();

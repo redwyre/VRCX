@@ -1,9 +1,8 @@
-/* eslint-env node */
 /**
  * @type {import('electron-builder').Configuration}
  * @see https://www.electron.build/configuration/configuration
  */
-module.exports = {
+const config = {
     appId: 'app.vrcx',
     productName: 'VRCX',
     icon: 'images/VRCX.png',
@@ -89,3 +88,5 @@ module.exports = {
         appimage: '1.0.3'
     }
 };
+
+export default config;

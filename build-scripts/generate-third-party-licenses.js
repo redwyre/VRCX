@@ -1,4 +1,3 @@
-/* global __dirname, require */
 // generate-third-party-licenses.js
 // use by frontend open source software notice dialog
 
@@ -23,11 +22,11 @@
  *
  */
 
-const fs = require('fs');
-const os = require('os');
-const path = require('path');
+import fs from 'fs';
+import os from 'os';
+import path from 'path';
 
-const rootDir = path.join(__dirname, '..');
+const rootDir = path.join(import.meta.dirname, '..');
 const frontendLicensePath = path.join(
     rootDir,
     'build',
@@ -41,7 +40,7 @@ const outputNoticePath = path.join(outputDir, 'THIRD_PARTY_NOTICES.txt');
 const dotnetDir = path.join(rootDir, 'Dotnet');
 const nugetCacheDir =
     process.env.NUGET_PACKAGES || path.join(os.homedir(), '.nuget', 'packages');
-const overridesPath = path.join(__dirname, 'licenses', 'nuget-overrides.json');
+const overridesPath = path.join(import.meta.dirname, 'licenses', 'nuget-overrides.json');
 
 const nugetOverrides = JSON.parse(fs.readFileSync(overridesPath, 'utf8'));
 

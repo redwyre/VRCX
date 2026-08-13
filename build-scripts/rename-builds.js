@@ -1,8 +1,8 @@
-const fs = require('fs');
-const path = require('path');
-const { getArchAndPlatform } = require('./utils');
+import fs from 'fs';
+import path from 'path';
+import { getArchAndPlatform } from './utils.js';
 
-const rootDir = path.join(__dirname, '..');
+const rootDir = path.join(import.meta.dirname, '..');
 const versionFilePath = path.join(rootDir, 'Version');
 const buildDir = path.join(rootDir, 'build');
 
@@ -26,10 +26,7 @@ try {
 function renameBuild(arch, platform) {
     if (platform === 'linux') {
         const oldAppImage = path.join(buildDir, `VRCX_Version.AppImage`);
-        const newAppImage = path.join(
-            buildDir,
-            `VRCX_${version}_${arch}.AppImage`
-        );
+        const newAppImage = path.join(buildDir, `VRCX_${version}_${arch}.AppImage`);
         try {
             if (fs.existsSync(oldAppImage)) {
                 fs.renameSync(oldAppImage, newAppImage);

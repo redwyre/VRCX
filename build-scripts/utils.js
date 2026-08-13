@@ -16,4 +16,4 @@ function getArchAndPlatform() {
     return { arch, platform };
 }
 
-module.exports = { getArchAndPlatform };
+export { getArchAndPlatform };

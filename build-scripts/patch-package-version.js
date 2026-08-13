@@ -1,7 +1,7 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
-const rootDir = path.join(__dirname, '..');
+const rootDir = path.join(import.meta.dirname, '..');
 const versionFilePath = path.resolve(rootDir, 'Version');
 const packageJsonPath = path.resolve(rootDir, 'package.json');
 
@@ -35,11 +35,7 @@ try {
 packageJson.version = version;
 
 try {
-    fs.writeFileSync(
-        packageJsonPath,
-        JSON.stringify(packageJson, null, 4),
-        'utf8'
-    );
+    fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 4), 'utf8');
     console.log(`Updated version in package.json to: ${version}`);
 } catch (err) {
     console.error('Error writing to package.json:', err);

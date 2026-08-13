@@ -1,6 +1,6 @@
-const fs = require('fs');
-const path = require('path');
-const { getArchAndPlatform } = require('./utils');
+import fs from 'fs';
+import path from 'path';
+import { getArchAndPlatform } from './utils.js';
 
 /**
  * Patches a file with the specified path
@@ -60,7 +60,7 @@ function patchNodeApiDotNet(arch, platform) {
     }
 
     const postBuildPath = path.join(
-        __dirname,
+        import.meta.dirname,
         `./../build/${platformName}-unpacked/resources/app.asar.unpacked/node_modules/node-api-dotnet/init.js`
     );
     console.log('Patching post-build init.js...');

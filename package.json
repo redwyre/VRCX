@@ -16,6 +16,7 @@
         "type": "git",
         "url": "git+https://github.com/vrcx-team/VRCX.git"
     },
+    "type": "module",
     "main": "src-electron/main.js",
     "scripts": {
         "dev": "vite serve src",
