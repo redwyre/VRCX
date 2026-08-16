@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup>
     <BaseIntermediateOutputPath>obj1\</BaseIntermediateOutputPath>
-    <OutputPath>..\build\Electron\</OutputPath>
+    <OutputPath>..\build\Electron\$(RuntimeIdentifier)\</OutputPath>
   </PropertyGroup>
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
   <PropertyGroup>
@@ -9,15 +9,17 @@
     <OutputType>Library</OutputType>
     <Configurations>Debug;Release</Configurations>
     <Platforms>x64;ARM64</Platforms>
-    <RuntimeIdentifiers>linux-x64;linux-arm64</RuntimeIdentifiers>
-    <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
+    <Platform>x64</Platform>
+    <RuntimeIdentifiers>linux-x64;linux-arm64;win-x64</RuntimeIdentifiers>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <ApplicationIcon>..\images\VRCX.ico</ApplicationIcon>
+    <AssemblyName>VRCX</AssemblyName>
     <AssemblyTitle>VRCX</AssemblyTitle>
     <Product>VRCX</Product>
     <Copyright>vrcx-team, pypy, natsumi</Copyright>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>true</AppendRuntimeIdentifierToOutputPath>
     <Title>VRCX</Title>
     <Description>VRCX</Description>
     <PackageIcon>..\images\VRCX.png</PackageIcon>
@@ -37,24 +39,22 @@
     <DefineConstants>LINUX</DefineConstants>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <DebugType>portable</DebugType>
+  <!-- Platform-specific Runtime Identifiers -->
+  <PropertyGroup Condition="'$(OS)' == 'Windows_NT' and '$(Platform)'=='x64'">
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
-    <DebugType>portable</DebugType>
+  <PropertyGroup Condition="'$(OS)' != 'Windows_NT' and '$(Platform)' == 'x64'">
+    <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <DebugType>pdbonly</DebugType>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
-    <DebugType>pdbonly</DebugType>
-  </PropertyGroup>
-  <PropertyGroup>
-    <AssemblyName>VRCX</AssemblyName>
+  <PropertyGroup Condition="'$(OS)' != 'Windows_NT' and '$(Platform)'=='ARM64'">
+    <RuntimeIdentifier>linux-arm64</RuntimeIdentifier>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <ApplicationIcon>..\images\VRCX.ico</ApplicationIcon>
+  <PropertyGroup Label="Debug build" Condition="'$(Configuration)'=='Debug'">
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+  <PropertyGroup Label="Release build" Condition="'$(Configuration)'=='Release'">
+    <DebugType>pdbonly</DebugType>
   </PropertyGroup>
 
   <ItemGroup>

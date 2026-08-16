@@ -83,12 +83,7 @@ if (!fs.existsSync(userDataPath)) {
 }
 app.setPath('userData', userDataPath);
 
-const armPath = path.join(rootDir, 'build/Electron/VRCX-Electron-arm64.cjs');
-if (process.arch === 'arm64' && fs.existsSync(armPath)) {
-    require(armPath);
-} else {
-    require(path.join(rootDir, 'build/Electron/VRCX-Electron.cjs'));
-}
+require(path.join(rootDir, 'build/Electron/VRCX-Electron.cjs'));
 
 const InteropApi = require('./InteropApi');
 const interopApi = new InteropApi();

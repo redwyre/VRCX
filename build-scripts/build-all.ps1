@@ -36,7 +36,7 @@ if ($IsWindows) {
 
 if ($IsLinux -or $IsMacOS) {
     if ($BuildArm64) {
-        dotnet build 'Dotnet/VRCX-Electron-arm64.csproj' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=arm64 -p:PlatformTarget=arm64 -t:"Restore;Clean;Build" -maxcpucount --arch arm64
+        dotnet build 'Dotnet/VRCX-Electron.csproj' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=arm64 -p:PlatformTarget=arm64 -t:"Restore;Clean;Build" -maxcpucount --arch arm64
     }
     else {
         dotnet build 'Dotnet/VRCX-Electron.csproj' -p:Configuration=Release -p:WarningLevel=0 -p:Platform=x64 -p:PlatformTarget=x64 -t:"Restore;Clean;Build" -maxcpucount --arch x64
