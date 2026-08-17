@@ -3,13 +3,20 @@
     <Platform Name="x64" />
     <Platform Name="ARM64" />
   </Configurations>
+  <Project Path="Dotnet/Cef/VRCX-Cef.csproj">
+    <Platform Project="x64" />
+    <Build Solution="*|ARM64" Project="false" />
+  </Project>
+  <Project Path="Dotnet/Core/Core.csproj">
+    <Platform Solution="*|ARM64" Project="ARM64" />
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
   <Project Path="Dotnet/DBMerger/DBMerger.csproj">
-    <Platform Project="x64" />
+    <Platform Solution="*|ARM64" Project="ARM64" />
+    <Platform Solution="*|x64" Project="x64" />
   </Project>
-  <Project Path="Dotnet/VRCX-Cef.csproj">
-    <Platform Project="x64" />
-  </Project>
-  <Project Path="Dotnet/VRCX-Electron.csproj">
-    <Platform Project="x64, ARM64" />
+  <Project Path="Dotnet/Electron/VRCX-Electron.csproj">
+    <Platform Solution="*|ARM64" Project="ARM64" />
+    <Platform Solution="*|x64" Project="x64" />
   </Project>
 </Solution>

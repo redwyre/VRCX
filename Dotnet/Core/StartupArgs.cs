@@ -15,7 +15,7 @@ using CefSharp.Internals;
 
 namespace VRCX
 {
-    internal class StartupArgs
+    public class StartupArgs
     {
         private const string SubProcessTypeArgument = "--type";
         public static VrcxLaunchArguments LaunchArguments = new();
