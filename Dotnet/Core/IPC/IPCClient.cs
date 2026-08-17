@@ -5,9 +5,9 @@ using System.IO.Pipes;
 using System.Text;
 using Newtonsoft.Json;
 
-#if !LINUX
-using CefSharp;
-#endif
+//#if !LINUX
+//using CefSharp;
+//#endif
 
 
 namespace VRCX
@@ -21,6 +21,8 @@ namespace VRCX
         private readonly byte[] packetBuffer = new byte[1024 * 1024];
         private readonly Newtonsoft.Json.JsonSerializer serializer = new Newtonsoft.Json.JsonSerializer();
         private string _currentPacket;
+
+        public event Action<string> PacketReceived;
 
         public IPCClient(NamedPipeServerStream ipcServer)
         {
@@ -82,10 +84,11 @@ namespace VRCX
                         if (string.IsNullOrEmpty(packet))
                             continue;
 
-#if !LINUX
-                        if (MainForm.Instance?.Browser != null && !MainForm.Instance.Browser.IsLoading && MainForm.Instance.Browser.CanExecuteJavascriptInMainFrame)
-                            MainForm.Instance.Browser.ExecuteScriptAsync("window?.$pinia?.vrcx.ipcEvent", packet);
-#endif
+                        //#if !LINUX
+                        //                        if (MainForm.Instance?.Browser != null && !MainForm.Instance.Browser.IsLoading && MainForm.Instance.Browser.CanExecuteJavascriptInMainFrame)
+                        //                            MainForm.Instance.Browser.ExecuteScriptAsync("window?.$pinia?.vrcx.ipcEvent", packet);
+                        //#endif
+                        PacketReceived?.Invoke(packet);
                     }
 
                     _currentPacket = string.Empty;

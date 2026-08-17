@@ -9,9 +9,9 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using NLog;
 
-#if !LINUX
-using CefSharp;
-#endif
+//#if !LINUX
+//using CefSharp;
+//#endif
 
 namespace VRCX
 {
@@ -35,6 +35,8 @@ namespace VRCX
         private readonly ConcurrentQueue<string> m_LogQueue = new ConcurrentQueue<string>(); // for electron
         private static readonly Regex CleanId = new("[^a-zA-Z0-9_\\-~:()]", RegexOptions.Compiled);
         private static readonly Regex CleanLocation = new("[/]", RegexOptions.Compiled);
+
+        public event Action<string> LogLine;
 
         // NOTE
         // FileSystemWatcher() is unreliable
@@ -290,12 +292,23 @@ namespace VRCX
                 if (!m_FirstRun)
                 {
                     var logLine = JsonSerializer.Serialize(item);
-#if LINUX
-                    m_LogQueue.Enqueue(logLine);
-#else
-                    if (MainForm.Instance != null && MainForm.Instance.Browser != null)
-                        MainForm.Instance.Browser.ExecuteScriptAsync("window?.$pinia?.gameLog.addGameLogEvent", logLine);
-#endif
+                    //#if LINUX
+                    //                    m_LogQueue.Enqueue(logLine);
+                    //#else
+                    //                    if (MainForm.Instance != null && MainForm.Instance.Browser != null)
+                    //                        MainForm.Instance.Browser.ExecuteScriptAsync("window?.$pinia?.gameLog.addGameLogEvent", logLine);
+                    //#endif
+
+                    if (LogLine != null)
+                    {
+                        LogLine.Invoke(logLine);
+
+                    }
+                    else
+                    {
+                        m_LogQueue.Enqueue(logLine);
+                    }
+
                 }
 
                 m_LogList.Add(item);

@@ -1,8 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <OutputPath>..\build\Electron\$(RuntimeIdentifier)\</OutputPath>
-  </PropertyGroup>
-
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <OutputType>Library</OutputType>
@@ -34,6 +31,7 @@
 
   <PropertyGroup>
     <DefineConstants>LINUX</DefineConstants>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
 
   <PropertyGroup Label="Debug build" Condition="'$(Configuration)'=='Debug'">
@@ -45,22 +43,22 @@
 
   <ItemGroup>
     <None Include="app.manifest" />
-    <None Include="..\Version">
+    <None Include="..\..\Version">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="libs\openvr_api.dll">
+    <None Include="..\libs\openvr_api.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>openvr_api.dll</TargetPath>
     </None>
-    <Content Include="..\images\VRCX.ico">
+    <Content Include="..\..\images\VRCX.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\images\VRCX_notify.ico">
+    <Content Include="..\..\images\VRCX_notify.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\images\VRCX.png">
+    <Content Include="..\..\images\VRCX.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -82,26 +80,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Remove="obj\**" />
-    <Compile Remove="obj\**" />
-    <Content Remove="Cef\**" />
-    <Compile Remove="Cef\**" />
-    <Content Remove="AppApi\Cef\**" />
-    <Compile Remove="AppApi\Cef\**" />
-    <Content Remove="Overlay\Cef\**" />
-    <Compile Remove="Overlay\Cef\**" />
-    <Content Remove="OverlayWebSocket\**" />
-    <Compile Remove="OverlayWebSocket\**" />
-    <Content Remove="DBMerger\**" />
-    <Compile Remove="DBMerger\**" />
+    <ProjectReference Include="..\Core\Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Reference Include="Blake2Sharp">
-      <HintPath>libs\Blake2Sharp.dll</HintPath>
+      <HintPath>..\libs\Blake2Sharp.dll</HintPath>
     </Reference>
     <Reference Include="librsync.net">
-      <HintPath>libs\librsync.net.dll</HintPath>
+      <HintPath>..\libs\librsync.net.dll</HintPath>
     </Reference>
   </ItemGroup>
 </Project>
