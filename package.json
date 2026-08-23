@@ -16,7 +16,7 @@
         "type": "git",
         "url": "git+https://github.com/vrcx-team/VRCX.git"
     },
-    "main": "src-electron/main.js",
+    "main": "src-electron/main.ts",
     "scripts": {
         "dev": "vite serve src",
         "localization": "node ./src/shared/utils/localizationHelperCLI.js",
@@ -32,8 +32,8 @@
         "test:coverage": "vitest run --coverage",
         "build:licenses": "node ./build-scripts/generate-third-party-licenses.js",
         "prod": "vite build src && npm run build:licenses",
-        "build-electron": "node ./build-scripts/download-dotnet-runtime.js --arch=x64 && node ./build-scripts/patch-package-version.js && cross-env DEBUG=electron-builder electron-builder --config electron-builder.config.js --x64 --publish never",
-        "build-electron-arm64": "node ./build-scripts/download-dotnet-runtime.js --arch=arm64 && node ./build-scripts/patch-package-version.js && electron-builder --config electron-builder.config.js --arm64 --publish never",
+        "build-electron": "cross-env DEBUG=electron-builder electron-builder --config electron-builder.config.cjs --x64 --publish never",
+        "build-electron-arm64": "node ./build-scripts/download-dotnet-runtime.js --arch=arm64 && node ./build-scripts/patch-package-version.js && electron-builder --config electron-builder.config.cjs --arm64 --publish never",
         "postbuild-electron": "node ./build-scripts/patch-node-api-dotnet.js --arch=x64 && node ./build-scripts/rename-builds.js --arch=x64",
         "postbuild-electron-arm64": "node ./build-scripts/patch-node-api-dotnet.js --arch=arm64 && node ./build-scripts/rename-builds.js --arch=arm64",
         "start-electron": "electron . --hot-reload"

@@ -10,6 +10,9 @@
     "i18n-ally.indent": 4,
     "editor.formatOnSave": true,
     "omnisharp.useModernNet": false,
+    "files.watcherExclude": {
+        "/build/**/*.asar": true
+    },
     "[javascript]": {
         "editor.defaultFormatter": "oxc.oxc-vscode"
     },

@@ -1,4 +1,9 @@
 /* eslint-env node */
+
+const { getArchAndPlatform } = require('./build-scripts/utils.js');
+const { downloadDotnetRuntime } = require('./build-scripts/download-dotnet-runtime.cjs');
+const { patchPackageVersion } = require('./build-scripts/patch-package-version.js');
+
 /**
  * @type {import('electron-builder').Configuration}
  * @see https://www.electron.build/configuration/configuration
@@ -7,6 +12,14 @@ module.exports = {
     appId: 'app.vrcx',
     productName: 'VRCX',
     icon: 'images/VRCX.png',
+    beforeBuild: async (context) => {
+        console.log(
+            `beforeBuild:{ ${context.appDir}, ${context.electronVersion}, ${context.platform}, ${context.arch} }`
+        );
+        const { arch, platform } = getArchAndPlatform();
+        downloadDotnetRuntime(arch, platform);
+        patchPackageVersion();
+    },
     files: [
         'build/html/**/*',
         'src-electron/*',
