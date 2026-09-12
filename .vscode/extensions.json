@@ -6,6 +6,7 @@
         "bradlc.vscode-tailwindcss",
         "ms-dotnettools.csdevkit",
         "ms-dotnettools.csharp",
-        "vitest.explorer"
+        "vitest.explorer",
+        "christian-kohler.npm-intellisense"
     ]
 }

@@ -31,12 +31,13 @@
                 "--",
                 "--remote-debugging-port=9229",
                 ".",
-                "--no-sandbox"
+                "--no-sandbox",
+                "--log-level=0"
                 //"--hot-reload"
             ],
             "env": {
-                "ELECTRON_ENABLE_LOGGING": "1",
-                "ELECTRON_ENABLE_STACK_DUMPING": "1",
+                "ELECTRON_ENABLE_LOGGING": "true",
+                "ELECTRON_ENABLE_STACK_DUMPING": "true",
                 "DISPLAY": ":0",
                 "WAYLAND_DISPLAY": "wayland-0",
                 "QT_QPA_PLATFORM": "xcb",
@@ -49,6 +50,66 @@
             "outputCapture": "std"
 
             //"preLaunchTask": "npm: build-electron"
+        },
+        {
+            "name": "(gdb) Attach",
+            "type": "cppdbg",
+            "request": "attach",
+            "program": "/home/redwyre/Projects/VRCX/node_modules/electron/dist/electron",
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable debuginfod non-interactively",
+                    "text": "-gdb-set debuginfod enabled on",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
+            "name": "(lldb) Launch",
+            "type": "lldb-dap",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "program": "/home/redwyre/Projects/VRCX/node_modules/electron/dist/electron",
+            "console": "integratedTerminal",
+            "initCommands": [
+                //"settings set symbols.load-on-demand false",
+                "settings set symbols.auto-download foreground",
+                "settings set symbols.enable-lldb-index-cache true",
+                "settings set symbols.enable-external-lookup true"
+            ],
+            "postRunCommands": ["image dump symtab"],
+            "args": [
+                "--",
+                "--remote-debugging-port=9229",
+                ".",
+                "--no-sandbox",
+                "--log-level=0"
+                //"--hot-reload"
+            ],
+            "env": {
+                "ELECTRON_ENABLE_LOGGING": "true",
+                "ELECTRON_ENABLE_STACK_DUMPING": "true",
+                "ELECTRON_RUN_AS_NODE": "",
+                "DISPLAY": ":0",
+                "WAYLAND_DISPLAY": "wayland-0",
+                "QT_QPA_PLATFORM": "xcb",
+                "GDK_BACKEND": "x11",
+                "DOTNET_ZapDisable": "1",
+                "DOTNET_ReadyToRun": "0",
+                "PreLoadSQLite_BreakIntoDebugger": "1",
+                "SQLite_TraceCategories": "Preload"
+            }
         },
         {
             "name": "Debug Nodejs",
@@ -67,10 +128,7 @@
     "compounds": [
         {
             "name": "VRCX App",
-            "configurations": [
-                "C#: Cef/Electron Debug",
-                "Debug Electron (Main Process)"
-            ]
+            "configurations": ["C#: Cef/Electron Debug", "Debug Electron (Main Process)"]
         }
     ]
 }
