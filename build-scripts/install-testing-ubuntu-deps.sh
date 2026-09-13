@@ -43,7 +43,7 @@ case "${ID:-}" in
         sudo pacman -S --needed dotnet-sdk-10.0 7zip nodejs npm
 
         # Install PowerShell from the AUR using paru
-        sudo paru -S --needed powershell-bin
+        paru -S --needed powershell-bin
 
         echo "You may need to restart your shell."
 
