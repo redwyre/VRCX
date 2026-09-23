@@ -73,7 +73,7 @@ namespace VRCX
         }
 
         // NOTE
-        // 메모리 릭 때문에 미리 생성해놓고 계속 사용함
+        // Created in advance and continuously used to avoid a memory leak
         public override void Init()
         {
             _thread.Start();
@@ -271,7 +271,7 @@ namespace VRCX
                                 {
                                     overlay.DestroyOverlay(_wristOverlayHandle);
                                     _wristOverlayHandle = 0;
-                                    logger.Error(err);
+                                    logger.Error("Error processing over 1:", err);
                                 }
                             }
 
@@ -284,7 +284,7 @@ namespace VRCX
                                 {
                                     overlay.DestroyOverlay(_hmdOverlayHandle);
                                     _hmdOverlayHandle = 0;
-                                    logger.Error(err);
+                                    logger.Error("Error processing over 2:", err);
                                 }
                             }
                         }
@@ -549,6 +549,7 @@ namespace VRCX
                 {
                     if (err != EVROverlayError.UnknownOverlay)
                     {
+                        logger.Error("Error finding dashboard overlay:", err);
                         return err;
                     }
 
@@ -556,6 +557,7 @@ namespace VRCX
                     err = overlay.CreateDashboardOverlay("VRCX", "VRCX", ref dashboardHandle, ref thumbnailHandle);
                     if (err != EVROverlayError.None)
                     {
+                        logger.Error("Error creating dashboard overlay:", err);
                         return err;
                     }
 
@@ -563,18 +565,21 @@ namespace VRCX
                     err = overlay.SetOverlayFromFile(thumbnailHandle, iconPath);
                     if (err != EVROverlayError.None)
                     {
+                        logger.Error("Error setting dashboard overlay icon:", err);
                         return err;
                     }
 
                     err = overlay.SetOverlayWidthInMeters(dashboardHandle, 1.5f);
                     if (err != EVROverlayError.None)
                     {
+                        logger.Error("Error setting dashboard overlay width:", err);
                         return err;
                     }
 
                     err = overlay.SetOverlayInputMethod(dashboardHandle, VROverlayInputMethod.Mouse);
                     if (err != EVROverlayError.None)
                     {
+                        logger.Error("Error setting dashboard overlay input method:", err);
                         return err;
                     }
                 }
@@ -607,6 +612,7 @@ namespace VRCX
                 {
                     if (err != EVROverlayError.UnknownOverlay)
                     {
+                        logger.Error("Error finding overlay 1:", err);
                         return err;
                     }
 
@@ -614,24 +620,28 @@ namespace VRCX
                     err = overlay.CreateOverlay("VRCX1", "VRCX1", ref overlayHandle);
                     if (err != EVROverlayError.None)
                     {
+                        logger.Error("Error creating overlay 1:", err);
                         return err;
                     }
 
                     err = overlay.SetOverlayAlpha(overlayHandle, 0.9f);
                     if (err != EVROverlayError.None)
                     {
+                        logger.Error("Error setting overlay 1 alpha:", err);
                         return err;
                     }
 
                     err = overlay.SetOverlayWidthInMeters(overlayHandle, 1f);
                     if (err != EVROverlayError.None)
                     {
+                        logger.Error("Error setting overlay 1 width:", err);
                         return err;
                     }
 
                     err = overlay.SetOverlayInputMethod(overlayHandle, VROverlayInputMethod.None);
                     if (err != EVROverlayError.None)
                     {
+                        logger.Error("Error setting overlay 1 input method:", err);
                         return err;
                     }
 
@@ -667,6 +677,7 @@ namespace VRCX
                 err = overlay.SetOverlayTransformTrackedDeviceRelative(overlayHandle, overlayIndex, ref hm34);
                 if (err != EVROverlayError.None)
                 {
+                    logger.Error("Error setting overlay 1 transform tracked device relative:", err);
                     return err;
                 }
             }
@@ -695,6 +706,7 @@ namespace VRCX
                         err = OpenVR.Overlay.SetOverlayTexture(overlayHandle, ref texture);
                         if (err != EVROverlayError.None)
                         {
+                            logger.Error("Error setting overlay 1 texture:", err);
                             return err;
                         }
 
@@ -703,6 +715,7 @@ namespace VRCX
                             err = overlay.ShowOverlay(overlayHandle);
                             if (err != EVROverlayError.None)
                             {
+                                logger.Error("Error showing overlay 1:", err);
                                 return err;
                             }
 
@@ -716,6 +729,7 @@ namespace VRCX
                 err = overlay.HideOverlay(overlayHandle);
                 if (err != EVROverlayError.None)
                 {
+                    logger.Error("Error hiding overlay 1:", err);
                     return err;
                 }
 
@@ -736,6 +750,7 @@ namespace VRCX
                 {
                     if (err != EVROverlayError.UnknownOverlay)
                     {
+                        logger.Error("Error finding VRCX2 overlay:", err);
                         return err;
                     }
 
@@ -743,24 +758,28 @@ namespace VRCX
                     err = overlay.CreateOverlay("VRCX2", "VRCX2", ref overlayHandle);
                     if (err != EVROverlayError.None)
                     {
+                        logger.Error("Error creating VRCX2 overlay:", err);
                         return err;
                     }
 
                     err = overlay.SetOverlayAlpha(overlayHandle, 0.9f);
                     if (err != EVROverlayError.None)
                     {
+                        logger.Error("Error setting overlay 2 alpha:", err);
                         return err;
                     }
 
                     err = overlay.SetOverlayWidthInMeters(overlayHandle, 1f);
                     if (err != EVROverlayError.None)
                     {
+                        logger.Error("Error setting overlay 2 width:", err);
                         return err;
                     }
 
                     err = overlay.SetOverlayInputMethod(overlayHandle, VROverlayInputMethod.None);
                     if (err != EVROverlayError.None)
                     {
+                        logger.Error("Error setting overlay 2 input method:", err);
                         return err;
                     }
 
@@ -784,6 +803,7 @@ namespace VRCX
                     err = overlay.SetOverlayTransformTrackedDeviceRelative(overlayHandle, OpenVR.k_unTrackedDeviceIndex_Hmd, ref hm34);
                     if (err != EVROverlayError.None)
                     {
+                        logger.Error("Error setting overlay 2 transform tracked device relative:", err);
                         return err;
                     }
 
@@ -815,6 +835,7 @@ namespace VRCX
                         err = OpenVR.Overlay.SetOverlayTexture(overlayHandle, ref texture);
                         if (err != EVROverlayError.None)
                         {
+                            logger.Error("Error setting overlay texture:", err);
                             return err;
                         }
 
@@ -823,6 +844,7 @@ namespace VRCX
                             err = overlay.ShowOverlay(overlayHandle);
                             if (err != EVROverlayError.None)
                             {
+                                logger.Error("Error showing overlay 2:", err);
                                 return err;
                             }
 
@@ -836,6 +858,7 @@ namespace VRCX
                 err = overlay.HideOverlay(overlayHandle);
                 if (err != EVROverlayError.None)
                 {
+                    logger.Error("Error hiding overlay 2:", err);
                     return err;
                 }
 
