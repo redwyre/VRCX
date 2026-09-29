@@ -16,3 +16,9 @@ public abstract class VRCXVRInterface
     public abstract void ExecuteVrOverlayFunction(string function, string json);
     public abstract ConcurrentQueue<KeyValuePair<string, string>> GetExecuteVrOverlayFunctionQueue();
 }
+
+public enum OverlayMode
+{
+    Background,
+    Overlay,
+}

@@ -1,4 +1,7 @@
 {
+    "files.associations": {
+        "*.vrmanifest": "json"
+    },
     "dotnet.defaultSolution": "VRCX.slnx",
     "i18n-ally.localesPaths": ["src/localization"],
     "i18n-ally.enabledFrameworks": ["vue"],
@@ -35,7 +38,6 @@
         "editor.defaultFormatter": "ms-dotnettools.csharp"
     },
     "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": "explicit"
-    },
-    "eslint.validate": ["javascript", "vue", "html"]
+        "source.fixAll.oxc": "explicit"
+    }
 }

@@ -54,7 +54,13 @@
                 "isDefault": true
             },
             "detail": "Run the required sequence of build steps to build the project",
-            "dependsOn": ["dotnet: build Electron", "npm: install", "npm: prod", "npm: build-electron"],
+            "dependsOn": [
+                "dotnet: build Electron",
+                "dotnet: build CEF",
+                "npm: install",
+                "npm: prod",
+                "shell npm: build-electron"
+            ],
             "dependsOrder": "sequence",
             "problemMatcher": []
         },
@@ -75,7 +81,15 @@
                 "--runtime",
                 "win-x64"
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
+            "linux": {
+                "command": "echo",
+                "args": ["Skipping CEF build on linux"]
+            },
+            "osx": {
+                "command": "echo",
+                "args": ["Skipping CEF build on osx"]
+            }
         },
         {
             "label": "dotnet: build Electron",
@@ -94,7 +108,23 @@
                 "--runtime",
                 "linux-x64"
             ],
-            "problemMatcher": []
+            "problemMatcher": [],
+            "windows": {
+                "command": "echo",
+                "args": ["Skipping Electron build on windows"]
+            }
+        },
+        {
+            "label": "shell npm: build-electron",
+            "type": "shell",
+            "group": "build",
+            "command": "npm",
+            "args": ["run", "build-electron"],
+            "problemMatcher": [],
+            "windows": {
+                "command": "echo",
+                "args": ["Skipping Electron build on windows"]
+            }
         }
     ]
 }

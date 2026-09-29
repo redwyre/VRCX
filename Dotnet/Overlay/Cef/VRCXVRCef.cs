@@ -30,6 +30,7 @@ namespace VRCX
         private readonly List<string[]> _deviceList;
         private readonly ReaderWriterLockSlim _deviceListLock;
         private readonly bool _isLegacy;
+        private readonly OverlayMode _overlayMode;
         private bool _active;
         private bool _menuButton;
         private int _overlayHand;
@@ -59,9 +60,10 @@ namespace VRCX
 
         private ComPtr<ID3D11Texture2D> _sharedTexture;
 
-        public VRCXVRCef(bool isLegacy)
+        public VRCXVRCef(bool isLegacy, OverlayMode overlayMode)
         {
             _isLegacy = isLegacy;
+            _overlayMode = overlayMode;
             _deviceListLock = new ReaderWriterLockSlim();
             _deviceList = new List<string[]>();
             _thread = new Thread(ThreadLoop)
@@ -86,7 +88,7 @@ namespace VRCX
         public override void Restart()
         {
             Exit();
-            OverlayProgram.VRCXVRInstance = new VRCXVRCef(_isLegacy);
+            OverlayProgram.VRCXVRInstance = new VRCXVRCef(_isLegacy, _overlayMode);
             OverlayProgram.VRCXVRInstance.Init();
         }
 
@@ -203,7 +205,12 @@ namespace VRCX
                         }
 
                         var _err = EVRInitError.None;
-                        system = OpenVR.Init(ref _err, EVRApplicationType.VRApplication_Background);
+                        var applicationType = _overlayMode switch
+                        {
+                            OverlayMode.Background => EVRApplicationType.VRApplication_Background,
+                            OverlayMode.Overlay => EVRApplicationType.VRApplication_Overlay
+                        };
+                        system = OpenVR.Init(ref _err, applicationType);
                         nextInit = DateTime.UtcNow.AddSeconds(5);
                         if (system == null)
                         {

@@ -17,7 +17,9 @@ internal static class OverlayProgram
         CefService.Instance.Init();
         AppApiVr.Instance = new AppApiVrCef();
         var isLegacy = VRCXStorage.Instance.Get("VRCX_DisableVrOverlayGpuAcceleration") == "true";
-        VRCXVRInstance = new VRCXVRCef(isLegacy);
+        int overlayMode = 0;
+        int.TryParse(VRCXStorage.Instance.Get("VRCX_OverlayMode"), out overlayMode);
+        VRCXVRInstance = new VRCXVRCef(isLegacy, (OverlayMode)overlayMode);
         VRCXVRInstance.Init();
 
         OverlayClient.Init();

@@ -129,6 +129,18 @@
                     @update:modelValue="setDisableVrOverlayGpuAcceleration" />
             </SettingsItem>
 
+            <SettingsItem v-if="!isLinux" :label="'Set startup mode'" :description="'Set startup mode'">
+                <Select :model-value="overlayMode" @update:model-value="setOverlayMode">
+                    <SelectTrigger size="sm">
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="0"> Background </SelectItem>
+                        <SelectItem value="1"> Start with SteamVR </SelectItem>
+                    </SelectContent>
+                </Select>
+            </SettingsItem>
+
             <SettingsItem :label="t('view.settings.general.application.proxy')">
                 <Button size="sm" variant="outline" @click="promptProxySettings">{{
                     t('view.settings.general.application.proxy')
@@ -196,7 +208,8 @@
         isStartAsMinimizedState,
         isCloseToTray,
         disableGpuAcceleration,
-        disableVrOverlayGpuAcceleration
+        disableVrOverlayGpuAcceleration,
+        overlayMode
     } = storeToRefs(generalSettingsStore);
 
     const {
@@ -205,6 +218,7 @@
         setIsCloseToTray,
         setDisableGpuAcceleration,
         setDisableVrOverlayGpuAcceleration,
+        setOverlayMode,
         promptProxySettings
     } = generalSettingsStore;
 

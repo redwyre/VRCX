@@ -1,0 +1,19 @@
+{
+    "source": "builtin",
+    "applications": [
+        {
+            "app_key": "app.vrcx.vrcx",
+            "launch_type": "binary",
+            "binary_path_windows": "VRCX.exe",
+            "binary_path_linux": "VRCX",
+            "binary_path_osx": "VRCX",
+            "is_dashboard_overlay": true
+        }
+    ],
+    "strings": {
+        "en_us": {
+            "name": "VRCX",
+            "description": "VRCX."
+        }
+    }
+}

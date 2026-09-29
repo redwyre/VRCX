@@ -20,6 +20,15 @@
             "preLaunchTask": "dotnet: build"
         },
         {
+            "name": "CEF Frontend",
+            "type": "chrome",
+            "request": "attach",
+            "port": 8089,
+            "address": "127.0.0.1",
+            "webRoot": "${workspaceFolder}/build/html",
+            "timeout": 10000
+        },
+        {
             "name": "Debug Electron (Main Process)",
             "type": "node",
             "request": "launch",
