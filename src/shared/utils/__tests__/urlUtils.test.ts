@@ -15,7 +15,15 @@ describe('getFaviconUrl', () => {
 
     it('returns empty string for empty input', () => {
         expect(getFaviconUrl('')).toBe('');
+
+
+
+
         expect(getFaviconUrl(null)).toBe('');
+
+
+
+
         expect(getFaviconUrl(undefined)).toBe('');
     });
 
@@ -37,7 +45,15 @@ describe('replaceVrcPackageUrl', () => {
 
     it('returns empty string for empty/null input', () => {
         expect(replaceVrcPackageUrl('')).toBe('');
+
+
+
+
         expect(replaceVrcPackageUrl(null)).toBe('');
+
+
+
+
         expect(replaceVrcPackageUrl(undefined)).toBe('');
     });
 });

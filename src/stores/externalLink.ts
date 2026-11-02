@@ -12,7 +12,7 @@ export const useExternalLinkStore = defineStore('ExternalLink', () => {
      *
      * @param {string} link
      */
-    function showExternalLinkDialog(link) {
+    function showExternalLinkDialog(link: string) {
         externalLinkDialog.value = {
             visible: true,
             link: String(link)

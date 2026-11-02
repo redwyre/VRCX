@@ -1,11 +1,11 @@
 import { dbVars } from '../database';
 
-import sqliteService from '../sqlite.js';
+import sqliteService from '../sqlite';
 
 const friendLogHistory = {
     async getFriendLogHistory() {
-        var friendLogHistory = [];
-        await sqliteService.execute((dbRow) => {
+        var friendLogHistory: { rowId: any; created_at: any; type: any; userId: any; displayName: any; friendNumber: any; }[] = [];
+        await sqliteService.execute((dbRow: any) => {
             var row = {
                 rowId: dbRow[0],
                 created_at: dbRow[1],
@@ -15,19 +15,23 @@ const friendLogHistory = {
                 friendNumber: dbRow[8]
             };
             if (row.type === 'DisplayName') {
-                row.previousDisplayName = dbRow[5];
+                (row as any).previousDisplayName = dbRow[5];
             } else if (row.type === 'TrustLevel') {
-                row.trustLevel = dbRow[6];
-                row.previousTrustLevel = dbRow[7];
+                (row as any).trustLevel = dbRow[6];
+                (row as any).previousTrustLevel = dbRow[7];
             }
             friendLogHistory.unshift(row);
         }, `SELECT * FROM ${dbVars.userPrefix}_friend_log_history`);
         return friendLogHistory;
     },
 
-    addFriendLogHistory(entry) {
+    addFriendLogHistory(entry: { created_at: any; type: any; userId: any; displayName: any; friendNumber?: any; previousDisplayName?: any; trustLevel?: any; previousTrustLevel?: any; }) {
         sqliteService.executeNonQuery(
             `INSERT OR IGNORE INTO ${dbVars.userPrefix}_friend_log_history (created_at, type, user_id, display_name, previous_display_name, trust_level, previous_trust_level, friend_number) VALUES (@created_at, @type, @user_id, @display_name, @previous_display_name, @trust_level, @previous_trust_level, @friend_number)`,
+
+
+
+
             {
                 '@created_at': entry.created_at,
                 '@type': entry.type,
@@ -41,7 +45,7 @@ const friendLogHistory = {
         );
     },
 
-    addFriendLogHistoryArray(inputData) {
+    addFriendLogHistoryArray(inputData: string | any[]) {
         if (inputData.length === 0) {
             return;
         }
@@ -65,6 +69,10 @@ const friendLogHistory = {
                 if (typeof line[item] === 'string') {
                     field = `'${line[item].replace(/'/g, "''")}'`;
                 } else {
+
+
+
+
                     field = null;
                 }
                 sqlValues += field;
@@ -83,15 +91,15 @@ const friendLogHistory = {
         );
     },
 
-    async getFriendLogHistoryForUserId(userId, types) {
-        let friendLogHistory = [];
+    async getFriendLogHistoryForUserId(userId: string, types: any) {
+        let friendLogHistory: { rowId: any; created_at: any; type: any; userId: any; displayName: any; friendNumber: any; }[] = [];
         let typeFilter = '';
         if (types && types.length > 0) {
-            const escapedTypes = types.map((t) => `'${t.replace(/'/g, "''")}'`);
+            const escapedTypes = types.map((t: string) => `'${t.replace(/'/g, "''")}'`);
             typeFilter = ` AND type IN (${escapedTypes.join(', ')})`;
         }
         await sqliteService.execute(
-            (dbRow) => {
+            (dbRow: any) => {
                 const row = {
                     rowId: dbRow[0],
                     created_at: dbRow[1],
@@ -101,14 +109,18 @@ const friendLogHistory = {
                     friendNumber: dbRow[8]
                 };
                 if (row.type === 'DisplayName') {
-                    row.previousDisplayName = dbRow[5];
+                    (row as any).previousDisplayName = dbRow[5];
                 } else if (row.type === 'TrustLevel') {
-                    row.trustLevel = dbRow[6];
-                    row.previousTrustLevel = dbRow[7];
+                    (row as any).trustLevel = dbRow[6];
+                    (row as any).previousTrustLevel = dbRow[7];
                 }
                 friendLogHistory.push(row);
             },
             `SELECT * FROM ${dbVars.userPrefix}_friend_log_history WHERE user_id = @user_id${typeFilter}`,
+
+
+
+
             {
                 '@user_id': userId
             }
@@ -117,8 +129,12 @@ const friendLogHistory = {
     },
 
     // https://github.com/vrcx-team/VRCX/issues/1262
-    deleteFriendLogHistory(entry) {
+    deleteFriendLogHistory(entry: { rowId: null; created_at: any; type: any; userId: any; }) {
         if (entry.rowId != null) {
+
+
+
+
             sqliteService.executeNonQuery(`DELETE FROM ${dbVars.userPrefix}_friend_log_history WHERE id = @row_id`, {
                 '@row_id': entry.rowId
             });
@@ -127,6 +143,10 @@ const friendLogHistory = {
             // fall back to composite key so the DB row is still removed.
             sqliteService.executeNonQuery(
                 `DELETE FROM ${dbVars.userPrefix}_friend_log_history WHERE created_at = @created_at AND type = @type AND user_id = @user_id`,
+
+
+
+
                 {
                     '@created_at': entry.created_at,
                     '@type': entry.type,

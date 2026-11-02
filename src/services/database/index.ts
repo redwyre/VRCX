@@ -1,23 +1,23 @@
-import { activityV2 } from './activityV2.js';
-import { avatarFavorites } from './avatarFavorites.js';
-import { avatarTags } from './avatarTags.js';
-import { feed } from './feed.js';
-import { friendFavorites } from './friendFavorites.js';
-import { friendLogCurrent } from './friendLogCurrent.js';
-import { friendLogHistory } from './friendLogHistory.js';
-import { gameLog } from './gameLog.js';
-import { memos } from './memos.js';
-import { moderation } from './moderation.js';
-import { mutualGraph } from './mutualGraph.js';
-import { notifications } from './notifications.js';
-import { tableAlter } from './tableAlter.js';
-import { tableFixes } from './tableFixes.js';
-import { tableSize } from './tableSize.js';
-import { userProfile } from './userProfile.js';
-import { worldFavorites } from './worldFavorites.js';
-import { printFavorites } from './printFavorites.js';
+import { activityV2 } from './activityV2';
+import { avatarFavorites } from './avatarFavorites';
+import { avatarTags } from './avatarTags';
+import { feed } from './feed';
+import { friendFavorites } from './friendFavorites';
+import { friendLogCurrent } from './friendLogCurrent';
+import { friendLogHistory } from './friendLogHistory';
+import { gameLog } from './gameLog';
+import { memos } from './memos';
+import { moderation } from './moderation';
+import { mutualGraph } from './mutualGraph';
+import { notifications } from './notifications';
+import { tableAlter } from './tableAlter';
+import { tableFixes } from './tableFixes';
+import { tableSize } from './tableSize';
+import { userProfile } from './userProfile';
+import { worldFavorites } from './worldFavorites';
+import { printFavorites } from './printFavorites';
 
-import sqliteService from '../sqlite.js';
+import sqliteService from '../sqlite';
 
 const dbVars = {
     userId: '',
@@ -46,15 +46,15 @@ const database = {
     ...mutualGraph,
     ...userProfile,
 
-    setMaxTableSize(limit) {
+    setMaxTableSize(limit: number) {
         dbVars.maxTableSize = limit;
     },
 
-    setSearchTableSize(limit) {
+    setSearchTableSize(limit: number) {
         dbVars.searchTableSize = limit;
     },
 
-    async initUserTables(userId) {
+    async initUserTables(userId: string) {
         dbVars.userId = userId;
         dbVars.userPrefix = userId.replaceAll('-', '').replaceAll('_', '');
         // Fix escape, add underscore if prefix starts with a number

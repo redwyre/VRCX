@@ -75,7 +75,7 @@ export const useAppearanceSettingsStore = defineStore(
         const tablePageSizes = ref([...DEFAULT_TABLE_PAGE_SIZES]);
         const dtHour12 = ref(false);
         const dtIsoFormat = ref(false);
-        const weekStartsOn = ref(/** @type {0 | 1 | 6} */ (1));
+        const weekStartsOn = ref((1 as 0 | 1 | 6));
         const sidebarSortMethod1 = ref('Sort Private to Bottom');
         const sidebarSortMethod2 = ref('Sort by Time in Instance');
         const sidebarSortMethod3 = ref('Sort by Last Active');
@@ -122,19 +122,19 @@ export const useAppearanceSettingsStore = defineStore(
             searchLimit: 5000
         });
 
-        const clampInt = (value, min, max) => {
+        const clampInt = (value: any, min: number, max: number) => {
             const n = parseInt(value, 10);
             return Math.min(max, Math.max(min, n));
         };
 
-        const resolveLastDarkTheme = (value, fallback = 'dark') => {
+        const resolveLastDarkTheme = (value: string, fallback = 'dark') => {
             const normalized = String(value || '').trim();
-            return THEME_CONFIG[normalized]?.isDark === true ? normalized : fallback;
+            return (THEME_CONFIG as any)[normalized]?.isDark === true ? normalized : fallback;
         };
 
         async function initAppearanceSettings() {
             const { initThemeMode, isDarkMode: initDarkMode } = await getThemeMode(configRepository);
-            const fallbackDarkTheme = THEME_CONFIG[initThemeMode]?.isDark === true ? initThemeMode : 'dark';
+            const fallbackDarkTheme = (THEME_CONFIG as any)[initThemeMode]?.isDark === true ? initThemeMode : 'dark';
             const [
                 appLanguageConfig,
                 displayVRCProfileThemesConfig,
@@ -181,6 +181,10 @@ export const useAppearanceSettingsStore = defineStore(
                 configRepository.getString('VRCX_appLanguage'),
                 configRepository.getBool('VRCX_displayVRCProfileThemes', true),
                 configRepository.getBool('VRCX_displayVRCProfileBackgrounds', false),
+
+
+
+
                 configRepository.getFloat('VRCX_profileBackgroundOpacity', 0.5),
                 configRepository.getBool('VRCX_displayVRCProfileCosmetics', false),
                 configRepository.getBool('VRCX_hideNicknames', false),
@@ -250,6 +254,10 @@ export const useAppearanceSettingsStore = defineStore(
 
             displayVRCProfileThemes.value = displayVRCProfileThemesConfig;
             displayVRCProfileBackgrounds.value = displayVRCProfileBackgroundsConfig;
+
+
+
+
             profileBackgroundOpacity.value = profileBackgroundOpacityConfig;
             displayVRCProfileCosmetics.value = displayVRCProfileCosmeticsConfig;
             hideNicknames.value = hideNicknamesConfig;
@@ -265,11 +273,11 @@ export const useAppearanceSettingsStore = defineStore(
 
             dtHour12.value = dtHour12Config;
             dtIsoFormat.value = dtIsoFormatConfig;
-            weekStartsOn.value = /** @type {0 | 1 | 6} */ (
-                [0, 1, 6].includes(weekStartsOnConfig) ? weekStartsOnConfig : 1
+            weekStartsOn.value = (
+                ([0, 1, 6].includes(weekStartsOnConfig) ? weekStartsOnConfig : 1) as 0 | 1 | 6
             );
 
-            currentCulture.value = await AppApi.CurrentCulture();
+            currentCulture.value = await (AppApi as any).CurrentCulture();
 
             sidebarSortMethods.value = JSON.parse(sidebarSortMethodsConfig);
             if (sidebarSortMethods.value?.length === 3) {
@@ -336,7 +344,7 @@ export const useAppearanceSettingsStore = defineStore(
         /**
          * @param {string} language
          */
-        async function changeAppLanguage(language) {
+        async function changeAppLanguage(language: string) {
             await setAppLanguage(language);
             vrStore.updateVRConfigVars();
         }
@@ -344,7 +352,7 @@ export const useAppearanceSettingsStore = defineStore(
         /**
          * @param {string} language
          */
-        async function setAppLanguage(language) {
+        async function setAppLanguage(language: string) {
             console.log('Language changed:', language);
 
             await loadLocalizedStrings(language);
@@ -362,7 +370,7 @@ export const useAppearanceSettingsStore = defineStore(
          * @param {boolean} setRandomColor
          * @returns {Promise<void>}
          */
-        async function updateTrustColor(field, color, setRandomColor = false) {
+        async function updateTrustColor(field: string, color: string, setRandomColor: boolean = false) {
             if (setRandomColor) {
                 setRandomUserColours();
             }
@@ -391,24 +399,28 @@ export const useAppearanceSettingsStore = defineStore(
         /**
          * @param customFunc
          */
-        async function userColourInit(customFunc) {
+        async function userColourInit(customFunc?: ((arg0: MapIterator<any>) => any) | undefined) {
             let dictObject = null;
             if (typeof customFunc === 'function') {
                 dictObject = customFunc(userStore.cachedUsers.keys());
             } else {
-                dictObject = await AppApi.GetColourBulk(Array.from(userStore.cachedUsers.keys()));
+                dictObject = await (AppApi as any).GetColourBulk(Array.from(userStore.cachedUsers.keys()));
             }
             if (!dictObject) {
                 console.warn('No user colour data found');
                 return;
             }
             if (LINUX) {
-                // @ts-ignore
+
                 dictObject = Object.fromEntries(dictObject);
             }
             for (const [userId, hue] of Object.entries(dictObject)) {
                 const ref = userStore.cachedUsers.get(userId);
                 if (typeof ref !== 'undefined') {
+
+
+
+
                     ref.$userColour = HueToHex(hue, isDarkMode.value);
                 }
             }
@@ -417,22 +429,22 @@ export const useAppearanceSettingsStore = defineStore(
         /**
          * @param {object} ref
          */
-        function applyUserTrustLevel(ref) {
-            const trust = computeTrustLevel(ref.tags, ref.developerType);
-            ref.$isModerator = trust.isModerator;
-            ref.$isTroll = trust.isTroll;
-            ref.$isProbableTroll = trust.isProbableTroll;
-            ref.$trustLevel = trust.trustLevel;
-            ref.$trustClass = trust.trustClass;
-            ref.$trustSortNum = trust.trustSortNum;
+        function applyUserTrustLevel(ref: object) {
+            const trust = computeTrustLevel((ref as any).tags, (ref as any).developerType);
+            (ref as any).$isModerator = trust.isModerator;
+            (ref as any).$isTroll = trust.isTroll;
+            (ref as any).$isProbableTroll = trust.isProbableTroll;
+            (ref as any).$trustLevel = trust.trustLevel;
+            (ref as any).$trustClass = trust.trustClass;
+            (ref as any).$trustSortNum = trust.trustSortNum;
             if (randomUserColours.value && watchState.isFriendsLoaded) {
-                if (!ref.$userColour) {
-                    getNameColour(ref.id, isDarkMode.value).then((colour) => {
-                        ref.$userColour = colour;
-                    });
+                if (!(ref as any).$userColour) {
+                    getNameColour((ref as any).id, isDarkMode.value).then((colour) => {
+    (ref as any).$userColour = colour;
+});
                 }
             } else {
-                ref.$userColour = trustColor.value[trust.trustColorKey];
+                (ref as any).$userColour = (trustColor.value as any)[trust.trustColorKey];
             }
         }
 
@@ -454,10 +466,10 @@ export const useAppearanceSettingsStore = defineStore(
         /**
          * @param {string} mode
          */
-        function setThemeMode(mode) {
+        function setThemeMode(mode: string) {
             themeMode.value = mode;
             configRepository.setString('VRCX_ThemeMode', mode);
-            if (THEME_CONFIG[mode]?.isDark === true) {
+            if ((THEME_CONFIG as any)[mode]?.isDark === true) {
                 const normalized = resolveLastDarkTheme(mode);
                 lastDarkTheme.value = normalized;
                 configRepository.setString('VRCX_lastDarkTheme', normalized);
@@ -465,6 +477,10 @@ export const useAppearanceSettingsStore = defineStore(
             const { isDark } = changeAppThemeStyle(mode);
             isDarkMode.value = isDark;
             vrStore.updateVRConfigVars();
+
+
+
+
             updateTrustColor(undefined, undefined);
         }
 
@@ -476,7 +492,7 @@ export const useAppearanceSettingsStore = defineStore(
         /**
          * @param value
          */
-        function normalizeAppFontFamily(value) {
+        function normalizeAppFontFamily(value: string) {
             if (value === 'custom') return 'custom';
             return APP_FONT_FAMILIES.includes(value) ? value : APP_FONT_DEFAULT_KEY;
         }
@@ -484,21 +500,21 @@ export const useAppearanceSettingsStore = defineStore(
         /**
          * @param value
          */
-        function normalizeAppCjkFontPack(value) {
+        function normalizeAppCjkFontPack(value: string) {
             return APP_CJK_FONT_PACKS.includes(value) ? value : APP_CJK_FONT_PACK_DEFAULT_KEY;
         }
 
         /**
          * @param value
          */
-        function setAppFontFamily(value) {
+        function setAppFontFamily(value: any) {
             const normalized = normalizeAppFontFamily(value);
             appFontFamily.value = normalized;
             configRepository.setString('VRCX_fontFamily', normalized);
             applyAppFontFamily(normalized, customFontFamily.value);
         }
 
-        function setCustomFontFamily(value) {
+        function setCustomFontFamily(value: string) {
             customFontFamily.value = value;
             configRepository.setString('VRCX_customFontFamily', value);
             if (appFontFamily.value === 'custom') {
@@ -509,7 +525,7 @@ export const useAppearanceSettingsStore = defineStore(
         /**
          * @param value
          */
-        function setAppCjkFontPack(value) {
+        function setAppCjkFontPack(value: any) {
             const normalized = normalizeAppCjkFontPack(value);
             appCjkFontPack.value = normalized;
             configRepository.setString('VRCX_cjkFontPack', normalized);
@@ -526,7 +542,7 @@ export const useAppearanceSettingsStore = defineStore(
             configRepository.setBool('VRCX_displayVRCProfileBackgrounds', displayVRCProfileBackgrounds.value);
         }
 
-        function setProfileBackgroundOpacity(value) {
+        function setProfileBackgroundOpacity(value: any) {
             profileBackgroundOpacity.value = value;
             configRepository.setFloat('VRCX_profileBackgroundOpacity', value);
         }
@@ -569,7 +585,7 @@ export const useAppearanceSettingsStore = defineStore(
         /**
          * @param size
          */
-        function setTablePageSize(size) {
+        function setTablePageSize(size: number) {
             const processedSize = clampInt(size, 1, MAX_TABLE_PAGE_SIZE);
             tablePageSize.value = processedSize;
             configRepository.setInt('VRCX_tablePageSize', processedSize);
@@ -580,7 +596,7 @@ export const useAppearanceSettingsStore = defineStore(
         /**
          * @param input
          */
-        function normalizeTablePageSizes(input) {
+        function normalizeTablePageSizes(input: any) {
             const values = (Array.isArray(input) ? input : DEFAULT_TABLE_PAGE_SIZES)
                 .map((v) => parseInt(v, 10))
                 .filter((v) => v > 0 && v <= MAX_TABLE_PAGE_SIZE);
@@ -591,7 +607,7 @@ export const useAppearanceSettingsStore = defineStore(
         /**
          * @param {(number | string)[]} sizes
          */
-        function setTablePageSizes(sizes) {
+        function setTablePageSizes(sizes: (number | string)[]) {
             tablePageSizes.value = normalizeTablePageSizes(sizes);
             configRepository.setString('VRCX_tablePageSizes', JSON.stringify(tablePageSizes.value));
 
@@ -610,43 +626,43 @@ export const useAppearanceSettingsStore = defineStore(
         /**
          * @param {number} value - 0 (Sunday), 1 (Monday), or 6 (Saturday)
          */
-        function setWeekStartsOn(value) {
-            const v = /** @type {0 | 1 | 6} */ ([0, 1, 6].includes(value) ? value : 1);
+        function setWeekStartsOn(value: number) {
+            const v = (([0, 1, 6].includes(value) ? value : 1) as 0 | 1 | 6);
             weekStartsOn.value = v;
             configRepository.setInt('VRCX_weekStartsOn', v);
         }
         /**
          * @param {string} method
          */
-        function setSidebarSortMethod1(method) {
+        function setSidebarSortMethod1(method: string) {
             sidebarSortMethod1.value = method;
             handleSaveSidebarSortOrder();
         }
         /**
          * @param {string} method
          */
-        function setSidebarSortMethod2(method) {
+        function setSidebarSortMethod2(method: string) {
             sidebarSortMethod2.value = method;
             handleSaveSidebarSortOrder();
         }
         /**
          * @param {string} method
          */
-        function setSidebarSortMethod3(method) {
+        function setSidebarSortMethod3(method: string) {
             sidebarSortMethod3.value = method;
             handleSaveSidebarSortOrder();
         }
         /**
          * @param {string[]} methods
          */
-        function setSidebarSortMethods(methods) {
+        function setSidebarSortMethods(methods: string[]) {
             sidebarSortMethods.value = methods;
             configRepository.setString('VRCX_sidebarSortMethods', JSON.stringify(methods));
         }
         /**
          * @param collapsed
          */
-        function setNavCollapsed(collapsed) {
+        function setNavCollapsed(collapsed: boolean) {
             isNavCollapsed.value = collapsed;
             configRepository.setBool('VRCX_navIsCollapsed', collapsed);
         }
@@ -656,7 +672,7 @@ export const useAppearanceSettingsStore = defineStore(
         /**
          * @param widthOrArray
          */
-        function setNavWidth(widthOrArray) {
+        function setNavWidth(widthOrArray: string | any[]) {
             let width = null;
             if (Array.isArray(widthOrArray) && widthOrArray.length) {
                 width = widthOrArray[widthOrArray.length - 1];
@@ -689,14 +705,22 @@ export const useAppearanceSettingsStore = defineStore(
         /**
          * @param {string[]} value
          */
-        function setSidebarFavoriteGroups(value) {
+        function setSidebarFavoriteGroups(value: string[]) {
+
+
+
+
             sidebarFavoriteGroups.value = value;
             configRepository.setString('VRCX_sidebarFavoriteGroups', JSON.stringify(value));
         }
         /**
          * @param {string[]} value
          */
-        function setSidebarFavoriteGroupOrder(value) {
+        function setSidebarFavoriteGroupOrder(value: string[]) {
+
+
+
+
             sidebarFavoriteGroupOrder.value = value;
             configRepository.setString('VRCX_sidebarFavoriteGroupOrder', JSON.stringify(value));
         }
@@ -723,7 +747,7 @@ export const useAppearanceSettingsStore = defineStore(
         /**
          * @param value
          */
-        function normalizeTableDensity(value) {
+        function normalizeTableDensity(value: string) {
             if (value === 'compact' || value === 'comfortable' || value === 'standard') {
                 return value;
             }
@@ -733,7 +757,7 @@ export const useAppearanceSettingsStore = defineStore(
         /**
          * @param density
          */
-        function setTableDensity(density) {
+        function setTableDensity(density: any) {
             const normalized = normalizeTableDensity(density);
             tableDensity.value = normalized;
             applyTableDensity(tableDensity.value);
@@ -768,8 +792,12 @@ export const useAppearanceSettingsStore = defineStore(
         /**
          * @param {object} color
          */
-        function setTrustColor(color) {
-            // @ts-ignore
+        function setTrustColor(color: object) {
+
+
+
+
+
             trustColor.value = color;
             configRepository.setString('VRCX_trustColor', JSON.stringify(trustColor.value));
         }
@@ -838,7 +866,7 @@ export const useAppearanceSettingsStore = defineStore(
             }
         }
 
-        const clampLimit = (value, min, max) => {
+        const clampLimit = (value: any, min: number, max: number) => {
             const n = Number.parseInt(value, 10);
             if (!Number.isFinite(n)) {
                 return null;
@@ -899,7 +927,7 @@ export const useAppearanceSettingsStore = defineStore(
         /**
          * @param density
          */
-        function applyTableDensity(density) {
+        function applyTableDensity(density: string) {
             const classList = document.documentElement.classList;
             classList.remove('is-compact-table', 'is-comfortable-table');
             if (density === 'compact') {

@@ -17,17 +17,27 @@ import { useUserStore } from '../stores/user';
  * @param {object} [options] Test seams.
  * @param {function} [options.now] Timestamp provider.
  */
-export function runAvatarSwapFlow({ json, ref, isLoggedIn }, { now = Date.now } = {}) {
+export function runAvatarSwapFlow({ json, ref, isLoggedIn }: {
+    json: object;
+    ref: object;
+    isLoggedIn: boolean;
+}, { now = Date.now }: {
+
+
+
+
+    now?: function;
+} = {}) {
     const gameStore = useGameStore();
 
     if (!isLoggedIn) {
         return;
     }
-    if (json.currentAvatar !== ref.currentAvatar) {
-        addAvatarToHistory(json.currentAvatar);
+    if ((json as any).currentAvatar !== (ref as any).currentAvatar) {
+        addAvatarToHistory((json as any).currentAvatar);
         if (gameStore.isGameRunning) {
-            addAvatarWearTime(ref.currentAvatar);
-            ref.$previousAvatarSwapTime = now();
+            addAvatarWearTime((ref as any).currentAvatar);
+            (ref as any).$previousAvatarSwapTime = now();
         }
     }
 }
@@ -39,13 +49,19 @@ export function runAvatarSwapFlow({ json, ref, isLoggedIn }, { now = Date.now } 
  * @param {object} [options] Test seams.
  * @param {function} [options.now] Timestamp provider.
  */
-export function runFirstLoginFlow(ref, { now = Date.now } = {}) {
+export function runFirstLoginFlow(ref: object, { now = Date.now }: {
+
+
+
+
+    now?: function;
+} = {}) {
     const gameStore = useGameStore();
     const authStore = useAuthStore();
     const userStore = useUserStore();
 
     if (gameStore.isGameRunning) {
-        ref.$previousAvatarSwapTime = now();
+        (ref as any).$previousAvatarSwapTime = now();
     }
     userStore.clearCachedUsers(); // clear before running applyUser
     userStore.setCurrentUser(ref);
@@ -57,13 +73,13 @@ export function runFirstLoginFlow(ref, { now = Date.now } = {}) {
  *
  * @param {object} ref Current user state reference.
  */
-export function runPostApplySyncFlow(ref) {
+export function runPostApplySyncFlow(ref: object) {
     const instanceStore = useInstanceStore();
 
     applyPresenceGroups(ref);
-    instanceStore.applyQueuedInstance(ref.queuedInstance);
+    instanceStore.applyQueuedInstance((ref as any).queuedInstance);
     updateUserCurrentStatus(ref);
-    if (typeof ref.friends !== 'undefined') {
+    if (typeof (ref as any).friends !== 'undefined') {
         runUpdateFriendshipsFlow(ref);
     }
 }
@@ -73,15 +89,15 @@ export function runPostApplySyncFlow(ref) {
  *
  * @param {object} ref Current user state reference.
  */
-export function runHomeLocationSyncFlow(ref) {
+export function runHomeLocationSyncFlow(ref: object) {
     const userStore = useUserStore();
 
-    if (ref.homeLocation === ref.$homeLocation?.tag) {
+    if ((ref as any).homeLocation === (ref as any).$homeLocation?.tag) {
         return;
     }
-    ref.$homeLocation = parseLocation(ref.homeLocation);
+    (ref as any).$homeLocation = parseLocation((ref as any).homeLocation);
     // apply home location name to user dialog
-    if (userStore.userDialog.visible && userStore.userDialog.id === ref.id) {
+    if (userStore.userDialog.visible && userStore.userDialog.id === (ref as any).id) {
         getWorldName(userStore.currentUser.homeLocation).then((worldName) => {
             userStore.userDialog.$homeLocationName = worldName;
         });

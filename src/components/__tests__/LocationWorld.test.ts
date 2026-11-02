@@ -17,14 +17,18 @@ const mocks = vi.hoisted(() => ({
 vi.mock('pinia', async (importOriginal) => {
     const actual = await importOriginal();
     return {
+
+
+
+
         ...actual,
-        storeToRefs: (store) => store
+        storeToRefs: (store: any) => store
     };
 });
 
 vi.mock('vue-i18n', () => ({
     useI18n: () => ({
-        t: (key) => key
+        t: (key: any) => key
     })
 }));
 
@@ -34,13 +38,13 @@ vi.mock('../../stores', () => ({
         lastInstanceApplied: mocks.lastInstanceApplied
     }),
     useLaunchStore: () => ({
-        showLaunchDialog: (...args) => mocks.showLaunchDialog(...args)
+        showLaunchDialog: (...args: any[]) => mocks.showLaunchDialog(...args)
     }),
     useGroupStore: () => ({})
 }));
 
 vi.mock('../../coordinators/groupCoordinator', () => ({
-    showGroupDialog: (...args) => mocks.showGroupDialog(...args)
+    showGroupDialog: (...args: any[]) => mocks.showGroupDialog(...args)
 }));
 
 vi.mock('../../shared/constants', () => ({
@@ -52,8 +56,16 @@ vi.mock('../../shared/constants', () => ({
 }));
 
 vi.mock('../../shared/utils', () => ({
-    getGroupName: (...args) => mocks.getGroupName(...args),
-    parseLocation: (...args) => mocks.parseLocation(...args)
+
+
+
+
+    getGroupName: (...args: any[]) => mocks.getGroupName(...args),
+
+
+
+
+    parseLocation: (...args: any[]) => mocks.parseLocation(...args)
 }));
 
 vi.mock('lucide-vue-next', () => ({

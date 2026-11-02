@@ -61,7 +61,7 @@ export const TAG_COLORS = Object.freeze([
  *
  * @param tagName
  */
-export function getTagColor(tagName) {
+export function getTagColor(tagName: string) {
     let hash = 5381;
     for (let i = 0; i < tagName.length; i++) {
         hash = ((hash << 5) + hash + tagName.charCodeAt(i)) >>> 0;

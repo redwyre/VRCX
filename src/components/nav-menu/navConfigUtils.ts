@@ -16,8 +16,8 @@ export function generateNavFolderId() {
 export function createNavDefinitionMap(definitions = []) {
     const map = new Map();
     definitions.forEach((definition) => {
-        if (definition?.key) {
-            map.set(definition.key, definition);
+        if ((definition as any)?.key) {
+            map.set((definition as any).key, definition);
         }
     });
     return map;
@@ -31,12 +31,12 @@ export function buildNavDefinitionsForLayout(
 ) {
     const keysInLayout = collectLayoutKeys(layout);
     const hiddenSet = new Set(Array.isArray(hiddenKeys) ? hiddenKeys : []);
-    const visibleBaseDefinitions = baseDefinitions.filter(
-        (definition) => !isToolNavKey(definition.key) || keysInLayout.has(definition.key)
-    );
-    const visibleDashboardDefinitions = dashboardDefinitions.filter(
-        (definition) => keysInLayout.has(definition.key) || hiddenSet.has(definition.key)
-    );
+    const visibleBaseDefinitions = baseDefinitions.filter((definition) => !isToolNavKey((definition as any).key) || keysInLayout.has((definition as any).key));
+
+
+
+
+    const visibleDashboardDefinitions = dashboardDefinitions.filter((definition) => keysInLayout.has((definition as any).key) || hiddenSet.has((definition as any).key));
 
     return [...visibleBaseDefinitions, ...visibleDashboardDefinitions];
 }
@@ -50,12 +50,13 @@ export function buildNavDefinitionsForLayout(
  * @returns {Promise<{ layout: any; hiddenKeys: any[] }>}
  */
 export async function loadStoredNavConfig(
-    repository,
-    fallbackLayout,
-    { configKey = NAV_CONFIG_KEY, filterHiddenKey = (_key) => true }
+    repository: any, fallbackLayout: any, { configKey = NAV_CONFIG_KEY, filterHiddenKey = (_key) => true }: {
+    configKey: string;
+    filterHiddenKey: (key: string) => boolean;
+}
 ) {
     let layout = fallbackLayout;
-    let hiddenKeys = [];
+    let hiddenKeys: any = [];
 
     const storedValue = await repository.getString(configKey);
     if (!storedValue) {

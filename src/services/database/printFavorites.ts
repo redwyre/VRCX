@@ -1,10 +1,14 @@
-import sqliteService from '../sqlite.js';
+import sqliteService from '../sqlite';
 
 const printFavorites = {
-    addPrintToFavorites(printId) {
+    addPrintToFavorites(printId: any) {
         sqliteService.executeNonQuery(
             `INSERT OR REPLACE INTO favorite_print (print_id, created_at)
              VALUES (@print_id, @created_at)`,
+
+
+
+
             {
                 '@print_id': printId,
                 '@created_at': new Date().toJSON()
@@ -12,16 +16,20 @@ const printFavorites = {
         );
     },
 
-    removePrintFromFavorites(printId) {
+    removePrintFromFavorites(printId: any) {
+
+
+
+
         sqliteService.executeNonQuery(`DELETE FROM favorite_print WHERE print_id = @print_id`, {
             '@print_id': printId
         });
     },
 
     async getPrintFavorites() {
-        const data = [];
+        const data: { printId: any; }[] = [];
 
-        await sqliteService.execute((dbRow) => {
+        await sqliteService.execute((dbRow: any) => {
             data.push({
                 printId: dbRow[1]
             });

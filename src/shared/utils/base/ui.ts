@@ -13,7 +13,7 @@ import { i18n } from '../../../plugins/i18n';
 import { router } from '../../../plugins/router';
 import { textToHex } from './string';
 
-import configRepository from '../../../services/config.js';
+import configRepository, { ConfigRepository } from '../../../services/config';
 
 const THEME_COLOR_STORAGE_KEY = 'VRCX_themeColor';
 const THEME_COLOR_STYLE_ID = 'app-theme-color-style';
@@ -31,7 +31,7 @@ const themeColors = THEME_COLORS.map((theme) => ({
 const currentThemeColor = ref(DEFAULT_THEME_COLOR_KEY);
 const isApplyingThemeColor = ref(false);
 
-function resolveThemeColor(themeKey) {
+function resolveThemeColor(themeKey: string) {
     const normalized = String(themeKey).trim().toLowerCase();
     return (
         themeColors.find((theme) => theme.key === normalized) ||
@@ -39,7 +39,7 @@ function resolveThemeColor(themeKey) {
     );
 }
 
-function applyThemeColorStyle(theme) {
+function applyThemeColorStyle(theme: any) {
     const root = document.documentElement;
     root.setAttribute('data-theme-color', theme.key);
 
@@ -61,13 +61,21 @@ function applyThemeColorStyle(theme) {
     }
 }
 
-async function applyThemeColor(themeKey, { persist = true } = {}) {
+async function applyThemeColor(themeKey: any, { persist = true } = {}) {
     const resolved = resolveThemeColor(themeKey);
     isApplyingThemeColor.value = true;
     applyThemeColorStyle(resolved);
+
+
+
+
     currentThemeColor.value = resolved.key;
     if (persist) {
         try {
+
+
+
+
             await configRepository.setString(THEME_COLOR_STORAGE_KEY, resolved.key);
         } catch (error) {
             console.warn('Failed to persist theme color', error);
@@ -81,6 +89,10 @@ async function initThemeColor() {
     const storedKey = await configRepository.getString(THEME_COLOR_STORAGE_KEY);
     const resolved = resolveThemeColor(storedKey || DEFAULT_THEME_COLOR_KEY);
     applyThemeColorStyle(resolved);
+
+
+
+
     currentThemeColor.value = resolved.key;
 }
 
@@ -94,7 +106,7 @@ function useThemeColor() {
     };
 }
 
-let electronSystemIsDark = null;
+let electronSystemIsDark: null = null;
 
 function systemIsDarkMode() {
     if (electronSystemIsDark !== null) {
@@ -103,11 +115,11 @@ function systemIsDarkMode() {
     return window.matchMedia('(prefers-color-scheme: dark)').matches;
 }
 
-function setSystemIsDarkMode(isDark) {
+function setSystemIsDarkMode(isDark: any) {
     electronSystemIsDark = isDark;
 }
 
-function applyThemeFonts(themeKey, fontLinks = []) {
+function applyThemeFonts(themeKey: string | undefined, fontLinks = []) {
     document.querySelectorAll('link[data-theme-font]').forEach((linkEl) => linkEl.remove());
 
     if (!fontLinks?.length) {
@@ -127,8 +139,8 @@ function applyThemeFonts(themeKey, fontLinks = []) {
     });
 }
 
-function applyThemeModeStyle(themeMode) {
-    const themeConfig = THEME_CONFIG[themeMode];
+function applyThemeModeStyle(themeMode: string | number) {
+    const themeConfig = (THEME_CONFIG as any)[themeMode];
     const themeFile = themeConfig?.file;
     let styleEl = document.getElementById(THEME_MODE_STYLE_ID);
 
@@ -151,12 +163,12 @@ function applyThemeModeStyle(themeMode) {
     }
 }
 
-function resolveAppFontFamily(fontKey) {
+function resolveAppFontFamily(fontKey: any) {
     const normalized = String(fontKey || '')
         .trim()
         .toLowerCase();
-    if (APP_FONT_CONFIG[normalized]) {
-        return { key: normalized, ...APP_FONT_CONFIG[normalized] };
+    if ((APP_FONT_CONFIG as any)[normalized]) {
+        return { key: normalized, ...(APP_FONT_CONFIG as any)[normalized] };
     }
     return {
         key: APP_FONT_DEFAULT_KEY,
@@ -164,7 +176,7 @@ function resolveAppFontFamily(fontKey) {
     };
 }
 
-function ensureDynamicFontStyle(attrName, styleKey, cssImport) {
+function ensureDynamicFontStyle(attrName: string, styleKey: any, cssImport: string | null) {
     const head = document.head;
     if (!head) {
         return;
@@ -191,12 +203,12 @@ function ensureDynamicFontStyle(attrName, styleKey, cssImport) {
     head.appendChild(styleEl);
 }
 
-function resolveAppCjkFontPack(packKey) {
+function resolveAppCjkFontPack(packKey: any) {
     const normalized = String(packKey || '')
         .trim()
         .toLowerCase();
-    if (APP_CJK_FONT_PACK_CONFIG[normalized]) {
-        return { key: normalized, ...APP_CJK_FONT_PACK_CONFIG[normalized] };
+    if ((APP_CJK_FONT_PACK_CONFIG as any)[normalized]) {
+        return { key: normalized, ...(APP_CJK_FONT_PACK_CONFIG as any)[normalized] };
     }
     return {
         key: APP_CJK_FONT_PACK_DEFAULT_KEY,
@@ -204,12 +216,12 @@ function resolveAppCjkFontPack(packKey) {
     };
 }
 
-function ensureAppCjkFontPackLinks(packKey) {
-    const config = APP_CJK_FONT_PACK_CONFIG[packKey];
+function ensureAppCjkFontPackLinks(packKey: any) {
+    const config = (APP_CJK_FONT_PACK_CONFIG as any)[packKey];
     ensureDynamicFontStyle(APP_CJK_FONT_PACK_LINK_ATTR, packKey, config?.cssImport);
 }
 
-function applyAppFontFamily(fontKey, customCssName) {
+function applyAppFontFamily(fontKey: string, customCssName: string) {
     if (fontKey === 'custom') {
         const cssName = String(customCssName || '').trim() || 'system-ui';
         const root = document.documentElement;
@@ -230,7 +242,7 @@ function applyAppFontFamily(fontKey, customCssName) {
     return resolved;
 }
 
-function applyAppCjkFontPack(packKey) {
+function applyAppCjkFontPack(packKey: string) {
     const resolved = resolveAppCjkFontPack(packKey);
     const root = document.documentElement;
     root.style.setProperty('--font-cjk-jp-primary', resolved.cssName.jp);
@@ -243,20 +255,20 @@ function applyAppCjkFontPack(packKey) {
     return resolved;
 }
 
-function changeAppThemeStyle(themeMode) {
+function changeAppThemeStyle(themeMode: string) {
     let isSystemMode = themeMode === 'system';
     if (isSystemMode) {
         themeMode = systemIsDarkMode() ? 'dark' : 'light';
     }
 
-    let themeConfig = THEME_CONFIG[themeMode];
+    let themeConfig = (THEME_CONFIG as any)[themeMode];
     if (!themeConfig) {
         // fallback to system
         console.error('Invalid theme mode:', themeMode);
         configRepository.setString('VRCX_ThemeMode', 'system');
         isSystemMode = true;
         themeMode = systemIsDarkMode() ? 'dark' : 'light';
-        themeConfig = THEME_CONFIG[themeMode];
+        themeConfig = (THEME_CONFIG as any)[themeMode];
     }
 
     applyThemeFonts(themeMode, themeConfig.fontLinks);
@@ -271,11 +283,11 @@ function changeAppThemeStyle(themeMode) {
         document.documentElement.classList.remove('dark');
     }
     if (themeConfig.name === 'Midnight') {
-        AppApi.ChangeTheme(2);
+        (AppApi as any).ChangeTheme(2);
     } else if (themeConfig.isDark) {
-        AppApi.ChangeTheme(1);
+        (AppApi as any).ChangeTheme(1);
     } else {
-        AppApi.ChangeTheme(0);
+        (AppApi as any).ChangeTheme(0);
     }
 
     if (LINUX) {
@@ -305,8 +317,12 @@ function changeAppThemeStyle(themeMode) {
 /**
  * @param {object} trustColor
  */
-function updateTrustColorClasses(trustColor) {
+function updateTrustColorClasses(trustColor: object) {
     if (document.getElementById('trustColor') !== null) {
+
+
+
+
         document.getElementById('trustColor').outerHTML = '';
     }
     const style = document.createElement('style');
@@ -314,7 +330,7 @@ function updateTrustColorClasses(trustColor) {
     style.type = 'text/css';
     let newCSS = '';
     for (const rank in trustColor) {
-        newCSS += `.x-tag-${rank} { color: ${trustColor[rank]} !important; border-color: ${trustColor[rank]} !important; } `;
+        newCSS += `.x-tag-${rank} { color: ${(trustColor as any)[rank]} !important; border-color: ${(trustColor as any)[rank]} !important; } `;
     }
     style.innerHTML = newCSS;
     document.getElementsByTagName('head')[0].appendChild(style);
@@ -322,9 +338,13 @@ function updateTrustColorClasses(trustColor) {
 
 async function refreshCustomCss() {
     if (document.contains(document.getElementById('app-custom-style'))) {
+
+
+
+
         document.getElementById('app-custom-style').remove();
     }
-    const customCss = await AppApi.CustomCss();
+    const customCss = await (AppApi as any).CustomCss();
     if (customCss) {
         const head = document.head;
         const $appCustomStyle = document.createElement('link');
@@ -338,9 +358,13 @@ async function refreshCustomCss() {
 
 async function refreshCustomScript() {
     if (document.contains(document.getElementById('app-custom-script'))) {
+
+
+
+
         document.getElementById('app-custom-script').remove();
     }
-    const customScript = await AppApi.CustomScript();
+    const customScript = await (AppApi as any).CustomScript();
     if (customScript) {
         const head = document.head;
         const $appCustomScript = document.createElement('script');
@@ -356,7 +380,7 @@ async function refreshCustomScript() {
  * @param isDarkMode
  * @returns {string}
  */
-function HueToHex(hue, isDarkMode) {
+function HueToHex(hue: number, isDarkMode: boolean) {
     // this.HSVtoRGB(hue / 65535, .8, .8);
     if (isDarkMode) {
         return HSVtoRGB(hue / 65535, 0.6, 1);
@@ -370,17 +394,17 @@ function HueToHex(hue, isDarkMode) {
  * @param {number} v
  * @returns {string}
  */
-function HSVtoRGB(h, s, v) {
+function HSVtoRGB(h: number, s: number, v: number) {
     let r = 0;
     let g = 0;
     let b = 0;
     if (arguments.length === 1) {
-        // @ts-ignore
-        s = h.s;
-        // @ts-ignore
-        v = h.v;
-        // @ts-ignore
-        h = h.h;
+
+        s = (h as any).s;
+
+        v = (h as any).v;
+
+        h = (h as any).h;
     }
     const i = Math.floor(h * 6);
     const f = h * 6 - i;
@@ -426,7 +450,7 @@ function HSVtoRGB(h, s, v) {
     return `#${decColor.toString(16).substr(1)}`;
 }
 
-function formatJsonVars(ref) {
+function formatJsonVars(ref: any) {
     // remove all object keys that start with $
     const newRef = { ...ref };
     for (const key in newRef) {
@@ -438,28 +462,35 @@ function formatJsonVars(ref) {
     const sortedKeys = Object.keys(newRef).sort();
     const sortedRef = {};
     sortedKeys.forEach((key) => {
-        sortedRef[key] = newRef[key];
+        (sortedRef as any)[key] = newRef[key];
     });
     if ('displayName' in sortedRef) {
         // add _hexDisplayName to top
         return {
-            // @ts-ignore
+
+
+
+
+
             _hexDisplayName: textToHex(sortedRef.displayName),
             ...sortedRef
         };
     }
-    if (sortedRef.user?.displayName) {
+    if ((sortedRef as any).user?.displayName) {
         // add _hexDisplayName to top
-        return {
-            // @ts-ignore
-            _hexDisplayName: textToHex(sortedRef.user.displayName),
-            ...sortedRef
-        };
+return {
+    _hexDisplayName: textToHex((sortedRef as any).user.displayName),
+    ...sortedRef
+};
     }
     if ('name' in sortedRef) {
         // add _hexName to top
         return {
-            // @ts-ignore
+
+
+
+
+
             _hexName: textToHex(sortedRef.name),
             ...sortedRef
         };
@@ -467,12 +498,12 @@ function formatJsonVars(ref) {
     return sortedRef;
 }
 
-function changeHtmlLangAttribute(language) {
+function changeHtmlLangAttribute(language: string) {
     const htmlElement = document.documentElement;
     htmlElement.setAttribute('lang', language);
 }
 
-async function getThemeMode(configRepository) {
+async function getThemeMode(configRepository: ConfigRepository) {
     const initThemeMode = await configRepository.getString('VRCX_ThemeMode', 'system');
 
     let isDarkMode;

@@ -1,4 +1,9 @@
-import security, { hexToUint8Array, stdAESKey, uint8ArrayToHex } from '../security.js';
+// TODO(ts-migrate): Check that this import is the one meant; TypeScript offered the name from
+// several modules.
+// describe was taken from vitest, over node:test. test was taken from vitest, over node:test
+// and node:test.
+import { describe, test, expect } from 'vitest';
+import security, { hexToUint8Array, stdAESKey, uint8ArrayToHex } from '../security';
 
 describe('hexToUint8Array', () => {
     test('converts hex string to Uint8Array', () => {

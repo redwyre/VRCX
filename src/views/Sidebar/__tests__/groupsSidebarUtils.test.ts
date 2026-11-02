@@ -131,7 +131,15 @@ describe('buildGroupItemRow', () => {
 
 describe('estimateGroupRowSize', () => {
     test('returns 44 for null/undefined', () => {
+
+
+
+
         expect(estimateGroupRowSize(null)).toBe(44);
+
+
+
+
         expect(estimateGroupRowSize(undefined)).toBe(44);
     });
 

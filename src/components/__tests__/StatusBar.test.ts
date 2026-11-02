@@ -84,6 +84,10 @@ vi.mock('../../plugins/router', () => ({
 vi.mock('vue-router', async (importOriginal) => {
     const actual = await importOriginal();
     return {
+
+
+
+
         ...actual,
         useRouter: vi.fn(() => ({
             push: vi.fn(),
@@ -165,45 +169,45 @@ const stubs = {
  */
 function mountStatusBar(storeOverrides = {}) {
     return mount(StatusBar, {
-        global: {
-            plugins: [
-                i18n,
-                createTestingPinia({
-                    stubActions: true,
-                    initialState: {
-                        Game: {
-                            isGameRunning: false,
-                            isSteamVRRunning: false,
-                            lastSessionDurationMs: 0,
-                            lastOfflineAt: 0,
-                            ...storeOverrides.Game
+    global: {
+        plugins: [
+            i18n,
+            createTestingPinia({
+                stubActions: true,
+                initialState: {
+                    Game: {
+                        isGameRunning: false,
+                        isSteamVRRunning: false,
+                        lastSessionDurationMs: 0,
+                        lastOfflineAt: 0,
+                        ...(storeOverrides as any).Game
+                    },
+                    Vrcx: {
+                        proxyServer: '',
+                        appStartAt: Date.now(),
+                        ...(storeOverrides as any).Vrcx
+                    },
+                    VrcStatus: {
+                        lastStatus: '',
+                        lastStatusTime: null,
+                        lastStatusSummary: '',
+                        ...(storeOverrides as any).VrcStatus
+                    },
+                    User: {
+                        currentUser: {
+                            $online_for: Date.now()
                         },
-                        Vrcx: {
-                            proxyServer: '',
-                            appStartAt: Date.now(),
-                            ...storeOverrides.Vrcx
-                        },
-                        VrcStatus: {
-                            lastStatus: '',
-                            lastStatusTime: null,
-                            lastStatusSummary: '',
-                            ...storeOverrides.VrcStatus
-                        },
-                        User: {
-                            currentUser: {
-                                $online_for: Date.now()
-                            },
-                            ...storeOverrides.User
-                        },
-                        GeneralSettings: {
-                            ...storeOverrides.GeneralSettings
-                        }
+                        ...(storeOverrides as any).User
+                    },
+                    GeneralSettings: {
+                        ...(storeOverrides as any).GeneralSettings
                     }
-                })
-            ],
-            stubs
-        }
-    });
+                }
+            })
+        ],
+        stubs
+    }
+});
 }
 
 describe('StatusBar.vue - Servers indicator', () => {

@@ -27,7 +27,7 @@ import * as workerTimers from 'worker-timers';
  *
  * @param {boolean} isGameRunning Whether VRChat is running.
  */
-export async function runGameRunningChangedFlow(isGameRunning) {
+export async function runGameRunningChangedFlow(isGameRunning: boolean) {
     const userStore = useUserStore();
     const instanceStore = useInstanceStore();
     const updateLoopStore = useUpdateLoopStore();
@@ -73,7 +73,7 @@ export async function runGameRunningChangedFlow(isGameRunning) {
  * @param {boolean} isGameRunningArg Game running flag from IPC.
  * @param {boolean} isSteamVRRunningArg SteamVR running flag from IPC.
  */
-export async function runUpdateIsGameRunningFlow(isGameRunningArg, isSteamVRRunningArg) {
+export async function runUpdateIsGameRunningFlow(isGameRunningArg: boolean, isSteamVRRunningArg: boolean) {
     const gameStore = useGameStore();
     const advancedSettingsStore = useAdvancedSettingsStore();
     const vrStore = useVrStore();
@@ -99,7 +99,7 @@ export async function runUpdateIsGameRunningFlow(isGameRunningArg, isSteamVRRunn
  *
  * @param {boolean} isHmdAfkArg HMD AFK flag from VR polling.
  */
-export function runUpdateIsHmdAfkFlow(isHmdAfkArg) {
+export function runUpdateIsHmdAfkFlow(isHmdAfkArg: boolean) {
     const gameStore = useGameStore();
 
     if (isHmdAfkArg !== gameStore.isHmdAfk) {
@@ -127,7 +127,7 @@ export async function runSweepVRChatCacheFlow() {
     const advancedSettingsStore = useAdvancedSettingsStore();
 
     try {
-        const output = await AssetBundleManager.SweepCache();
+        const output = await (AssetBundleManager as any).SweepCache();
         console.log('SweepCache', output);
     } catch (e) {
         console.error('SweepCache failed', e);
@@ -142,7 +142,7 @@ export async function runSweepVRChatCacheFlow() {
  *
  * @param {object} ref Avatar or world reference payload.
  */
-export async function runDeleteVRChatCacheFlow(ref) {
+export async function runDeleteVRChatCacheFlow(ref: object) {
     const gameStore = useGameStore();
     const worldStore = useWorldStore();
     const avatarStore = useAvatarStore();
@@ -165,27 +165,25 @@ export function runCheckIfGameCrashedFlow() {
         return;
     }
     const { location } = locationStore.lastLocation;
-    AppApi.VrcClosedGracefully().then((result) => {
-        if (result || !isRealInstance(location)) {
-            return;
-        }
-        // check if relaunched less than 2mins ago (prevent crash loop)
-        if (
-            gameStore.state.lastCrashedTime &&
-            new Date().getTime() - gameStore.state.lastCrashedTime.getTime() < 120_000
-        ) {
-            console.log('VRChat was recently crashed, not relaunching');
-            return;
-        }
-        gameStore.setLastCrashedTime(new Date());
-        // wait a bit for SteamVR to potentially close before deciding to relaunch
-        let restartDelay = 8000;
-        if (gameStore.isGameNoVR) {
-            // wait for game to close before relaunching
-            restartDelay = 2000;
-        }
-        workerTimers.setTimeout(() => runRestartCrashedGameFlow(location), restartDelay);
-    });
+    (AppApi as any).VrcClosedGracefully().then((result: any) => {
+    if (result || !isRealInstance(location)) {
+        return;
+    }
+    // check if relaunched less than 2mins ago (prevent crash loop)
+    if (gameStore.state.lastCrashedTime &&
+        new Date().getTime() - (gameStore.state.lastCrashedTime as any).getTime() < 120000) {
+        console.log('VRChat was recently crashed, not relaunching');
+        return;
+    }
+    gameStore.setLastCrashedTime(new Date());
+    // wait a bit for SteamVR to potentially close before deciding to relaunch
+    let restartDelay = 8000;
+    if (gameStore.isGameNoVR) {
+        // wait for game to close before relaunching
+        restartDelay = 2000;
+    }
+    workerTimers.setTimeout(() => runRestartCrashedGameFlow(location), restartDelay);
+});
 }
 
 /**
@@ -193,7 +191,7 @@ export function runCheckIfGameCrashedFlow() {
  *
  * @param {string} location Last known location to relaunch.
  */
-async function runRestartCrashedGameFlow(location) {
+async function runRestartCrashedGameFlow(location: string) {
     const gameStore = useGameStore();
     const notificationStore = useNotificationStore();
     const gameLogStore = useGameLogStore();
@@ -203,7 +201,7 @@ async function runRestartCrashedGameFlow(location) {
         console.log("SteamVR isn't running, not relaunching VRChat");
         return;
     }
-    AppApi.FocusWindow();
+    (AppApi as any).FocusWindow();
     const message = 'VRChat crashed, attempting to rejoin last instance';
     toast(message);
     const entry = {
@@ -240,7 +238,7 @@ export async function runCheckVRChatDebugLoggingFlow() {
             // already enabled
             return;
         }
-        const result = await AppApi.SetVRChatRegistryKey('LOGGING_ENABLED', '1', 4);
+        const result = await (AppApi as any).SetVRChatRegistryKey('LOGGING_ENABLED', '1', 4);
         if (!result) {
             // failed to set key
             modalStore.alert({

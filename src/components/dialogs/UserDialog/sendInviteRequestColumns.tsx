@@ -1,11 +1,19 @@
 import CountdownTimer from '@/components/CountdownTimer.vue';
+
+
+
+
 import { Button } from '@/components/ui/button';
+
+
+
+
 import { i18n } from '@/plugins';
 import { SquarePen } from 'lucide-vue-next';
 
 const { t } = i18n.global;
 
-export const createColumns = ({ onEdit }) => [
+export const createColumns = ({ onEdit }: any) => [
     {
         accessorKey: 'slot',
         header: () => t('table.profile.invite_messages.slot'),
@@ -25,7 +33,7 @@ export const createColumns = ({ onEdit }) => [
         meta: {
             tdClass: 'text-right'
         },
-        cell: ({ row }) => <CountdownTimer datetime={row.original?.updatedAt} hours={1} />
+        cell: ({ row }: any) => <CountdownTimer datetime={row.original?.updatedAt} hours={1} />
     },
     {
         id: 'action',
@@ -35,11 +43,11 @@ export const createColumns = ({ onEdit }) => [
         meta: {
             tdClass: 'text-right'
         },
-        cell: ({ row }) => (
+        cell: ({ row }: any) => (
             <Button
                 size="icon-sm"
                 variant="ghost"
-                onClick={(e) => {
+                onClick={(e: { stopPropagation: () => void; }) => {
                     e.stopPropagation();
                     onEdit?.(row.original);
                 }}

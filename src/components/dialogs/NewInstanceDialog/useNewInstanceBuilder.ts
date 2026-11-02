@@ -14,7 +14,7 @@ import configRepository from '../../../services/config';
  *
  * @param {import('vue').Ref<string>} locationTagRef - Reactive location tag from props
  */
-export function useNewInstanceBuilder(locationTagRef) {
+export function useNewInstanceBuilder(locationTagRef: import('vue').Ref<string>) {
     const { cachedGroups } = useGroupStore();
     const { currentUser, isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
     const { createNewInstance } = useInstanceStore();
@@ -123,29 +123,29 @@ export function useNewInstanceBuilder(locationTagRef) {
     /**
      * @param {object} D - NewInstanceDialog.value
      */
-    function refreshGroupRoles(D) {
-        if (D.groupId && D.groupId !== D.lastSelectedGroupId) {
-            D.roleIds = [];
-            const ref = cachedGroups.get(D.groupId);
+    function refreshGroupRoles(D: object) {
+        if ((D as any).groupId && (D as any).groupId !== (D as any).lastSelectedGroupId) {
+            (D as any).roleIds = [];
+            const ref = cachedGroups.get((D as any).groupId);
             if (typeof ref !== 'undefined') {
-                D.groupRef = ref;
-                D.selectedGroupRoles = ref.roles;
+                (D as any).groupRef = ref;
+                (D as any).selectedGroupRoles = ref.roles;
                 groupRequest
-                    .getGroupRoles({
-                        groupId: D.groupId
-                    })
-                    .then((args) => {
-                        D.lastSelectedGroupId = D.groupId;
-                        D.selectedGroupRoles = args.json;
-                        ref.roles = args.json;
-                    });
+    .getGroupRoles({
+    groupId: (D as any).groupId
+})
+    .then((args) => {
+    (D as any).lastSelectedGroupId = (D as any).groupId;
+    (D as any).selectedGroupRoles = args.json;
+    ref.roles = args.json;
+});
             }
         }
-        if (!D.groupId) {
-            D.roleIds = [];
-            D.groupRef = {};
-            D.selectedGroupRoles = [];
-            D.lastSelectedGroupId = '';
+        if (!(D as any).groupId) {
+            (D as any).roleIds = [];
+            (D as any).groupRef = {};
+            (D as any).selectedGroupRoles = [];
+            (D as any).lastSelectedGroupId = '';
         }
     }
 
@@ -154,7 +154,7 @@ export function useNewInstanceBuilder(locationTagRef) {
     /**
      * @param noChanges
      */
-    function updateNewInstanceDialog(noChanges) {
+    function updateNewInstanceDialog(noChanges?: boolean | undefined) {
         const D = newInstanceDialog.value;
         if (D.instanceId) {
             D.location = `${D.worldId}:${D.instanceId}`;
@@ -217,7 +217,7 @@ export function useNewInstanceBuilder(locationTagRef) {
     /**
      * @param tag
      */
-    async function initNewInstanceDialog(tag) {
+    async function initNewInstanceDialog(tag: string) {
         if (!isRealInstance(tag)) {
             return;
         }
@@ -266,7 +266,7 @@ export function useNewInstanceBuilder(locationTagRef) {
     /**
      * @param tabName
      */
-    function newInstanceTabClick(tabName) {
+    function newInstanceTabClick(tabName: string) {
         if (tabName === 'Normal') {
             buildInstance();
         } else {
@@ -276,8 +276,12 @@ export function useNewInstanceBuilder(locationTagRef) {
     /**
      * @param value
      */
-    function handleRoleIdsChange(value) {
+    function handleRoleIdsChange(value: any) {
         const next = Array.isArray(value) ? value.map((v) => String(v ?? '')).filter(Boolean) : [];
+
+
+
+
         newInstanceDialog.value.roleIds = next;
         buildInstance();
     }

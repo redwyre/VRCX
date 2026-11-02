@@ -1,4 +1,4 @@
-const getOptions = (optionTypes) => {
+const getOptions = (optionTypes: any) => {
     const optionMap = {
         Off: { label: 'Off', textKey: 'dialog.shared_feed_filters.off' },
         On: { label: 'On', textKey: 'dialog.shared_feed_filters.on' },
@@ -15,7 +15,7 @@ const getOptions = (optionTypes) => {
             textKey: 'dialog.shared_feed_filters.everyone'
         }
     };
-    return optionTypes.map((type) => optionMap[type]);
+    return optionTypes.map((type: string | number) => (optionMap as any)[type]);
 };
 
 function feedFiltersOptions() {

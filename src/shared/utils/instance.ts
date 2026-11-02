@@ -2,7 +2,7 @@
  * @param {string} instanceId
  * @returns
  */
-function isRealInstance(instanceId) {
+function isRealInstance(instanceId: string) {
     if (!instanceId) {
         return false;
     }
@@ -26,19 +26,15 @@ function isRealInstance(instanceId) {
  * @param {object} instance
  * @returns {string}
  */
-function getLaunchURL(instance) {
+function getLaunchURL(instance: object) {
     const L = instance;
-    if (L.instanceId) {
-        if (L.shortName) {
-            return `https://vrchat.com/home/launch?worldId=${encodeURIComponent(
-                L.worldId
-            )}&instanceId=${encodeURIComponent(L.instanceId)}&shortName=${encodeURIComponent(L.shortName)}`;
+    if ((L as any).instanceId) {
+        if ((L as any).shortName) {
+            return `https://vrchat.com/home/launch?worldId=${encodeURIComponent((L as any).worldId)}&instanceId=${encodeURIComponent((L as any).instanceId)}&shortName=${encodeURIComponent((L as any).shortName)}`;
         }
-        return `https://vrchat.com/home/launch?worldId=${encodeURIComponent(
-            L.worldId
-        )}&instanceId=${encodeURIComponent(L.instanceId)}`;
+        return `https://vrchat.com/home/launch?worldId=${encodeURIComponent((L as any).worldId)}&instanceId=${encodeURIComponent((L as any).instanceId)}`;
     }
-    return `https://vrchat.com/home/launch?worldId=${encodeURIComponent(L.worldId)}`;
+    return `https://vrchat.com/home/launch?worldId=${encodeURIComponent((L as any).worldId)}`;
 }
 
 const regionTagMap = {
@@ -60,15 +56,15 @@ const regionTagMap = {
  * @param {boolean} [opts.strict]
  * @returns {string} Instance tag, e.g. '12345~hidden(usr_xxx)~region(us)'
  */
-function buildLegacyInstanceTag({
-    instanceName,
-    userId,
-    accessType,
-    groupId,
-    groupAccessType,
-    region,
-    ageGate,
-    strict
+function buildLegacyInstanceTag({ instanceName, userId, accessType, groupId, groupAccessType, region, ageGate, strict }: {
+    instanceName: string;
+    userId: string;
+    accessType: string;
+    groupId?: string;
+    groupAccessType?: string;
+    region: string;
+    ageGate?: boolean;
+    strict?: boolean;
 }) {
     const tags = [];
 
@@ -96,7 +92,7 @@ function buildLegacyInstanceTag({
         tags.push('~ageGate');
     }
 
-    const regionCode = regionTagMap[region];
+    const regionCode = regionTagMap[region as keyof typeof regionTagMap];
     if (regionCode) {
         tags.push(`~region(${regionCode})`);
     }

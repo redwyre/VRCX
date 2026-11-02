@@ -7,7 +7,7 @@ import { compareUnityVersion } from '../shared/utils/avatar';
 import { formatFileSize } from '../shared/utils/base/format';
 import { queryRequest } from '../api';
 
-async function deleteVRChatCache(ref) {
+async function deleteVRChatCache(ref: any) {
     const authStore = useAuthStore();
     const sdkUnityVersion = authStore.cachedConfig.sdkUnityVersion;
     let assetUrl = '';
@@ -33,23 +33,23 @@ async function deleteVRChatCache(ref) {
     const id = extractFileId(assetUrl);
     const version = parseInt(extractFileVersion(assetUrl), 10);
     const variantVersion = parseInt(extractVariantVersion(assetUrl), 10);
-    await AssetBundleManager.DeleteCache(id, version, variant, variantVersion);
+    await (AssetBundleManager as any).DeleteCache(id, version, variant, variantVersion);
 }
 
 /**
  * @param {object} ref
  * @returns
  */
-async function checkVRChatCache(ref) {
-    if (!ref.unityPackages) {
+async function checkVRChatCache(ref: object) {
+    if (!(ref as any).unityPackages) {
         return { Item1: -1, Item2: false, Item3: '' };
     }
     const authStore = useAuthStore();
     const sdkUnityVersion = authStore.cachedConfig.sdkUnityVersion;
     let assetUrl = '';
     let variant = '';
-    for (let i = ref.unityPackages.length - 1; i > -1; i--) {
-        const unityPackage = ref.unityPackages[i];
+    for (let i = (ref as any).unityPackages.length - 1; i > -1; i--) {
+        const unityPackage = (ref as any).unityPackages[i];
         if (unityPackage.variant && unityPackage.variant !== 'security') {
             continue;
         }
@@ -67,7 +67,7 @@ async function checkVRChatCache(ref) {
         }
     }
     if (!assetUrl) {
-        assetUrl = ref.assetUrl;
+        assetUrl = (ref as any).assetUrl;
     }
     const id = extractFileId(assetUrl);
     const version = parseInt(extractFileVersion(assetUrl), 10);
@@ -77,7 +77,7 @@ async function checkVRChatCache(ref) {
     }
 
     try {
-        return AssetBundleManager.CheckVRChatCache(id, version, variant, variantVersion);
+        return (AssetBundleManager as any).CheckVRChatCache(id, version, variant, variantVersion);
     } catch (err) {
         console.error('Failed reading VRChat cache size:', err);
         toast.error(`Failed reading VRChat cache size: ${err}`);
@@ -89,7 +89,7 @@ async function checkVRChatCache(ref) {
  * @param {object} ref
  * @returns {Promise<object>}
  */
-async function getBundleDateSize(ref) {
+async function getBundleDateSize(ref: object) {
     const authStore = useAuthStore();
     const sdkUnityVersion = authStore.cachedConfig.sdkUnityVersion;
     const avatarStore = useAvatarStore();
@@ -99,8 +99,8 @@ async function getBundleDateSize(ref) {
     const instanceStore = useInstanceStore();
     const { currentInstanceWorld, currentInstanceLocation } = storeToRefs(instanceStore);
     const bundleJson = {};
-    for (let i = ref.unityPackages.length - 1; i > -1; i--) {
-        const unityPackage = ref.unityPackages[i];
+    for (let i = (ref as any).unityPackages.length - 1; i > -1; i--) {
+        const unityPackage = (ref as any).unityPackages[i];
         if (!unityPackage) {
             continue;
         }
@@ -112,7 +112,7 @@ async function getBundleDateSize(ref) {
         }
 
         const platform = unityPackage.platform;
-        if (bundleJson[platform]) {
+        if ((bundleJson as any)[platform]) {
             continue;
         }
         const assetUrl = unityPackage.assetUrl;
@@ -132,11 +132,11 @@ async function getBundleDateSize(ref) {
             version,
             variant
         });
-        if (!args?.json?.success) {
+        if (!(args as any)?.json?.success) {
             continue;
         }
 
-        const json = args.json;
+        const json = (args as any).json;
         if (typeof json.fileSize !== 'undefined') {
             json._fileSize = formatFileSize(json.fileSize);
         }
@@ -146,19 +146,19 @@ async function getBundleDateSize(ref) {
         if (typeof json.avatarStats?.totalTextureUsage !== 'undefined') {
             json._totalTextureUsage = formatFileSize(json.avatarStats.totalTextureUsage);
         }
-        bundleJson[platform] = json;
+        (bundleJson as any)[platform] = json;
 
-        if (avatarDialog.value.id === ref.id) {
+        if (avatarDialog.value.id === (ref as any).id) {
             // update avatar dialog
-            avatarDialog.value.fileAnalysis[platform] = json;
+(avatarDialog.value.fileAnalysis as any)[platform] = json;
         }
         // update world dialog
-        if (worldDialog.value.id === ref.id) {
-            worldDialog.value.fileAnalysis[platform] = json;
+        if (worldDialog.value.id === (ref as any).id) {
+            (worldDialog.value.fileAnalysis as any)[platform] = json;
         }
         // update player list
-        if (currentInstanceLocation.value.worldId === ref.id) {
-            currentInstanceWorld.value.fileAnalysis[platform] = json;
+        if (currentInstanceLocation.value.worldId === (ref as any).id) {
+            (currentInstanceWorld.value.fileAnalysis as any)[platform] = json;
         }
     }
 

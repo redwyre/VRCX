@@ -27,38 +27,38 @@ export function useInstanceActivitySettings() {
         }
     }
 
-    function changeBarWidth(value, onSettingsChange) {
+    function changeBarWidth(value: number, onSettingsChange: () => void) {
         barWidth.value = value;
         configRepository.setInt('VRCX_InstanceActivityBarWidth', value).finally(() => {
             if (onSettingsChange) onSettingsChange();
         });
     }
 
-    function changeIsDetailInstanceVisible(value, onSettingsChange) {
+    function changeIsDetailInstanceVisible(value: boolean, onSettingsChange: () => void) {
         isDetailVisible.value = value;
         configRepository.setBool('VRCX_InstanceActivityDetailVisible', value).finally(() => {
             if (onSettingsChange) onSettingsChange();
         });
     }
 
-    function changeIsSoloInstanceVisible(value, onSettingsChange) {
+    function changeIsSoloInstanceVisible(value: boolean, onSettingsChange: () => void) {
         isSoloInstanceVisible.value = value;
         configRepository.setBool('VRCX_InstanceActivitySoloInstanceVisible', value).finally(() => {
             if (onSettingsChange) onSettingsChange();
         });
     }
 
-    function changeIsNoFriendInstanceVisible(value, onSettingsChange) {
+    function changeIsNoFriendInstanceVisible(value: boolean, onSettingsChange: () => void) {
         isNoFriendInstanceVisible.value = value;
         configRepository.setBool('VRCX_InstanceActivityNoFriendInstanceVisible', value).finally(() => {
             if (onSettingsChange) onSettingsChange();
         });
     }
 
-    function handleChangeSettings(activityDetailChartRef) {
+    function handleChangeSettings(activityDetailChartRef: { value: any[]; }) {
         nextTick(() => {
             if (activityDetailChartRef.value) {
-                activityDetailChartRef.value.forEach((child) => {
+                activityDetailChartRef.value.forEach((child: { echartsInstance: any; initEcharts: () => void; }) => {
                     requestAnimationFrame(() => {
                         if (child.echartsInstance) {
                             child.initEcharts();

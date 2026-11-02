@@ -2,62 +2,56 @@ import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
-/**
- * @typedef {object} ConfirmResult
- * @property {boolean} ok
- * @property {'ok' | 'cancel' | 'dismiss' | 'replaced'} reason
- * @property {boolean} checked
- */
+export type ConfirmResult = {
+    ok: boolean;
+    reason: 'ok' | 'cancel' | 'dismiss' | 'replaced';
+    checked: boolean;
+};
 
-/**
- * @typedef {object} ConfirmOptions
- * @property {string} title
- * @property {string} description
- * @property {string} [confirmText]
- * @property {string} [cancelText]
- * @property {string} [checkboxLabel] // shows a checkbox, its state is returned as `checked`
- * @property {boolean} [dismissible] // true: allow esc/outside, false: block
- * @property {boolean} [destructive] // true: use destructive variant for confirm button
- */
+export type ConfirmOptions = {
+    title: string;
+    description: string;
+    confirmText?: string;
+    cancelText?: string;
+    checkboxLabel?: string;
+    dismissible?: boolean;
+    destructive?: boolean;
+};
 
-/**
- * @typedef {object} AlertOptions
- * @property {string} title
- * @property {string} description
- * @property {string} [confirmText]
- * @property {boolean} [dismissible]
- * @property {boolean} [destructive] // true: use destructive variant for confirm button
- */
+export type AlertOptions = {
+    title: string;
+    description: string;
+    confirmText?: string;
+    dismissible?: boolean;
+    destructive?: boolean;
+};
 
-/**
- * @typedef {object} PromptResult
- * @property {boolean} ok
- * @property {'ok' | 'cancel' | 'dismiss' | 'replaced'} reason
- * @property {string} value
- */
+export type PromptResult = {
+    ok: boolean;
+    reason: 'ok' | 'cancel' | 'dismiss' | 'replaced';
+    value: string;
+};
 
-/**
- * @typedef {object} PromptOptions
- * @property {string} title
- * @property {string} description
- * @property {string} [confirmText]
- * @property {string} [cancelText]
- * @property {string} [inputValue]
- * @property {string} [inputType]
- * @property {RegExp | string} [pattern]
- * @property {string} [errorMessage]
- * @property {boolean} [dismissible]
- */
+export type PromptOptions = {
+    title: string;
+    description: string;
+    confirmText?: string;
+    cancelText?: string;
+    inputValue?: string;
+    inputType?: string;
+    pattern?: RegExp | string;
+    errorMessage?: string;
+    dismissible?: boolean;
+};
 
-/**
- * @typedef {object} OtpPromptOptions
- * @property {string} title
- * @property {string} description
- * @property {'totp' | 'emailOtp' | 'otp'} mode
- * @property {string} [confirmText]
- * @property {string} [cancelText]
- * @property {boolean} [dismissible]
- */
+export type OtpPromptOptions = {
+    title: string;
+    description: string;
+    mode: 'totp' | 'emailOtp' | 'otp';
+    confirmText?: string;
+    cancelText?: string;
+    dismissible?: boolean;
+};
 
 export const useModalStore = defineStore('Modal', () => {
     const { t } = useI18n();
@@ -93,11 +87,11 @@ export const useModalStore = defineStore('Modal', () => {
     const otpMode = ref('totp'); // 'totp' | 'emailOtp' | 'otp'
 
     /** @type {{ resolve: ((result: ConfirmResult) => void) | null } | null} */
-    let pending = null;
+    let pending: { resolve: ((result: ConfirmResult) => void) | null; } | null = null;
     /** @type {{ resolve: ((result: PromptResult) => void) | null } | null} */
-    let pendingPrompt = null;
+    let pendingPrompt: { resolve: ((result: PromptResult) => void) | null; } | null = null;
     /** @type {{ resolve: ((result: PromptResult) => void) | null } | null} */
-    let pendingOtp = null;
+    let pendingOtp: { resolve: ((result: PromptResult) => void) | null; } | null = null;
 
     function closeDialog() {
         alertOpen.value = false;
@@ -110,7 +104,7 @@ export const useModalStore = defineStore('Modal', () => {
     /**
      * @param {'ok' | 'cancel' | 'dismiss' | 'replaced'} reason
      */
-    function finish(reason) {
+    function finish(reason: 'ok' | 'cancel' | 'dismiss' | 'replaced') {
         const resolve = pending?.resolve;
         pending = null;
         closeDialog();
@@ -120,7 +114,7 @@ export const useModalStore = defineStore('Modal', () => {
     /**
      * @param {'ok' | 'cancel' | 'dismiss' | 'replaced'} reason
      */
-    function finishWithoutClosing(reason) {
+    function finishWithoutClosing(reason: 'ok' | 'cancel' | 'dismiss' | 'replaced') {
         const resolve = pending?.resolve;
         pending = null;
         if (resolve) resolve({ ok: reason === 'ok', reason, checked: alertChecked.value });
@@ -130,7 +124,7 @@ export const useModalStore = defineStore('Modal', () => {
      * @param {'ok' | 'cancel' | 'dismiss' | 'replaced'} reason
      * @param {string} value
      */
-    function finishPrompt(reason, value) {
+    function finishPrompt(reason: 'ok' | 'cancel' | 'dismiss' | 'replaced', value: string) {
         const resolve = pendingPrompt?.resolve;
         pendingPrompt = null;
         closePromptDialog();
@@ -141,7 +135,7 @@ export const useModalStore = defineStore('Modal', () => {
      * @param {'ok' | 'cancel' | 'dismiss' | 'replaced'} reason
      * @param {string} value
      */
-    function finishPromptWithoutClosing(reason, value) {
+    function finishPromptWithoutClosing(reason: 'ok' | 'cancel' | 'dismiss' | 'replaced', value: string) {
         const resolve = pendingPrompt?.resolve;
         pendingPrompt = null;
         if (resolve) resolve({ ok: reason === 'ok', reason, value });
@@ -151,7 +145,7 @@ export const useModalStore = defineStore('Modal', () => {
      * @param {'confirm' | 'alert'} mode
      * @param {any} options
      */
-    function openBase(mode, options) {
+    function openBase(mode: 'confirm' | 'alert', options: any) {
         if (pending) {
             // old dialog is force-finished
             // do not call closeDialog here because we are about to open a new one
@@ -185,7 +179,7 @@ export const useModalStore = defineStore('Modal', () => {
      * @param {PromptOptions} options
      * @returns {Promise<PromptResult>}
      */
-    function openPrompt(options) {
+    function openPrompt(options: PromptOptions) {
         if (pendingPrompt) {
             finishPromptWithoutClosing('replaced', promptInputValue.value);
         }
@@ -198,6 +192,10 @@ export const useModalStore = defineStore('Modal', () => {
         promptDismissible.value = options.dismissible !== false;
         promptInputValue.value = inputValueCopy;
         promptInputType.value = options.inputType || 'text';
+
+
+
+
         promptPattern.value = options.pattern ?? null;
         promptErrorMessage.value = options.errorMessage || t('dialog.prompt.input_invalid');
 
@@ -217,7 +215,7 @@ export const useModalStore = defineStore('Modal', () => {
      * @param {ConfirmOptions} options
      * @returns {Promise<ConfirmResult>}
      */
-    function confirm(options) {
+    function confirm(options: ConfirmOptions) {
         return openBase('confirm', options);
     }
 
@@ -227,7 +225,7 @@ export const useModalStore = defineStore('Modal', () => {
      * @param {AlertOptions} options
      * @returns {Promise<ConfirmResult>}
      */
-    function alert(options) {
+    function alert(options: AlertOptions) {
         return openBase('alert', options);
     }
 
@@ -237,7 +235,7 @@ export const useModalStore = defineStore('Modal', () => {
      * @param {PromptOptions} options
      * @returns {Promise<PromptResult>}
      */
-    function prompt(options) {
+    function prompt(options: PromptOptions) {
         return openPrompt(options);
     }
 
@@ -246,7 +244,7 @@ export const useModalStore = defineStore('Modal', () => {
         finish('ok');
     }
 
-    function handlePromptOk(value) {
+    function handlePromptOk(value: any) {
         if (!pendingPrompt) return;
         finishPrompt('ok', value ?? '');
     }
@@ -263,7 +261,7 @@ export const useModalStore = defineStore('Modal', () => {
         finish('cancel');
     }
 
-    function handlePromptCancel(value) {
+    function handlePromptCancel(value: any) {
         if (!pendingPrompt) return;
         finishPrompt('cancel', value ?? '');
     }
@@ -281,17 +279,17 @@ export const useModalStore = defineStore('Modal', () => {
         finish('dismiss');
     }
 
-    function handlePromptDismiss(value) {
+    function handlePromptDismiss(value: any) {
         if (!pendingPrompt) return;
         if (!promptDismissible.value) return;
         finishPrompt('dismiss', value ?? '');
     }
 
-    function setAlertOpen(open) {
+    function setAlertOpen(open: any) {
         alertOpen.value = !!open;
     }
 
-    function setPromptOpen(open) {
+    function setPromptOpen(open: any) {
         promptOpen.value = !!open;
     }
 
@@ -305,7 +303,7 @@ export const useModalStore = defineStore('Modal', () => {
      * @param {'ok' | 'cancel' | 'dismiss' | 'replaced'} reason
      * @param {string} value
      */
-    function finishOtp(reason, value) {
+    function finishOtp(reason: 'ok' | 'cancel' | 'dismiss' | 'replaced', value: string) {
         const resolve = pendingOtp?.resolve;
         pendingOtp = null;
         closeOtpDialog();
@@ -316,7 +314,7 @@ export const useModalStore = defineStore('Modal', () => {
      * @param {'ok' | 'cancel' | 'dismiss' | 'replaced'} reason
      * @param {string} value
      */
-    function finishOtpWithoutClosing(reason, value) {
+    function finishOtpWithoutClosing(reason: 'ok' | 'cancel' | 'dismiss' | 'replaced', value: string) {
         const resolve = pendingOtp?.resolve;
         pendingOtp = null;
         if (resolve) resolve({ ok: reason === 'ok', reason, value });
@@ -326,7 +324,7 @@ export const useModalStore = defineStore('Modal', () => {
      * @param {OtpPromptOptions} options
      * @returns {Promise<PromptResult>}
      */
-    function openOtp(options) {
+    function openOtp(options: OtpPromptOptions) {
         if (pendingOtp) {
             finishOtpWithoutClosing('replaced', '');
         }
@@ -352,27 +350,27 @@ export const useModalStore = defineStore('Modal', () => {
      * @param {OtpPromptOptions} options
      * @returns {Promise<PromptResult>}
      */
-    function otpPrompt(options) {
+    function otpPrompt(options: OtpPromptOptions) {
         return openOtp(options);
     }
 
-    function handleOtpOk(value) {
+    function handleOtpOk(value: any) {
         if (!pendingOtp) return;
         finishOtp('ok', value ?? '');
     }
 
-    function handleOtpCancel(value) {
+    function handleOtpCancel(value: any) {
         if (!pendingOtp) return;
         finishOtp('cancel', value ?? '');
     }
 
-    function handleOtpDismiss(value) {
+    function handleOtpDismiss(value: any) {
         if (!pendingOtp) return;
         if (!otpDismissible.value) return;
         finishOtp('dismiss', value ?? '');
     }
 
-    function setOtpOpen(open) {
+    function setOtpOpen(open: any) {
         otpOpen.value = !!open;
     }
 

@@ -16,9 +16,11 @@ import { i18n } from '../../plugins/i18n';
 import { useGalleryStore, useFriendStore } from '../../stores';
 import { showUserDialog } from '../../coordinators/userCoordinator';
 import UserContextMenu from '../../components/UserContextMenu.vue';
+import { Store } from 'pinia';
+import { Reactive, ComputedRef, Ref } from 'vue';
 
 const { t } = i18n.global;
-let friendStore;
+let friendStore: Store<"Friend", Pick<{ state: { friendNumber: number; }; friends: Reactive<Map<any, any>>; vipFriends: ComputedRef<any[]>; onlineFriends: ComputedRef<any[]>; activeFriends: ComputedRef<any[]>; offlineFriends: ComputedRef<any[]>; friendsInSameInstance: ComputedRef<unknown[]>; allFavoriteFriendIds: ComputedRef<Set<unknown>>; allFavoriteOnlineFriends: ComputedRef<any[]>; localFavoriteFriends: Reactive<Set<unknown>>; isRefreshFriendsLoading: Ref<boolean, boolean>; onlineFriendCount: Ref<number, number>; friendLog: Map<any, any>; friendLogTable: Ref<{ data: any[]; filters: any; pageSizeLinked: boolean; loading: boolean; }, { data: any[]; filters: any[]; pageSizeLinked: boolean; loading: boolean; } | { data: any[]; filters: any; pageSizeLinked: boolean; loading: boolean; }>; pendingOfflineMap: Map<any, any>; pendingOfflineDelay: number; updateLocalFavoriteFriends: () => void; updateSidebarFavorites: () => void; deleteFriend: (id: string) => void; refreshFriendsStatus: (ref: { friends: any; offlineFriends: any; activeFriends: any; onlineFriends: any; }) => { added: any[]; removed: any[]; }; addFriend: (id: string, state_input?: string | null) => void; refreshFriends: () => Promise<any[]>; updateOnlineFriendCounter: (forceUpdate?: boolean) => void; getAllUserStats: () => Promise<void>; updateFriendLastSeen: (userId: string, lastSeen: string) => void; getAllUserMutualCount: () => Promise<void>; getAllUserMutualOptedOut: () => Promise<void>; initFriendLog: (currentUser: object) => Promise<void>; migrateFriendLog: (userId: string) => Promise<void>; getFriendLog: (currentUser: object) => Promise<void>; tryApplyFriendOrder: () => Promise<void>; resetFriendLog: () => void; reindexSortedFriend: (input: object | string) => void; resetDerivedDebugCounters: () => void; getDerivedDebugCounters: () => { allFavoriteFriendIds: number; allFavoriteOnlineFriends: number; vipFriends: number; onlineFriends: number; activeFriends: number; offlineFriends: number; friendsInSameInstance: number; }; initFriendLogHistoryTable: () => Promise<void>; setIsRefreshFriendsLoading: (value: boolean) => void; }, "state" | "friends" | "localFavoriteFriends" | "isRefreshFriendsLoading" | "onlineFriendCount" | "friendLog" | "friendLogTable" | "pendingOfflineMap" | "pendingOfflineDelay">, Pick<{ state: { friendNumber: number; }; friends: Reactive<Map<any, any>>; vipFriends: ComputedRef<any[]>; onlineFriends: ComputedRef<any[]>; activeFriends: ComputedRef<any[]>; offlineFriends: ComputedRef<any[]>; friendsInSameInstance: ComputedRef<unknown[]>; allFavoriteFriendIds: ComputedRef<Set<unknown>>; allFavoriteOnlineFriends: ComputedRef<any[]>; localFavoriteFriends: Reactive<Set<unknown>>; isRefreshFriendsLoading: Ref<boolean, boolean>; onlineFriendCount: Ref<number, number>; friendLog: Map<any, any>; friendLogTable: Ref<{ data: any[]; filters: any; pageSizeLinked: boolean; loading: boolean; }, { data: any[]; filters: any[]; pageSizeLinked: boolean; loading: boolean; } | { data: any[]; filters: any; pageSizeLinked: boolean; loading: boolean; }>; pendingOfflineMap: Map<any, any>; pendingOfflineDelay: number; updateLocalFavoriteFriends: () => void; updateSidebarFavorites: () => void; deleteFriend: (id: string) => void; refreshFriendsStatus: (ref: { friends: any; offlineFriends: any; activeFriends: any; onlineFriends: any; }) => { added: any[]; removed: any[]; }; addFriend: (id: string, state_input?: string | null) => void; refreshFriends: () => Promise<any[]>; updateOnlineFriendCounter: (forceUpdate?: boolean) => void; getAllUserStats: () => Promise<void>; updateFriendLastSeen: (userId: string, lastSeen: string) => void; getAllUserMutualCount: () => Promise<void>; getAllUserMutualOptedOut: () => Promise<void>; initFriendLog: (currentUser: object) => Promise<void>; migrateFriendLog: (userId: string) => Promise<void>; getFriendLog: (currentUser: object) => Promise<void>; tryApplyFriendOrder: () => Promise<void>; resetFriendLog: () => void; reindexSortedFriend: (input: object | string) => void; resetDerivedDebugCounters: () => void; getDerivedDebugCounters: () => { allFavoriteFriendIds: number; allFavoriteOnlineFriends: number; vipFriends: number; onlineFriends: number; activeFriends: number; offlineFriends: number; friendsInSameInstance: number; }; initFriendLogHistoryTable: () => Promise<void>; setIsRefreshFriendsLoading: (value: boolean) => void; }, "vipFriends" | "onlineFriends" | "activeFriends" | "offlineFriends" | "friendsInSameInstance" | "allFavoriteFriendIds" | "allFavoriteOnlineFriends">, Pick<{ state: { friendNumber: number; }; friends: Reactive<Map<any, any>>; vipFriends: ComputedRef<any[]>; onlineFriends: ComputedRef<any[]>; activeFriends: ComputedRef<any[]>; offlineFriends: ComputedRef<any[]>; friendsInSameInstance: ComputedRef<unknown[]>; allFavoriteFriendIds: ComputedRef<Set<unknown>>; allFavoriteOnlineFriends: ComputedRef<any[]>; localFavoriteFriends: Reactive<Set<unknown>>; isRefreshFriendsLoading: Ref<boolean, boolean>; onlineFriendCount: Ref<number, number>; friendLog: Map<any, any>; friendLogTable: Ref<{ data: any[]; filters: any; pageSizeLinked: boolean; loading: boolean; }, { data: any[]; filters: any[]; pageSizeLinked: boolean; loading: boolean; } | { data: any[]; filters: any; pageSizeLinked: boolean; loading: boolean; }>; pendingOfflineMap: Map<any, any>; pendingOfflineDelay: number; updateLocalFavoriteFriends: () => void; updateSidebarFavorites: () => void; deleteFriend: (id: string) => void; refreshFriendsStatus: (ref: { friends: any; offlineFriends: any; activeFriends: any; onlineFriends: any; }) => { added: any[]; removed: any[]; }; addFriend: (id: string, state_input?: string | null) => void; refreshFriends: () => Promise<any[]>; updateOnlineFriendCounter: (forceUpdate?: boolean) => void; getAllUserStats: () => Promise<void>; updateFriendLastSeen: (userId: string, lastSeen: string) => void; getAllUserMutualCount: () => Promise<void>; getAllUserMutualOptedOut: () => Promise<void>; initFriendLog: (currentUser: object) => Promise<void>; migrateFriendLog: (userId: string) => Promise<void>; getFriendLog: (currentUser: object) => Promise<void>; tryApplyFriendOrder: () => Promise<void>; resetFriendLog: () => void; reindexSortedFriend: (input: object | string) => void; resetDerivedDebugCounters: () => void; getDerivedDebugCounters: () => { allFavoriteFriendIds: number; allFavoriteOnlineFriends: number; vipFriends: number; onlineFriends: number; activeFriends: number; offlineFriends: number; friendsInSameInstance: number; }; initFriendLogHistoryTable: () => Promise<void>; setIsRefreshFriendsLoading: (value: boolean) => void; }, "updateLocalFavoriteFriends" | "updateSidebarFavorites" | "deleteFriend" | "refreshFriendsStatus" | "addFriend" | "refreshFriends" | "updateOnlineFriendCounter" | "getAllUserStats" | "updateFriendLastSeen" | "getAllUserMutualCount" | "getAllUserMutualOptedOut" | "initFriendLog" | "migrateFriendLog" | "getFriendLog" | "tryApplyFriendOrder" | "resetFriendLog" | "reindexSortedFriend" | "resetDerivedDebugCounters" | "getDerivedDebugCounters" | "initFriendLogHistoryTable" | "setIsRefreshFriendsLoading">>;
 
 const getFriendStore = () => {
     if (!friendStore) {
@@ -27,12 +29,16 @@ const getFriendStore = () => {
     return friendStore;
 };
 
-const expandedRow = ({ row }) => {
+const expandedRow = ({ row }: any) => {
     const original = row.original;
     const type = original.type;
     const { showFullscreenImageDialog } = useGalleryStore();
     if (type === 'GPS') {
         return (
+
+
+
+
             <div class="pl-5 text-sm">
                 {original.previousLocation ? (
                     <>
@@ -40,9 +46,21 @@ const expandedRow = ({ row }) => {
                         <Badge variant="secondary" class="ml-1 w-fit">
                             {timeToText(original.time)}
                         </Badge>
+
+
+
+
                         <br />
+
+
+
+
                         <span>
                             <ArrowDown />
+
+
+
+
                         </span>
                     </>
                 ) : null}
@@ -54,12 +72,20 @@ const expandedRow = ({ row }) => {
                         enableContextMenu
                     />
                 ) : null}
+
+
+
+
             </div>
         );
     }
 
     if (type === 'Offline') {
         return original.location ? (
+
+
+
+
             <div class="pl-5 text-sm">
                 <Location
                     location={original.location}
@@ -70,12 +96,20 @@ const expandedRow = ({ row }) => {
                 <Badge variant="secondary" class="ml-1 w-fit">
                     {timeToText(original.time)}
                 </Badge>
+
+
+
+
             </div>
         ) : null;
     }
 
     if (type === 'Online') {
         return original.location ? (
+
+
+
+
             <div class="pl-5 text-sm">
                 <Location
                     location={original.location}
@@ -83,23 +117,51 @@ const expandedRow = ({ row }) => {
                     grouphint={original.groupName}
                     enableContextMenu
                 />
+
+
+
+
             </div>
         ) : null;
     }
 
     if (type === 'Avatar') {
         return (
+
+
+
+
             <div class="pl-5 text-sm">
+
+
+
+
                 <div class="flex items-center">
+
+
+
+
                     <div class="inline-block align-top w-40">
                         {original.previousCurrentAvatarThumbnailImageUrl ? (
                             <>
+
+
+
+
                                 <img
                                     src={original.previousCurrentAvatarThumbnailImageUrl}
                                     class="cursor-pointer h-30 w-40 rounded pointer"
                                     loading="lazy"
+
+
+
+
                                     onClick={() => showFullscreenImageDialog(original.previousCurrentAvatarImageUrl)}
                                 />
+
+
+
+
                                 <br />
                                 <AvatarInfo
                                     imageurl={original.previousCurrentAvatarThumbnailImageUrl}
@@ -110,19 +172,47 @@ const expandedRow = ({ row }) => {
                                 />
                             </>
                         ) : null}
+
+
+
+
                     </div>
+
+
+
+
                     <span class="mx-2">
                         <ArrowRight />
+
+
+
+
                     </span>
+
+
+
+
                     <div class="inline-block align-top w-40">
                         {original.currentAvatarThumbnailImageUrl ? (
                             <>
+
+
+
+
                                 <img
                                     src={original.currentAvatarThumbnailImageUrl}
                                     class="cursor-pointer h-30 w-40 rounded pointer"
                                     loading="lazy"
+
+
+
+
                                     onClick={() => showFullscreenImageDialog(original.currentAvatarImageUrl)}
                                 />
+
+
+
+
                                 <br />
                                 <AvatarInfo
                                     imageurl={original.currentAvatarThumbnailImageUrl}
@@ -133,23 +223,71 @@ const expandedRow = ({ row }) => {
                                 />
                             </>
                         ) : null}
+
+
+
+
                     </div>
+
+
+
+
                 </div>
+
+
+
+
             </div>
         );
     }
 
     if (type === 'Status') {
         return (
+
+
+
+
             <div class="flex items-center pl-5 text-sm">
+
+
+
+
                 <i class={['x-user-status', statusClass(original.previousStatus)]}></i>
+
+
+
+
                 <span class="ml-1">{original.previousStatusDescription}</span>
+
+
+
+
                 <br />
+
+
+
+
                 <span class="mx-2">
                     <ArrowRight />
+
+
+
+
                 </span>
+
+
+
+
                 <i class={['x-user-status', statusClass(original.status), 'mx-1']}></i>
+
+
+
+
                 <span>{original.statusDescription}</span>
+
+
+
+
             </div>
         );
     }
@@ -157,7 +295,15 @@ const expandedRow = ({ row }) => {
     if (type === 'Bio') {
         const links = getBioLinksDifference(original.previousBioLinks, original.bioLinks);
         return (
+
+
+
+
             <div class="pl-5 text-sm">
+
+
+
+
                 <pre
                     class="text-xs leading-5.5 whitespace-pre-wrap font-[inherit]"
                     innerHTML={formatDifference(
@@ -166,15 +312,43 @@ const expandedRow = ({ row }) => {
                     )}
                 ></pre>
                 {links.length ? (
+
+
+
+
                     <div class="mt-1 flex flex-col gap-0.5 text-xs">
                         {links.map(({ link, className }) => (
+
+
+
+
                             <span class="flex items-center gap-1 cursor-pointer" onClick={() => openExternalLink(link)}>
+
+
+
+
                                 <img src={getFaviconUrl(link)} class="size-4" loading="lazy" />
+
+
+
+
                                 <span class={className}>{link}</span>
+
+
+
+
                             </span>
                         ))}
+
+
+
+
                     </div>
                 ) : null}
+
+
+
+
             </div>
         );
     }
@@ -193,20 +367,28 @@ export const columns = [
         meta: {
             expandedRow
         },
-        cell: ({ row }) => {
+        cell: ({ row }: any) => {
             if (!row.getCanExpand()) {
                 return null;
             }
             return (
+
+
+
+
                 <button
                     type="button"
                     class="inline-flex h-6 items-center justify-center text-xs text-muted-foreground hover:text-foreground cursor-pointer"
-                    onClick={(event) => {
+                    onClick={(event: { stopPropagation: () => void; }) => {
                         event.stopPropagation();
                         row.toggleExpanded();
                     }}
                 >
                     {row.getIsExpanded() ? <ChevronDown /> : <ChevronRight />}
+
+
+
+
                 </button>
             );
         }
@@ -215,13 +397,13 @@ export const columns = [
         accessorKey: 'created_at',
         size: 140,
         meta: { label: () => t('table.feed.date') },
-        header: ({ column }) => (
+        header: ({ column }: any) => (
             <Button variant="ghost" class="pl-0!" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
                 {t('table.feed.date')}
                 <ArrowUpDown class="ml-1 h-4 w-4" />
             </Button>
         ),
-        cell: ({ row }) => {
+        cell: ({ row }: any) => {
             const createdAt = row.getValue('created_at');
             const shortText = formatDateFilter(createdAt, 'short');
             const longText = formatDateFilter(createdAt, 'long');
@@ -229,9 +411,17 @@ export const columns = [
             return (
                 <Tooltip>
                     <TooltipTrigger asChild>
+
+
+
+
                         <span>{shortText}</span>
                     </TooltipTrigger>
                     <TooltipContent side="right">
+
+
+
+
                         <span>{longText}</span>
                     </TooltipContent>
                 </Tooltip>
@@ -243,13 +433,21 @@ export const columns = [
         size: 130,
         header: () => t('table.feed.type'),
         meta: { label: () => t('table.feed.type') },
-        cell: ({ row }) => {
+        cell: ({ row }: any) => {
             const type = row.getValue('type');
             return (
+
+
+
+
                 <div>
                     <Badge variant="outline" class="text-muted-foreground">
                         {t(`view.feed.filters.${type}`)}
                     </Badge>
+
+
+
+
                 </div>
             );
         }
@@ -259,7 +457,7 @@ export const columns = [
         size: 190,
         header: () => t('table.feed.user'),
         meta: { label: () => t('table.feed.user') },
-        cell: ({ row }) => {
+        cell: ({ row }: any) => {
             const original = row.original;
             const friend = getFriendStore().friends.get(original.userId);
             return (
@@ -268,8 +466,16 @@ export const columns = [
                     state={friend?.state ?? ''}
                     location={friend?.ref?.location ?? ''}
                 >
+
+
+
+
                     <span class="cursor-pointer pr-2.5" onClick={() => showUserDialog(original.userId)}>
                         {original.displayName}
+
+
+
+
                     </span>
                 </UserContextMenu>
             );
@@ -284,11 +490,15 @@ export const columns = [
             stretch: true,
             label: () => t('table.feed.detail')
         },
-        cell: ({ row }) => {
+        cell: ({ row }: any) => {
             const original = row.original;
             const type = original.type;
             if (type === 'GPS') {
                 return original.location ? (
+
+
+
+
                     <div class="w-full min-w-0 truncate">
                         <Location
                             location={original.location}
@@ -297,12 +507,20 @@ export const columns = [
                             enableContextMenu
                             disableTooltip
                         />
+
+
+
+
                     </div>
                 ) : null;
             }
 
             if (type === 'Offline' || type === 'Online') {
                 return original.location ? (
+
+
+
+
                     <div class="w-full min-w-0 truncate">
                         <Location
                             location={original.location}
@@ -311,6 +529,10 @@ export const columns = [
                             enableContextMenu
                             disableTooltip
                         />
+
+
+
+
                     </div>
                 ) : null;
             }
@@ -318,29 +540,73 @@ export const columns = [
             if (type === 'Status') {
                 if (original.statusDescription === original.previousStatusDescription) {
                     return (
+
+
+
+
                         <div class="flex items-center">
+
+
+
+
                             <i class={['x-user-status', statusClass(original.previousStatus)]}></i>
+
+
+
+
                             <span class="mx-2">
                                 <ArrowRight />
+
+
+
+
                             </span>
+
+
+
+
                             <i class={['x-user-status', statusClass(original.status)]}></i>
+
+
+
+
                         </div>
                     );
                 }
 
                 return (
+
+
+
+
                     <div class="w-full min-w-0 truncate">
+
+
+
+
                         <i
                             style="display:-webkit-inline-box"
                             class={['x-user-status', 'mr-2', statusClass(original.status)]}
                         ></i>
+
+
+
+
                         <span style="display:-webkit-inline-box">{original.statusDescription}</span>
+
+
+
+
                     </div>
                 );
             }
 
             if (type === 'Avatar') {
                 return (
+
+
+
+
                     <div class="w-full min-w-0 truncate">
                         <AvatarInfo
                             imageurl={original.currentAvatarImageUrl}
@@ -349,11 +615,19 @@ export const columns = [
                             hintavatarname={original.avatarName}
                             avatartags={original.currentAvatarTags}
                         />
+
+
+
+
                     </div>
                 );
             }
 
             if (type === 'Bio') {
+
+
+
+
                 return <span class="block w-full min-w-0 truncate">{replaceBioSymbols(original.bio)}</span>;
             }
 
@@ -382,10 +656,7 @@ function getBioLinksDifference(previousLinks = [], links = []) {
  * @returns {string} HTML string with newlines converted to `<br>`
  */
 function formatDifference(
-    oldString,
-    newString,
-    markerAddition = '<span class="x-text-added">{{text}}</span>',
-    markerDeletion = '<span class="x-text-removed">{{text}}</span>'
+    oldString: any, newString: any, markerAddition: string = '<span class="x-text-added">{{text}}</span>', markerDeletion: string = '<span class="x-text-removed">{{text}}</span>'
 ) {
     [oldString, newString] = [oldString, newString].map((s) =>
         String(s ?? '')
@@ -397,10 +668,10 @@ function formatDifference(
             .replaceAll(/\n/g, '<br>')
     );
 
-    const oldWords = oldString.split(/\s+/).flatMap((word) => word.split(/(<br>)/));
-    const newWords = newString.split(/\s+/).flatMap((word) => word.split(/(<br>)/));
+    const oldWords = oldString.split(/\s+/).flatMap((word: string) => word.split(/(<br>)/));
+    const newWords = newString.split(/\s+/).flatMap((word: string) => word.split(/(<br>)/));
 
-    function findLongestMatch(oldStart, oldEnd, newStart, newEnd) {
+    function findLongestMatch(oldStart: any, oldEnd: number, newStart: any, newEnd: number) {
         let bestOldStart = oldStart;
         let bestNewStart = newStart;
         let bestSize = 0;
@@ -436,7 +707,7 @@ function formatDifference(
         };
     }
 
-    function buildDiff(oldStart, oldEnd, newStart, newEnd) {
+    function buildDiff(oldStart: number, oldEnd: number, newStart: number, newEnd: number): any {
         const result = [];
         const match = findLongestMatch(oldStart, oldEnd, newStart, newEnd);
 
@@ -454,11 +725,11 @@ function formatDifference(
                 result.push(...buildDiff(match.oldStart + match.size, oldEnd, match.newStart + match.size, newEnd));
             }
         } else {
-            function build(words, start, end, pattern) {
+            function build(words: any, start: any, end: any, pattern: string) {
                 let r = [];
                 let ts = words
                     .slice(start, end)
-                    .filter((w) => w.length > 0)
+                    .filter((w: string | any[]) => w.length > 0)
                     .join(' ')
                     .split('<br>');
                 for (let i = 0; i < ts.length; i++) {

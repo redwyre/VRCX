@@ -24,24 +24,23 @@ import { copyToClipboard } from '../../../shared/utils';
  * @returns {object} Command composable API
  */
 export function useGroupDialogCommands(
-    groupDialog,
-    {
-        t,
-        modalStore,
-        currentUser,
-        showGroupDialog,
-        leaveGroupPrompt,
-        setGroupVisibility,
-        setGroupSubscription,
-        setGroupEventAnnouncements,
-        showPreviousInstancesListDialog,
-        showGroupMemberModerationDialog,
-        showGroupRolesDialog,
-        showInviteGroupDialog,
-        showGroupTransferDialog,
-        showGroupPostEditDialog,
-        groupRequest
-    }
+    groupDialog: import('vue').Ref, { t, modalStore, currentUser, showGroupDialog, leaveGroupPrompt, setGroupVisibility, setGroupSubscription, setGroupEventAnnouncements, showPreviousInstancesListDialog, showGroupMemberModerationDialog, showGroupRolesDialog, showInviteGroupDialog, showGroupTransferDialog, showGroupPostEditDialog, groupRequest }: {
+    t: any;
+    modalStore: any;
+    currentUser: any;
+    showGroupDialog: any;
+    leaveGroupPrompt: any;
+    setGroupVisibility: any;
+    setGroupSubscription: any;
+    setGroupEventAnnouncements?: any;
+    showPreviousInstancesListDialog?: any;
+    showGroupMemberModerationDialog: any;
+    showGroupRolesDialog?: any;
+    showInviteGroupDialog: any;
+    showGroupTransferDialog?: any;
+    showGroupPostEditDialog: any;
+    groupRequest: any;
+}
 ) {
     // --- Command map ---
     // Direct commands: function
@@ -114,8 +113,8 @@ export function useGroupDialogCommands(
                     description: t('confirm.block_group'),
                     destructive: true
                 }),
-                handler: (id) => {
-                    groupRequest.blockGroup({ groupId: id }).then((args) => {
+                handler: (id: any) => {
+                    groupRequest.blockGroup({ groupId: id }).then((args: { params: { groupId: any; }; }) => {
                         if (groupDialog.value.visible && groupDialog.value.id === args.params.groupId) {
                             showGroupDialog(args.params.groupId);
                         }
@@ -127,13 +126,13 @@ export function useGroupDialogCommands(
                     title: t('confirm.title'),
                     description: t('confirm.unblock_group')
                 }),
-                handler: (id) => {
+                handler: (id: any) => {
                     groupRequest
                         .unblockGroup({
                             groupId: id,
                             userId: currentUser.value.id
                         })
-                        .then((args) => {
+                        .then((args: { params: { groupId: any; }; }) => {
                             if (groupDialog.value.visible && groupDialog.value.id === args.params.groupId) {
                                 showGroupDialog(args.params.groupId);
                             }
@@ -150,13 +149,13 @@ export function useGroupDialogCommands(
      *
      * @param {string} command
      */
-    function groupDialogCommand(command) {
+    function groupDialogCommand(command: string) {
         const D = groupDialog.value;
         if (D.visible === false) {
             return;
         }
 
-        const entry = commandMap[command];
+        const entry = (commandMap as any)[command];
 
         if (!entry) {
             return;
@@ -172,7 +171,7 @@ export function useGroupDialogCommands(
         if (entry.confirm) {
             modalStore
                 .confirm(entry.confirm())
-                .then(({ ok }) => {
+                .then(({ ok }: any) => {
                     if (ok) {
                         entry.handler(D.id);
                     }

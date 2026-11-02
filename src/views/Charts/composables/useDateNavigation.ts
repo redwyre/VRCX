@@ -2,7 +2,7 @@ import { computed, ref } from 'vue';
 
 import dayjs from 'dayjs';
 
-export function useDateNavigation(allDateOfActivity, reloadData) {
+export function useDateNavigation(allDateOfActivity: any, reloadData: any) {
     const selectedDate = ref(dayjs().toDate());
 
     const allDateOfActivityArray = computed(() => {
@@ -57,7 +57,7 @@ export function useDateNavigation(allDateOfActivity, reloadData) {
         reloadData();
     }
 
-    function getDatePickerDisabledDate(time) {
+    function getDatePickerDisabledDate(time: any) {
         if (
             time > Date.now() ||
             allDateOfActivityArray.value[allDateOfActivityArray.value.length - 1]

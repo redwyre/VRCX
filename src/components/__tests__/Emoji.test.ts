@@ -15,14 +15,26 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock('../../stores', () => ({
     useGalleryStore: () => ({
-        getCachedEmoji: (...args) => mocks.getCachedEmoji(...args),
+
+
+
+
+        getCachedEmoji: (...args: any[]) => mocks.getCachedEmoji(...args),
         emojiTable: mocks.emojiTable
     })
 }));
 
 vi.mock('../../shared/utils', () => ({
-    extractFileId: (...args) => mocks.extractFileId(...args),
-    generateEmojiStyle: (...args) => mocks.generateEmojiStyle(...args)
+
+
+
+
+    extractFileId: (...args: any[]) => mocks.extractFileId(...args),
+
+
+
+
+    generateEmojiStyle: (...args: any[]) => mocks.generateEmojiStyle(...args)
 }));
 
 vi.mock('../ui/avatar', () => ({
@@ -56,6 +68,10 @@ describe('Emoji.vue', () => {
     });
 
     it('renders animated div when emoji has frames in table', async () => {
+
+
+
+
         mocks.emojiTable.push({
             id: 'file_1',
             frames: 4,

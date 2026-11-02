@@ -51,10 +51,18 @@ describe('convertFileUrlToImageUrl', () => {
     });
 
     test('returns empty string for null input', () => {
+
+
+
+
         expect(convertFileUrlToImageUrl(null)).toBe('');
     });
 
     test('returns empty string for undefined input', () => {
+
+
+
+
         expect(convertFileUrlToImageUrl(undefined)).toBe('');
     });
 

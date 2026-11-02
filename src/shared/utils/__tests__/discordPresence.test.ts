@@ -3,7 +3,7 @@ import { describe, expect, test } from 'vitest';
 import { getPlatformLabel, getStatusInfo, getRpcWorldConfig, isPopcornPalaceWorld } from '../discordPresence';
 import { ActivityType, StatusDisplayType } from '../../constants/discord';
 
-const t = (key) => key;
+const t = (key: any) => key;
 
 describe('getPlatformLabel', () => {
     test('returns VR label when game is running in VR', () => {
@@ -38,6 +38,10 @@ describe('getPlatformLabel', () => {
 
     test('returns empty string for empty/falsy platform when not game running', () => {
         expect(getPlatformLabel('', false, false, t)).toBe('');
+
+
+
+
         expect(getPlatformLabel(undefined, false, false, t)).toBe('');
     });
 });
@@ -181,7 +185,15 @@ describe('getRpcWorldConfig', () => {
         ];
         for (const id of pypyIds) {
             const config = getRpcWorldConfig(id);
+
+
+
+
             expect(config.appId).toBe('784094509008551956');
+
+
+
+
             expect(config.bigIcon).toBe('pypy');
         }
     });
@@ -195,7 +207,15 @@ describe('getRpcWorldConfig', () => {
         ];
         for (const id of lsIds) {
             const config = getRpcWorldConfig(id);
+
+
+
+
             expect(config.appId).toBe('968292722391785512');
+
+
+
+
             expect(config.bigIcon).toBe('ls_media');
         }
     });

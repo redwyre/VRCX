@@ -28,7 +28,7 @@ const vrcPlusImageReq = {
             matchingDimensions: false,
             postData: JSON.stringify(params),
             imageData
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -47,7 +47,7 @@ const vrcPlusImageReq = {
             matchingDimensions: true,
             postData: JSON.stringify(params),
             imageData
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -61,7 +61,7 @@ const vrcPlusImageReq = {
         return request(`prints/user/${getCurrentUserId()}`, {
             method: 'GET',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -73,7 +73,7 @@ const vrcPlusImageReq = {
     deletePrint(printId: string): Promise<{ json: unknown; printId: string }> {
         return request(`prints/${printId}`, {
             method: 'DELETE'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 printId
@@ -93,7 +93,7 @@ const vrcPlusImageReq = {
             cropWhiteBorder,
             postData: JSON.stringify(params),
             imageData
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -106,7 +106,7 @@ const vrcPlusImageReq = {
     getPrint(params: { printId: string }): Promise<{ json: Json<Print>; params: { printId: string } }> {
         return request(`prints/${params.printId}`, {
             method: 'GET'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -124,7 +124,7 @@ const vrcPlusImageReq = {
             matchingDimensions: true,
             postData: JSON.stringify(params),
             imageData
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params

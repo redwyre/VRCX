@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, Mock, test, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => ({
     toast: {
@@ -44,7 +44,7 @@ function flushPromises() {
 }
 
 describe('appActions utils', () => {
-    let consoleErrorSpy;
+    let consoleErrorSpy: Mock<(...data: any[]) => void>;
 
     beforeEach(() => {
         consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
@@ -56,11 +56,11 @@ describe('appActions utils', () => {
                 writeText: vi.fn().mockResolvedValue(undefined)
             }
         });
-        globalThis.AppApi = {
-            OpenLink: vi.fn(),
-            OpenDiscordProfile: vi.fn().mockResolvedValue(undefined),
-            OpenFolderAndSelectItem: vi.fn()
-        };
+        (globalThis as any).AppApi = {
+    OpenLink: vi.fn(),
+    OpenDiscordProfile: vi.fn().mockResolvedValue(undefined),
+    OpenFolderAndSelectItem: vi.fn()
+};
     });
 
     afterEach(() => {
@@ -93,7 +93,7 @@ describe('appActions utils', () => {
     });
 
     test('copyToClipboard shows translated error toast on failure', async () => {
-        navigator.clipboard.writeText.mockRejectedValue(new Error('denied'));
+        (navigator.clipboard.writeText as any).mockRejectedValue(new Error('denied'));
         copyToClipboard('hello');
         await flushPromises();
         await flushPromises();
@@ -105,14 +105,14 @@ describe('appActions utils', () => {
         openExternalLink('vrcx://user/usr_1');
         await flushPromises();
         expect(mocks.externalLinkStore.showExternalLinkDialog).not.toHaveBeenCalled();
-        expect(AppApi.OpenLink).not.toHaveBeenCalled();
+        expect((AppApi as any).OpenLink).not.toHaveBeenCalled();
     });
 
     test('openExternalLink shows the external link dialog', () => {
         openExternalLink('https://example.com');
 
         expect(mocks.externalLinkStore.showExternalLinkDialog).toHaveBeenCalledWith('https://example.com');
-        expect(AppApi.OpenLink).not.toHaveBeenCalled();
+        expect((AppApi as any).OpenLink).not.toHaveBeenCalled();
     });
 
     test('openDiscordProfile validates empty discord id', () => {
@@ -121,7 +121,7 @@ describe('appActions utils', () => {
     });
 
     test('openDiscordProfile shows error toast when api fails', async () => {
-        AppApi.OpenDiscordProfile.mockRejectedValue(new Error('fail'));
+        (AppApi as any).OpenDiscordProfile.mockRejectedValue(new Error('fail'));
         openDiscordProfile('123');
         await flushPromises();
         expect(mocks.toast.error).toHaveBeenCalledWith('Failed to open Discord profile!');
@@ -129,6 +129,6 @@ describe('appActions utils', () => {
 
     test('openFolderGeneric delegates to AppApi', () => {
         openFolderGeneric('/tmp/a.txt');
-        expect(AppApi.OpenFolderAndSelectItem).toHaveBeenCalledWith('/tmp/a.txt', true);
+        expect((AppApi as any).OpenFolderAndSelectItem).toHaveBeenCalledWith('/tmp/a.txt', true);
     });
 });

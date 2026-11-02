@@ -21,7 +21,7 @@ export const useModerationStore = defineStore('Moderation', () => {
         data: [],
         search: '',
         loading: false,
-        filters: /** @type {import('@/types/vrcx').TableFilter[]} */ ([
+        filters: ([
             {
                 prop: 'type',
                 value: []
@@ -30,7 +30,7 @@ export const useModerationStore = defineStore('Moderation', () => {
                 prop: ['sourceDisplayName', 'targetDisplayName'],
                 value: ''
             }
-        ]),
+        ] as import('@/types/vrcx').TableFilter[]),
         pageSize: 20,
         pageSizeLinked: true
     });
@@ -49,7 +49,7 @@ export const useModerationStore = defineStore('Moderation', () => {
         { flush: 'sync' }
     );
 
-    function handlePlayerModerationAtDelete(args) {
+    function handlePlayerModerationAtDelete(args: { ref: any; params?: { playerModerationId: any; } | { playerModerationId: any; }; }) {
         const { ref } = args;
 
         let hasModeration = false;
@@ -71,7 +71,7 @@ export const useModerationStore = defineStore('Moderation', () => {
         const array = playerModerationTable.value.data;
         const { length } = array;
         for (let i = 0; i < length; ++i) {
-            if (array[i].id === ref.id) {
+            if ((array[i] as any).id === ref.id) {
                 array.splice(i, 1);
                 break;
             }
@@ -94,7 +94,7 @@ export const useModerationStore = defineStore('Moderation', () => {
         }
     }
 
-    function handlePlayerModerationDelete(args) {
+    function handlePlayerModerationDelete(args: { params: { type: any; moderated: any; }; }) {
         let { type, moderated } = args.params;
         const userId = userStore.currentUser.id;
         for (let ref of cachedPlayerModerations.values()) {
@@ -115,8 +115,8 @@ export const useModerationStore = defineStore('Moderation', () => {
      * @param {object} json
      * @returns {object}
      */
-    function applyPlayerModeration(json) {
-        let ref = cachedPlayerModerations.get(json.id);
+    function applyPlayerModeration(json: object) {
+        let ref = cachedPlayerModerations.get((json as any).id);
         if (typeof ref === 'undefined') {
             ref = {
                 id: '',
@@ -136,14 +136,22 @@ export const useModerationStore = defineStore('Moderation', () => {
             Object.assign(ref, json);
             ref.$isExpired = false;
         }
-        if (json.targetUserId) {
-            cachedPlayerModerationsUserIds.add(json.targetUserId);
+        if ((json as any).targetUserId) {
+            cachedPlayerModerationsUserIds.add((json as any).targetUserId);
         }
         const array = playerModerationTable.value.data;
-        const index = array.findIndex((item) => item.id === ref.id);
+        const index = array.findIndex((item) => (item as any).id === ref.id);
         if (index !== -1) {
+
+
+
+
             array[index] = ref;
         } else {
+
+
+
+
             array.push(ref);
         }
         const userRef = userStore.cachedUsers.get(ref.targetUserId);
@@ -184,7 +192,7 @@ export const useModerationStore = defineStore('Moderation', () => {
      * @param {string} userId
      * @returns {object} Moderations
      */
-    function getUserModerations(userId) {
+    function getUserModerations(userId: string) {
         let moderations = {
             isBlocked: false,
             isMuted: false,
@@ -216,12 +224,16 @@ export const useModerationStore = defineStore('Moderation', () => {
     /**
      * @param {{ type: string; contentId: string; contentName?: string; details?: object }} params
      */
-    function showModerationReportDialog({ type, contentId, contentName = '', details = undefined }) {
+    function showModerationReportDialog({ type, contentId, contentName = '', details = undefined }: { type: string; contentId: string; contentName?: string; details?: object; }) {
         moderationReportDialog.value = {
             visible: true,
             type,
             contentId,
             contentName,
+
+
+
+
             details
         };
     }

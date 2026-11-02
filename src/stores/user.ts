@@ -353,7 +353,7 @@ export const useUserStore = defineStore('User', () => {
     const ownedListingIds = computed(() => new Set(activePurchases.value.map((purchase) => purchase.listingId)));
     const ownedProductIds = computed(
         () =>
-            new Set(activePurchases.value.flatMap((purchase) => (purchase.products ?? []).map((product) => product.id)))
+            new Set(activePurchases.value.flatMap((purchase) => (purchase.products ?? []).map((product: { id: any; }) => product.id)))
     );
 
     const currentUserClientConfig = ref({
@@ -361,7 +361,7 @@ export const useUserStore = defineStore('User', () => {
         configString: ''
     });
 
-    function addCachedUserDisplayNameEntry(displayName, userId) {
+    function addCachedUserDisplayNameEntry(displayName: any, userId: any) {
         if (!displayName || !userId) {
             return;
         }
@@ -373,7 +373,7 @@ export const useUserStore = defineStore('User', () => {
         userIds.add(userId);
     }
 
-    function removeCachedUserDisplayNameEntry(displayName, userId) {
+    function removeCachedUserDisplayNameEntry(displayName: string, userId: any) {
         if (!displayName || !userId) {
             return;
         }
@@ -387,7 +387,7 @@ export const useUserStore = defineStore('User', () => {
         }
     }
 
-    function syncCachedUserDisplayName(ref, previousDisplayName = '') {
+    function syncCachedUserDisplayName(ref: { id: any; displayName: string; }, previousDisplayName = '') {
         if (!ref?.id) {
             return;
         }
@@ -397,7 +397,7 @@ export const useUserStore = defineStore('User', () => {
         addCachedUserDisplayNameEntry(ref.displayName, ref.id);
     }
 
-    function setCachedUser(ref, previousDisplayName = '', { skipIndex = false } = {}) {
+    function setCachedUser(ref: any, previousDisplayName = '', { skipIndex = false } = {}) {
         if (!ref?.id) {
             return;
         }
@@ -407,7 +407,7 @@ export const useUserStore = defineStore('User', () => {
         }
     }
 
-    function deleteCachedUser(userId) {
+    function deleteCachedUser(userId: any) {
         const ref = cachedUsers.get(userId);
         if (!ref) {
             return false;
@@ -416,7 +416,7 @@ export const useUserStore = defineStore('User', () => {
         return cachedUsers.delete(userId);
     }
 
-    function deleteCachedProfile(userId) {
+    function deleteCachedProfile(userId: any) {
         const ref = cachedProfiles.value.get(userId);
         if (!ref) {
             return false;
@@ -431,7 +431,7 @@ export const useUserStore = defineStore('User', () => {
         cachedPurchases.value.clear();
     }
 
-    function setCachedPurchases(purchases) {
+    function setCachedPurchases(purchases: any) {
         for (const purchase of purchases) {
             cachedPurchases.value.set(purchase.purchaseId, purchase);
         }
@@ -490,22 +490,22 @@ export const useUserStore = defineStore('User', () => {
     /**
      * @param {object} ref
      */
-    function applyUserLanguage(ref) {
-        if (!ref || !ref.tags || !subsetOfLanguages.value) {
+    function applyUserLanguage(ref: object) {
+        if (!ref || !(ref as any).tags || !subsetOfLanguages.value) {
             return;
         }
 
-        ref.$languages = [];
+        (ref as any).$languages = [];
         const languagePrefix = 'language_';
         const prefixLength = languagePrefix.length;
 
-        for (const tag of ref.tags) {
+        for (const tag of (ref as any).tags) {
             if (tag.startsWith(languagePrefix)) {
                 const key = tag.substring(prefixLength);
                 const value = subsetOfLanguages.value[key];
 
                 if (value !== undefined) {
-                    ref.$languages.push({ key, value });
+                    (ref as any).$languages.push({ key, value });
                 }
             }
         }
@@ -514,17 +514,17 @@ export const useUserStore = defineStore('User', () => {
     /**
      * @param {object} ref
      */
-    function applyPresenceLocation(ref) {
-        const presence = ref.presence;
+    function applyPresenceLocation(ref: object) {
+        const presence = (ref as any).presence;
         if (isRealInstance(presence.world)) {
-            ref.$locationTag = `${presence.world}:${presence.instance}`;
+            (ref as any).$locationTag = `${presence.world}:${presence.instance}`;
         } else {
-            ref.$locationTag = presence.world;
+            (ref as any).$locationTag = presence.world;
         }
         if (isRealInstance(presence.travelingToWorld)) {
-            ref.$travelingToLocation = `${presence.travelingToWorld}:${presence.travelingToInstance}`;
+            (ref as any).$travelingToLocation = `${presence.travelingToWorld}:${presence.travelingToInstance}`;
         } else {
-            ref.$travelingToLocation = presence.travelingToWorld;
+            (ref as any).$travelingToLocation = presence.travelingToWorld;
         }
         runUpdateCurrentUserLocationFlow();
     }
@@ -532,15 +532,15 @@ export const useUserStore = defineStore('User', () => {
     /**
      * @param {boolean} updateInstanceOccupants
      */
-    function applyUserDialogLocation(updateInstanceOccupants = false) {
+    function applyUserDialogLocation(updateInstanceOccupants: boolean = false) {
         let addUser;
-        let friend;
+        let friend: { userId: any; ref: { location: string; $location: { tag: string; }; }; state: string; name: any; };
         let ref;
         const D = userDialog.value;
         if (!D.visible) {
             return;
         }
-        const L = parseLocation(D.ref.$location?.tag);
+        const L = parseLocation((D.ref as any).$location?.tag);
         if (updateInstanceOccupants && L.isRealInstance) {
             instanceRequest.getInstance({
                 worldId: L.worldId,
@@ -548,7 +548,7 @@ export const useUserStore = defineStore('User', () => {
             });
         }
         D.$location = L;
-        L.user = {};
+        (L as any).user = {};
         if (L.userId) {
             ref = cachedUsers.get(L.userId);
             if (typeof ref === 'undefined') {
@@ -558,13 +558,13 @@ export const useUserStore = defineStore('User', () => {
                     })
                     .then((args) => {
                         if (args.ref.id === L.userId) {
-                            Object.assign(L.user, args.ref);
+                            Object.assign((L as any).user, args.ref);
                             D.$location = L;
                             applyUserDialogLocation();
                         }
                     });
             } else {
-                L.user = ref;
+                (L as any).user = ref;
             }
         }
         const users = [];
@@ -625,6 +625,10 @@ export const useUserStore = defineStore('User', () => {
         } else {
             users.sort(compareByLocationAt);
         }
+
+
+
+
         D.users = users;
         if ((L.worldId && currentLocation === L.tag && playersInInstance.size > 0) || !L.isRealInstance) {
             D.instance = {
@@ -656,15 +660,19 @@ export const useUserStore = defineStore('User', () => {
         return compareByName;
     }
 
-    function sortUserDialogAvatars(array) {
+    function sortUserDialogAvatars(array: any) {
         userDialog.value.avatars = array.sort(getUserDialogAvatarComparator());
     }
 
-    function sortUserDialogLicensedAvatars(array) {
+    function sortUserDialogLicensedAvatars(array: any) {
         userDialog.value.licensedAvatars = array.sort(getUserDialogAvatarComparator());
     }
 
     async function initUserNotes() {
+
+
+
+
         state.lastNoteCheck = new Date();
         state.lastDbNoteDate = null;
         state.notes.clear();
@@ -692,6 +700,10 @@ export const useUserStore = defineStore('User', () => {
     }
 
     async function getLatestUserNotes() {
+
+
+
+
         state.lastNoteCheck = new Date();
         const params = {
             offset: 0,
@@ -704,10 +716,22 @@ export const useUserStore = defineStore('User', () => {
                 params.offset = i * params.n;
                 const args = await userRequest.getUserNotes(params);
                 for (const note of args.json) {
+
+
+
+
                     if (state.lastDbNoteDate && state.lastDbNoteDate > note.createdAt) {
                         done = true;
                     }
+
+
+
+
                     if (!state.lastDbNoteDate || state.lastDbNoteDate < note.createdAt) {
+
+
+
+
                         state.lastDbNoteDate = note.createdAt;
                     }
                     note.note = replaceBioSymbols(note.note);
@@ -750,8 +774,8 @@ export const useUserStore = defineStore('User', () => {
      * @param userId
      * @param newNote
      */
-    async function checkNote(userId, newNote) {
-        if (!state.lastNoteCheck || state.lastNoteCheck.getTime() + 5 * 60 * 1000 > Date.now()) {
+    async function checkNote(userId: any, newNote: any) {
+        if (!state.lastNoteCheck || (state.lastNoteCheck as any).getTime() + 5 * 60 * 1000 > Date.now()) {
             return;
         }
         const existingNote = state.notes.get(userId);
@@ -770,7 +794,7 @@ export const useUserStore = defineStore('User', () => {
     /**
      * @param userId
      */
-    function showSendBoopDialog(userId) {
+    function showSendBoopDialog(userId: string) {
         sendBoopDialog.value.userId = userId;
         sendBoopDialog.value.visible = true;
     }
@@ -778,28 +802,28 @@ export const useUserStore = defineStore('User', () => {
     /**
      * @param {string} value
      */
-    function setUserDialogMemo(value) {
+    function setUserDialogMemo(value: string) {
         userDialog.value.memo = value;
     }
 
     /**
      * @param {boolean} value
      */
-    function setUserDialogVisible(value) {
+    function setUserDialogVisible(value: boolean) {
         userDialog.value.visible = value;
     }
 
     /**
      * @param {boolean} value
      */
-    function setUserDialogIsFavorite(value) {
+    function setUserDialogIsFavorite(value: boolean) {
         userDialog.value.isFavorite = value;
     }
 
     /**
      * @param {string} value
      */
-    function setCurrentUserColour(value) {
+    function setCurrentUserColour(value: string) {
         currentUser.value.$userColour = value;
     }
 
@@ -808,7 +832,7 @@ export const useUserStore = defineStore('User', () => {
      * @param {string} travelingToLocation
      * @param {number} timestamp
      */
-    function setCurrentUserLocationState(location, travelingToLocation, timestamp = Date.now()) {
+    function setCurrentUserLocationState(location: string, travelingToLocation: string, timestamp: number = Date.now()) {
         currentUser.value.$location_at = timestamp;
         currentUser.value.$travelingToTime = timestamp;
         currentUser.value.$locationTag = location;
@@ -818,28 +842,40 @@ export const useUserStore = defineStore('User', () => {
     /**
      * @param {number} value
      */
-    function setCurrentUserTravelingToTime(value) {
+    function setCurrentUserTravelingToTime(value: number) {
         currentUser.value.$travelingToTime = value;
     }
 
     /**
      * @param {object} value
      */
-    function setCurrentUser(value) {
+    function setCurrentUser(value: object) {
+
+
+
+
         currentUser.value = value;
     }
 
     /**
      * @param {number | null} value
      */
-    function setCurrentUserCredits(value) {
+    function setCurrentUserCredits(value: number | null) {
+
+
+
+
         currentUserCredits.value = value;
     }
 
     /**
      * @param {object} value
      */
-    function setSubsetOfLanguages(value) {
+    function setSubsetOfLanguages(value: object) {
+
+
+
+
         subsetOfLanguages.value = value;
     }
 
@@ -853,6 +889,10 @@ export const useUserStore = defineStore('User', () => {
                 status: statusHistory[i]
             });
         }
+
+
+
+
         D.socialStatusHistoryTable = statusHistoryArray;
 
         D.status = currentUser.value.status;
@@ -874,29 +914,109 @@ export const useUserStore = defineStore('User', () => {
             const ref = args.json;
             D.selfProfileRef = ref;
 
+
+
+
+
             D.status = ref.status;
+
+
+
+
             D.statusDescription = ref.statusDescription;
+
+
+
+
             D.pronouns = ref.pronouns;
+
+
+
+
             D.bio = ref.bio;
+
+
+
+
             D.bioLinks = ref.bioLinks.slice();
+
+
+
+
             D.bannerColor = ref.bannerColor;
+
+
+
+
             D.bannerUrl = ref.bannerUrl;
             D.bannerType = ref.bannerType || 'color';
+
+
+
+
             D.userIcon = ref.userIcon;
 
+
+
+
+
             D.themes = ref.themes;
+
+
+
+
             D.themeId = ref.themeId;
+
+
+
+
             const selectedTheme = ref.themes.find((theme) => theme.id === ref.themeId);
             D.themeName = selectedTheme?.name ?? '';
+
+
+
+
             D.themeButtonColor = ref.themeButtonColor;
+
+
+
+
             D.themeIconColor = ref.themeIconColor;
+
+
+
+
             D.themeSubtextColor = ref.themeSubtextColor;
             D.backgroundType = ref.backgroundType || 'default';
+
+
+
+
             D.backgroundTextureId = ref.backgroundTextureId;
+
+
+
+
             D.backgroundGradientBottom = ref.backgroundGradientBottom;
+
+
+
+
             D.backgroundGradientTop = ref.backgroundGradientTop;
+
+
+
+
             D.nameplateEffect = ref.nameplateEffect;
+
+
+
+
             D.profileEffect = ref.profileEffect;
+
+
+
+
             D.iconFrame = ref.iconFrame;
         });
 
@@ -906,11 +1026,19 @@ export const useUserStore = defineStore('User', () => {
     function markCurrentUserGameStarted() {
         currentUser.value.$online_for = Date.now();
         currentUser.value.$offline_for = null;
+
+
+
+
         currentUser.value.$previousAvatarSwapTime = Date.now();
     }
 
     function markCurrentUserGameStopped() {
         currentUser.value.$online_for = 0;
+
+
+
+
         currentUser.value.$offline_for = Date.now();
         currentUser.value.$previousAvatarSwapTime = null;
     }
@@ -918,9 +1046,9 @@ export const useUserStore = defineStore('User', () => {
     /**
      * @param {string} command
      */
-    async function confirmCurrentUserToggle(command, isEnableAction) {
+    async function confirmCurrentUserToggle(command: string, isEnableAction: boolean) {
         const action = isEnableAction ? t('confirm.enable_action') : t('confirm.disable_action');
-        const { ok } = await modalStore.confirm({
+        const { ok }: any = await modalStore.confirm({
             title: t('confirm.title'),
             description: t('confirm.command_question_toggle', {
                 action,
@@ -998,7 +1126,7 @@ export const useUserStore = defineStore('User', () => {
         });
     }
 
-    function changePassword(currentPassword, password) {
+    function changePassword(currentPassword: any, password: any) {
         return userRequest.saveCurrentUser({
             currentPassword,
             password
@@ -1006,7 +1134,7 @@ export const useUserStore = defineStore('User', () => {
     }
 
     // check `currentUser.hideContentFilterSettings` before showing content filter settings in UI
-    function changeContentFilterSettings(contentFilters) {
+    function changeContentFilterSettings(contentFilters: any) {
         return userRequest.saveCurrentUser({
             contentFilters
         });

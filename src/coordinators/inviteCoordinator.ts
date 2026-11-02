@@ -13,7 +13,7 @@ import { useLaunchStore } from '../stores/launch';
  *
  * @param {string} worldId
  */
-export function runNewInstanceSelfInviteFlow(worldId) {
+export function runNewInstanceSelfInviteFlow(worldId: string) {
     const instanceStore = useInstanceStore();
     const launchStore = useLaunchStore();
     const inviteStore = useInviteStore();

@@ -3,11 +3,11 @@ import { mount } from '@vue/test-utils';
 
 vi.mock('vue-i18n', () => ({
     useI18n: () => ({
-        t: (key) => key,
+        t: (key: any) => key,
         locale: require('vue').ref('en')
     }),
     createI18n: () => ({
-        global: { t: (key) => key, locale: require('vue').ref('en') },
+        global: { t: (key: any) => key, locale: require('vue').ref('en') },
         install: vi.fn()
     })
 }));
@@ -161,6 +161,10 @@ describe('GroupModerationBulkActions.vue', () => {
             const addBtn = wrapper
                 .findAll('button')
                 .find((b) => b.text().includes('dialog.group_member_moderation.add_roles'));
+
+
+
+
             expect(addBtn.attributes('disabled')).toBeDefined();
         });
 
@@ -173,6 +177,10 @@ describe('GroupModerationBulkActions.vue', () => {
             const kickBtn = wrapper
                 .findAll('button')
                 .find((b) => b.text().includes('dialog.group_member_moderation.kick'));
+
+
+
+
             expect(kickBtn.attributes('disabled')).toBeDefined();
         });
     });
@@ -188,6 +196,10 @@ describe('GroupModerationBulkActions.vue', () => {
             const kickBtn = wrapper
                 .findAll('button')
                 .find((b) => b.text().includes('dialog.group_member_moderation.kick'));
+
+
+
+
             expect(kickBtn.attributes('disabled')).toBeDefined();
         });
 
@@ -204,7 +216,15 @@ describe('GroupModerationBulkActions.vue', () => {
             const unbanBtn = wrapper
                 .findAll('button')
                 .find((b) => b.text().includes('dialog.group_member_moderation.unban'));
+
+
+
+
             expect(banBtn.attributes('disabled')).toBeDefined();
+
+
+
+
             expect(unbanBtn.attributes('disabled')).toBeDefined();
         });
     });
@@ -232,6 +252,10 @@ describe('GroupModerationBulkActions.vue', () => {
             const cancelBtn = wrapper
                 .findAll('button')
                 .find((b) => b.text().includes('dialog.group_member_moderation.cancel'));
+
+
+
+
             await cancelBtn.trigger('click');
             expect(wrapper.emitted('cancel-progress')).toBeTruthy();
         });

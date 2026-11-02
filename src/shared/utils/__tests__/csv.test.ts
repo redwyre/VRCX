@@ -77,6 +77,10 @@ describe('formatCsvRow', () => {
     });
 
     it('handles null obj gracefully', () => {
+
+
+
+
         expect(formatCsvRow(null, ['id', 'name'])).toBe(',');
     });
 

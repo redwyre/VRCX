@@ -24,7 +24,7 @@ const miscReq = {
     getFile(params: { fileId: string }): Promise<{ json: Json<File>; params: { fileId: string } }> {
         return request(`file/${params.fileId}`, {
             method: 'GET'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -39,7 +39,7 @@ const miscReq = {
         return request('userNotes', {
             method: 'POST',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -52,10 +52,10 @@ const miscReq = {
         fileId: string;
         version: number;
         variant: string;
-    }): Promise<{ json: Json<FileAnalysis>; params }> {
+    }): Promise<{ json: Json<FileAnalysis>; params: any }> {
         return request(`analysis/${params.fileId}/${params.version}/${params.variant}`, {
             method: 'GET'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -68,7 +68,7 @@ const miscReq = {
         return request('economy/store', {
             method: 'GET',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -77,13 +77,13 @@ const miscReq = {
         });
     },
 
-    closeInstance(params: { location: string; hardClose: boolean }): Promise<{ json: Json<Instance>; params }> {
+    closeInstance(params: { location: string; hardClose: boolean }): Promise<{ json: Json<Instance>; params: any }> {
         return request(`instances/${params.location}`, {
             method: 'DELETE',
             params: {
                 hardClose: params.hardClose ?? false
             }
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -92,10 +92,10 @@ const miscReq = {
         });
     },
 
-    deleteWorldPersistData(params: { worldId: string }): Promise<{ json: unknown; params }> {
+    deleteWorldPersistData(params: { worldId: string }): Promise<{ json: unknown; params: { worldId: any; } }> {
         return request(`users/${getCurrentUserId()}/${params.worldId}/persist`, {
             method: 'DELETE'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -104,10 +104,10 @@ const miscReq = {
         });
     },
 
-    hasWorldPersistData(params: { worldId: string }): Promise<{ json: unknown; params }> {
+    hasWorldPersistData(params: { worldId: string }): Promise<{ json: unknown; params: any }> {
         return request(`users/${getCurrentUserId()}/${params.worldId}/persist/exists`, {
             method: 'GET'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -127,7 +127,7 @@ const miscReq = {
                 hidden: params.hidden,
                 showcased: params.showcased
             }
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -139,7 +139,7 @@ const miscReq = {
     getVisits(): Promise<{ json: number }> {
         return request('visits', {
             method: 'GET'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json
             };
@@ -150,7 +150,7 @@ const miscReq = {
     deleteFile(fileId: string): Promise<{ json: Json<File>; fileId: string }> {
         return request(`file/${fileId}`, {
             method: 'DELETE'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 fileId
@@ -172,7 +172,7 @@ const miscReq = {
                 emojiId: params.emojiId
                 // inventoryItemId
             }
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -181,7 +181,7 @@ const miscReq = {
         });
     },
 
-    getInfoPush(params: { require?: string; include?: string[] }): Promise<{ json: Json<InfoPush[]>; params }> {
+    getInfoPush(params: { require?: string; include?: string[] }): Promise<{ json: Json<InfoPush[]>; params: any }> {
         const query: Record<string, any> = {
             require: params.require,
             include: params.include
@@ -189,7 +189,7 @@ const miscReq = {
         return request('infoPush', {
             method: 'GET',
             params: query
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params

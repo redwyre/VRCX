@@ -1,11 +1,11 @@
 import { dbVars } from '../database';
 
-import sqliteService from '../sqlite.js';
+import sqliteService from '../sqlite';
 
 const notifications = {
     async getNotifications() {
-        var notifications = [];
-        await sqliteService.execute((dbRow) => {
+        var notifications: { id: any; created_at: any; type: any; senderUserId: any; senderUsername: any; receiverUserId: any; message: any; details: { worldId: any; worldName: any; imageUrl: any; inviteMessage: any; requestMessage: any; responseMessage: any; }; $isExpired: boolean; }[] = [];
+        await sqliteService.execute((dbRow: number[]) => {
             var row = {
                 id: dbRow[0],
                 created_at: dbRow[1],
@@ -29,23 +29,23 @@ const notifications = {
         return notifications;
     },
 
-    async lookupNotificationDatabase(search, filters, vipList, maxEntries = dbVars.maxTableSize) {
+    async lookupNotificationDatabase(search: string, filters: any, vipList: any, maxEntries = dbVars.maxTableSize) {
         search = search.replaceAll("'", "''");
-        let notifications = [];
+        let notifications: { id: any; created_at: any; type: any; senderUserId: any; senderUsername: any; receiverUserId: any; message: any; details: { worldId: any; worldName: any; imageUrl: any; inviteMessage: any; requestMessage: any; responseMessage: any; }; $isExpired: boolean; }[] = [];
 
         let vipQuery = '';
         if (vipList.length > 0) {
-            const vipIds = vipList.map((userId) => `'${userId.replaceAll("'", "''")}'`);
+            const vipIds = vipList.map((userId: string) => `'${userId.replaceAll("'", "''")}'`);
             vipQuery = `AND sender_user_id IN (${vipIds.join(',')})`;
         }
 
         let filterQuery = '';
         if (filters.length > 0) {
-            const filterTypes = filters.map((type) => `'${type.replaceAll("'", "''")}'`);
+            const filterTypes = filters.map((type: string) => `'${type.replaceAll("'", "''")}'`);
             filterQuery = `AND type IN (${filterTypes.join(',')})`;
         }
 
-        await sqliteService.execute((dbRow) => {
+        await sqliteService.execute((dbRow: number[]) => {
             let row = {
                 id: dbRow[0],
                 created_at: dbRow[1],
@@ -69,7 +69,7 @@ const notifications = {
         return notifications;
     },
 
-    addNotificationToDatabase(row) {
+    addNotificationToDatabase(row: any) {
         var entry = {
             id: '',
             created_at: '',
@@ -102,6 +102,10 @@ const notifications = {
         }
         sqliteService.executeNonQuery(
             `INSERT OR IGNORE INTO ${dbVars.userPrefix}_notifications (id, created_at, type, sender_user_id, sender_username, receiver_user_id, message, world_id, world_name, image_url, invite_message, request_message, response_message, expired) VALUES (@id, @created_at, @type, @sender_user_id, @sender_username, @receiver_user_id, @message, @world_id, @world_name, @image_url, @invite_message, @request_message, @response_message, @expired)`,
+
+
+
+
             {
                 '@id': entry.id,
                 '@created_at': entry.created_at,
@@ -121,19 +125,27 @@ const notifications = {
         );
     },
 
-    deleteNotification(rowId) {
+    deleteNotification(rowId: any) {
+
+
+
+
         sqliteService.executeNonQuery(`DELETE FROM ${dbVars.userPrefix}_notifications WHERE id = @row_id`, {
             '@row_id': rowId
         });
     },
 
-    updateNotificationExpired(entry) {
+    updateNotificationExpired(entry: any) {
         var expired = 0;
         if (entry.$isExpired) {
             expired = 1;
         }
         sqliteService.executeNonQuery(
             `UPDATE ${dbVars.userPrefix}_notifications SET expired = @expired WHERE id = @id`,
+
+
+
+
             {
                 '@id': entry.id,
                 '@expired': expired
@@ -144,8 +156,8 @@ const notifications = {
     // notifications v2
 
     async getNotificationsV2() {
-        const notifications = [];
-        await sqliteService.execute((dbRow) => {
+        const notifications: { id: any; createdAt: any; updatedAt: any; expiresAt: any; type: any; link: any; linkText: any; message: any; title: any; imageUrl: any; seen: boolean; senderUserId: any; senderUsername: any; data: any; responses: any; details: any; }[] = [];
+        await sqliteService.execute((dbRow: any) => {
             const row = {
                 id: dbRow[0],
                 createdAt: dbRow[1],
@@ -165,16 +177,24 @@ const notifications = {
                 details: JSON.parse(dbRow[15] || '{}')
             };
             // for UI table
+
+
+
+
             row.created_at = row.createdAt;
-            row.version = 2;
+            (row as any).version = 2;
             notifications.unshift(row);
         }, `SELECT * FROM ${dbVars.userPrefix}_notifications_v2 ORDER BY created_at DESC LIMIT ${dbVars.maxTableSize}`);
         return notifications;
     },
 
-    addNotificationV2ToDatabase(entry) {
+    addNotificationV2ToDatabase(entry: any) {
         sqliteService.executeNonQuery(
             `INSERT OR REPLACE INTO ${dbVars.userPrefix}_notifications_v2 (id, created_at, updated_at, expires_at, type, link, link_text, message, title, image_url, seen, sender_user_id, sender_username, data, responses, details) VALUES (@id, @created_at, @updated_at, @expires_at, @type, @link, @link_text, @message, @title, @image_url, @seen, @sender_user_id, @sender_username, @data, @responses, @details)`,
+
+
+
+
             {
                 '@id': entry.id,
                 '@created_at': entry.createdAt,
@@ -196,9 +216,13 @@ const notifications = {
         );
     },
 
-    expireNotificationV2(id) {
+    expireNotificationV2(id: any) {
         sqliteService.executeNonQuery(
             `UPDATE ${dbVars.userPrefix}_notifications_v2 SET expires_at = @expires_at, seen = 1 WHERE id = @id`,
+
+
+
+
             {
                 '@id': id,
                 '@expires_at': new Date().toJSON()
@@ -206,13 +230,21 @@ const notifications = {
         );
     },
 
-    seenNotificationV2(id) {
+    seenNotificationV2(id: any) {
+
+
+
+
         sqliteService.executeNonQuery(`UPDATE ${dbVars.userPrefix}_notifications_v2 SET seen = 1 WHERE id = @id`, {
             '@id': id
         });
     },
 
-    deleteNotificationV2(id) {
+    deleteNotificationV2(id: any) {
+
+
+
+
         sqliteService.executeNonQuery(`DELETE FROM ${dbVars.userPrefix}_notifications_v2 WHERE id = @id`, {
             '@id': id
         });

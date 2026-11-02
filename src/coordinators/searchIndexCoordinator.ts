@@ -6,14 +6,14 @@ import { watchState } from '../services/watchState';
 /**
  * @param {object} ctx
  */
-export function syncFriendSearchIndex(ctx) {
+export function syncFriendSearchIndex(ctx: object) {
     useSearchIndexStore().syncFriend(ctx);
 }
 
 /**
  * @param {string} id
  */
-export function removeFriendSearchIndex(id) {
+export function removeFriendSearchIndex(id: string) {
     useSearchIndexStore().removeFriend(id);
 }
 
@@ -24,14 +24,14 @@ export function clearFriendSearchIndex() {
 /**
  * @param {object} ref
  */
-export function syncAvatarSearchIndex(ref) {
+export function syncAvatarSearchIndex(ref: object) {
     useSearchIndexStore().upsertAvatar(ref);
 }
 
 /**
  * @param {string} id
  */
-export function removeAvatarSearchIndex(id) {
+export function removeAvatarSearchIndex(id: string) {
     useSearchIndexStore().removeAvatar(id);
 }
 
@@ -42,14 +42,14 @@ export function clearAvatarSearchIndex() {
 /**
  * @param {object} ref
  */
-export function syncWorldSearchIndex(ref) {
+export function syncWorldSearchIndex(ref: object) {
     useSearchIndexStore().upsertWorld(ref);
 }
 
 /**
  * @param {string} id
  */
-export function removeWorldSearchIndex(id) {
+export function removeWorldSearchIndex(id: string) {
     useSearchIndexStore().removeWorld(id);
 }
 
@@ -60,14 +60,14 @@ export function clearWorldSearchIndex() {
 /**
  * @param {object} ref
  */
-export function syncGroupSearchIndex(ref) {
+export function syncGroupSearchIndex(ref: object) {
     useSearchIndexStore().upsertGroup(ref);
 }
 
 /**
  * @param {string} id
  */
-export function removeGroupSearchIndex(id) {
+export function removeGroupSearchIndex(id: string) {
     useSearchIndexStore().removeGroup(id);
 }
 

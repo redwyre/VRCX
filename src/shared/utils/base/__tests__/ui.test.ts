@@ -34,6 +34,10 @@ describe('HSVtoRGB', () => {
     });
 
     it('handles object argument { h, s, v }', () => {
+
+
+
+
         expect(HSVtoRGB({ h: 0, s: 1, v: 1 })).toBe('#ff0000');
     });
 

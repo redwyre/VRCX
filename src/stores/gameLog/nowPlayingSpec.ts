@@ -10,19 +10,19 @@
  * @param {Function} deps.addGameLogVideo
  * @returns {object}
  */
-export function createNowPlayingSpecHandler({
-    nowPlaying,
-    setNowPlaying,
-    clearNowPlaying,
-    startNowPlayingTicker,
-    updateNowPlayingVideoName,
-    addGameLogVideo
+export function createNowPlayingSpecHandler({ nowPlaying, setNowPlaying, clearNowPlaying, startNowPlayingTicker, updateNowPlayingVideoName, addGameLogVideo }: {
+    nowPlaying: import('vue').Ref;
+    setNowPlaying: Function;
+    clearNowPlaying: Function;
+    startNowPlayingTicker: Function;
+    updateNowPlayingVideoName: Function;
+    addGameLogVideo: Function;
 }) {
     const producers = new Map();
     let followedId = '';
     let changeSequence = 0;
 
-    function parseEvent(data) {
+    function parseEvent(data: string) {
         try {
             const event = JSON.parse(data);
             if (event && typeof event.id === 'string' && event.id && typeof event.type === 'string') {
@@ -34,7 +34,7 @@ export function createNowPlayingSpecHandler({
         return null;
     }
 
-    function parseMediaId(value) {
+    function parseMediaId(value: unknown) {
         if (typeof value === 'string') {
             return value.trim();
         }
@@ -44,7 +44,7 @@ export function createNowPlayingSpecHandler({
         return '';
     }
 
-    function decodeUrl(url) {
+    function decodeUrl(url: string) {
         try {
             return decodeURI(url);
         } catch {
@@ -52,7 +52,7 @@ export function createNowPlayingSpecHandler({
         }
     }
 
-    function getYouTubeVideoId(url) {
+    function getYouTubeVideoId(url: string | URL) {
         let parsed;
         try {
             parsed = new URL(url);
@@ -66,6 +66,10 @@ export function createNowPlayingSpecHandler({
         } else if (host === 'youtube.com') {
             const [, section, pathId] = parsed.pathname.split('/');
             if (section === 'watch') {
+
+
+
+
                 id = parsed.searchParams.get('v');
             } else if (['shorts', 'live', 'embed'].includes(section)) {
                 id = pathId;
@@ -74,7 +78,7 @@ export function createNowPlayingSpecHandler({
         return /^[\w-]{11}$/.test(id ?? '') ? id : '';
     }
 
-    function getMediaImage(image, url) {
+    function getMediaImage(image: any, url: any) {
         if (typeof image === 'string' && image) {
             return image;
         }
@@ -82,7 +86,7 @@ export function createNowPlayingSpecHandler({
         return youtubeId ? `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg` : '';
     }
 
-    function createProducer(id) {
+    function createProducer(id: any) {
         return {
             id,
             hasMedia: false,
@@ -105,7 +109,7 @@ export function createNowPlayingSpecHandler({
         };
     }
 
-    function getPosition(producer, now) {
+    function getPosition(producer: { paused: any; stopped: any; anchorPos: number; anchorWall: number; speed: number; length: number; }, now: number) {
         if (producer.paused || producer.stopped) {
             return producer.anchorPos;
         }
@@ -113,7 +117,7 @@ export function createNowPlayingSpecHandler({
         return producer.length > 0 ? Math.min(pos, producer.length) : pos;
     }
 
-    function setAnchor(producer, now, mediaTime) {
+    function setAnchor(producer: any, now: any, mediaTime?: number) {
         producer.anchorPos = typeof mediaTime === 'number' ? Math.max(0, mediaTime) : getPosition(producer, now);
         producer.anchorWall = now;
     }
@@ -135,11 +139,11 @@ export function createNowPlayingSpecHandler({
         return best;
     }
 
-    function getDisplayUrl(producer) {
+    function getDisplayUrl(producer: { hideUrl: any; name: any; url: any; }) {
         return producer.hideUrl ? producer.name : producer.url;
     }
 
-    async function publishMedia(producer, location, dt) {
+    async function publishMedia(producer: any, location: any, dt: any) {
         const videoUrl = getDisplayUrl(producer);
         producer.publishedUrl = videoUrl;
         if (!videoUrl) {
@@ -182,7 +186,7 @@ export function createNowPlayingSpecHandler({
         });
     }
 
-    function applyTiming(producer, now) {
+    function applyTiming(producer: any, now: number) {
         const np = nowPlaying.value;
         if (!np.url || np.url !== producer.publishedUrl) {
             return;
@@ -201,7 +205,7 @@ export function createNowPlayingSpecHandler({
         startNowPlayingTicker();
     }
 
-    async function sync(changed, isMediaChange, location, dt, now) {
+    async function sync(changed: any, isMediaChange: boolean, location: any, dt: any, now: number) {
         const followed = pickFollowed();
         if (!followed) {
             if (followedId && nowPlaying.value.spec) {
@@ -220,7 +224,7 @@ export function createNowPlayingSpecHandler({
         }
     }
 
-    async function handleNowPlayingEvent(gameLog, location) {
+    async function handleNowPlayingEvent(gameLog: any, location: any) {
         const event = parseEvent(gameLog.data);
         if (!event) {
             return;

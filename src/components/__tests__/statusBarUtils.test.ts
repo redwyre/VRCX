@@ -153,7 +153,7 @@ describe('normalizeClock', () => {
 // ─── loadVisibility ──────────────────────────────────────────────────
 
 describe('loadVisibility', () => {
-    let storage;
+    let storage: any;
 
     beforeEach(() => {
         storage = createMockStorage();
@@ -190,7 +190,7 @@ describe('loadVisibility', () => {
 
 describe('loadClocks', () => {
     const defaults = [{ offset: 9 }, { offset: 0 }, { offset: -5 }];
-    let storage;
+    let storage: any;
 
     beforeEach(() => {
         storage = createMockStorage();
@@ -245,7 +245,7 @@ describe('loadClocks', () => {
 // ─── loadClockCount ──────────────────────────────────────────────────
 
 describe('loadClockCount', () => {
-    let storage;
+    let storage: any;
 
     beforeEach(() => {
         storage = createMockStorage();
@@ -313,9 +313,9 @@ describe('formatAppUptime', () => {
 function createMockStorage() {
     const data = new Map();
     return {
-        getItem: (key) => (data.has(key) ? data.get(key) : null),
-        setItem: (key, value) => data.set(key, String(value)),
-        removeItem: (key) => data.delete(key),
+        getItem: (key: any) => (data.has(key) ? data.get(key) : null),
+        setItem: (key: any, value: any) => data.set(key, String(value)),
+        removeItem: (key: any) => data.delete(key),
         clear: () => data.clear()
     };
 }

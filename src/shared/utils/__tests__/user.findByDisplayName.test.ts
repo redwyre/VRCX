@@ -1,3 +1,8 @@
+// TODO(ts-migrate): Check that this import is the one meant; TypeScript offered the name from
+// several modules.
+// describe was taken from vitest, over node:test. test was taken from vitest, over node:test
+// and node:test.
+import { vi, describe, test, expect } from 'vitest';
 import { findUserByDisplayName } from '../user';
 
 vi.mock('../../../views/Feed/Feed.vue', () => ({
@@ -9,7 +14,7 @@ vi.mock('../../../plugins/router', () => ({
 }));
 
 describe('findUserByDisplayName', () => {
-    function createCachedUsers(entries) {
+    function createCachedUsers(entries: { id: string; displayName: string; }[]) {
         const map = new Map();
         for (const entry of entries) {
             map.set(entry.id, entry);
@@ -17,7 +22,7 @@ describe('findUserByDisplayName', () => {
         return map;
     }
 
-    function createDisplayNameIndex(entries) {
+    function createDisplayNameIndex(entries: { id: string; displayName: string; }[]) {
         const index = new Map();
         for (const entry of entries) {
             let ids = index.get(entry.displayName);

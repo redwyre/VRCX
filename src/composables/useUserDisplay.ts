@@ -12,15 +12,15 @@ import {
 export function useUserDisplay() {
     const userStore = useUserStore();
 
-    function userStatusClass(user, pendingOffline = false) {
+    function userStatusClass(user: object, pendingOffline = false) {
         return userStatusClassPure(user, pendingOffline, userStore.currentUser);
     }
 
-    function userImage(user, isIcon = false, resolution = '128') {
+    function userImage(user: object, isIcon = false, resolution = '128') {
         return userImagePure(user, isIcon, resolution);
     }
 
-    function userImageFull(user) {
+    function userImageFull(user: object) {
         return userImageFullPure(user);
     }
 

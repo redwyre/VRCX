@@ -35,7 +35,7 @@ export function useSearchGroup() {
     /**
      * @param go
      */
-    async function moreSearchGroup(go) {
+    async function moreSearchGroup(go?: number | undefined) {
         const params = searchGroupParams.value;
         if (go) {
             params.offset += params.n * go;
@@ -54,6 +54,10 @@ export function useSearchGroup() {
                 for (const json of args.json) {
                     map.set(json.id, json);
                 }
+
+
+
+
                 searchGroupResults.value = Array.from(map.values());
                 return args;
             });

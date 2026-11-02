@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
-import { createPinia, setActivePinia } from 'pinia';
-import { ref } from 'vue';
+import { createPinia, setActivePinia, Store } from 'pinia';
+import { ComputedRef, Ref, ref } from 'vue';
 
 import en from '../../localization/en.json';
 
@@ -21,6 +21,10 @@ vi.mock('../../plugins/router', () => ({
 vi.mock('vue-router', async (importOriginal) => {
     const actual = await importOriginal();
     return {
+
+
+
+
         ...actual,
         useRouter: vi.fn(() => ({
             push: vi.fn(),
@@ -65,15 +69,19 @@ vi.mock('../../services/watchState', () => ({
 }));
 vi.mock('vue-i18n', async (importOriginal) => {
     const actual = await importOriginal();
-    const i18n = actual.createI18n({
-        locale: 'en',
-        fallbackLocale: 'en',
-        legacy: false,
-        missingWarn: false,
-        fallbackWarn: false,
-        messages: { en }
-    });
+    const i18n = (actual as any).createI18n({
+    locale: 'en',
+    fallbackLocale: 'en',
+    legacy: false,
+    missingWarn: false,
+    fallbackWarn: false,
+    messages: { en }
+});
     return {
+
+
+
+
         ...actual,
         useI18n: () => i18n.global
     };
@@ -122,13 +130,13 @@ vi.mock('../settings/appearance', () => ({
 function makeApiMock() {
     return {
         instanceRequest: {
-            getInstanceFromShortName: (...args) => mockGetInstanceFromShortName(...args)
+            getInstanceFromShortName: (...args: any[]) => mockGetInstanceFromShortName(...args)
         },
         userRequest: {
             getUsers: vi.fn().mockResolvedValue({ json: [] })
         },
         groupRequest: {
-            groupStrictsearch: (...args) => mockGroupStrictsearch(...args)
+            groupStrictsearch: (...args: any[]) => mockGroupStrictsearch(...args)
         },
         queryRequest: {},
         miscRequest: {}
@@ -138,19 +146,19 @@ vi.mock('../../api', () => makeApiMock());
 vi.mock('../../api/', () => makeApiMock());
 
 vi.mock('../../coordinators/userCoordinator', () => ({
-    showUserDialog: (...args) => mockShowUserDialog(...args),
+    showUserDialog: (...args: any[]) => mockShowUserDialog(...args),
     lookupUser: vi.fn(),
     applyUser: vi.fn()
 }));
 vi.mock('../../coordinators/avatarCoordinator', () => ({
-    showAvatarDialog: (...args) => mockShowAvatarDialog(...args),
+    showAvatarDialog: (...args: any[]) => mockShowAvatarDialog(...args),
     getAvatarName: vi.fn()
 }));
 vi.mock('../../coordinators/groupCoordinator', () => ({
-    showGroupDialog: (...args) => mockShowGroupDialog(...args)
+    showGroupDialog: (...args: any[]) => mockShowGroupDialog(...args)
 }));
 vi.mock('../../coordinators/worldCoordinator', () => ({
-    showWorldDialog: (...args) => mockShowWorldDialog(...args)
+    showWorldDialog: (...args: any[]) => mockShowWorldDialog(...args)
 }));
 
 vi.mock('vue-sonner', () => ({
@@ -163,9 +171,11 @@ vi.mock('vue-sonner', () => ({
 }));
 
 import { useSearchStore } from '../search';
+import { Instance } from 'vrchat';
+import { Json } from '../../types';
 
 describe('useSearchStore', () => {
-    let store;
+    let store: Store<"Search", Pick<{ searchText: Ref<string, string>; searchUserResults: Ref<any[], any[]>; stringComparer: ComputedRef<Intl.Collator>; friendsListSearch: Ref<string, string>; clearSearch: () => void; searchUserByDisplayName: (displayName: any) => Promise<void>; moreSearchUser: (go: any, params: any) => Promise<void>; directAccessParse: (input: any) => boolean; directAccessPaste: () => Promise<void>; directAccessWorld: (textBoxInput: any) => boolean | Promise<{ json: Json<Instance>; params: any; }>; verifyShortName: (location: string, shortName: string) => Promise<{ json: Json<Instance>; params: any; }>; setSearchText: (value: string) => void; }, "searchText" | "searchUserResults" | "friendsListSearch">, Pick<{ searchText: Ref<string, string>; searchUserResults: Ref<any[], any[]>; stringComparer: ComputedRef<Intl.Collator>; friendsListSearch: Ref<string, string>; clearSearch: () => void; searchUserByDisplayName: (displayName: any) => Promise<void>; moreSearchUser: (go: any, params: any) => Promise<void>; directAccessParse: (input: any) => boolean; directAccessPaste: () => Promise<void>; directAccessWorld: (textBoxInput: any) => boolean | Promise<{ json: Json<Instance>; params: any; }>; verifyShortName: (location: string, shortName: string) => Promise<{ json: Json<Instance>; params: any; }>; setSearchText: (value: string) => void; }, "stringComparer">, Pick<{ searchText: Ref<string, string>; searchUserResults: Ref<any[], any[]>; stringComparer: ComputedRef<Intl.Collator>; friendsListSearch: Ref<string, string>; clearSearch: () => void; searchUserByDisplayName: (displayName: any) => Promise<void>; moreSearchUser: (go: any, params: any) => Promise<void>; directAccessParse: (input: any) => boolean; directAccessPaste: () => Promise<void>; directAccessWorld: (textBoxInput: any) => boolean | Promise<{ json: Json<Instance>; params: any; }>; verifyShortName: (location: string, shortName: string) => Promise<{ json: Json<Instance>; params: any; }>; setSearchText: (value: string) => void; }, "directAccessParse" | "directAccessWorld" | "clearSearch" | "searchUserByDisplayName" | "moreSearchUser" | "directAccessPaste" | "verifyShortName" | "setSearchText">>;
 
     beforeEach(() => {
         setActivePinia(createPinia());

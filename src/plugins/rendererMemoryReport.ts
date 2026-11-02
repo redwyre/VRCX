@@ -1,6 +1,6 @@
 function readPerformanceMemory() {
-    // @ts-ignore
-    const memory = window?.performance?.memory;
+
+    const memory = (window?.performance as any)?.memory;
     if (!memory) return null;
     const { usedJSHeapSize, jsHeapSizeLimit } = memory;
     if (typeof usedJSHeapSize !== 'number' || typeof jsHeapSizeLimit !== 'number') {
@@ -10,7 +10,7 @@ function readPerformanceMemory() {
 }
 
 export function startRendererMemoryThresholdReport(
-    Sentry,
+    Sentry: any,
     { intervalMs = 10_000, thresholdRatio = 0.8, cooldownMs = 5 * 60_000 } = {}
 ) {
     const initial = readPerformanceMemory();
@@ -31,7 +31,7 @@ export function startRendererMemoryThresholdReport(
         if (now - lastSent < cooldownMs) return;
         lastSent = now;
 
-        Sentry.withScope((scope) => {
+        Sentry.withScope((scope: { setLevel: (arg0: string) => void; setTag: (arg0: string, arg1: string) => void; setContext: (arg0: string, arg1: { usedMB: number; limitMB: number; ratio: number; }) => void; }) => {
             scope.setLevel('warning');
             scope.setTag('reason', 'high-js-heap');
             scope.setContext('memory', {

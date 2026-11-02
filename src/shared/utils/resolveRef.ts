@@ -10,19 +10,24 @@
  * @param {(id: string) => Promise<{ ref: object }>} opts.fetchFn - Fetch function
  * @returns {Promise<object>}
  */
-async function resolveRef(input, { emptyDefault, idAlias, nameKey, fetchFn }) {
+async function resolveRef(input: string | object | null | undefined, { emptyDefault, idAlias, nameKey, fetchFn }: {
+    emptyDefault: object;
+    idAlias: string;
+    nameKey: string;
+    fetchFn: (id: string) => Promise<{ ref: object; }>;
+}) {
     if (!input) {
         return emptyDefault;
     }
     if (typeof input === 'string') {
         input = { id: input, [nameKey]: '' };
     }
-    const id = input.id || input[idAlias] || '';
-    let name = input[nameKey] || '';
+    const id = (input as any).id || (input as any)[idAlias] || '';
+    let name = (input as any)[nameKey] || '';
     if (id && !name) {
         try {
             const args = await fetchFn(id);
-            name = args?.ref?.[nameKey] || name;
+            name = (args?.ref as any)?.[nameKey] || name;
             return { ...args.ref, id, [nameKey]: name };
         } catch {
             return { ...input, id, [nameKey]: name };

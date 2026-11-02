@@ -68,7 +68,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
     });
     const databaseReadyForAutoLogin = ref(false);
     /** @type {(value?: unknown) => void} */
-    let resolveDatabaseInit = () => {};
+    let resolveDatabaseInit: (value?: unknown) => void = () => {};
     const databaseInitComplete = new Promise((resolve) => {
         resolveDatabaseInit = resolve;
     });
@@ -89,6 +89,10 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 try {
                     window.electron.ipcRenderer.on('launch-command', (command) => {
                         if (command) {
+
+
+
+
                             eventLaunchCommand(command);
                         }
                     });
@@ -130,24 +134,24 @@ export const useVrcxStore = defineStore('Vrcx', () => {
 
             clearVRCXCacheFrequency.value = await configRepository.getInt('VRCX_clearVRCXCacheFrequency', 172800);
 
-            if (!(await VRCXStorage.Get('VRCX_DatabaseLocation'))) {
-                await VRCXStorage.Set('VRCX_DatabaseLocation', '');
+            if (!(await (VRCXStorage as any).Get('VRCX_DatabaseLocation'))) {
+                await (VRCXStorage as any).Set('VRCX_DatabaseLocation', '');
             }
-            if (!(await VRCXStorage.Get('VRCX_ProxyServer'))) {
-                await VRCXStorage.Set('VRCX_ProxyServer', '');
+            if (!(await (VRCXStorage as any).Get('VRCX_ProxyServer'))) {
+                await (VRCXStorage as any).Set('VRCX_ProxyServer', '');
             }
-            if ((await VRCXStorage.Get('VRCX_DisableGpuAcceleration')) === '') {
-                await VRCXStorage.Set('VRCX_DisableGpuAcceleration', 'false');
+            if ((await (VRCXStorage as any).Get('VRCX_DisableGpuAcceleration')) === '') {
+                await (VRCXStorage as any).Set('VRCX_DisableGpuAcceleration', 'false');
             }
-            if ((await VRCXStorage.Get('VRCX_DisableVrOverlayGpuAcceleration')) === '') {
-                await VRCXStorage.Set('VRCX_DisableVrOverlayGpuAcceleration', 'false');
+            if ((await (VRCXStorage as any).Get('VRCX_DisableVrOverlayGpuAcceleration')) === '') {
+                await (VRCXStorage as any).Set('VRCX_DisableVrOverlayGpuAcceleration', 'false');
             }
-            proxyServer.value = await VRCXStorage.Get('VRCX_ProxyServer');
-            state.locationX = parseInt(await VRCXStorage.Get('VRCX_LocationX'), 10);
-            state.locationY = parseInt(await VRCXStorage.Get('VRCX_LocationY'), 10);
-            state.sizeWidth = parseInt(await VRCXStorage.Get('VRCX_SizeWidth'), 10);
-            state.sizeHeight = parseInt(await VRCXStorage.Get('VRCX_SizeHeight'), 10);
-            state.windowState = await VRCXStorage.Get('VRCX_WindowState');
+            proxyServer.value = await (VRCXStorage as any).Get('VRCX_ProxyServer');
+            state.locationX = parseInt(await (VRCXStorage as any).Get('VRCX_LocationX'), 10);
+            state.locationY = parseInt(await (VRCXStorage as any).Get('VRCX_LocationY'), 10);
+            state.sizeWidth = parseInt(await (VRCXStorage as any).Get('VRCX_SizeWidth'), 10);
+            state.sizeHeight = parseInt(await (VRCXStorage as any).Get('VRCX_SizeHeight'), 10);
+            state.windowState = await (VRCXStorage as any).Get('VRCX_WindowState');
 
             maxTableSize.value = await configRepository.getInt('VRCX_maxTableSize_v2', DEFAULT_MAX_TABLE_SIZE);
             database.setMaxTableSize(maxTableSize.value);
@@ -197,7 +201,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                     description: t('message.database.upgrade_failed_description'),
                     dismissible: false
                 });
-                AppApi.ShowDevTools();
+                (AppApi as any).ShowDevTools();
                 return false;
             }
         }
@@ -212,42 +216,42 @@ export const useVrcxStore = defineStore('Vrcx', () => {
     /**
      * @param {string} value
      */
-    function setProxyServer(value) {
+    function setProxyServer(value: string) {
         proxyServer.value = value;
     }
 
     /**
      * @param {boolean} value
      */
-    function setIpcEnabled(value) {
+    function setIpcEnabled(value: boolean) {
         ipcEnabled.value = value;
     }
 
     /**
      * @param {number} value
      */
-    function setClearVRCXCacheFrequency(value) {
+    function setClearVRCXCacheFrequency(value: number) {
         clearVRCXCacheFrequency.value = value;
     }
 
     /**
      * @param {number} value
      */
-    function setMaxTableSize(value) {
+    function setMaxTableSize(value: number) {
         maxTableSize.value = value;
     }
 
     /**
      * @param {number} value
      */
-    function setSearchLimit(value) {
+    function setSearchLimit(value: number) {
         searchLimit.value = value;
     }
 
     /**
      * @param data
      */
-    async function eventVrcxMessage(data) {
+    async function eventVrcxMessage(data: any) {
         let entry;
         switch (data.MsgType) {
             case 'CustomTag':
@@ -309,18 +313,18 @@ export const useVrcxStore = defineStore('Vrcx', () => {
 
     async function saveVRCXWindowOption() {
         if (LINUX) {
-            VRCXStorage.Set('VRCX_LocationX', state.locationX.toString());
-            VRCXStorage.Set('VRCX_LocationY', state.locationY.toString());
-            VRCXStorage.Set('VRCX_SizeWidth', state.sizeWidth.toString());
-            VRCXStorage.Set('VRCX_SizeHeight', state.sizeHeight.toString());
-            VRCXStorage.Set('VRCX_WindowState', state.windowState);
+            (VRCXStorage as any).Set('VRCX_LocationX', state.locationX.toString());
+            (VRCXStorage as any).Set('VRCX_LocationY', state.locationY.toString());
+            (VRCXStorage as any).Set('VRCX_SizeWidth', state.sizeWidth.toString());
+            (VRCXStorage as any).Set('VRCX_SizeHeight', state.sizeHeight.toString());
+            (VRCXStorage as any).Set('VRCX_WindowState', state.windowState);
         }
     }
 
     /**
      * @param path
      */
-    async function processScreenshot(path) {
+    async function processScreenshot(path: any) {
         let newPath = path;
         if (advancedSettingsStore.screenshotHelper) {
             const location = parseLocation(locationStore.lastLocation.location);
@@ -339,21 +343,20 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 players: []
             };
             for (const user of locationStore.lastLocation.playerList.values()) {
+
+
+
+
                 metadata.players.push({
                     id: user.userId,
                     displayName: user.displayName
                 });
             }
             try {
-                newPath = await AppApi.AddScreenshotMetadata(
-                    path,
-                    JSON.stringify(metadata),
-                    location.worldId,
-                    advancedSettingsStore.screenshotHelperModifyFilename
-                );
+                newPath = await (AppApi as any).AddScreenshotMetadata(path, JSON.stringify(metadata), location.worldId, advancedSettingsStore.screenshotHelperModifyFilename);
             } catch (e) {
                 console.error('Failed to add screenshot metadata', e);
-                if (e.message?.includes('UnauthorizedAccessException')) {
+                if ((e as any).message?.includes('UnauthorizedAccessException')) {
                     toast.error(
                         'Failed to add screenshot metadata, access denied. Make sure VRCX has permission to access the screenshot folder.',
                         { duration: 10000 }
@@ -368,7 +371,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
             console.log('Screenshot metadata added', newPath);
         }
         if (advancedSettingsStore.screenshotHelperCopyToClipboard) {
-            await AppApi.CopyImageToClipboard(newPath);
+            await (AppApi as any).CopyImageToClipboard(newPath);
             console.log('Screenshot copied to clipboard', newPath);
         }
     }
@@ -377,7 +380,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
     /**
      * @param json
      */
-    async function ipcEvent(json) {
+    async function ipcEvent(json: string) {
         if (!watchState.isLoggedIn) {
             return;
         }
@@ -497,7 +500,11 @@ export const useVrcxStore = defineStore('Vrcx', () => {
      *
      * @param {string} filePath - The full path to the file being dragged into the window
      */
-    function dragEnterCef(filePath) {
+    function dragEnterCef(filePath: string) {
+
+
+
+
         currentlyDroppingFile.value = filePath;
     }
 
@@ -513,7 +520,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
     );
 
     async function startupLaunchCommand() {
-        const command = await AppApi.GetLaunchCommand();
+        const command = await (AppApi as any).GetLaunchCommand();
         if (!command) {
             return;
         }
@@ -548,7 +555,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
     /**
      * @param input
      */
-    function eventLaunchCommand(input) {
+    function eventLaunchCommand(input: string) {
         if (!watchState.isLoggedIn) {
             return;
         }
@@ -635,20 +642,20 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 break;
         }
         if (shouldFocusWindow) {
-            AppApi.FocusWindow();
+            (AppApi as any).FocusWindow();
         }
     }
 
     /**
      * @param name
      */
-    async function backupVrcRegistry(name) {
+    async function backupVrcRegistry(name: string) {
         let regJson;
         try {
             if (WINDOWS) {
-                regJson = await AppApi.GetVRChatRegistry();
+                regJson = await (AppApi as any).GetVRChatRegistry();
             } else {
-                regJson = await AppApi.GetVRChatRegistryJson();
+                regJson = await (AppApi as any).GetVRChatRegistryJson();
                 regJson = JSON.parse(regJson);
             }
         } catch (e) {
@@ -676,7 +683,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
         }
 
         // check for auto restore
-        const hasVRChatRegistryFolder = await AppApi.HasVRChatRegistryFolder();
+const hasVRChatRegistryFolder = await (AppApi as any).HasVRChatRegistryFolder();
         if (!hasVRChatRegistryFolder) {
             const lastBackupDate = await configRepository.getString('VRCX_VRChatRegistryLastBackupDate');
             const lastRestoreCheck = await configRepository.getString('VRCX_VRChatRegistryLastRestoreCheck');
@@ -690,7 +697,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 title: t('dialog.registry_backup.header')
             });
             showRegistryBackupDialog();
-            await AppApi.FocusWindow();
+            await (AppApi as any).FocusWindow();
             await configRepository.setString('VRCX_VRChatRegistryLastRestoreCheck', lastBackupDate);
         } else {
             await tryAutoBackupVrcRegistry();

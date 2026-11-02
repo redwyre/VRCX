@@ -14,16 +14,32 @@ const testDefinitions = [
     { key: 'direct-access', action: 'direct-access' }
 ];
 const testDefinitionMap = new Map(testDefinitions.map((d) => [d.key, d]));
-const mockT = (key) => `translated:${key}`;
+const mockT = (key: any) => `translated:${key}`;
 const mockGenerateFolderId = () => 'generated-folder-id';
 
 // ─── normalizeHiddenKeys ─────────────────────────────────────────────
 
 describe('normalizeHiddenKeys', () => {
     test('returns empty array for non-array input', () => {
+
+
+
+
         expect(normalizeHiddenKeys(null, testDefinitionMap)).toEqual([]);
+
+
+
+
         expect(normalizeHiddenKeys(undefined, testDefinitionMap)).toEqual([]);
+
+
+
+
         expect(normalizeHiddenKeys('string', testDefinitionMap)).toEqual([]);
+
+
+
+
         expect(normalizeHiddenKeys(42, testDefinitionMap)).toEqual([]);
     });
 
@@ -40,6 +56,10 @@ describe('normalizeHiddenKeys', () => {
     });
 
     test('filters out falsy values', () => {
+
+
+
+
         expect(normalizeHiddenKeys([null, '', undefined, 'feed'], testDefinitionMap)).toEqual(['feed']);
     });
 
@@ -107,7 +127,15 @@ describe('getFirstNavRoute', () => {
 
 describe('isEntryNotified', () => {
     test('returns false for null/undefined entry', () => {
+
+
+
+
         expect(isEntryNotified(null, ['feed'])).toBe(false);
+
+
+
+
         expect(isEntryNotified(undefined, ['feed'])).toBe(false);
     });
 
@@ -149,14 +177,14 @@ describe('isEntryNotified', () => {
 // ─── sanitizeLayout ──────────────────────────────────────────────────
 
 describe('sanitizeLayout', () => {
-    const runSanitize = (layout, hiddenKeys = []) =>
+    const runSanitize = (layout: any, hiddenKeys = []) =>
         sanitizeLayout(layout, hiddenKeys, testDefinitionMap, testDefinitions, mockT, mockGenerateFolderId);
 
     test('returns default items for null/undefined layout', () => {
         const result = runSanitize(null);
         // Should include all non-chart items + charts folder
         expect(result.length).toBeGreaterThan(0);
-        expect(result.some((e) => e.type === 'item' && e.key === 'feed')).toBe(true);
+        expect(result.some((e: any) => e.type === 'item' && e.key === 'feed')).toBe(true);
     });
 
     test('preserves valid item entries', () => {
@@ -171,7 +199,7 @@ describe('sanitizeLayout', () => {
             { type: 'item', key: 'nonexistent' }
         ];
         const result = runSanitize(layout);
-        expect(result.find((e) => e.key === 'nonexistent')).toBeUndefined();
+        expect(result.find((e: any) => e.key === 'nonexistent')).toBeUndefined();
     });
 
     test('deduplicates item keys', () => {
@@ -180,7 +208,7 @@ describe('sanitizeLayout', () => {
             { type: 'item', key: 'feed' }
         ];
         const result = runSanitize(layout);
-        const feedEntries = result.filter((e) => e.type === 'item' && e.key === 'feed');
+        const feedEntries = result.filter((e: any) => e.type === 'item' && e.key === 'feed');
         expect(feedEntries.length).toBe(1);
     });
 
@@ -195,7 +223,7 @@ describe('sanitizeLayout', () => {
             }
         ];
         const result = runSanitize(layout);
-        const folder = result.find((e) => e.type === 'folder' && e.id === 'my-folder');
+        const folder = result.find((e: any) => e.type === 'folder' && e.id === 'my-folder');
         expect(folder).toBeDefined();
         expect(folder.items).toEqual(['feed', 'search']);
         expect(folder.name).toBe('My Folder');
@@ -210,7 +238,7 @@ describe('sanitizeLayout', () => {
             }
         ];
         const result = runSanitize(layout);
-        const folder = result.find((e) => e.type === 'folder');
+        const folder = result.find((e: any) => e.type === 'folder');
         expect(folder.id).toBe('generated-folder-id');
     });
 
@@ -224,7 +252,7 @@ describe('sanitizeLayout', () => {
             }
         ];
         const result = runSanitize(layout);
-        const folder = result.find((e) => e.type === 'folder');
+        const folder = result.find((e: any) => e.type === 'folder');
         expect(folder.name).toBe('translated:nav_tooltip.favorites');
     });
 
@@ -232,21 +260,25 @@ describe('sanitizeLayout', () => {
         const layout = [{ type: 'item', key: 'feed' }];
         const result = runSanitize(layout);
         // All non-chart, non-hidden items should be present
-        expect(result.some((e) => e.key === 'search')).toBe(true);
-        expect(result.some((e) => e.key === 'tools')).toBe(true);
+        expect(result.some((e: any) => e.key === 'search')).toBe(true);
+        expect(result.some((e: any) => e.key === 'tools')).toBe(true);
     });
 
     test('does not append hidden keys', () => {
         const layout = [{ type: 'item', key: 'feed' }];
+
+
+
+
         const result = runSanitize(layout, ['search', 'tools']);
-        expect(result.find((e) => e.type === 'item' && e.key === 'search')).toBeUndefined();
-        expect(result.find((e) => e.type === 'item' && e.key === 'tools')).toBeUndefined();
+        expect(result.find((e: any) => e.type === 'item' && e.key === 'search')).toBeUndefined();
+        expect(result.find((e: any) => e.type === 'item' && e.key === 'tools')).toBeUndefined();
     });
 
     test('converts legacy "charts" item to charts folder', () => {
         const layout = [{ type: 'item', key: 'charts' }];
         const result = runSanitize(layout);
-        const chartsFolder = result.find((e) => e.type === 'folder' && e.id === 'default-folder-charts');
+        const chartsFolder = result.find((e: any) => e.type === 'folder' && e.id === 'default-folder-charts');
         expect(chartsFolder).toBeDefined();
         expect(chartsFolder.items).toEqual(['charts-instance', 'charts-mutual', 'charts-hot-worlds']);
     });
@@ -261,6 +293,6 @@ describe('sanitizeLayout', () => {
             }
         ];
         const result = runSanitize(layout);
-        expect(result.find((e) => e.id === 'empty-folder')).toBeUndefined();
+        expect(result.find((e: any) => e.id === 'empty-folder')).toBeUndefined();
     });
 });

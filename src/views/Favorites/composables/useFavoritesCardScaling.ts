@@ -1,9 +1,9 @@
 import { computed, nextTick, onBeforeMount, ref, watch } from 'vue';
 import { useResizeObserver } from '@vueuse/core';
 
-import configRepository from '../../../services/config.js';
+import configRepository from '../../../services/config';
 
-function clamp(value, min, max) {
+function clamp(value: any, min: any, max: any) {
     if (Number.isNaN(value)) {
         return min;
     }
@@ -18,30 +18,30 @@ function clamp(value, min, max) {
 
 export function useFavoritesCardScaling(options = {}) {
     const slider = {
-        min: options.min ?? 0.6,
-        max: options.max ?? 1,
-        step: options.step ?? 0.01
-    };
+    min: (options as any).min ?? 0.6,
+    max: (options as any).max ?? 1,
+    step: (options as any).step ?? 0.01
+};
     const spacingSlider = {
-        min: options.spacingMin ?? 0.5,
-        max: options.spacingMax ?? 1.5,
-        step: options.spacingStep ?? 0.05
-    };
-    const baseWidth = options.baseWidth ?? 260;
-    const baseGap = options.baseGap ?? 12;
-    const gapStep = options.gapStep ?? 8;
-    const configKey = options.configKey ?? '';
-    const spacingConfigKey = options.spacingConfigKey ?? '';
-    const basePaddingY = options.basePaddingY ?? 8;
-    const basePaddingX = options.basePaddingX ?? 10;
-    const baseContentGap = options.baseContentGap ?? 10;
-    const baseActionGap = options.baseActionGap ?? 8;
-    const baseActionGroupGap = options.baseActionGroupGap ?? 6;
-    const baseActionMargin = options.baseActionMargin ?? 8;
-    const baseCheckboxMargin = options.baseCheckboxMargin ?? 10;
-    const minGap = options.minGap ?? 4;
-    const minPadding = options.minPadding ?? 4;
-    const defaultSpacing = clamp(options.defaultSpacing ?? 1, spacingSlider.min, spacingSlider.max);
+    min: (options as any).spacingMin ?? 0.5,
+    max: (options as any).spacingMax ?? 1.5,
+    step: (options as any).spacingStep ?? 0.05
+};
+    const baseWidth = (options as any).baseWidth ?? 260;
+    const baseGap = (options as any).baseGap ?? 12;
+    const gapStep = (options as any).gapStep ?? 8;
+    const configKey = (options as any).configKey ?? '';
+    const spacingConfigKey = (options as any).spacingConfigKey ?? '';
+    const basePaddingY = (options as any).basePaddingY ?? 8;
+    const basePaddingX = (options as any).basePaddingX ?? 10;
+    const baseContentGap = (options as any).baseContentGap ?? 10;
+    const baseActionGap = (options as any).baseActionGap ?? 8;
+    const baseActionGroupGap = (options as any).baseActionGroupGap ?? 6;
+    const baseActionMargin = (options as any).baseActionMargin ?? 8;
+    const baseCheckboxMargin = (options as any).baseCheckboxMargin ?? 10;
+    const minGap = (options as any).minGap ?? 4;
+    const minPadding = (options as any).minPadding ?? 4;
+    const defaultSpacing = clamp((options as any).defaultSpacing ?? 1, spacingSlider.min, spacingSlider.max);
 
     const cardScaleBase = ref(1);
     const cardSpacingBase = ref(defaultSpacing);
@@ -54,7 +54,7 @@ export function useFavoritesCardScaling(options = {}) {
             containerWidth.value = 0;
             return;
         }
-        containerWidth.value = Math.max(element.clientWidth ?? element.offsetWidth ?? 0, 0);
+        containerWidth.value = Math.max((element as any).clientWidth ?? (element as any).offsetWidth ?? 0, 0);
     };
 
     const cardScale = computed({
@@ -97,14 +97,14 @@ export function useFavoritesCardScaling(options = {}) {
             const itemCount = Math.max(Number(count) || 0, 0);
             const safeCount = itemCount > 0 ? itemCount : 1;
             const maxColumns = width > 0 ? Math.max(1, Math.floor((width + gap) / (minWidth + gap)) || 1) : 1;
-            const preferredColumns = options?.preferredColumns;
+            const preferredColumns = (options as any)?.preferredColumns;
             const requestedColumns = preferredColumns
                 ? Math.max(1, Math.min(Math.round(preferredColumns), maxColumns))
                 : maxColumns;
             const columns = Math.max(1, Math.min(safeCount, requestedColumns));
-            const forceStretch = Boolean(options?.forceStretch);
-            const disableAutoStretch = Boolean(options?.disableAutoStretch);
-            const matchMaxColumnWidth = Boolean(options?.matchMaxColumnWidth);
+            const forceStretch = Boolean((options as any)?.forceStretch);
+            const disableAutoStretch = Boolean((options as any)?.disableAutoStretch);
+            const matchMaxColumnWidth = Boolean((options as any)?.matchMaxColumnWidth);
             const shouldStretch = !disableAutoStretch && (forceStretch || itemCount >= maxColumns);
 
             let cardWidth = minWidth;
@@ -153,7 +153,7 @@ export function useFavoritesCardScaling(options = {}) {
 
     useResizeObserver(containerRef, (entries) => {
         const [entry] = entries;
-        const width = entry?.contentRect?.width ?? containerRef.value?.clientWidth ?? 0;
+        const width = entry?.contentRect?.width ?? (containerRef.value as any)?.clientWidth ?? 0;
         containerWidth.value = Math.max(width, 0);
     });
 

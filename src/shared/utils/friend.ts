@@ -12,8 +12,8 @@ import {
  * @param {string[]} sortMethods
  * @returns
  */
-function getFriendsSortFunction(sortMethods) {
-    const sorts = [];
+function getFriendsSortFunction(sortMethods: string[]) {
+    const sorts: any = [];
     for (const sortMethod of sortMethods) {
         switch (sortMethod) {
             case 'Sort Alphabetically':
@@ -49,7 +49,7 @@ function getFriendsSortFunction(sortMethods) {
      * @param {object} b
      * @returns {number}
      */
-    return (a, b) => {
+    return (a: object, b: object) => {
         let res;
         for (const sort of sorts) {
             res = sort(a, b);
@@ -66,7 +66,7 @@ function getFriendsSortFunction(sortMethods) {
  * @param {string} b
  * @returns {number}
  */
-function sortStatus(a, b) {
+function sortStatus(a: string, b: string) {
     switch (b) {
         case 'join me':
             switch (a) {
@@ -136,14 +136,14 @@ function sortStatus(a, b) {
  * @param {object} friend
  * @returns {boolean}
  */
-function isFriendOnline(friend) {
-    if (typeof friend === 'undefined' || typeof friend?.ref === 'undefined') {
+function isFriendOnline(friend: object) {
+    if (typeof friend === 'undefined' || typeof (friend as any)?.ref === 'undefined') {
         return false;
     }
-    if (friend.state === 'online') {
+    if ((friend as any).state === 'online') {
         return true;
     }
-    if (friend.state !== 'online' && friend.ref.location !== 'private') {
+    if ((friend as any).state !== 'online' && (friend as any).ref.location !== 'private') {
         // wat
         return true;
     }

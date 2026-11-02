@@ -9,12 +9,20 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock('worker-timers', () => ({
-    setInterval: (...args) => mocks.setInterval(...args),
-    clearInterval: (...args) => mocks.clearInterval(...args)
+
+
+
+
+    setInterval: (...args: any[]) => mocks.setInterval(...args),
+    clearInterval: (...args: any[]) => mocks.clearInterval(...args)
 }));
 
 vi.mock('../../shared/utils', () => ({
-    timeToText: (...args) => mocks.timeToText(...args)
+
+
+
+
+    timeToText: (...args: any[]) => mocks.timeToText(...args)
 }));
 
 import CountdownTimer from '../CountdownTimer.vue';

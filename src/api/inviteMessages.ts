@@ -13,7 +13,7 @@ const inviteMessagesReq = {
     ): Promise<{ json: Json<InviteMessage[]>; messageType: InviteMessageType }> {
         return request(`message/${getCurrentUserId()}/${messageType}`, {
             method: 'GET'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 messageType
@@ -35,7 +35,7 @@ const inviteMessagesReq = {
         return request(`message/${getCurrentUserId()}/${messageType}/${slot}`, {
             method: 'PUT',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params,

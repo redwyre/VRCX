@@ -9,13 +9,13 @@ const mocks = vi.hoisted(() => ({
     }
 }));
 
-vi.mock('pinia', async (i) => ({ ...(await i()), storeToRefs: (s) => s }));
-vi.mock('vue-i18n', () => ({ useI18n: () => ({ t: (k) => k }) }));
+vi.mock('pinia', async (i) => ({ ...(await i()), storeToRefs: (s: any) => s }));
+vi.mock('vue-i18n', () => ({ useI18n: () => ({ t: (k: any) => k }) }));
 vi.mock('../../../stores', () => ({
     useAppearanceSettingsStore: () => ({
         tableLimitsDialog: mocks.dialog,
-        closeTableLimitsDialog: (...a) => mocks.close(...a),
-        saveTableLimitsDialog: (...a) => mocks.save(...a),
+        closeTableLimitsDialog: (...a: any[]) => mocks.close(...a),
+        saveTableLimitsDialog: (...a: any[]) => mocks.save(...a),
         TABLE_MAX_SIZE_MIN: 100,
         TABLE_MAX_SIZE_MAX: 5000,
         SEARCH_LIMIT_MIN: 10,

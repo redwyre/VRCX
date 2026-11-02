@@ -12,6 +12,8 @@ import { getCurrentUser } from './userCoordinator';
 import { watchState } from '../services/watchState';
 
 import configRepository from '../services/config';
+import { RemoveIndexSignature } from '@intlify/core-base';
+import { ComposerTranslation, LocaleMessageValue, VueMessageType } from 'vue-i18n';
 
 /**
  * Runs friend list refresh orchestration.
@@ -33,7 +35,7 @@ export async function runRefreshFriendsListFlow() {
  *
  * @param t
  */
-export async function runInitFriendsListFlow(t) {
+export async function runInitFriendsListFlow(t: ComposerTranslation<any, string, RemoveIndexSignature<{ [x: string]: LocaleMessageValue<VueMessageType>; }>, never, never, never>) {
     const userStore = useUserStore();
     const friendStore = useFriendStore();
     const authStore = useAuthStore();
@@ -67,8 +69,8 @@ export async function runInitFriendsListFlow(t) {
     friendStore.getAllUserStats(); // joinCount, lastSeen, timeSpent
 
     // remove old data from json file and migrate to SQLite (July 2021)
-    if (await VRCXStorage.Get(`${userId}_friendLogUpdatedAt`)) {
-        VRCXStorage.Remove(`${userId}_feedTable`);
+    if (await (VRCXStorage as any).Get(`${userId}_friendLogUpdatedAt`)) {
+        (VRCXStorage as any).Remove(`${userId}_feedTable`);
         migrateMemos();
         friendStore.migrateFriendLog(userId);
     }

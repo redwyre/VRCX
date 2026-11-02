@@ -51,7 +51,7 @@ export const useFeedStore = defineStore('Feed', () => {
 
     init();
 
-    function feedSearch(row) {
+    function feedSearch(row: { location: any; type: any; displayName: any; worldName: any; status: any; statusDescription: any; avatarName: any; bio: any; previousBio: any; bioLinks: any[]; }) {
         const value = feedTable.value.search.trim().toUpperCase();
         if (!value) {
             return true;
@@ -129,7 +129,7 @@ export const useFeedStore = defineStore('Feed', () => {
         await configRepository.setBool('VRCX_feedTableVIPFilter', feedTable.value.vip);
         feedTable.value.loading = true;
         try {
-            let vipList = [];
+            let vipList: unknown[] = [];
             if (feedTable.value.vip) {
                 vipList = Array.from(friendStore.localFavoriteFriends.values());
             }
@@ -147,6 +147,10 @@ export const useFeedStore = defineStore('Feed', () => {
                       )
                     : await database.lookupFeedDatabase(feedTable.value.filter, vipList);
             feedTableData.value = [];
+
+
+
+
             feedTableData.value = [...feedTableData.value, ...rows];
         } finally {
             feedTable.value.loading = false;
@@ -159,22 +163,34 @@ export const useFeedStore = defineStore('Feed', () => {
      *
      * @param {object} feed The feed entry to add.
      */
-    function addFeedEntry(feed) {
-        if (feedTable.value.filter.length > 0 && !feedTable.value.filter.includes(feed.type)) {
+    function addFeedEntry(feed: object) {
+
+
+
+
+        if (feedTable.value.filter.length > 0 && !feedTable.value.filter.includes((feed as any).type)) {
             return;
         }
-        if (feedTable.value.vip && !friendStore.localFavoriteFriends.has(feed.userId)) {
+        if (feedTable.value.vip && !friendStore.localFavoriteFriends.has((feed as any).userId)) {
             return;
         }
+
+
+
+
         if (!feedSearch(feed)) {
             return;
         }
-        if (feedTable.value.dateFrom && feed.created_at < feedTable.value.dateFrom) {
+        if (feedTable.value.dateFrom && (feed as any).created_at < feedTable.value.dateFrom) {
             return;
         }
-        if (feedTable.value.dateTo && feed.created_at > feedTable.value.dateTo) {
+        if (feedTable.value.dateTo && (feed as any).created_at > feedTable.value.dateTo) {
             return;
         }
+
+
+
+
         feedTableData.value = [feed, ...feedTableData.value];
         sweepFeed();
     }

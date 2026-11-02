@@ -34,14 +34,22 @@ export function useSearchAvatar() {
         isSearchAvatarLoading.value = false;
         const avatarsArray = Array.from(avatars.values());
         searchAvatarPageNum.value = 0;
+
+
+
+
         searchAvatarResults.value = avatarsArray;
+
+
+
+
         searchAvatarPage.value = avatarsArray.slice(0, 10);
     }
 
     /**
      * @param n
      */
-    function moreSearchAvatar(n) {
+    function moreSearchAvatar(n: number) {
         let offset;
         if (n === -1) {
             searchAvatarPageNum.value--;
@@ -51,6 +59,10 @@ export function useSearchAvatar() {
             searchAvatarPageNum.value++;
             offset = searchAvatarPageNum.value * 10;
         }
+
+
+
+
         searchAvatarPage.value = searchAvatarResults.value.slice(offset, offset + 10);
     }
 

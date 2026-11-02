@@ -5,65 +5,65 @@
  * @param {string} searchQuery
  * @returns {boolean}
  */
-function gameLogSearchFilter(row, searchQuery) {
+function gameLogSearchFilter(row: object, searchQuery: string) {
     const value = searchQuery.trim().toUpperCase();
     if (!value) {
         return true;
     }
-    if ((value.startsWith('WRLD_') || value.startsWith('GRP_')) && String(row.location).toUpperCase().includes(value)) {
+    if ((value.startsWith('WRLD_') || value.startsWith('GRP_')) && String((row as any).location).toUpperCase().includes(value)) {
         return true;
     }
-    switch (row.type) {
+    switch ((row as any).type) {
         case 'Location':
-            if (String(row.worldName).toUpperCase().includes(value)) {
+            if (String((row as any).worldName).toUpperCase().includes(value)) {
                 return true;
             }
             return false;
         case 'OnPlayerJoined':
-            if (String(row.displayName).toUpperCase().includes(value)) {
+            if (String((row as any).displayName).toUpperCase().includes(value)) {
                 return true;
             }
             return false;
         case 'OnPlayerLeft':
-            if (String(row.displayName).toUpperCase().includes(value)) {
+            if (String((row as any).displayName).toUpperCase().includes(value)) {
                 return true;
             }
             return false;
         case 'PortalSpawn':
-            if (String(row.displayName).toUpperCase().includes(value)) {
+            if (String((row as any).displayName).toUpperCase().includes(value)) {
                 return true;
             }
-            if (String(row.worldName).toUpperCase().includes(value)) {
+            if (String((row as any).worldName).toUpperCase().includes(value)) {
                 return true;
             }
             return false;
         case 'Event':
-            if (String(row.data).toUpperCase().includes(value)) {
+            if (String((row as any).data).toUpperCase().includes(value)) {
                 return true;
             }
             return false;
         case 'External':
-            if (String(row.message).toUpperCase().includes(value)) {
+            if (String((row as any).message).toUpperCase().includes(value)) {
                 return true;
             }
-            if (String(row.displayName).toUpperCase().includes(value)) {
+            if (String((row as any).displayName).toUpperCase().includes(value)) {
                 return true;
             }
             return false;
         case 'VideoPlay':
-            if (String(row.displayName).toUpperCase().includes(value)) {
+            if (String((row as any).displayName).toUpperCase().includes(value)) {
                 return true;
             }
-            if (String(row.videoName).toUpperCase().includes(value)) {
+            if (String((row as any).videoName).toUpperCase().includes(value)) {
                 return true;
             }
-            if (String(row.videoUrl).toUpperCase().includes(value)) {
+            if (String((row as any).videoUrl).toUpperCase().includes(value)) {
                 return true;
             }
             return false;
         case 'StringLoad':
         case 'ImageLoad':
-            if (String(row.resourceUrl).toUpperCase().includes(value)) {
+            if (String((row as any).resourceUrl).toUpperCase().includes(value)) {
                 return true;
             }
             return false;
@@ -78,11 +78,11 @@ function gameLogSearchFilter(row, searchQuery) {
  * @param {object} row
  * @returns {number} Millisecond timestamp, or 0 if unparseable
  */
-function getGameLogCreatedAtTs(row) {
+function getGameLogCreatedAtTs(row: object) {
     // dynamic import avoided — dayjs is a lightweight dep already used by the
-    // consumer; we import it lazily to keep the module usable without bundler
-    // context in tests (dayjs is a CJS/ESM dual package).
-    const createdAtRaw = row?.created_at ?? row?.createdAt ?? row?.dt;
+// consumer; we import it lazily to keep the module usable without bundler
+// context in tests (dayjs is a CJS/ESM dual package).
+const createdAtRaw = (row as any)?.created_at ?? (row as any)?.createdAt ?? (row as any)?.dt;
     if (typeof createdAtRaw === 'number') {
         const ts = createdAtRaw > 1_000_000_000_000 ? createdAtRaw : createdAtRaw * 1000;
         return Number.isFinite(ts) ? ts : 0;
@@ -105,21 +105,21 @@ function getGameLogCreatedAtTs(row) {
  * @param {object} b
  * @returns {number} Negative if a should come first, positive if b first
  */
-function compareGameLogRows(a, b) {
+function compareGameLogRows(a: object, b: object) {
     const aTs = getGameLogCreatedAtTs(a);
     const bTs = getGameLogCreatedAtTs(b);
     if (aTs !== bTs) {
         return bTs - aTs;
     }
 
-    const aRowId = typeof a?.rowId === 'number' ? a.rowId : 0;
-    const bRowId = typeof b?.rowId === 'number' ? b.rowId : 0;
+    const aRowId = typeof (a as any)?.rowId === 'number' ? (a as any).rowId : 0;
+    const bRowId = typeof (b as any)?.rowId === 'number' ? (b as any).rowId : 0;
     if (aRowId !== bRowId) {
         return bRowId - aRowId;
     }
 
-    const aUid = typeof a?.uid === 'string' ? a.uid : '';
-    const bUid = typeof b?.uid === 'string' ? b.uid : '';
+    const aUid = typeof (a as any)?.uid === 'string' ? (a as any).uid : '';
+    const bUid = typeof (b as any)?.uid === 'string' ? (b as any).uid : '';
     return aUid < bUid ? 1 : aUid > bUid ? -1 : 0;
 }
 
@@ -134,7 +134,7 @@ export { gameLogSearchFilter, getGameLogCreatedAtTs, compareGameLogRows };
  * @param {string} worldName
  * @returns {object}
  */
-export function createLocationEntry(dt, location, worldId, worldName) {
+export function createLocationEntry(dt: string, location: string, worldId: string, worldName: string) {
     return {
         created_at: dt,
         type: 'Location',
@@ -157,7 +157,7 @@ export function createLocationEntry(dt, location, worldId, worldName) {
  * @param {number} [time]
  * @returns {object}
  */
-export function createJoinLeaveEntry(type, dt, displayName, location, userId, time = 0) {
+export function createJoinLeaveEntry(type: 'OnPlayerJoined' | 'OnPlayerLeft', dt: string, displayName: string, location: string, userId: string, time: number = 0) {
     return {
         created_at: dt,
         type,
@@ -175,7 +175,7 @@ export function createJoinLeaveEntry(type, dt, displayName, location, userId, ti
  * @param {string} location
  * @returns {object}
  */
-export function createPortalSpawnEntry(dt, location) {
+export function createPortalSpawnEntry(dt: string, location: string) {
     return {
         created_at: dt,
         type: 'PortalSpawn',
@@ -196,7 +196,7 @@ export function createPortalSpawnEntry(dt, location) {
  * @param {string} location
  * @returns {object}
  */
-export function createResourceLoadEntry(rawType, dt, resourceUrl, location) {
+export function createResourceLoadEntry(rawType: string, dt: string, resourceUrl: string, location: string) {
     return {
         created_at: dt,
         type: rawType === 'resource-load-string' ? 'StringLoad' : 'ImageLoad',
@@ -215,7 +215,7 @@ export function createResourceLoadEntry(rawType, dt, resourceUrl, location) {
  * @param {string} url
  * @returns {{ userId: string; inventoryId: string } | null}
  */
-export function parseInventoryFromUrl(url) {
+export function parseInventoryFromUrl(url: string) {
     try {
         const parsed = new URL(url);
         if (parsed.pathname.substring(0, 12) === '/api/1/user/' && parsed.pathname.includes('/inventory/inv_')) {
@@ -239,7 +239,7 @@ export function parseInventoryFromUrl(url) {
  * @param {string} url
  * @returns {string | null} PrintId or null
  */
-export function parsePrintFromUrl(url) {
+export function parsePrintFromUrl(url: string) {
     try {
         const parsed = new URL(url);
         if (parsed.pathname.substring(0, 14) === '/api/1/prints/') {

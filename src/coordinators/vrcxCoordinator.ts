@@ -60,6 +60,10 @@ export function clearVRCXCache() {
             !favoriteStore.getCachedFavoritesByObjectId(id) &&
             ref.authorId !== userStore.currentUser.id &&
             !favoriteStore.localAvatarFavoritesList.includes(id) &&
+
+
+
+
             !avatarStore.avatarHistory.includes(id)
         ) {
             removeAvatarFromCache(id);

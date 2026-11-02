@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
-import { mount } from '@vue/test-utils';
+import { mount, VueWrapper } from '@vue/test-utils';
 
 const mocks = vi.hoisted(() => ({
-    makeRef: (value) => ({ value, __v_isRef: true }),
+    makeRef: (value: any) => ({ value, __v_isRef: true }),
     feedTable: null,
     feedTableData: null,
     feedTableLookup: vi.fn(),
@@ -13,6 +13,10 @@ const mocks = vi.hoisted(() => ({
     maxTableSize: 100
 }));
 
+
+
+
+
 mocks.feedTable = mocks.makeRef({
     loading: false,
     vip: false,
@@ -21,19 +25,27 @@ mocks.feedTable = mocks.makeRef({
     dateFrom: '',
     dateTo: ''
 });
+
+
+
+
 mocks.feedTableData = mocks.makeRef([]);
+
+
+
+
 mocks.pagination = mocks.makeRef({
     pageIndex: 2,
     pageSize: 10
 });
 
 vi.mock('pinia', () => ({
-    storeToRefs: (store) => store
+    storeToRefs: (store: any) => store
 }));
 
 vi.mock('vue-i18n', () => ({
     useI18n: () => ({
-        t: (key) => key,
+        t: (key: any) => key,
         locale: { value: 'en-US' }
     })
 }));
@@ -157,8 +169,8 @@ vi.mock('lucide-vue-next', () => ({
 
 import Feed from '../Feed.vue';
 
-function clickButtonByText(wrapper, text) {
-    const button = wrapper.findAll('button').find((node) => node.text().includes(text));
+function clickButtonByText(wrapper: VueWrapper<any, any>, text: string) {
+    const button = wrapper.findAll('button').find((node: { text: () => string | any[]; }) => node.text().includes(text));
     if (!button) {
         throw new Error(`Cannot find button with text: ${text}`);
     }
@@ -167,6 +179,10 @@ function clickButtonByText(wrapper, text) {
 
 describe('Feed.vue', () => {
     beforeEach(() => {
+
+
+
+
         mocks.feedTable.value = {
             loading: false,
             vip: false,
@@ -175,8 +191,16 @@ describe('Feed.vue', () => {
             dateFrom: '',
             dateTo: ''
         };
+
+
+
+
         mocks.feedTableData.value = [];
         mocks.feedTableLookup.mockReset();
+
+
+
+
         mocks.pagination.value = { pageIndex: 2, pageSize: 10 };
         mocks.filteredRows = [{ id: 'r1' }];
         mocks.maxTableSize = 100;
@@ -188,22 +212,54 @@ describe('Feed.vue', () => {
         await wrapper.get('[data-testid="set-date-range"]').trigger('click');
         await clickButtonByText(wrapper, 'common.actions.confirm');
 
+
+
+
+
         expect(mocks.feedTable.value.dateFrom).toContain('T');
+
+
+
+
         expect(mocks.feedTable.value.dateTo).toContain('T');
+
+
+
+
         expect(new Date(mocks.feedTable.value.dateFrom).getTime()).toBeLessThan(
+
+
+
+
             new Date(mocks.feedTable.value.dateTo).getTime()
         );
         expect(mocks.feedTableLookup).toHaveBeenCalledTimes(1);
     });
 
     test('clears date filter and triggers lookup', async () => {
+
+
+
+
         mocks.feedTable.value.dateFrom = '2026-03-01T00:00:00.000Z';
+
+
+
+
         mocks.feedTable.value.dateTo = '2026-03-02T23:59:59.999Z';
         const wrapper = mount(Feed);
 
         await clickButtonByText(wrapper, 'common.actions.clear');
 
+
+
+
+
         expect(mocks.feedTable.value.dateFrom).toBe('');
+
+
+
+
         expect(mocks.feedTable.value.dateTo).toBe('');
         expect(mocks.feedTableLookup).toHaveBeenCalledTimes(1);
     });
@@ -212,9 +268,17 @@ describe('Feed.vue', () => {
         const wrapper = mount(Feed);
 
         await wrapper.get('[data-testid="select-gps"]').trigger('click');
+
+
+
+
         expect(mocks.feedTable.value.filter).toEqual(['GPS']);
 
         await wrapper.get('[data-testid="select-all"]').trigger('click');
+
+
+
+
         expect(mocks.feedTable.value.filter).toEqual([]);
         expect(mocks.feedTableLookup).toHaveBeenCalledTimes(2);
     });
@@ -224,6 +288,10 @@ describe('Feed.vue', () => {
 
         await wrapper.get('[data-testid="set-page-size"]').trigger('click');
 
+
+
+
+
         expect(mocks.pagination.value).toEqual({
             pageIndex: 0,
             pageSize: 50
@@ -231,6 +299,10 @@ describe('Feed.vue', () => {
     });
 
     test('caps total items when table length is slightly above max table size', () => {
+
+
+
+
         mocks.filteredRows = Array.from({ length: 120 }, (_, i) => ({ id: i }));
         mocks.maxTableSize = 100;
         const wrapper = mount(Feed);

@@ -4,8 +4,12 @@
  * @param {Partial<import('@/types/vrcx').VrcxGroup>} json - API response to merge
  * @returns {import('@/types/vrcx').VrcxGroup}
  */
-export function createDefaultGroupRef(json) {
-    return /** @type {import('@/types/vrcx').VrcxGroup} */ ({
+
+
+
+
+export function createDefaultGroupRef(json: Partial<import('@/types/vrcx').VrcxGroup>) {
+    return ({
         id: '',
         name: '',
         shortCode: '',
@@ -72,5 +76,5 @@ export function createDefaultGroupRef(json) {
         // VRCX
         $languages: [],
         ...json
-    });
+    } as import('@/types/vrcx').VrcxGroup);
 }

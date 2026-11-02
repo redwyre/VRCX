@@ -25,7 +25,7 @@ const whatsNewReleases = Object.freeze({
  * @param {string} version
  * @returns {string}
  */
-function normalizeReleaseVersion(version) {
+function normalizeReleaseVersion(version: string) {
     const normalizedVersion = String(version || '')
         .replace(/^VRCX\s+/, '')
         .trim();
@@ -40,12 +40,12 @@ function normalizeReleaseVersion(version) {
  *     items: { key: string; icon: string; titleKey: string; descriptionKey: string }[];
  * } | null}
  */
-function getWhatsNewRelease(version) {
+function getWhatsNewRelease(version: string) {
     const normalizedVersion = normalizeReleaseVersion(version);
     if (!normalizedVersion) {
         return null;
     }
-    const release = whatsNewReleases[normalizedVersion];
+    const release = whatsNewReleases[normalizedVersion as keyof typeof whatsNewReleases];
     if (!release) {
         return null;
     }
@@ -55,7 +55,7 @@ function getWhatsNewRelease(version) {
     return {
         titleKey: `${baseKey}.title`,
         subtitleKey: `${baseKey}.subtitle`,
-        items: release.items.map((item) => ({
+        items: release.items.map((item: { key: any; }) => ({
             ...item,
             titleKey: `${baseKey}.items.${item.key}.title`,
             descriptionKey: `${baseKey}.items.${item.key}.description`
@@ -76,6 +76,10 @@ function getLatestWhatsNewRelease() {
         return null;
     }
     const latestVersion = versions.sort().at(-1);
+
+
+
+
     return getWhatsNewRelease(latestVersion);
 }
 

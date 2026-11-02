@@ -11,20 +11,24 @@ const mocks = vi.hoisted(() => ({
 vi.mock('pinia', async (importOriginal) => {
     const actual = await importOriginal();
     return {
+
+
+
+
         ...actual,
-        storeToRefs: (store) => store
+        storeToRefs: (store: any) => store
     };
 });
 
 vi.mock('vue-i18n', () => ({
     useI18n: () => ({
-        t: (key) => key
+        t: (key: any) => key
     })
 }));
 
 vi.mock('../../../../stores', () => ({
     useFavoriteStore: () => ({
-        showFavoriteDialog: (...args) => mocks.showFavoriteDialog(...args)
+        showFavoriteDialog: (...args: any[]) => mocks.showFavoriteDialog(...args)
     }),
     useUserStore: () => ({
         currentUser: mocks.currentUser
@@ -32,8 +36,8 @@ vi.mock('../../../../stores', () => ({
 }));
 
 vi.mock('../../../../coordinators/avatarCoordinator', () => ({
-    showAvatarDialog: (...args) => mocks.showAvatarDialog(...args),
-    selectAvatarWithConfirmation: (...args) => mocks.selectAvatarWithConfirmation(...args)
+    showAvatarDialog: (...args: any[]) => mocks.showAvatarDialog(...args),
+    selectAvatarWithConfirmation: (...args: any[]) => mocks.selectAvatarWithConfirmation(...args)
 }));
 
 vi.mock('@/components/ui/item', () => ({
@@ -98,7 +102,7 @@ import FavoritesAvatarLocalHistoryItem from '../FavoritesAvatarLocalHistoryItem.
 /**
  * @param {Record<string, any>} props
  */
-function mountItem(props = {}) {
+function mountItem(props: Record<string, any> = {}) {
     return mount(FavoritesAvatarLocalHistoryItem, {
         props: {
             favorite: {
@@ -116,9 +120,9 @@ function mountItem(props = {}) {
  * @param wrapper
  * @param text
  */
-async function clickMenuItem(wrapper, text) {
+async function clickMenuItem(wrapper: { findAll: (arg0: string) => any; }, text: any) {
     const buttons = wrapper.findAll('button');
-    const target = buttons.find((btn) => btn.text().includes(text));
+    const target = buttons.find((btn: { text: () => string | any[]; }) => btn.text().includes(text));
     expect(target, `menu item not found: ${text}`).toBeTruthy();
     await target.trigger('click');
 }

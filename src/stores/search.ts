@@ -50,11 +50,11 @@ export const useSearchStore = defineStore('Search', () => {
     /**
      * @param {string} value
      */
-    function setSearchText(value) {
+    function setSearchText(value: string) {
         searchText.value = value;
     }
 
-    async function searchUserByDisplayName(displayName) {
+    async function searchUserByDisplayName(displayName: any) {
         const params = {
             n: 10,
             offset: 0,
@@ -64,7 +64,7 @@ export const useSearchStore = defineStore('Search', () => {
         await moreSearchUser(null, params);
     }
 
-    async function moreSearchUser(go, params) {
+    async function moreSearchUser(go: any, params: any) {
         if (go) {
             params.offset += params.n * go;
             if (params.offset < 0) {
@@ -77,7 +77,7 @@ export const useSearchStore = defineStore('Search', () => {
                     console.error('getUsers gave us garbage', json);
                     continue;
                 }
-                // @ts-ignore
+
                 applyUser(json);
             }
 
@@ -88,6 +88,10 @@ export const useSearchStore = defineStore('Search', () => {
                     map.set(ref.id, ref);
                 }
             }
+
+
+
+
             searchUserResults.value = Array.from(map.values());
             return args;
         });
@@ -98,10 +102,10 @@ export const useSearchStore = defineStore('Search', () => {
         if (LINUX) {
             cbText = await window.electron.getClipboardText();
         } else {
-            cbText = await AppApi.GetClipboard().catch((e) => {
-                console.log(e);
-                return '';
-            });
+            cbText = await (AppApi as any).GetClipboard().catch((e: any) => {
+    console.log(e);
+    return '';
+});
         }
 
         let trimemd = cbText.trim();
@@ -112,7 +116,7 @@ export const useSearchStore = defineStore('Search', () => {
         }
     }
 
-    function directAccessParse(input) {
+    function directAccessParse(input: any) {
         if (!input) {
             return false;
         }
@@ -160,7 +164,7 @@ export const useSearchStore = defineStore('Search', () => {
         return false;
     }
 
-    function directAccessWorld(textBoxInput) {
+    function directAccessWorld(textBoxInput: any) {
         let worldId;
         let shortName;
         let input = textBoxInput;
@@ -217,6 +221,10 @@ export const useSearchStore = defineStore('Search', () => {
         if (directAccessPrompt.value) return;
 
         // Element Plus: prompt(message, title, options)
+
+
+
+
         directAccessPrompt.value = modalStore.prompt({
             title: t('prompt.direct_access_omni.header'),
             description: t('prompt.direct_access_omni.description'),
@@ -227,7 +235,7 @@ export const useSearchStore = defineStore('Search', () => {
         });
 
         try {
-            const { ok, value } = await directAccessPrompt.value;
+            const { ok, value }: any = await directAccessPrompt.value;
 
             if (ok && value) {
                 const input = value.trim();
@@ -242,7 +250,7 @@ export const useSearchStore = defineStore('Search', () => {
         }
     }
 
-    function showGroupDialogShortCode(shortCode) {
+    function showGroupDialogShortCode(shortCode: string) {
         groupRequest.groupStrictsearch({ query: shortCode }).then((args) => {
             for (const group of args.json) {
                 if (`${group.shortCode}.${group.discriminator}` === shortCode) {
@@ -254,7 +262,7 @@ export const useSearchStore = defineStore('Search', () => {
         });
     }
 
-    function verifyShortName(location, shortName) {
+    function verifyShortName(location: string, shortName: string) {
         return instanceRequest.getInstanceFromShortName({ shortName }).then((args) => {
             const newLocation = args.json.location;
             const newShortName = args.json.shortName;

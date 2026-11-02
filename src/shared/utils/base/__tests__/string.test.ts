@@ -1,3 +1,8 @@
+// TODO(ts-migrate): Check that this import is the one meant; TypeScript offered the name from
+// several modules.
+// describe was taken from vitest, over node:test. test was taken from vitest, over node:test
+// and node:test.
+import { describe, test, expect } from 'vitest';
 import {
     changeLogRemoveLinks,
     commaNumber,
@@ -18,9 +23,17 @@ describe('String Utils', () => {
 
         test('handles different types', () => {
             expect(escapeTag('')).toBe('');
-            // @ts-ignore
+
+
+
+
+
             expect(escapeTag(null)).toBe('null');
-            // @ts-ignore
+
+
+
+
+
             expect(escapeTag(123)).toBe('123');
         });
     });
@@ -32,15 +45,15 @@ describe('String Utils', () => {
                 data: { value: 'Hello & world' }
             };
             const result = escapeTagRecursive(input);
-            expect(result.name).toBe('&#60;script&#62;alert(&#34;xss&#34;)&#60;/script&#62;');
-            expect(result.data.value).toBe('Hello &#38; world');
+            expect((result as any).name).toBe('&#60;script&#62;alert(&#34;xss&#34;)&#60;/script&#62;');
+            expect((result as any).data.value).toBe('Hello &#38; world');
         });
 
         test('handles arrays', () => {
             const input = ['<script>', 'normal text'];
             const result = escapeTagRecursive(input);
-            expect(result[0]).toBe('&#60;script&#62;');
-            expect(result[1]).toBe('normal text');
+            expect((result as any)[0]).toBe('&#60;script&#62;');
+            expect((result as any)[1]).toBe('normal text');
         });
     });
 
@@ -52,7 +65,11 @@ describe('String Utils', () => {
 
         test('handles special cases', () => {
             expect(textToHex('')).toBe('');
-            // @ts-ignore
+
+
+
+
+
             expect(textToHex(123)).toBe('31 32 33');
         });
     });
@@ -65,16 +82,24 @@ describe('String Utils', () => {
 
         test('handles edge cases', () => {
             expect(commaNumber(0)).toBe('0');
-            // @ts-ignore
+
+
+
+
+
             expect(commaNumber(null)).toBe('0');
-            // @ts-ignore
+
+
+
+
+
             expect(commaNumber('abc')).toBe('0');
         });
     });
 
     describe('localeIncludes', () => {
         const comparer = {
-            compare: (a, b) => a.toLowerCase().localeCompare(b.toLowerCase())
+            compare: (a: string, b: string) => a.toLowerCase().localeCompare(b.toLowerCase())
         };
 
         test('finds substrings', () => {
@@ -115,8 +140,20 @@ describe('String Utils', () => {
         });
 
         test('handles non-string input', () => {
+
+
+
+
             expect(replaceBioSymbols(null)).toBe('');
+
+
+
+
             expect(replaceBioSymbols(undefined)).toBe('');
+
+
+
+
             expect(replaceBioSymbols(123)).toBe('');
         });
 

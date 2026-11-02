@@ -7,8 +7,12 @@ vi.mock('../../services/appConfig', () => ({
     AppDebug: {
         debugWebRequests: false
     },
-    logWebRequest: (...args) => mockLogWebRequest(...args),
-    withQueryLog: (...args) => mockWithQueryLog(...args)
+    logWebRequest: (...args: any[]) => mockLogWebRequest(...args),
+
+
+
+
+    withQueryLog: (...args: any[]) => mockWithQueryLog(...args)
 }));
 
 import {
@@ -152,7 +156,7 @@ describe('entity query cache helpers', () => {
         });
 
         const cached = queryClient.getQueryData(queryKey);
-        expect(cached.ref.updated_at).toBe('2026-01-01T00:00:00.000Z');
+        expect((cached as any).ref.updated_at).toBe('2026-01-01T00:00:00.000Z');
     });
 
     test('patch and refetch invalidates only active queries for that key', async () => {
@@ -230,6 +234,6 @@ describe('entity query cache helpers', () => {
         });
 
         const data = queryClient.getQueryData(queryKey);
-        expect(data.ref.displayName).toBe('New');
+        expect((data as any).ref.displayName).toBe('New');
     });
 });

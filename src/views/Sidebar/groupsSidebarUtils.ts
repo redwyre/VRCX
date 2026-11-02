@@ -2,7 +2,7 @@
  * @param {Array} group - Array of group instance refs
  * @returns {string} The groupId, or empty string
  */
-export function getGroupId(group) {
+export function getGroupId(group: Array<any>) {
     return group[0]?.group?.groupId || '';
 }
 
@@ -12,17 +12,17 @@ export function getGroupId(group) {
  * @param {object} cfg - Collapsed state config object
  * @returns {object} Row object
  */
-export function buildGroupHeaderRow(group, index, cfg) {
+export function buildGroupHeaderRow(group: Array<any>, index: number, cfg: object) {
     const groupId = getGroupId(group);
     return {
-        type: 'group-header',
-        key: `group-header:${groupId}`,
-        groupId,
-        label: group[0]?.group?.name ?? '',
-        count: group.length,
-        isCollapsed: Boolean(cfg[groupId]?.isCollapsed),
-        headerPaddingTop: index === 0 ? '0px' : '10px'
-    };
+    type: 'group-header',
+    key: `group-header:${groupId}`,
+    groupId,
+    label: group[0]?.group?.name ?? '',
+    count: group.length,
+    isCollapsed: Boolean((cfg as any)[groupId]?.isCollapsed),
+    headerPaddingTop: index === 0 ? '0px' : '10px'
+};
 }
 
 /**
@@ -32,27 +32,27 @@ export function buildGroupHeaderRow(group, index, cfg) {
  * @param {boolean} isAgeGatedVisible - Whether age-gated instances should be visible
  * @returns {object} Row object
  */
-export function buildGroupItemRow(ref, index, groupId, isAgeGatedVisible) {
+export function buildGroupItemRow(ref: object, index: number, groupId: string, isAgeGatedVisible: boolean) {
     return {
-        type: 'group-item',
-        key: `group-item:${groupId}:${ref?.instance?.id ?? index}`,
-        ownerId: ref?.instance?.ownerId ?? '',
-        iconUrl: ref?.group?.iconUrl ?? '',
-        name: ref?.group?.name ?? '',
-        userCount: ref?.instance?.userCount ?? 0,
-        capacity: ref?.instance?.capacity ?? 0,
-        location: ref?.instance?.location ?? '',
-        isVisible: Boolean(isAgeGatedVisible || !(ref?.ageGate || ref?.location?.includes('~ageGate')))
-    };
+    type: 'group-item',
+    key: `group-item:${groupId}:${(ref as any)?.instance?.id ?? index}`,
+    ownerId: (ref as any)?.instance?.ownerId ?? '',
+    iconUrl: (ref as any)?.group?.iconUrl ?? '',
+    name: (ref as any)?.group?.name ?? '',
+    userCount: (ref as any)?.instance?.userCount ?? 0,
+    capacity: (ref as any)?.instance?.capacity ?? 0,
+    location: (ref as any)?.instance?.location ?? '',
+    isVisible: Boolean(isAgeGatedVisible || !((ref as any)?.ageGate || (ref as any)?.location?.includes('~ageGate')))
+};
 }
 
 /**
  * @param {object} row - Row object with type property
  * @returns {number} Estimated height in pixels
  */
-export function estimateGroupRowSize(row) {
+export function estimateGroupRowSize(row: object) {
     if (!row) return 44;
-    if (row.type === 'group-header') {
+    if ((row as any).type === 'group-header') {
         return 30;
     }
     return 52;

@@ -19,7 +19,11 @@ vi.mock('../../services/config', () => ({
 }));
 
 vi.mock('../../shared/utils', () => ({
-    changeLogRemoveLinks: (...args) => mocks.changeLogRemoveLinks(...args)
+
+
+
+
+    changeLogRemoveLinks: (...args: any[]) => mocks.changeLogRemoveLinks(...args)
 }));
 
 vi.mock('vue-sonner', () => ({
@@ -28,7 +32,7 @@ vi.mock('vue-sonner', () => ({
 
 vi.mock('vue-i18n', () => ({
     useI18n: () => ({
-        t: (key) => key,
+        t: (key: any) => key,
         locale: require('vue').ref('en')
     })
 }));
@@ -55,9 +59,9 @@ describe('useVRCXUpdaterStore.setAutoUpdateVRCX', () => {
         });
         mocks.configRepository.setString.mockResolvedValue(undefined);
 
-        globalThis.AppApi = {
-            GetVersion: vi.fn().mockResolvedValue('2026.1.0')
-        };
+        (globalThis as any).AppApi = {
+    GetVersion: vi.fn().mockResolvedValue('2026.1.0')
+};
 
         setActivePinia(createPinia());
         useVRCXUpdaterStore();

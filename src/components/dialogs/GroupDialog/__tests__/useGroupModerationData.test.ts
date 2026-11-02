@@ -4,11 +4,11 @@ import { describe, expect, test, vi, beforeEach, afterEach } from 'vitest';
 vi.mock('vue-sonner', () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
 vi.mock('vue-i18n', () => ({
     useI18n: () => ({
-        t: (key) => key,
+        t: (key: any) => key,
         locale: require('vue').ref('en')
     }),
     createI18n: () => ({
-        global: { t: (key) => key, locale: require('vue').ref('en') },
+        global: { t: (key: any) => key, locale: require('vue').ref('en') },
         install: vi.fn()
     })
 }));
@@ -29,6 +29,10 @@ vi.mock('vue-router', async (importOriginal) => {
     const actual = await importOriginal();
     const { ref: vRef } = require('vue');
     return {
+
+
+
+
         ...actual,
         useRouter: vi.fn(() => ({
             push: vi.fn(),
@@ -89,8 +93,8 @@ vi.mock('../../../../api', () => ({
 }));
 
 vi.mock('worker-timers', () => ({
-    setTimeout: (fn, ms) => globalThis.setTimeout(fn, ms),
-    clearTimeout: (id) => globalThis.clearTimeout(id)
+    setTimeout: (fn: () => void, ms: number | undefined) => globalThis.setTimeout(fn, ms),
+    clearTimeout: (id: string | number | NodeJS.Timeout | undefined) => globalThis.clearTimeout(id)
 }));
 
 import { useGroupModerationData } from '../useGroupModerationData';
@@ -147,7 +151,7 @@ function createDeps(overrides = {}) {
 describe('useGroupModerationData', () => {
     beforeEach(() => {
         vi.clearAllMocks();
-        queryRequest.fetch.mockReset();
+        (queryRequest.fetch as any).mockReset();
     });
 
     describe('getAllGroupBans', () => {
@@ -278,6 +282,10 @@ describe('useGroupModerationData', () => {
             });
 
             const { getAllGroupLogs } = useGroupModerationData(deps);
+
+
+
+
             await getAllGroupLogs('grp_test', ['group.member.ban', 'group.member.kick']);
 
             expect(deps.groupRequest.getGroupLogs).toHaveBeenCalledWith(
@@ -382,9 +390,9 @@ describe('useGroupModerationData', () => {
                 params: {}
             });
             deps.applyGroupMember.mockReturnValue({ userId: 'usr_1' });
-            queryRequest.fetch.mockResolvedValue({
-                json: { id: 'usr_1', displayName: 'Alice' }
-            });
+            (queryRequest.fetch as any).mockResolvedValue({
+    json: { id: 'usr_1', displayName: 'Alice' }
+});
 
             const { addGroupMemberToSelection } = useGroupModerationData(deps);
             await addGroupMemberToSelection('usr_1');
@@ -405,7 +413,15 @@ describe('useGroupModerationData', () => {
     describe('resetData', () => {
         test('clears all table data and search state', () => {
             const deps = createDeps();
+
+
+
+
             deps.tables.members.data = [{ userId: 'usr_1' }];
+
+
+
+
             deps.tables.bans.data = [{ userId: 'usr_2' }];
 
             const { resetData, memberSearch } = useGroupModerationData(deps);
@@ -429,6 +445,10 @@ describe('useGroupModerationData', () => {
 
         test('groupMembersSearch clears table when search is too short', () => {
             const deps = createDeps();
+
+
+
+
             deps.tables.members.data = [{ userId: 'usr_1' }];
 
             const { groupMembersSearch, memberSearch, isGroupMembersLoading } = useGroupModerationData(deps);
@@ -493,6 +513,10 @@ describe('useGroupModerationData', () => {
             await vi.advanceTimersByTimeAsync(200); // second request for "johnny" resolves
 
             expect(deps.tables.members.data).toEqual([{ userId: 'usr_new', $selected: false }]);
+
+
+
+
 
             resolveFirst({
                 json: { results: [{ userId: 'usr_stale' }] },

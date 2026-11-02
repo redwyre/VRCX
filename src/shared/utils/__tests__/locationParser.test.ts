@@ -170,7 +170,7 @@ describe('resolveRegion', () => {
 // ─── translateAccessType ─────────────────────────────────────────────
 
 describe('translateAccessType', () => {
-    const t = (key) => `translated_${key}`;
+    const t = (key: any) => `translated_${key}`;
     const keyMap = {
         public: 'access.public',
         friends: 'access.friends',

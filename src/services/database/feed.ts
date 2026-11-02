@@ -1,12 +1,16 @@
 import { dbVars } from '../database';
 
-import { parseBioLinks } from './userProfile.js';
-import sqliteService from '../sqlite.js';
+import { parseBioLinks } from './userProfile';
+import sqliteService from '../sqlite';
 
 const feed = {
-    async addGPSToDatabase(entry) {
+    async addGPSToDatabase(entry: { created_at: any; type?: string; userId: any; displayName: any; location: any; worldName: any; groupName: any; previousLocation: any; time: any; }) {
         const rowId = await sqliteService.executeInsert(
             `INSERT OR IGNORE INTO ${dbVars.userPrefix}_feed_gps (created_at, user_id, display_name, location, world_name, previous_location, time, group_name) VALUES (@created_at, @user_id, @display_name, @location, @world_name, @previous_location, @time, @group_name)`,
+
+
+
+
             {
                 '@created_at': entry.created_at,
                 '@user_id': entry.userId,
@@ -21,9 +25,13 @@ const feed = {
         return rowId ? { ...entry, rowId } : undefined;
     },
 
-    async addStatusToDatabase(entry) {
+    async addStatusToDatabase(entry: { created_at: any; type?: string; userId: any; displayName: any; status: any; statusDescription: any; previousStatus: any; previousStatusDescription: any; }) {
         const rowId = await sqliteService.executeInsert(
             `INSERT OR IGNORE INTO ${dbVars.userPrefix}_feed_status (created_at, user_id, display_name, status, status_description, previous_status, previous_status_description) VALUES (@created_at, @user_id, @display_name, @status, @status_description, @previous_status, @previous_status_description)`,
+
+
+
+
             {
                 '@created_at': entry.created_at,
                 '@user_id': entry.userId,
@@ -37,9 +45,13 @@ const feed = {
         return rowId ? { ...entry, rowId } : undefined;
     },
 
-    async addBioToDatabase(entry) {
+    async addBioToDatabase(entry: { created_at: any; type?: string; userId: any; displayName: any; bio: any; previousBio: any; bioLinks: any; previousBioLinks: any; }) {
         const rowId = await sqliteService.executeInsert(
             `INSERT OR IGNORE INTO ${dbVars.userPrefix}_feed_bio (created_at, user_id, display_name, bio, previous_bio, bio_links, previous_bio_links) VALUES (@created_at, @user_id, @display_name, @bio, @previous_bio, @bio_links, @previous_bio_links)`,
+
+
+
+
             {
                 '@created_at': entry.created_at,
                 '@user_id': entry.userId,
@@ -53,9 +65,13 @@ const feed = {
         return rowId ? { ...entry, rowId } : undefined;
     },
 
-    async addAvatarToDatabase(entry) {
+    async addAvatarToDatabase(entry: { created_at: any; type?: string; userId: any; displayName: any; ownerId: any; previousOwnerId?: string; avatarName: any; previousAvatarName?: string; currentAvatarImageUrl: any; currentAvatarThumbnailImageUrl: any; previousCurrentAvatarImageUrl: any; previousCurrentAvatarThumbnailImageUrl: any; }) {
         const rowId = await sqliteService.executeInsert(
             `INSERT OR IGNORE INTO ${dbVars.userPrefix}_feed_avatar (created_at, user_id, display_name, owner_id, avatar_name, current_avatar_image_url, current_avatar_thumbnail_image_url, previous_current_avatar_image_url, previous_current_avatar_thumbnail_image_url) VALUES (@created_at, @user_id, @display_name, @owner_id, @avatar_name, @current_avatar_image_url, @current_avatar_thumbnail_image_url, @previous_current_avatar_image_url, @previous_current_avatar_thumbnail_image_url)`,
+
+
+
+
             {
                 '@created_at': entry.created_at,
                 '@user_id': entry.userId,
@@ -78,10 +94,14 @@ const feed = {
      * @param {string | null} cutoffDate - ISO date string. Deletes records older than this date. If null, deletes all
      *   records.
      */
-    async purgeAvatarFeedData(cutoffDate) {
+    async purgeAvatarFeedData(cutoffDate: string | null) {
         if (cutoffDate) {
             await sqliteService.executeNonQuery(
                 `DELETE FROM ${dbVars.userPrefix}_feed_avatar WHERE created_at < @cutoff`,
+
+
+
+
                 {
                     '@cutoff': cutoffDate
                 }
@@ -91,9 +111,13 @@ const feed = {
         }
     },
 
-    async addOnlineOfflineToDatabase(entry) {
+    async addOnlineOfflineToDatabase(entry: { created_at: any; type: any; userId: any; displayName: any; location: any; worldName: any; groupName: any; time: any; }) {
         const rowId = await sqliteService.executeInsert(
             `INSERT OR IGNORE INTO ${dbVars.userPrefix}_feed_online_offline (created_at, user_id, display_name, type, location, world_name, time, group_name) VALUES (@created_at, @user_id, @display_name, @type, @location, @world_name, @time, @group_name)`,
+
+
+
+
             {
                 '@created_at': entry.created_at,
                 '@user_id': entry.userId,
@@ -109,9 +133,9 @@ const feed = {
     },
 
     async searchFeedDatabase(
-        search,
-        filters,
-        vipList,
+        search: string,
+        filters: any,
+        vipList: any,
         maxEntries = dbVars.searchTableSize,
         dateFrom = '',
         dateTo = ''
@@ -122,10 +146,10 @@ const feed = {
         let vipQuery = '';
         const vipArgs = {};
         if (vipList.length > 0) {
-            const vipPlaceholders = [];
-            vipList.forEach((vip, i) => {
+            const vipPlaceholders: string[] = [];
+            vipList.forEach((vip: any, i: any) => {
                 const key = `@vip_${i}`;
-                vipArgs[key] = vip;
+                (vipArgs as any)[key] = vip;
                 vipPlaceholders.push(key);
             });
             vipQuery = `AND user_id IN (${vipPlaceholders.join(', ')})`;
@@ -152,7 +176,7 @@ const feed = {
             avatar = false;
             online = false;
             offline = false;
-            filters.forEach((filter) => {
+            filters.forEach((filter: any) => {
                 switch (filter) {
                     case 'GPS':
                         gps = true;
@@ -245,7 +269,7 @@ const feed = {
         if (selects.length === 0) {
             return [];
         }
-        const feedDatabase = [];
+        const feedDatabase: { rowId: any; created_at: any; userId: any; displayName: any; type: any; }[] = [];
         const args = {
             '@searchLike': searchLike,
             '@limit': maxEntries,
@@ -253,13 +277,13 @@ const feed = {
             ...vipArgs
         };
         if (dateFrom) {
-            args['@dateFrom'] = dateFrom;
+            (args as any)['@dateFrom'] = dateFrom;
         }
         if (dateTo) {
-            args['@dateTo'] = dateTo;
+            (args as any)['@dateTo'] = dateTo;
         }
         await sqliteService.execute(
-            (dbRow) => {
+            (dbRow: any) => {
                 const type = dbRow[4];
                 const row = {
                     rowId: dbRow[0],
@@ -270,56 +294,60 @@ const feed = {
                 };
                 switch (type) {
                     case 'GPS':
-                        row.location = dbRow[5];
-                        row.worldName = dbRow[6];
-                        row.previousLocation = dbRow[7];
-                        row.time = dbRow[8];
-                        row.groupName = dbRow[9];
+                        (row as any).location = dbRow[5];
+                        (row as any).worldName = dbRow[6];
+                        (row as any).previousLocation = dbRow[7];
+                        (row as any).time = dbRow[8];
+                        (row as any).groupName = dbRow[9];
                         break;
                     case 'Status':
-                        row.status = dbRow[10];
-                        row.statusDescription = dbRow[11];
-                        row.previousStatus = dbRow[12];
-                        row.previousStatusDescription = dbRow[13];
+                        (row as any).status = dbRow[10];
+                        (row as any).statusDescription = dbRow[11];
+                        (row as any).previousStatus = dbRow[12];
+                        (row as any).previousStatusDescription = dbRow[13];
                         break;
                     case 'Bio':
-                        row.bio = dbRow[14];
-                        row.previousBio = dbRow[15];
-                        row.bioLinks = parseBioLinks(dbRow[22]);
-                        row.previousBioLinks = parseBioLinks(dbRow[23]);
+                        (row as any).bio = dbRow[14];
+                        (row as any).previousBio = dbRow[15];
+                        (row as any).bioLinks = parseBioLinks(dbRow[22]);
+                        (row as any).previousBioLinks = parseBioLinks(dbRow[23]);
                         break;
                     case 'Avatar':
-                        row.ownerId = dbRow[16];
-                        row.avatarName = dbRow[17];
-                        row.currentAvatarImageUrl = dbRow[18];
-                        row.currentAvatarThumbnailImageUrl = dbRow[19];
-                        row.previousCurrentAvatarImageUrl = dbRow[20];
-                        row.previousCurrentAvatarThumbnailImageUrl = dbRow[21];
+                        (row as any).ownerId = dbRow[16];
+                        (row as any).avatarName = dbRow[17];
+                        (row as any).currentAvatarImageUrl = dbRow[18];
+                        (row as any).currentAvatarThumbnailImageUrl = dbRow[19];
+                        (row as any).previousCurrentAvatarImageUrl = dbRow[20];
+                        (row as any).previousCurrentAvatarThumbnailImageUrl = dbRow[21];
                         break;
                     case 'Online':
                     case 'Offline':
-                        row.location = dbRow[5];
-                        row.worldName = dbRow[6];
-                        row.time = dbRow[8];
-                        row.groupName = dbRow[9];
+                        (row as any).location = dbRow[5];
+                        (row as any).worldName = dbRow[6];
+                        (row as any).time = dbRow[8];
+                        (row as any).groupName = dbRow[9];
                         break;
                 }
                 feedDatabase.push(row);
             },
             `SELECT ${baseColumns} FROM (${selects.join(' UNION ALL ')}) ORDER BY created_at DESC, id DESC LIMIT @limit`,
+
+
+
+
             args
         );
         return feedDatabase;
     },
 
-    async lookupFeedDatabase(filters, vipList, maxEntries = dbVars.maxTableSize) {
+    async lookupFeedDatabase(filters: any, vipList: any, maxEntries = dbVars.maxTableSize) {
         let vipQuery = '';
         const vipArgs = {};
         if (vipList.length > 0) {
-            const vipPlaceholders = [];
-            vipList.forEach((vip, i) => {
+            const vipPlaceholders: string[] = [];
+            vipList.forEach((vip: any, i: any) => {
                 const key = `@vip_${i}`;
-                vipArgs[key] = vip;
+                (vipArgs as any)[key] = vip;
                 vipPlaceholders.push(key);
             });
             vipQuery = `AND user_id IN (${vipPlaceholders.join(', ')})`;
@@ -337,7 +365,7 @@ const feed = {
             avatar = false;
             online = false;
             offline = false;
-            filters.forEach((filter) => {
+            filters.forEach((filter: any) => {
                 switch (filter) {
                     case 'GPS':
                         gps = true;
@@ -423,14 +451,14 @@ const feed = {
         if (selects.length === 0) {
             return [];
         }
-        const feedDatabase = [];
+        const feedDatabase: { rowId: any; created_at: any; userId: any; displayName: any; type: any; }[] = [];
         const args = {
             '@limit': maxEntries,
             '@perTable': maxEntries,
             ...vipArgs
         };
         await sqliteService.execute(
-            (dbRow) => {
+            (dbRow: any) => {
                 const type = dbRow[4];
                 const row = {
                     rowId: dbRow[0],
@@ -441,56 +469,60 @@ const feed = {
                 };
                 switch (type) {
                     case 'GPS':
-                        row.location = dbRow[5];
-                        row.worldName = dbRow[6];
-                        row.previousLocation = dbRow[7];
-                        row.time = dbRow[8];
-                        row.groupName = dbRow[9];
+                        (row as any).location = dbRow[5];
+                        (row as any).worldName = dbRow[6];
+                        (row as any).previousLocation = dbRow[7];
+                        (row as any).time = dbRow[8];
+                        (row as any).groupName = dbRow[9];
                         break;
                     case 'Status':
-                        row.status = dbRow[10];
-                        row.statusDescription = dbRow[11];
-                        row.previousStatus = dbRow[12];
-                        row.previousStatusDescription = dbRow[13];
+                        (row as any).status = dbRow[10];
+                        (row as any).statusDescription = dbRow[11];
+                        (row as any).previousStatus = dbRow[12];
+                        (row as any).previousStatusDescription = dbRow[13];
                         break;
                     case 'Bio':
-                        row.bio = dbRow[14];
-                        row.previousBio = dbRow[15];
-                        row.bioLinks = parseBioLinks(dbRow[22]);
-                        row.previousBioLinks = parseBioLinks(dbRow[23]);
+                        (row as any).bio = dbRow[14];
+                        (row as any).previousBio = dbRow[15];
+                        (row as any).bioLinks = parseBioLinks(dbRow[22]);
+                        (row as any).previousBioLinks = parseBioLinks(dbRow[23]);
                         break;
                     case 'Avatar':
-                        row.ownerId = dbRow[16];
-                        row.avatarName = dbRow[17];
-                        row.currentAvatarImageUrl = dbRow[18];
-                        row.currentAvatarThumbnailImageUrl = dbRow[19];
-                        row.previousCurrentAvatarImageUrl = dbRow[20];
-                        row.previousCurrentAvatarThumbnailImageUrl = dbRow[21];
+                        (row as any).ownerId = dbRow[16];
+                        (row as any).avatarName = dbRow[17];
+                        (row as any).currentAvatarImageUrl = dbRow[18];
+                        (row as any).currentAvatarThumbnailImageUrl = dbRow[19];
+                        (row as any).previousCurrentAvatarImageUrl = dbRow[20];
+                        (row as any).previousCurrentAvatarThumbnailImageUrl = dbRow[21];
                         break;
                     case 'Online':
                     case 'Offline':
-                        row.location = dbRow[5];
-                        row.worldName = dbRow[6];
-                        row.time = dbRow[8];
-                        row.groupName = dbRow[9];
+                        (row as any).location = dbRow[5];
+                        (row as any).worldName = dbRow[6];
+                        (row as any).time = dbRow[8];
+                        (row as any).groupName = dbRow[9];
                         break;
                 }
                 feedDatabase.push(row);
             },
             `SELECT ${baseColumns} FROM (${selects.join(' UNION ALL ')}) ORDER BY created_at DESC, id DESC LIMIT @limit`,
+
+
+
+
             args
         );
         return feedDatabase;
     },
 
-    async getFeedByInstanceId(instanceId, filters, vipList) {
+    async getFeedByInstanceId(instanceId: any, filters: any, vipList: any) {
         let vipQuery = '';
         const vipArgs = {};
         if (vipList.length > 0) {
-            const vipPlaceholders = [];
-            vipList.forEach((vip, i) => {
+            const vipPlaceholders: string[] = [];
+            vipList.forEach((vip: any, i: any) => {
                 const key = `@vip_${i}`;
-                vipArgs[key] = vip;
+                (vipArgs as any)[key] = vip;
                 vipPlaceholders.push(key);
             });
             vipQuery = `AND user_id IN (${vipPlaceholders.join(', ')})`;
@@ -502,7 +534,7 @@ const feed = {
             gps = false;
             online = false;
             offline = false;
-            filters.forEach((filter) => {
+            filters.forEach((filter: any) => {
                 switch (filter) {
                     case 'GPS':
                         gps = true;
@@ -564,7 +596,7 @@ const feed = {
         if (selects.length === 0) {
             return [];
         }
-        const feedDatabase = [];
+        const feedDatabase: { rowId: any; created_at: any; userId: any; displayName: any; type: any; }[] = [];
         const args = {
             '@instanceLike': `%${instanceId}%`,
             '@limit': dbVars.searchTableSize,
@@ -572,7 +604,7 @@ const feed = {
             ...vipArgs
         };
         await sqliteService.execute(
-            (dbRow) => {
+            (dbRow: any) => {
                 const type = dbRow[4];
                 const row = {
                     rowId: dbRow[0],
@@ -583,23 +615,27 @@ const feed = {
                 };
                 switch (type) {
                     case 'GPS':
-                        row.location = dbRow[5];
-                        row.worldName = dbRow[6];
-                        row.previousLocation = dbRow[7];
-                        row.time = dbRow[8];
-                        row.groupName = dbRow[9];
+                        (row as any).location = dbRow[5];
+                        (row as any).worldName = dbRow[6];
+                        (row as any).previousLocation = dbRow[7];
+                        (row as any).time = dbRow[8];
+                        (row as any).groupName = dbRow[9];
                         break;
                     case 'Online':
                     case 'Offline':
-                        row.location = dbRow[5];
-                        row.worldName = dbRow[6];
-                        row.time = dbRow[8];
-                        row.groupName = dbRow[9];
+                        (row as any).location = dbRow[5];
+                        (row as any).worldName = dbRow[6];
+                        (row as any).time = dbRow[8];
+                        (row as any).groupName = dbRow[9];
                         break;
                 }
                 feedDatabase.push(row);
             },
             `SELECT ${baseColumns} FROM (${selects.join(' UNION ALL ')}) ORDER BY created_at DESC, id DESC LIMIT @limit`,
+
+
+
+
             args
         );
         return feedDatabase;
@@ -610,11 +646,11 @@ const feed = {
      * @param {number} limit - Max number of worlds to return
      * @returns {Promise<Array>} Ranked list of hot worlds
      */
-    async getHotWorlds(days = 30, limit = 30) {
+    async getHotWorlds(days: number = 30, limit: number = 30) {
         const halfDays = Math.floor(days / 2);
-        const results = [];
+        const results: any = [];
         await sqliteService.execute(
-            (dbRow) => {
+            (dbRow: any) => {
                 results.push({
                     worldId: dbRow[0],
                     worldName: dbRow[1],
@@ -637,6 +673,10 @@ const feed = {
             GROUP BY world_id
             ORDER BY unique_friends DESC, visit_count DESC
             LIMIT @limit`,
+
+
+
+
             {
                 '@daysOffset': `-${days} days`,
                 '@limit': limit
@@ -645,7 +685,7 @@ const feed = {
 
         const trendMap = new Map();
         await sqliteService.execute(
-            (dbRow) => {
+            (dbRow: any) => {
                 trendMap.set(dbRow[0], dbRow[1]);
             },
             `SELECT
@@ -658,6 +698,10 @@ const feed = {
                 AND INSTR(location, ':') > 0
                 AND world_name IS NOT NULL AND world_name != ''
             GROUP BY world_id`,
+
+
+
+
             {
                 '@daysOffset': `-${days} days`,
                 '@halfOffset': `-${halfDays} days`
@@ -666,7 +710,7 @@ const feed = {
 
         const recentMap = new Map();
         await sqliteService.execute(
-            (dbRow) => {
+            (dbRow: any) => {
                 recentMap.set(dbRow[0], dbRow[1]);
             },
             `SELECT
@@ -678,6 +722,10 @@ const feed = {
                 AND INSTR(location, ':') > 0
                 AND world_name IS NOT NULL AND world_name != ''
             GROUP BY world_id`,
+
+
+
+
             {
                 '@halfOffset': `-${halfDays} days`
             }
@@ -703,10 +751,10 @@ const feed = {
      * @param {number} days - Number of days to look back
      * @returns {Promise<Array>} List of friends who visited
      */
-    async getHotWorldFriendDetail(worldId, days = 30) {
-        const results = [];
+    async getHotWorldFriendDetail(worldId: string, days: number = 30) {
+        const results: { userId: any; displayName: any; visitCount: any; lastVisit: any; }[] = [];
         await sqliteService.execute(
-            (dbRow) => {
+            (dbRow: any) => {
                 results.push({
                     userId: dbRow[0],
                     displayName: dbRow[1],
@@ -724,6 +772,10 @@ const feed = {
                 AND created_at >= datetime('now', @daysOffset)
             GROUP BY user_id
             ORDER BY visit_count DESC`,
+
+
+
+
             {
                 '@worldId': worldId,
                 '@daysOffset': `-${days} days`

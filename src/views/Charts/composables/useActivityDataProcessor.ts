@@ -3,15 +3,15 @@ import { computed } from 'vue';
 import dayjs from 'dayjs';
 
 export function useActivityDataProcessor(
-    activityData,
-    activityDetailData,
-    isDetailVisible,
-    isSoloInstanceVisible,
-    isNoFriendInstanceVisible,
-    selectedDate
+    activityData: { value: any[]; },
+    activityDetailData: { value: any; },
+    isDetailVisible: { value: any; },
+    isSoloInstanceVisible: { value: any; },
+    isNoFriendInstanceVisible: { value: any; },
+    selectedDate: { value: string | number | Date | dayjs.Dayjs | null | undefined; }
 ) {
     const totalOnlineTime = computed(() => {
-        return activityData.value?.reduce((acc, item, idx) => {
+        return activityData.value?.reduce((acc, item: { joinTime: string | number | Date | dayjs.Dayjs | null | undefined; leaveTime: number; time: any; }, idx: number) => {
             // If the joinTime of the first data is on the previous day,
             // and the data traverses midnight, the duration starts at midnight
             if (idx === 0) {
@@ -38,7 +38,7 @@ export function useActivityDataProcessor(
                 if (arr.length === 1) {
                     return true;
                 }
-                return arr.some((item) => item.isFriend);
+                return arr.some((item: { isFriend: any; }) => item.isFriend);
             });
         }
         return result;

@@ -1,4 +1,4 @@
-﻿/// Copyright © `2019` `https://github.com/gc/` (MIT License)
+/// Copyright © `2019` `https://github.com/gc/` (MIT License)
 /// This file doesn't support non latin languages very well, but there's not
 /// much that can be done about that
 
@@ -110,7 +110,7 @@ for (const [char_, confusables] of charToConfusables) {
 }
 
 const nonConfusables = /^[!-~]*$/;
-const removeConfusables = function (a) {
+const removeConfusables = function (a: string) {
     // Skip if all characters are ok
     if (nonConfusables.test(a)) {
         return a;
@@ -128,7 +128,7 @@ const removeConfusables = function (a) {
     return ret;
 };
 
-const removeWhitespace = function (a) {
+const removeWhitespace = function (a: string) {
     return a.replace(/\s/g, '');
 };
 

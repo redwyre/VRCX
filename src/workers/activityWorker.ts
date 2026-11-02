@@ -7,7 +7,7 @@ import {
     computeActivityView,
     computeOverlapView,
     normalizeBuckets
-} from '../shared/utils/activityEngine.js';
+} from '../shared/utils/activityEngine';
 
 self.addEventListener('message', (event) => {
     const { type, seq, payload } = event.data;
@@ -84,7 +84,7 @@ self.addEventListener('message', (event) => {
     }
 });
 
-function computeSessionsSnapshot(payload) {
+function computeSessionsSnapshot(payload: { sourceRevision: string; sourceType: string; rows: string | any[]; mergeGapMs: number | undefined; nowMs: number | undefined; mayHaveOpenTail: boolean; events: any; initialStart: null | undefined; }) {
     const sourceRevision = payload.sourceRevision || '';
     if (payload.sourceType === 'self_gamelog') {
         const sessions = buildSessionsFromGamelog(payload.rows, payload.mergeGapMs, payload.nowMs).map(

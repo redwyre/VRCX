@@ -1,11 +1,15 @@
 import { dbVars } from '../database';
 
-import sqliteService from '../sqlite.js';
+import sqliteService from '../sqlite';
 
 const avatarFavorites = {
-    addAvatarToCache(entry) {
+    addAvatarToCache(entry: { id: any; authorId: any; authorName: any; created_at: any; description: any; imageUrl: any; name: any; releaseStatus: any; thumbnailImageUrl: any; updated_at: any; version: any; }) {
         sqliteService.executeNonQuery(
             `INSERT OR REPLACE INTO cache_avatar (id, added_at, author_id, author_name, created_at, description, image_url, name, release_status, thumbnail_image_url, updated_at, version) VALUES (@id, @added_at, @author_id, @author_name, @created_at, @description, @image_url, @name, @release_status, @thumbnail_image_url, @updated_at, @version)`,
+
+
+
+
             {
                 '@id': entry.id,
                 '@added_at': new Date().toJSON(),
@@ -23,11 +27,15 @@ const avatarFavorites = {
         );
     },
 
-    addAvatarToHistory(avatarId) {
+    addAvatarToHistory(avatarId: any) {
         sqliteService.executeNonQuery(
             `INSERT INTO ${dbVars.userPrefix}_avatar_history (avatar_id, created_at, time)
             VALUES (@avatar_id, @created_at, 0)
             ON CONFLICT(avatar_id) DO UPDATE SET created_at = @created_at`,
+
+
+
+
             {
                 '@avatar_id': avatarId,
                 '@created_at': new Date().toJSON()
@@ -35,16 +43,20 @@ const avatarFavorites = {
         );
     },
 
-    async getAvatarTimeSpent(avatarId) {
+    async getAvatarTimeSpent(avatarId: any) {
         var ref = {
             timeSpent: 0,
             avatarId
         };
         await sqliteService.execute(
-            (row) => {
+            (row: number[]) => {
                 ref.timeSpent = row[0];
             },
             `SELECT time FROM ${dbVars.userPrefix}_avatar_history WHERE avatar_id = @avatarId`,
+
+
+
+
             {
                 '@avatarId': avatarId
             }
@@ -55,16 +67,20 @@ const avatarFavorites = {
 
     async getAllAvatarTimeSpent() {
         const map = new Map();
-        await sqliteService.execute((row) => {
+        await sqliteService.execute((row: any) => {
             map.set(row[0], row[1] || 0);
         }, `SELECT avatar_id, time FROM ${dbVars.userPrefix}_avatar_history`);
 
         return map;
     },
 
-    addAvatarTimeSpent(avatarId, timeSpent) {
+    addAvatarTimeSpent(avatarId: string, timeSpent: number) {
         sqliteService.executeNonQuery(
             `UPDATE ${dbVars.userPrefix}_avatar_history SET time = time + @timeSpent WHERE avatar_id = @avatarId`,
+
+
+
+
             {
                 '@avatarId': avatarId,
                 '@timeSpent': timeSpent
@@ -72,9 +88,9 @@ const avatarFavorites = {
         );
     },
 
-    async getAvatarHistory(currentUserId, limit = 100) {
-        var data = [];
-        await sqliteService.execute((dbRow) => {
+    async getAvatarHistory(currentUserId: string, limit = 100) {
+        var data: { id: any; authorId: any; authorName: any; created_at: any; description: any; imageUrl: any; name: any; releaseStatus: any; thumbnailImageUrl: any; updated_at: any; version: any; }[] = [];
+        await sqliteService.execute((dbRow: any) => {
             var row = {
                 id: dbRow[0],
                 authorId: dbRow[5],
@@ -93,10 +109,10 @@ const avatarFavorites = {
         return data;
     },
 
-    async getCachedAvatarById(id) {
+    async getCachedAvatarById(id: string) {
         var data = null;
         await sqliteService.execute(
-            (dbRow) => {
+            (dbRow: any) => {
                 data = {
                     id: dbRow[0],
                     // added_at: dbRow[1],
@@ -113,6 +129,10 @@ const avatarFavorites = {
                 };
             },
             `SELECT * FROM cache_avatar WHERE id = @id`,
+
+
+
+
             {
                 '@id': id
             }
@@ -125,9 +145,13 @@ const avatarFavorites = {
         sqliteService.executeNonQuery('DELETE FROM cache_avatar');
     },
 
-    addAvatarToFavorites(avatarId, groupName) {
+    addAvatarToFavorites(avatarId: string, groupName: string) {
         sqliteService.executeNonQuery(
             'INSERT OR REPLACE INTO favorite_avatar (avatar_id, group_name, created_at) VALUES (@avatar_id, @group_name, @created_at)',
+
+
+
+
             {
                 '@avatar_id': avatarId,
                 '@group_name': groupName,
@@ -136,9 +160,13 @@ const avatarFavorites = {
         );
     },
 
-    renameAvatarFavoriteGroup(newGroupName, groupName) {
+    renameAvatarFavoriteGroup(newGroupName: string, groupName: string) {
         sqliteService.executeNonQuery(
             `UPDATE favorite_avatar SET group_name = @new_group_name WHERE group_name = @group_name`,
+
+
+
+
             {
                 '@new_group_name': newGroupName,
                 '@group_name': groupName
@@ -146,15 +174,23 @@ const avatarFavorites = {
         );
     },
 
-    deleteAvatarFavoriteGroup(groupName) {
+    deleteAvatarFavoriteGroup(groupName: string) {
+
+
+
+
         sqliteService.executeNonQuery(`DELETE FROM favorite_avatar WHERE group_name = @group_name`, {
             '@group_name': groupName
         });
     },
 
-    removeAvatarFromFavorites(avatarId, groupName) {
+    removeAvatarFromFavorites(avatarId: string, groupName: string) {
         sqliteService.executeNonQuery(
             `DELETE FROM favorite_avatar WHERE avatar_id = @avatar_id AND group_name = @group_name`,
+
+
+
+
             {
                 '@avatar_id': avatarId,
                 '@group_name': groupName
@@ -163,8 +199,8 @@ const avatarFavorites = {
     },
 
     async getAvatarFavorites() {
-        var data = [];
-        await sqliteService.execute((dbRow) => {
+        var data: { created_at: any; avatarId: any; groupName: any; }[] = [];
+        await sqliteService.execute((dbRow: any) => {
             var row = {
                 created_at: dbRow[1],
                 avatarId: dbRow[2],
@@ -175,15 +211,23 @@ const avatarFavorites = {
         return data;
     },
 
-    removeAvatarFromCache(avatarId) {
+    removeAvatarFromCache(avatarId: unknown) {
+
+
+
+
         sqliteService.executeNonQuery(`DELETE FROM cache_avatar WHERE id = @avatar_id`, {
             '@avatar_id': avatarId
         });
     },
 
     async getAvatarCache() {
-        var data = [];
-        await sqliteService.execute((dbRow) => {
+        var data: {
+            id: any;
+            // added_at: dbRow[1],
+            authorId: any; authorName: any; created_at: any; description: any; imageUrl: any; name: any; releaseStatus: any; thumbnailImageUrl: any; updated_at: any; version: any;
+        }[] = [];
+        await sqliteService.execute((dbRow: any) => {
             var row = {
                 id: dbRow[0],
                 // added_at: dbRow[1],

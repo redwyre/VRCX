@@ -1,10 +1,10 @@
 import { useAppearanceSettingsStore } from '../stores';
 
-function padZero(num) {
+function padZero(num: any) {
     return String(num).padStart(2, '0');
 }
 
-function toIsoLong(date) {
+function toIsoLong(date: Date) {
     const y = date.getFullYear();
     const m = padZero(date.getMonth() + 1);
     const d = padZero(date.getDate());
@@ -14,7 +14,7 @@ function toIsoLong(date) {
     return `${y}-${m}-${d} ${hh}:${mm}:${ss}`;
 }
 
-function toLocalShort(date, dateFormat, hour12) {
+function toLocalShort(date: Date, dateFormat: string, hour12: boolean) {
     return date
         .toLocaleDateString(dateFormat, {
             month: '2-digit',
@@ -28,7 +28,7 @@ function toLocalShort(date, dateFormat, hour12) {
         .replace(',', '');
 }
 
-function toLocalLong(date, dateFormat, hour12) {
+function toLocalLong(date: Date, dateFormat: string, hour12: boolean) {
     return date.toLocaleDateString(dateFormat, {
         month: '2-digit',
         day: '2-digit',
@@ -40,7 +40,7 @@ function toLocalLong(date, dateFormat, hour12) {
     });
 }
 
-function toLocalTime(date, dateFormat, hour12) {
+function toLocalTime(date: Date, dateFormat: string, hour12: boolean) {
     return date.toLocaleTimeString(dateFormat, {
         hour: 'numeric',
         minute: 'numeric',
@@ -48,7 +48,7 @@ function toLocalTime(date, dateFormat, hour12) {
     });
 }
 
-function toLocalDate(date, dateFormat) {
+function toLocalDate(date: Date, dateFormat: string) {
     return date.toLocaleDateString(dateFormat, {
         month: '2-digit',
         day: '2-digit',
@@ -61,7 +61,7 @@ function toLocalDate(date, dateFormat) {
  * @param {'long' | 'short' | 'time' | 'date'} format
  * @returns {string}
  */
-function formatDateFilter(dateStr, format) {
+function formatDateFilter(dateStr: string | number, format: 'long' | 'short' | 'time' | 'date') {
     const appearance = useAppearanceSettingsStore();
     const { dtIsoFormat: isoFormat, dtHour12: hour12, currentCulture } = appearance;
 

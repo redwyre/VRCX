@@ -2,12 +2,12 @@
  * @param {object} print
  * @returns
  */
-function getPrintFileName(print) {
-    const authorName = print.authorName;
+function getPrintFileName(print: object) {
+    const authorName = (print as any).authorName;
     // fileDate format: 2024-11-03_16-14-25.757
     const createdAt = getPrintLocalDate(print);
     const fileNameDate = createdAt.toISOString().replace(/:/g, '-').replace(/T/g, '_').replace(/Z/g, '');
-    const fileName = `${authorName}_${fileNameDate}_${print.id}.png`;
+    const fileName = `${authorName}_${fileNameDate}_${(print as any).id}.png`;
     return fileName;
 }
 
@@ -15,15 +15,15 @@ function getPrintFileName(print) {
  * @param {object} print
  * @returns
  */
-function getPrintLocalDate(print) {
-    if (print.createdAt) {
-        const createdAt = new Date(print.createdAt);
+function getPrintLocalDate(print: object) {
+    if ((print as any).createdAt) {
+        const createdAt = new Date((print as any).createdAt);
         // cursed convert to local time
         createdAt.setMinutes(createdAt.getMinutes() - createdAt.getTimezoneOffset());
         return createdAt;
     }
-    if (print.timestamp) {
-        return new Date(print.timestamp);
+    if ((print as any).timestamp) {
+        return new Date((print as any).timestamp);
     }
 
     const createdAt = new Date();
@@ -35,12 +35,12 @@ function getPrintLocalDate(print) {
 /**
  * @param {object} emoji
  */
-function getEmojiFileName(emoji) {
-    if (emoji.frames) {
-        const loopStyle = emoji.loopStyle || 'linear';
-        return `${emoji.name}_${emoji.animationStyle}animationStyle_${emoji.frames}frames_${emoji.framesOverTime}fps_${loopStyle}loopStyle.png`;
+function getEmojiFileName(emoji: object) {
+    if ((emoji as any).frames) {
+        const loopStyle = (emoji as any).loopStyle || 'linear';
+        return `${(emoji as any).name}_${(emoji as any).animationStyle}animationStyle_${(emoji as any).frames}frames_${(emoji as any).framesOverTime}fps_${loopStyle}loopStyle.png`;
     } else {
-        return `${emoji.name}_${emoji.animationStyle}animationStyle.png`;
+        return `${(emoji as any).name}_${(emoji as any).animationStyle}animationStyle.png`;
     }
 }
 
@@ -51,7 +51,7 @@ function getEmojiFileName(emoji) {
  * @param {string} loopStyle
  * @param size
  */
-function generateEmojiStyle(url, fps, frameCount, loopStyle, size) {
+function generateEmojiStyle(url: string, fps: number, frameCount: number, loopStyle: string, size: number) {
     let framesPerLine = 2;
     if (frameCount > 4) framesPerLine = 4;
     if (frameCount > 16) framesPerLine = 8;

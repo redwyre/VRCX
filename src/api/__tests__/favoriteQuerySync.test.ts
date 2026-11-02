@@ -1,13 +1,17 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 const mockRequest = vi.fn();
+
+
+
+
 const mockInvalidateQueries = vi.fn().mockResolvedValue();
 const mockHandleFavoriteAdd = vi.fn();
 const mockHandleFavoriteDelete = vi.fn();
 const mockHandleFavoriteGroupClear = vi.fn();
 
 vi.mock('../../services/request', () => ({
-    request: (...args) => mockRequest(...args)
+    request: (...args: any[]) => mockRequest(...args)
 }));
 
 vi.mock('../../stores', () => ({
@@ -17,14 +21,14 @@ vi.mock('../../stores', () => ({
 }));
 
 vi.mock('../../coordinators/favoriteCoordinator', () => ({
-    handleFavoriteAdd: (...args) => mockHandleFavoriteAdd(...args),
-    handleFavoriteDelete: (...args) => mockHandleFavoriteDelete(...args),
-    handleFavoriteGroupClear: (...args) => mockHandleFavoriteGroupClear(...args)
+    handleFavoriteAdd: (...args: any[]) => mockHandleFavoriteAdd(...args),
+    handleFavoriteDelete: (...args: any[]) => mockHandleFavoriteDelete(...args),
+    handleFavoriteGroupClear: (...args: any[]) => mockHandleFavoriteGroupClear(...args)
 }));
 
 vi.mock('../../queries', () => ({
     queryClient: {
-        invalidateQueries: (...args) => mockInvalidateQueries(...args)
+        invalidateQueries: (...args: any[]) => mockInvalidateQueries(...args)
     }
 }));
 

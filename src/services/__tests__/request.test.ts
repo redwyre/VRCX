@@ -4,7 +4,12 @@ vi.mock('../../plugins/router.js', () => ({
     initRouter: vi.fn()
 }));
 
-import { buildRequestInit, parseResponse, processBulk, shouldIgnoreError } from '../request.js';
+// TODO(ts-migrate): Check that this import is the one meant; TypeScript offered the name from
+// several modules.
+// describe was taken from vitest, over node:test. test was taken from vitest, over node:test
+// and node:test.
+import { vi, describe, test, expect } from 'vitest';
+import { buildRequestInit, parseResponse, processBulk, shouldIgnoreError } from '../request';
 
 describe('buildRequestInit', () => {
     test('builds GET request with default method', () => {
@@ -256,7 +261,7 @@ describe('processBulk', () => {
     test('increments offset correctly', async () => {
         const pages = [{ json: [1, 2, 3] }, { json: [4, 5] }, { json: [] }];
         let call = 0;
-        const offsets = [];
+        const offsets: any = [];
         const fn = vi.fn((params) => {
             offsets.push(params.offset);
             const result = pages[call++];

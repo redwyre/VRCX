@@ -1,8 +1,12 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 function setupWorkerHarness() {
-    const sent = [];
-    let handler = null;
+    const sent: any = [];
+    let handler: ((arg0: { data: any; }) => any) | null = null;
+
+
+
+
 
     globalThis.self = {
         addEventListener: vi.fn((event, cb) => {
@@ -15,7 +19,7 @@ function setupWorkerHarness() {
 
     return {
         sent,
-        dispatch: (data) => handler?.({ data })
+        dispatch: (data: any) => handler?.({ data })
     };
 }
 
@@ -26,7 +30,7 @@ describe('quickSearchWorker message protocol', () => {
 
     test('returns empty search result for short query', async () => {
         const harness = setupWorkerHarness();
-        await import('../quickSearchWorker.js');
+        await import('../quickSearchWorker');
 
         harness.dispatch({
             type: 'search',
@@ -56,7 +60,7 @@ describe('quickSearchWorker message protocol', () => {
 
     test('deduplicates favorites and joined groups against own results', async () => {
         const harness = setupWorkerHarness();
-        await import('../quickSearchWorker.js');
+        await import('../quickSearchWorker');
 
         harness.dispatch({
             type: 'updateIndex',

@@ -4,7 +4,7 @@ import { useModalStore } from '../stores';
 
 // requires binding of SQLite
 class SQLiteService {
-    handleSQLiteError(e) {
+    handleSQLiteError(e: { message: string | string[]; }) {
         if (typeof e.message === 'string' && !window.isVrOverlay) {
             const modalStore = useModalStore();
             if (e.message.includes('database disk image is malformed')) {
@@ -44,46 +44,70 @@ class SQLiteService {
         throw e;
     }
 
-    async execute(callback, sql, args = null) {
+    async execute(callback: any, sql: any, args = null) {
         try {
             if (LINUX) {
                 if (args) {
+
+
+
+
                     args = new Map(Object.entries(args));
                 }
-                var json = await SQLite.ExecuteJson(sql, args);
+                var json = await (SQLite as any).ExecuteJson(sql, args);
                 var items = JSON.parse(json);
-                items.forEach((item) => {
+                items.forEach((item: any) => {
                     callback(item);
                 });
                 return;
             }
-            var data = await SQLite.Execute(sql, args);
-            data.forEach((row) => {
+            var data = await (SQLite as any).Execute(sql, args);
+            data.forEach((row: any) => {
                 callback(row);
             });
         } catch (e) {
+
+
+
+
             this.handleSQLiteError(e);
         }
     }
 
-    async executeNonQuery(sql, args = null) {
+    async executeNonQuery(sql: any, args = null) {
         try {
             if (LINUX && args) {
+
+
+
+
                 args = new Map(Object.entries(args));
             }
-            return await SQLite.ExecuteNonQuery(sql, args);
+            return await (SQLite as any).ExecuteNonQuery(sql, args);
         } catch (e) {
+
+
+
+
             this.handleSQLiteError(e);
         }
     }
 
-    async executeInsert(sql, args = null) {
+    async executeInsert(sql: any, args = null) {
         try {
             if (LINUX && args) {
+
+
+
+
                 args = new Map(Object.entries(args));
             }
-            return await SQLite.ExecuteInsert(sql, args);
+            return await (SQLite as any).ExecuteInsert(sql, args);
         } catch (e) {
+
+
+
+
             this.handleSQLiteError(e);
         }
     }

@@ -1,17 +1,17 @@
 const defaultAESKey = new TextEncoder().encode('https://github.com/pypy-vrc/VRCX');
 
-const hexToUint8Array = (hexStr) => {
+const hexToUint8Array = (hexStr: string) => {
     const r = hexStr.match(/.{1,2}/g);
     if (!r) return null;
-    return new Uint8Array(r.map((b) => parseInt(b, 16)));
+    return new Uint8Array(r.map((b: string) => parseInt(b, 16)));
 };
 
-const uint8ArrayToHex = (arr) => arr.reduce((str, byte) => str + byte.toString(16).padStart(2, '0'), '');
+const uint8ArrayToHex = (arr: any) => arr.reduce((str: any, byte: any) => str + byte.toString(16).padStart(2, '0'), '');
 
 /**
  * @param key
  */
-function stdAESKey(key) {
+function stdAESKey(key: any) {
     const tKey = new TextEncoder().encode(key);
     let sk = tKey;
     if (tKey.length < 32) {
@@ -26,7 +26,7 @@ function stdAESKey(key) {
  * @param plaintext
  * @param key
  */
-async function encrypt(plaintext, key) {
+async function encrypt(plaintext: string | undefined, key: any) {
     let iv = window.crypto.getRandomValues(new Uint8Array(12));
     let sharedKey = await window.crypto.subtle.importKey(
         'raw',
@@ -51,7 +51,7 @@ async function encrypt(plaintext, key) {
  * @param ciphertext
  * @param key
  */
-async function decrypt(ciphertext, key) {
+async function decrypt(ciphertext: any, key: any) {
     let text = hexToUint8Array(ciphertext);
     if (!text) return '';
     let sharedKey = await window.crypto.subtle.importKey(

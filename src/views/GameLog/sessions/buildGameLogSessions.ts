@@ -2,14 +2,14 @@ const TOLERANCE_MS = 1000;
 const AGGREGATE_THRESHOLD = 5;
 const AGGREGATE_WINDOW_MS = 5000;
 
-function toEpoch(dateStr) {
+function toEpoch(dateStr: string) {
     if (!dateStr) return 0;
     const t = Date.parse(dateStr);
     return Number.isNaN(t) ? 0 : t;
 }
 
 /** Time-based fallback: last segment whose epoch <= eventEpoch + tolerance. */
-function findSegmentIndex(eventEpoch, segmentsAsc) {
+function findSegmentIndex(eventEpoch: number, segmentsAsc: string | any[]) {
     const target = eventEpoch + TOLERANCE_MS;
     for (let i = segmentsAsc.length - 1; i >= 0; i--) {
         if (segmentsAsc[i].epoch <= target) return i;
@@ -17,7 +17,7 @@ function findSegmentIndex(eventEpoch, segmentsAsc) {
     return 0;
 }
 
-function toMember(e) {
+function toMember(e: { displayName: any; userId: any; created_at: any; isFriend: any; isFavorite: any; }) {
     return {
         displayName: e.displayName,
         userId: e.userId,
@@ -27,7 +27,7 @@ function toMember(e) {
     };
 }
 
-function makeGroup(groupType, batch) {
+function makeGroup(groupType: any, batch: any) {
     return {
         type: groupType,
         created_at: batch[0].created_at,
@@ -36,7 +36,7 @@ function makeGroup(groupType, batch) {
     };
 }
 
-function aggregateTailEvents(events, matchType, groupType) {
+function aggregateTailEvents(events: any, matchType: string, groupType: string) {
     if (events.length === 0) return;
 
     // Find last matchType event
@@ -65,7 +65,7 @@ function aggregateTailEvents(events, matchType, groupType) {
     events.splice(indices[0], 0, group);
 }
 
-function aggregateHeadEvents(events, matchType, groupType) {
+function aggregateHeadEvents(events: any, matchType: string, groupType: string) {
     if (events.length === 0) return;
 
     // Find first matchType event
@@ -94,7 +94,7 @@ function aggregateHeadEvents(events, matchType, groupType) {
     events.splice(indices[0], 0, group);
 }
 
-function applyAggregation(segmentsAsc) {
+function applyAggregation(segmentsAsc: { id: any; created_at: any; epoch: number; location: any; worldId: any; worldName: any; groupName: any; duration: any; events: any[]; }[]) {
     for (const seg of segmentsAsc) {
         aggregateTailEvents(seg.events, 'OnPlayerLeft', 'LeftGroup');
         aggregateTailEvents(seg.events, 'OnPlayerJoined', 'JoinGroup');
@@ -102,7 +102,7 @@ function applyAggregation(segmentsAsc) {
     }
 }
 
-function deduplicateVideoPlay(events) {
+function deduplicateVideoPlay(events: any) {
     for (let i = events.length - 1; i > 0; i--) {
         if (
             events[i].type === 'VideoPlay' &&
@@ -134,7 +134,7 @@ function deduplicateVideoPlay(events) {
  *     }[];
  * }}
  */
-export function buildGameLogSessions(locationSegments, flatEvents) {
+export function buildGameLogSessions(locationSegments: { id: any; created_at: any; location: any; worldId: any; worldName: any; groupName: any; time: any; }[], flatEvents: { type: any; created_at: any; userId: any; location: any; videoUrl: any; }[]) {
     if (!locationSegments || locationSegments.length === 0) {
         return { segments: [] };
     }
@@ -191,33 +191,37 @@ export function buildGameLogSessions(locationSegments, flatEvents) {
                 idx = findSegmentIndex(eventEpoch, segmentsAsc);
             }
 
+
+
+
+
             segmentsAsc[idx].events.push({ ...event });
         }
     }
 
     for (const seg of segmentsAsc) {
-        seg.events.sort((a, b) => toEpoch(a.created_at) - toEpoch(b.created_at));
+        seg.events.sort((a, b) => toEpoch((a as any).created_at) - toEpoch((b as any).created_at));
     }
 
     for (const seg of segmentsAsc) {
         const cutoff = seg.epoch - TOLERANCE_MS;
-        seg.events = seg.events.filter((e) => toEpoch(e.created_at) >= cutoff);
+        seg.events = seg.events.filter((e) => toEpoch((e as any).created_at) >= cutoff);
     }
 
     for (const seg of segmentsAsc) {
         const windowEnd = seg.epoch + AGGREGATE_WINDOW_MS;
         const joinedIds = new Set();
         for (const e of seg.events) {
-            if (toEpoch(e.created_at) > windowEnd) break;
-            if (e.type === 'OnPlayerJoined' && e.userId) {
-                joinedIds.add(e.userId);
+            if (toEpoch((e as any).created_at) > windowEnd) break;
+            if ((e as any).type === 'OnPlayerJoined' && (e as any).userId) {
+                joinedIds.add((e as any).userId);
             }
         }
         if (joinedIds.size > 0) {
             for (let i = seg.events.length - 1; i >= 0; i--) {
                 const e = seg.events[i];
-                if (toEpoch(e.created_at) > windowEnd) continue;
-                if (e.type === 'OnPlayerLeft' && e.userId && joinedIds.has(e.userId)) {
+                if (toEpoch((e as any).created_at) > windowEnd) continue;
+                if ((e as any).type === 'OnPlayerLeft' && (e as any).userId && joinedIds.has((e as any).userId)) {
                     seg.events.splice(i, 1);
                 }
             }

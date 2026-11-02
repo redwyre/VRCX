@@ -4,8 +4,12 @@
  * @param {Partial<import('@/types/vrcx').VrcxWorld>} json - API response to merge
  * @returns {import('@/types/vrcx').VrcxWorld}
  */
-export function createDefaultWorldRef(json) {
-    return /** @type {import('@/types/vrcx').VrcxWorld} */ ({
+
+
+
+
+export function createDefaultWorldRef(json: Partial<import('@/types/vrcx').VrcxWorld>) {
+    return ({
         id: '',
         name: '',
         description: '',
@@ -52,5 +56,5 @@ export function createDefaultWorldRef(json) {
         $isLabs: false,
         //
         ...json
-    });
+    } as import('@/types/vrcx').VrcxWorld);
 }

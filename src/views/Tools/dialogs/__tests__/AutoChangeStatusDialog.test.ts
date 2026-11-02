@@ -37,8 +37,8 @@ const mocks = vi.hoisted(() => ({
     }
 }));
 
-vi.mock('pinia', async (i) => ({ ...(await i()), storeToRefs: (s) => s }));
-vi.mock('vue-i18n', () => ({ useI18n: () => ({ t: (k) => k }) }));
+vi.mock('pinia', async (i) => ({ ...(await i()), storeToRefs: (s: any) => s }));
+vi.mock('vue-i18n', () => ({ useI18n: () => ({ t: (k: any) => k }) }));
 
 vi.mock('../../../../stores', () => ({
     useGeneralSettingsStore: () => mocks.generalStore,
@@ -140,8 +140,16 @@ describe('AutoChangeStatusDialog.vue', () => {
                 node.attributes('data-label')?.includes('view.settings.general.automation.auto_invite_request_accept')
             );
 
+
+
+
+
         await autoAcceptSwitch.find('.emit-false').trigger('click');
         expect(mocks.generalStore.setAutoAcceptInviteRequests).toHaveBeenCalledWith('Off');
+
+
+
+
 
         await autoAcceptSwitch.find('.emit-true').trigger('click');
         expect(mocks.generalStore.setAutoAcceptInviteRequests).toHaveBeenCalledWith('All Favorites');

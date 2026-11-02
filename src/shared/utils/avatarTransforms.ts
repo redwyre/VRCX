@@ -4,8 +4,12 @@
  * @param {Partial<import('@/types/vrcx').Json<import('vrchat').Avatar>>} json - API response to merge
  * @returns {import('@/types/vrcx').Json<import('vrchat').Avatar>}
  */
-export function createDefaultAvatarRef(json) {
-    return /** @type {import('@/types/vrcx').Json<import('vrchat').Avatar>} */ ({
+
+
+
+
+export function createDefaultAvatarRef(json: Partial<import('@/types/vrcx').Json<import('vrchat').Avatar>>) {
+    return ({
         acknowledgements: '',
         activeAssetReviewId: '',
         assetUrl: '',
@@ -38,5 +42,5 @@ export function createDefaultAvatarRef(json) {
         updated_at: '',
         version: 0,
         ...json
-    });
+    } as import('@/types/vrcx').Json<import('vrchat').Avatar>);
 }

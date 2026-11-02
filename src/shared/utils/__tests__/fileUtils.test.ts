@@ -17,7 +17,15 @@ describe('extractFileId', () => {
     });
 
     it('handles null/undefined input', () => {
+
+
+
+
         expect(extractFileId(null)).toBe('');
+
+
+
+
         expect(extractFileId(undefined)).toBe('');
     });
 });
@@ -48,7 +56,15 @@ describe('extractVariantVersion', () => {
 
     it('returns 0 for empty/null input', () => {
         expect(extractVariantVersion('')).toBe('0');
+
+
+
+
         expect(extractVariantVersion(null)).toBe('0');
+
+
+
+
         expect(extractVariantVersion(undefined)).toBe('0');
     });
 

@@ -11,8 +11,14 @@ import { convertYoutubeTime, findUserByDisplayName, isRpcWorld, replaceBioSymbol
  * @param {object} deps.advancedSettingsStore – needs `.youTubeApi`, `.lookupYouTubeVideo()`
  * @returns {object} The media parser functions
  */
-export function createMediaParsers({ nowPlaying, setNowPlaying, clearNowPlaying, userStore, advancedSettingsStore }) {
-    async function addGameLogVideo(gameLog, location, userId) {
+export function createMediaParsers({ nowPlaying, setNowPlaying, clearNowPlaying, userStore, advancedSettingsStore }: {
+    nowPlaying: import('vue').Ref;
+    setNowPlaying: Function;
+    clearNowPlaying: Function;
+    userStore: object;
+    advancedSettingsStore: object;
+}) {
+    async function addGameLogVideo(gameLog: any, location: string, userId: string) {
         let url;
         const videoUrl = gameLog.videoUrl;
         let youtubeVideoId = '';
@@ -36,6 +42,10 @@ export function createMediaParsers({ nowPlaying, setNowPlaying, clearNowPlaying,
                     url.origin === 'https://nextnex.com' ||
                     url.origin === 'https://r.0cm.org'
                 ) {
+
+
+
+
                     url = new URL(url.searchParams.get('url'));
                 }
                 if (videoUrl.startsWith('https://u2b.cx/')) {
@@ -56,8 +66,8 @@ export function createMediaParsers({ nowPlaying, setNowPlaying, clearNowPlaying,
                     // https://music.youtube.com/watch?v=
                     youtubeVideoId = id2;
                 }
-                if (advancedSettingsStore.youTubeApi && youtubeVideoId) {
-                    const data = await advancedSettingsStore.lookupYouTubeVideo(youtubeVideoId);
+                if ((advancedSettingsStore as any).youTubeApi && youtubeVideoId) {
+                    const data = await (advancedSettingsStore as any).lookupYouTubeVideo(youtubeVideoId);
                     if (data || data.pageInfo.totalResults !== 0) {
                         videoId = 'YouTube';
                         videoName = data.items[0].snippet.title;
@@ -83,7 +93,7 @@ export function createMediaParsers({ nowPlaying, setNowPlaying, clearNowPlaying,
         }
     }
 
-    async function addGameLogVRDancing(gameLog, location) {
+    async function addGameLogVRDancing(gameLog: any, location: any) {
         const data = /VideoPlay\(VRDancing\) "(.+?)",([\d.]+),([\d.]+),(-?[\d.]+),"(.+?)","(.+?)"/g.exec(gameLog.data);
         if (!data) {
             console.error('failed to parse', gameLog.data);
@@ -119,8 +129,8 @@ export function createMediaParsers({ nowPlaying, setNowPlaying, clearNowPlaying,
         let userId = '';
         if (displayName) {
             userId =
-                findUserByDisplayName(userStore.cachedUsers, displayName, userStore.cachedUserIdsByDisplayName)?.id ??
-                '';
+    findUserByDisplayName((userStore as any).cachedUsers, displayName, (userStore as any).cachedUserIdsByDisplayName)?.id ??
+        '';
         }
         if (videoId === 'YouTube') {
             const entry1 = {
@@ -148,7 +158,7 @@ export function createMediaParsers({ nowPlaying, setNowPlaying, clearNowPlaying,
         }
     }
 
-    async function addGameLogLSMedia(gameLog, location) {
+    async function addGameLogLSMedia(gameLog: any, location: any) {
         // [VRCX] LSMedia 0,4268.981,Natsumi-sama,,
         // [VRCX] LSMedia 0,6298.292,Natsumi-sama,The Outfit (2022), 1080p
         const data = /LSMedia ([\d.]+),([\d.]+),(.+?),(.+?),(?=[^,]*$)/g.exec(gameLog.data);
@@ -174,8 +184,8 @@ export function createMediaParsers({ nowPlaying, setNowPlaying, clearNowPlaying,
         let userId = '';
         if (displayName) {
             userId =
-                findUserByDisplayName(userStore.cachedUsers, displayName, userStore.cachedUserIdsByDisplayName)?.id ??
-                '';
+    findUserByDisplayName((userStore as any).cachedUsers, displayName, (userStore as any).cachedUserIdsByDisplayName)?.id ??
+        '';
         }
         const entry1 = {
             created_at: gameLog.dt,
@@ -192,7 +202,7 @@ export function createMediaParsers({ nowPlaying, setNowPlaying, clearNowPlaying,
         await setNowPlaying(entry1);
     }
 
-    async function addGameLogPopcornPalace(gameLog, location) {
+    async function addGameLogPopcornPalace(gameLog: any, location: any) {
         // [VRCX] VideoPlay(PopcornPalace) {"videoName": "How to Train Your Dragon - 2025-06-06", "videoPos": 37.28777, "videoLength": 11474.05, "thumbnailUrl": "", "displayName": "miner28_3", "isPaused": false, "is3D": false, "looping": false}
         let data = gameLog.data;
         if (!data) {
@@ -231,8 +241,8 @@ export function createMediaParsers({ nowPlaying, setNowPlaying, clearNowPlaying,
         let userId = '';
         if (displayName) {
             userId =
-                findUserByDisplayName(userStore.cachedUsers, displayName, userStore.cachedUserIdsByDisplayName)?.id ??
-                '';
+    findUserByDisplayName((userStore as any).cachedUsers, displayName, (userStore as any).cachedUserIdsByDisplayName)?.id ??
+        '';
         }
         const entry1 = {
             created_at: gameLog.dt,

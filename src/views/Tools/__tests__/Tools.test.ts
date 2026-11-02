@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { ref } from 'vue';
-import { flushPromises, mount } from '@vue/test-utils';
+import { flushPromises, mount, VueWrapper } from '@vue/test-utils';
 
 const push = vi.fn();
 const showGalleryPage = vi.fn();
@@ -15,6 +15,10 @@ let routeName = 'not-tools';
 vi.mock('vue-router', async (importOriginal) => {
     const actual = await importOriginal();
     return {
+
+
+
+
         ...actual,
         useRouter: () => ({ push }),
         useRoute: () => ({
@@ -26,14 +30,18 @@ vi.mock('vue-router', async (importOriginal) => {
 });
 
 vi.mock('vue-i18n', () => ({
-    useI18n: () => ({ t: (key) => key })
+    useI18n: () => ({ t: (key: any) => key })
 }));
 
 vi.mock('pinia', async (importOriginal) => {
     const actual = await importOriginal();
     return {
+
+
+
+
         ...actual,
-        storeToRefs: (store) => store
+        storeToRefs: (store: any) => store
     };
 });
 
@@ -57,8 +65,8 @@ vi.mock('../../../composables/useToolNavPinning', () => ({
 
 vi.mock('../../../services/config.js', () => ({
     default: {
-        getString: (...args) => getString(...args),
-        setString: (...args) => setString(...args)
+        getString: (...args: any[]) => getString(...args),
+        setString: (...args: any[]) => setString(...args)
     }
 }));
 
@@ -75,12 +83,12 @@ vi.mock('../../../components/ui/tooltip', () => ({
 
 import Tools from '../Tools.vue';
 
-function findToolItemByTitle(wrapper, titleKey) {
-    return wrapper.findAllComponents({ name: 'ToolItem' }).find((component) => component.text().includes(titleKey));
+function findToolItemByTitle(wrapper: VueWrapper<any, any>, titleKey: string) {
+    return wrapper.findAllComponents({ name: 'ToolItem' }).find((component: { text: () => string | any[]; }) => component.text().includes(titleKey));
 }
 
-function findCategoryHeaderByTitle(wrapper, titleKey) {
-    return wrapper.findAll('div.cursor-pointer').find((node) => node.text().includes(titleKey));
+function findCategoryHeaderByTitle(wrapper: VueWrapper<any, any>, titleKey: string) {
+    return wrapper.findAll('div.cursor-pointer').find((node: { text: () => string | any[]; }) => node.text().includes(titleKey));
 }
 
 describe('Tools.vue', () => {
@@ -97,6 +105,10 @@ describe('Tools.vue', () => {
         const screenshotItem = findToolItemByTitle(wrapper, 'view.tools.pictures.screenshot');
 
         expect(screenshotItem).toBeTruthy();
+
+
+
+
         await screenshotItem.trigger('click');
 
         expect(push).toHaveBeenCalledWith({ name: 'screenshot-metadata' });
@@ -109,6 +121,10 @@ describe('Tools.vue', () => {
         const galleryItem = findToolItemByTitle(wrapper, 'view.tools.pictures.gallery');
 
         expect(galleryItem).toBeTruthy();
+
+
+
+
         await galleryItem.trigger('click');
 
         expect(push).toHaveBeenCalledWith({ name: 'gallery' });
@@ -121,6 +137,10 @@ describe('Tools.vue', () => {
         const imageCategoryHeader = findCategoryHeaderByTitle(wrapper, 'view.tools.pictures.header');
 
         expect(imageCategoryHeader).toBeTruthy();
+
+
+
+
         await imageCategoryHeader.trigger('click');
 
         expect(setString).toHaveBeenCalledWith('VRCX_toolsCategoryCollapsed', expect.stringContaining('"image":true'));
@@ -135,6 +155,10 @@ describe('Tools.vue', () => {
         const imageCategoryHeader = findCategoryHeaderByTitle(wrapper, 'view.tools.pictures.header');
 
         expect(imageCategoryHeader).toBeTruthy();
+
+
+
+
         await imageCategoryHeader.trigger('click');
 
         expect(setString).toHaveBeenCalledWith('VRCX_toolsCategoryCollapsed', expect.stringContaining('"image":false'));

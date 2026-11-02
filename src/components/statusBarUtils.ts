@@ -22,7 +22,7 @@ export const defaultVisibility = {
  * @param {any} value - Raw offset value
  * @returns {number} Normalised integer offset
  */
-export function normalizeUtcHour(value) {
+export function normalizeUtcHour(value: any) {
     const n = Number(value);
     if (!Number.isFinite(n)) return 0;
     return Math.max(-12, Math.min(14, Math.round(n)));
@@ -34,7 +34,7 @@ export function normalizeUtcHour(value) {
  * @param {number} offset
  * @returns {string}
  */
-export function formatUtcHour(offset) {
+export function formatUtcHour(offset: number) {
     const n = normalizeUtcHour(offset);
     return `UTC${n >= 0 ? '+' : ''}${n}`;
 }
@@ -51,7 +51,7 @@ export function formatUtcHour(offset) {
  * @param {any} value
  * @returns {number}
  */
-export function parseClockOffset(value) {
+export function parseClockOffset(value: any) {
     if (typeof value === 'number') {
         return normalizeUtcHour(value);
     }
@@ -83,7 +83,7 @@ export function parseClockOffset(value) {
  * @param {any} entry
  * @returns {{ offset: number }}
  */
-export function normalizeClock(entry) {
+export function normalizeClock(entry: any) {
     if (entry && typeof entry === 'object') {
         if ('offset' in entry) {
             return { offset: parseClockOffset(entry.offset) };
@@ -101,7 +101,7 @@ export function normalizeClock(entry) {
  * @param {Storage} storage - Object with `getItem(key)` method
  * @returns {object}
  */
-export function loadVisibility(storage) {
+export function loadVisibility(storage: Storage) {
     try {
         const saved = storage.getItem('VRCX_statusBarVisibility');
         if (saved) {
@@ -121,7 +121,7 @@ export function loadVisibility(storage) {
  * @param {Array} defaults - Fallback clock definitions
  * @returns {{ offset: number }[]}
  */
-export function loadClocks(storage, defaults) {
+export function loadClocks(storage: Storage, defaults: Array<any>) {
     try {
         const saved = storage.getItem('VRCX_statusBarClocks');
         if (saved) {
@@ -143,7 +143,7 @@ export function loadClocks(storage, defaults) {
  * @param {Storage} storage
  * @returns {number}
  */
-export function loadClockCount(storage) {
+export function loadClockCount(storage: Storage) {
     try {
         const saved = storage.getItem('VRCX_statusBarClockCount');
         if (saved !== null) {
@@ -162,7 +162,7 @@ export function loadClockCount(storage) {
  * @param {number} elapsedSeconds
  * @returns {string}
  */
-export function formatAppUptime(elapsedSeconds) {
+export function formatAppUptime(elapsedSeconds: number) {
     const safe = Math.max(0, Math.floor(elapsedSeconds));
     const hours = Math.floor(safe / 3600)
         .toString()

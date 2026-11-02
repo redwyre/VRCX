@@ -6,15 +6,15 @@ import {
     calculateOverlapGrid,
     aggregateSessionsToGrid,
     findBestOverlapTime
-} from '../overlapCalculator.js';
+} from '../overlapCalculator';
 
 // Helper: create a UTC date string
-function utc(dateStr) {
+function utc(dateStr: string | number | Date) {
     return new Date(dateStr).toISOString();
 }
 
 // Helper: create a timestamp from UTC string
-function ts(dateStr) {
+function ts(dateStr: string | number | Date) {
     return new Date(dateStr).getTime();
 }
 

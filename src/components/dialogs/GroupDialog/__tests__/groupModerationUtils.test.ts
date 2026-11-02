@@ -17,7 +17,15 @@ describe('getAuditLogTypeName', () => {
 
     it('returns empty string for falsy input', () => {
         expect(getAuditLogTypeName('')).toBe('');
+
+
+
+
         expect(getAuditLogTypeName(null)).toBe('');
+
+
+
+
         expect(getAuditLogTypeName(undefined)).toBe('');
     });
 });
@@ -42,11 +50,23 @@ describe('resolveRoleNames', () => {
     });
 
     it('handles non-array roleIds gracefully', () => {
+
+
+
+
         expect(resolveRoleNames(null, roles)).toBe('');
+
+
+
+
         expect(resolveRoleNames(undefined, roles)).toBe('');
     });
 
     it('handles non-array roles gracefully', () => {
+
+
+
+
         expect(resolveRoleNames(['role_1'], null)).toBe('');
     });
 

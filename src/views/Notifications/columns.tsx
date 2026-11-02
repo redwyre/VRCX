@@ -25,7 +25,7 @@ import Emoji from '../../components/Emoji.vue';
 
 const { t, te } = i18n.global;
 
-const isGroupId = (id) => typeof id === 'string' && id.startsWith('grp_');
+const isGroupId = (id: string) => typeof id === 'string' && id.startsWith('grp_');
 
 export const createColumns = ({
     getNotificationCreatedAt,
@@ -42,7 +42,7 @@ export const createColumns = ({
     hideNotificationPrompt,
     deleteNotificationLog,
     deleteNotificationLogPrompt
-}) => {
+}: any) => {
     const { showSendBoopDialog } = useUserStore();
 
     const { shiftHeld } = storeToRefs(useUiStore());
@@ -66,7 +66,7 @@ export const createColumns = ({
         );
     };
 
-    const getResponseIcon = (response, notificationType) => {
+    const getResponseIcon = (response: { type: string; icon: any; }, notificationType: string) => {
         if (response?.type === 'link') {
             return Link;
         }
@@ -97,11 +97,11 @@ export const createColumns = ({
             cell: () => null
         },
         {
-            accessorFn: (row) => getNotificationCreatedAtTs(row),
+            accessorFn: (row: any) => getNotificationCreatedAtTs(row),
             id: 'created_at',
             size: 120,
             meta: { label: () => t('table.notification.date') },
-            header: ({ column }) => (
+            header: ({ column }: any) => (
                 <Button
                     variant="ghost"
                     class="pl-0!"
@@ -111,7 +111,7 @@ export const createColumns = ({
                     <ArrowUpDown class="ml-1 h-4 w-4" />
                 </Button>
             ),
-            sortFn: (rowA, rowB, columnId) => {
+            sortFn: (rowA: { getValue: (arg0: any) => number; original: { id: any; }; }, rowB: { getValue: (arg0: any) => number; original: { id: any; }; }, columnId: any) => {
                 const a = rowA.getValue(columnId) ?? 0;
                 const b = rowB.getValue(columnId) ?? 0;
                 if (a !== b) {
@@ -122,7 +122,7 @@ export const createColumns = ({
                 const bId = typeof rowB.original?.id === 'string' ? rowB.original.id : '';
                 return aId.localeCompare(bId);
             },
-            cell: ({ row }) => {
+            cell: ({ row }: any) => {
                 const createdAt = getNotificationCreatedAt(row.original);
                 const shortText = formatDateFilter(createdAt, 'short');
                 const longText = formatDateFilter(createdAt, 'long');
@@ -130,9 +130,17 @@ export const createColumns = ({
                 return (
                     <Tooltip>
                         <TooltipTrigger asChild>
+
+
+
+
                             <span>{shortText}</span>
                         </TooltipTrigger>
                         <TooltipContent side="right">
+
+
+
+
                             <span>{longText}</span>
                         </TooltipContent>
                     </Tooltip>
@@ -144,7 +152,7 @@ export const createColumns = ({
             size: 180,
             header: () => t('table.notification.type'),
             meta: { label: () => t('table.notification.type') },
-            cell: ({ row }) => {
+            cell: ({ row }: any) => {
                 const original = row.original;
                 const typeKey = `view.notification.filters.${original.type}`;
                 const label = te(typeKey) ? t(typeKey) : original.type;
@@ -162,8 +170,16 @@ export const createColumns = ({
                         <Badge variant="outline" class="text-muted-foreground">
                             <Tooltip>
                                 <TooltipTrigger asChild>
+
+
+
+
                                     <span class="cursor-pointer" onClick={() => showWorldDialog(original.location)}>
                                         {label}
+
+
+
+
                                     </span>
                                 </TooltipTrigger>
                                 <TooltipContent side="top">
@@ -186,11 +202,23 @@ export const createColumns = ({
                         <Badge variant="outline" class="text-muted-foreground">
                             <Tooltip>
                                 <TooltipTrigger asChild>
+
+
+
+
                                     <span class="cursor-pointer" onClick={() => openNotificationLink(original.link)}>
                                         {label}
+
+
+
+
                                     </span>
                                 </TooltipTrigger>
                                 <TooltipContent side="top">
+
+
+
+
                                     <span>{original.linkText}</span>
                                 </TooltipContent>
                             </Tooltip>
@@ -213,35 +241,71 @@ export const createColumns = ({
             },
             size: 150,
             header: () => t('table.notification.user'),
-            cell: ({ row }) => {
+            cell: ({ row }: any) => {
                 const original = row.original;
                 if (original.senderUserId && !isGroupId(original.senderUserId)) {
                     return (
+
+
+
+
                         <span class="table-user-text block w-full min-w-0 truncate">
+
+
+
+
                             <span
                                 class="cursor-pointer block w-full min-w-0 truncate"
                                 onClick={() => showUserDialog(original.senderUserId)}
                             >
                                 {original.senderUsername}
+
+
+
+
                             </span>
+
+
+
+
                         </span>
                     );
                 }
 
                 if (original.link?.startsWith('user:')) {
                     return (
+
+
+
+
                         <span class="table-user-text block w-full min-w-0 truncate">
+
+
+
+
                             <span
                                 class="cursor-pointer block w-full min-w-0 truncate"
                                 onClick={() => openNotificationLink(original.link)}
                             >
                                 {original.linkText || original.senderUsername}
+
+
+
+
                             </span>
+
+
+
+
                         </span>
                     );
                 }
 
                 if (original.senderUsername && !isGroupId(original.senderUserId)) {
+
+
+
+
                     return <span class="table-user-text block w-full min-w-0 truncate">{original.senderUsername}</span>;
                 }
 
@@ -256,7 +320,7 @@ export const createColumns = ({
             },
             size: 150,
             header: () => t('table.notification.group'),
-            cell: ({ row }) => {
+            cell: ({ row }: any) => {
                 const original = row.original;
                 const label =
                     original.senderUsername ||
@@ -267,58 +331,122 @@ export const createColumns = ({
 
                 if (original.senderUserId && (original.type === 'groupChange' || isGroupId(original.senderUserId))) {
                     return (
+
+
+
+
                         <span class="table-user-text block w-full min-w-0 truncate">
+
+
+
+
                             <span
                                 class="cursor-pointer block w-full min-w-0 truncate"
                                 onClick={() => showGroupDialog(original.senderUserId)}
                             >
                                 {label}
+
+
+
+
                             </span>
+
+
+
+
                         </span>
                     );
                 }
 
                 if (original.type === 'groupChange' && original.senderUsername) {
+
+
+
+
                     return <span class="table-user-text block w-full min-w-0 truncate">{original.senderUsername}</span>;
                 }
 
                 if (original.link?.startsWith('group:')) {
                     return (
+
+
+
+
                         <span class="table-user-text block w-full min-w-0 truncate">
+
+
+
+
                             <span
                                 class="cursor-pointer block w-full min-w-0 truncate"
                                 onClick={() => openNotificationLink(original.link)}
                             >
                                 {original.data?.groupName || label}
+
+
+
+
                             </span>
+
+
+
+
                         </span>
                     );
                 }
 
                 if (original.link?.startsWith('event:')) {
                     return (
+
+
+
+
                         <span class="table-user-text block w-full min-w-0 truncate">
+
+
+
+
                             <span
                                 class="cursor-pointer block w-full min-w-0 truncate"
                                 onClick={() => openNotificationLink(original.link)}
                             >
                                 {original.data?.groupName || original.groupName || label}
+
+
+
+
                             </span>
+
+
+
+
                         </span>
                     );
                 }
 
                 if (original.data?.groupName) {
+
+
+
+
                     return <span class="table-user-text block w-full min-w-0 truncate">{original.data.groupName}</span>;
                 }
 
                 if (original.details?.groupName) {
                     return (
+
+
+
+
                         <span class="table-user-text block w-full min-w-0 truncate">{original.details.groupName}</span>
                     );
                 }
 
                 if (original.groupName) {
+
+
+
+
                     return <span class="table-user-text block w-full min-w-0 truncate">{original.groupName}</span>;
                 }
 
@@ -330,7 +458,7 @@ export const createColumns = ({
             size: 80,
             header: () => t('table.notification.photo'),
             meta: { label: () => t('table.notification.photo') },
-            cell: ({ row }) => {
+            cell: ({ row }: any) => {
                 const original = row.original;
                 if (original.type === 'boop') {
                     const imageUrl = original.details?.imageUrl || original.imageUrl;
@@ -390,11 +518,19 @@ export const createColumns = ({
                 label: () => t('table.notification.message')
             },
             minSize: 100,
-            cell: ({ row }) => {
+            cell: ({ row }: any) => {
                 const original = row.original;
                 return (
+
+
+
+
                     <div class="w-full min-w-0">
                         {original.type === 'invite' && original.details ? (
+
+
+
+
                             <div class="w-full min-w-0">
                                 <Location
                                     location={original.details.worldId}
@@ -402,17 +538,33 @@ export const createColumns = ({
                                     grouphint={original.details.groupName}
                                     link
                                 />
+
+
+
+
                             </div>
                         ) : null}
                         {original.message && original.title ? (
                             <TooltipWrapper content={`${original.title}, ${original.message}`} delayDuration={500}>
+
+
+
+
                                 <span class="block w-full min-w-0 truncate">
                                     {`${original.title}, ${original.message}`}
+
+
+
+
                                 </span>
                             </TooltipWrapper>
                         ) : null}
                         {!original.message && original.title ? (
                             <TooltipWrapper content={original.title} delayDuration={500}>
+
+
+
+
                                 <span class="block w-full min-w-0 truncate">{original.title}</span>
                             </TooltipWrapper>
                         ) : null}
@@ -420,24 +572,44 @@ export const createColumns = ({
                         !original.title &&
                         original.message !== `This is a generated invite to ${original.details?.worldName}` ? (
                             <TooltipWrapper content={original.message} delayDuration={500}>
+
+
+
+
                                 <span class="block w-full min-w-0 truncate">{original.message}</span>
                             </TooltipWrapper>
                         ) : null}
                         {!original.message && original.details?.inviteMessage ? (
                             <TooltipWrapper content={original.details.inviteMessage} delayDuration={500}>
+
+
+
+
                                 <span class="block w-full min-w-0 truncate">{original.details.inviteMessage}</span>
                             </TooltipWrapper>
                         ) : null}
                         {!original.message && original.details?.requestMessage ? (
                             <TooltipWrapper content={original.details.requestMessage} delayDuration={500}>
+
+
+
+
                                 <span class="block w-full min-w-0 truncate">{original.details.requestMessage}</span>
                             </TooltipWrapper>
                         ) : null}
                         {!original.message && original.details?.responseMessage ? (
                             <TooltipWrapper content={original.details.responseMessage} delayDuration={500}>
+
+
+
+
                                 <span class="block w-full min-w-0 truncate">{original.details.responseMessage}</span>
                             </TooltipWrapper>
                         ) : null}
+
+
+
+
                     </div>
                 );
             }
@@ -453,7 +625,7 @@ export const createColumns = ({
             maxSize: 120,
             header: () => t('table.notification.action'),
             enableSorting: false,
-            cell: ({ row }) => {
+            cell: ({ row }: any) => {
                 const original = row.original;
                 const hasResponses = Array.isArray(original.responses);
                 const showDecline =
@@ -469,12 +641,24 @@ export const createColumns = ({
                 const showDeleteLog = original.type !== 'friendRequest' && original.type !== 'ignoredFriendRequest';
 
                 return (
+
+
+
+
                     <div class="flex items-center justify-end gap-2">
                         {original.senderUserId !== currentUser.value?.id && !isNotificationExpired(original) ? (
+
+
+
+
                             <span class="inline-flex items-center gap-2">
                                 {original.type === 'friendRequest' ? (
                                     <Tooltip>
                                         <TooltipTrigger asChild>
+
+
+
+
                                             <button
                                                 type="button"
                                                 class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
@@ -482,9 +666,17 @@ export const createColumns = ({
                                                 onClick={() => acceptFriendRequestNotification(original)}
                                             >
                                                 <Check class="h-4 w-4" />
+
+
+
+
                                             </button>
                                         </TooltipTrigger>
                                         <TooltipContent side="top">
+
+
+
+
                                             <span>{t('view.notification.actions.accept')}</span>
                                         </TooltipContent>
                                     </Tooltip>
@@ -493,6 +685,10 @@ export const createColumns = ({
                                 {original.type === 'invite' ? (
                                     <Tooltip>
                                         <TooltipTrigger asChild>
+
+
+
+
                                             <button
                                                 type="button"
                                                 class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
@@ -500,19 +696,35 @@ export const createColumns = ({
                                                 onClick={() => showSendInviteResponseDialog(original)}
                                             >
                                                 <MessageCircle class="h-4 w-4" />
+
+
+
+
                                             </button>
                                         </TooltipTrigger>
                                         <TooltipContent side="top">
+
+
+
+
                                             <span>{t('view.notification.actions.decline_with_message')}</span>
                                         </TooltipContent>
                                     </Tooltip>
                                 ) : null}
 
                                 {original.type === 'requestInvite' ? (
+
+
+
+
                                     <span class="inline-flex items-center">
                                         {canInvite() ? (
                                             <Tooltip>
                                                 <TooltipTrigger asChild>
+
+
+
+
                                                     <button
                                                         type="button"
                                                         class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
@@ -520,15 +732,27 @@ export const createColumns = ({
                                                         onClick={() => acceptRequestInvite(original)}
                                                     >
                                                         <Check class="h-4 w-4" />
+
+
+
+
                                                     </button>
                                                 </TooltipTrigger>
                                                 <TooltipContent side="top">
+
+
+
+
                                                     <span>{t('view.notification.actions.invite')}</span>
                                                 </TooltipContent>
                                             </Tooltip>
                                         ) : null}
                                         <Tooltip>
                                             <TooltipTrigger asChild>
+
+
+
+
                                                 <button
                                                     type="button"
                                                     class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
@@ -536,17 +760,29 @@ export const createColumns = ({
                                                     onClick={() => showSendInviteRequestResponseDialog(original)}
                                                 >
                                                     <MessageCircle class="h-4 w-4" />
+
+
+
+
                                                 </button>
                                             </TooltipTrigger>
                                             <TooltipContent side="top">
+
+
+
+
                                                 <span>{t('view.notification.actions.decline_with_message')}</span>
                                             </TooltipContent>
                                         </Tooltip>
+
+
+
+
                                     </span>
                                 ) : null}
 
                                 {hasResponses
-                                    ? original.responses.map((response) => {
+                                    ? original.responses.map((response: { type: string; data: any; icon: string; text: any; }) => {
                                           const onClick = () => {
                                               if (response.type === 'link') {
                                                   openNotificationLink(response.data);
@@ -564,6 +800,10 @@ export const createColumns = ({
                                           return (
                                               <Tooltip key={`${response.text}:${response.type}`}>
                                                   <TooltipTrigger asChild>
+
+
+
+
                                                       <button
                                                           type="button"
                                                           class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
@@ -571,9 +811,17 @@ export const createColumns = ({
                                                           onClick={onClick}
                                                       >
                                                           <ResponseIcon class="h-4 w-4" />
+
+
+
+
                                                       </button>
                                                   </TooltipTrigger>
                                                   <TooltipContent side="top">
+
+
+
+
                                                       <span>{response.text}</span>
                                                   </TooltipContent>
                                               </Tooltip>
@@ -584,6 +832,10 @@ export const createColumns = ({
                                 {showDecline ? (
                                     <Tooltip>
                                         <TooltipTrigger asChild>
+
+
+
+
                                             <button
                                                 type="button"
                                                 class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
@@ -595,9 +847,17 @@ export const createColumns = ({
                                                 }
                                             >
                                                 <X class={shiftHeld.value ? 'h-4 w-4 text-red-600' : 'h-4 w-4'} />
+
+
+
+
                                             </button>
                                         </TooltipTrigger>
                                         <TooltipContent side="top">
+
+
+
+
                                             <span>{t('view.notification.actions.decline')}</span>
                                         </TooltipContent>
                                     </Tooltip>
@@ -606,6 +866,10 @@ export const createColumns = ({
                                 {original.type === 'group.queueReady' ? (
                                     <Tooltip>
                                         <TooltipTrigger asChild>
+
+
+
+
                                             <button
                                                 type="button"
                                                 class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
@@ -621,15 +885,27 @@ export const createColumns = ({
                                                 ) : (
                                                     <Trash2 class="h-4 w-4" />
                                                 )}
+
+
+
+
                                             </button>
                                         </TooltipTrigger>
                                     </Tooltip>
                                 ) : null}
+
+
+
+
                             </span>
                         ) : null}
                         {showDeleteLog ? (
                             <Tooltip>
                                 <TooltipTrigger asChild>
+
+
+
+
                                     <button
                                         type="button"
                                         class="inline-flex h-6 ml-1 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
@@ -645,13 +921,25 @@ export const createColumns = ({
                                         ) : (
                                             <Trash2 class="h-4 w-4" />
                                         )}
+
+
+
+
                                     </button>
                                 </TooltipTrigger>
                                 <TooltipContent side="top">
+
+
+
+
                                     <span>{t('view.notification.actions.delete_log')}</span>
                                 </TooltipContent>
                             </Tooltip>
                         ) : null}
+
+
+
+
                     </div>
                 );
             }

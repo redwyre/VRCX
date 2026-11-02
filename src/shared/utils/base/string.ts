@@ -2,7 +2,7 @@
  * @param {string} tag
  * @returns {string}
  */
-function escapeTag(tag) {
+function escapeTag(tag: string) {
     const s = String(tag);
     return s.replace(/["&'<>]/g, (c) => `&#${c.charCodeAt(0)};`);
 }
@@ -11,13 +11,13 @@ function escapeTag(tag) {
  * @param {object} obj
  * @returns {object}
  */
-function escapeTagRecursive(obj) {
+function escapeTagRecursive(obj: object) {
     if (typeof obj === 'string') {
         return escapeTag(obj);
     }
     if (typeof obj === 'object') {
         for (const key in obj) {
-            obj[key] = escapeTagRecursive(obj[key]);
+            (obj as any)[key] = escapeTagRecursive((obj as any)[key]);
         }
     }
     return obj;
@@ -27,7 +27,7 @@ function escapeTagRecursive(obj) {
  * @param {string} text
  * @returns {string}
  */
-function textToHex(text) {
+function textToHex(text: string) {
     const s = String(text);
     return s
         .split('')
@@ -39,7 +39,7 @@ function textToHex(text) {
  * @param {number} num
  * @returns {string}
  */
-function commaNumber(num) {
+function commaNumber(num: number) {
     if (!num) {
         return '0';
     }
@@ -57,7 +57,7 @@ function commaNumber(num) {
  * @param {object} comparer
  * @returns {boolean}
  */
-function localeIncludes(str, search, comparer) {
+function localeIncludes(str: string, search: string, comparer: object) {
     // These checks are stolen from https://stackoverflow.com/a/69623589/11030436
     if (search === '') {
         return true;
@@ -78,7 +78,7 @@ function localeIncludes(str, search, comparer) {
     // Now simply loop through each substring and compare them
     for (let i = 0; i < str.length - searchObj.length + 1; i++) {
         const substr = strObj.substring(i, i + searchObj.length);
-        if (comparer.compare(substr, searchObj) === 0) {
+        if ((comparer as any).compare(substr, searchObj) === 0) {
             return true;
         }
     }
@@ -89,7 +89,7 @@ function localeIncludes(str, search, comparer) {
  * @param {string} text
  * @returns {string}
  */
-function changeLogRemoveLinks(text) {
+function changeLogRemoveLinks(text: string) {
     return text.replace(/([^!])\[[^\]]+\]\([^)]+\)/g, '$1');
 }
 
@@ -97,7 +97,7 @@ function changeLogRemoveLinks(text) {
  * @param {string} text
  * @returns {string}
  */
-function replaceBioSymbols(text) {
+function replaceBioSymbols(text: string) {
     if (typeof text !== 'string') {
         return '';
     }
@@ -132,7 +132,7 @@ function replaceBioSymbols(text) {
     };
     let newText = text;
     for (const key in symbolList) {
-        const regex = new RegExp(symbolList[key], 'g');
+        const regex = new RegExp(symbolList[key as keyof typeof symbolList], 'g');
         newText = newText.replace(regex, key);
     }
     return newText.replace(/ {1,}/g, ' ').trimRight();
@@ -142,7 +142,7 @@ function replaceBioSymbols(text) {
  * @param {string} text
  * @returns {string}
  */
-function removeEmojis(text) {
+function removeEmojis(text: string) {
     if (!text) {
         return '';
     }

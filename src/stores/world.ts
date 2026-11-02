@@ -51,21 +51,21 @@ export const useWorldStore = defineStore('World', () => {
     /**
      * @param {boolean} value
      */
-    function setWorldDialogLoading(value) {
+    function setWorldDialogLoading(value: boolean) {
         worldDialog.loading = value;
     }
 
     /**
      * @param {boolean} value
      */
-    function setWorldDialogVisible(value) {
+    function setWorldDialogVisible(value: boolean) {
         worldDialog.visible = value;
     }
 
     /**
      * @param {boolean} value
      */
-    function setWorldDialogIsFavorite(value) {
+    function setWorldDialogIsFavorite(value: boolean) {
         worldDialog.isFavorite = value;
     }
 

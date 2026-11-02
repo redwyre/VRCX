@@ -5,11 +5,11 @@ import { sortStatus } from './friend';
  * @param {object} b
  * @returns
  */
-function compareByName(a, b) {
-    if (typeof a.name !== 'string' || typeof b.name !== 'string') {
+function compareByName(a: object, b: object) {
+    if (typeof (a as any).name !== 'string' || typeof (b as any).name !== 'string') {
         return 0;
     }
-    return a.name.localeCompare(b.name);
+    return (a as any).name.localeCompare((b as any).name);
 }
 
 /**
@@ -19,12 +19,12 @@ function compareByName(a, b) {
  * @param {object} b
  * @returns
  */
-function compareByCreatedAt(a, b) {
-    if (typeof a.created_at !== 'string' || typeof b.created_at !== 'string') {
+function compareByCreatedAt(a: object, b: object) {
+    if (typeof (a as any).created_at !== 'string' || typeof (b as any).created_at !== 'string') {
         return 0;
     }
-    const A = a.created_at.toUpperCase();
-    const B = b.created_at.toUpperCase();
+    const A = (a as any).created_at.toUpperCase();
+    const B = (b as any).created_at.toUpperCase();
     if (A < B) {
         return 1;
     }
@@ -41,9 +41,9 @@ function compareByCreatedAt(a, b) {
  * @param {object} b
  * @returns
  */
-function compareByCreatedAtAscending(a, b) {
-    const A = a.created_at;
-    const B = b.created_at;
+function compareByCreatedAtAscending(a: object, b: object) {
+    const A = (a as any).created_at;
+    const B = (b as any).created_at;
     if (A < B) {
         return -1;
     }
@@ -60,12 +60,12 @@ function compareByCreatedAtAscending(a, b) {
  * @param {object} b
  * @returns
  */
-function compareByUpdatedAt(a, b) {
-    if (typeof a.updated_at !== 'string' || typeof b.updated_at !== 'string') {
+function compareByUpdatedAt(a: object, b: object) {
+    if (typeof (a as any).updated_at !== 'string' || typeof (b as any).updated_at !== 'string') {
         return 0;
     }
-    const A = a.updated_at.toUpperCase();
-    const B = b.updated_at.toUpperCase();
+    const A = (a as any).updated_at.toUpperCase();
+    const B = (b as any).updated_at.toUpperCase();
     if (A < B) {
         return 1;
     }
@@ -82,11 +82,11 @@ function compareByUpdatedAt(a, b) {
  * @param {object} b
  * @returns
  */
-function compareByDisplayName(a, b) {
-    if (typeof a.displayName !== 'string' || typeof b.displayName !== 'string') {
+function compareByDisplayName(a: object, b: object) {
+    if (typeof (a as any).displayName !== 'string' || typeof (b as any).displayName !== 'string') {
         return 0;
     }
-    return a.displayName.localeCompare(b.displayName);
+    return (a as any).displayName.localeCompare((b as any).displayName);
 }
 
 /**
@@ -96,11 +96,11 @@ function compareByDisplayName(a, b) {
  * @param {object} b
  * @returns
  */
-function compareById(a, b) {
-    if (typeof a.id !== 'string' || typeof b.id !== 'string') {
+function compareById(a: object, b: object) {
+    if (typeof (a as any).id !== 'string' || typeof (b as any).id !== 'string') {
         return 0;
     }
-    return a.id.localeCompare(b.id);
+    return (a as any).id.localeCompare((b as any).id);
 }
 
 /**
@@ -108,11 +108,11 @@ function compareById(a, b) {
  * @param {object} b
  * @returns
  */
-function compareByMemberCount(a, b) {
-    if (typeof a.memberCount !== 'number' || typeof b.memberCount !== 'number') {
+function compareByMemberCount(a: object, b: object) {
+    if (typeof (a as any).memberCount !== 'number' || typeof (b as any).memberCount !== 'number') {
         return 0;
     }
-    return a.memberCount - b.memberCount;
+    return (a as any).memberCount - (b as any).memberCount;
 }
 
 /**
@@ -122,15 +122,15 @@ function compareByMemberCount(a, b) {
  * @param {object} b
  * @returns
  */
-function compareByPrivate(a, b) {
-    if (typeof a.ref === 'undefined' || typeof b.ref === 'undefined') {
+function compareByPrivate(a: object, b: object) {
+    if (typeof (a as any).ref === 'undefined' || typeof (b as any).ref === 'undefined') {
         return 0;
     }
-    if (a.ref.location === 'private' && b.ref.location === 'private') {
+    if ((a as any).ref.location === 'private' && (b as any).ref.location === 'private') {
         return 0;
-    } else if (a.ref.location === 'private') {
+    } else if ((a as any).ref.location === 'private') {
         return 1;
-    } else if (b.ref.location === 'private') {
+    } else if ((b as any).ref.location === 'private') {
         return -1;
     }
     return 0;
@@ -141,17 +141,17 @@ function compareByPrivate(a, b) {
  * @param {object} b
  * @returns
  */
-function compareByStatus(a, b) {
-    if (typeof a.ref === 'undefined' || typeof b.ref === 'undefined') {
+function compareByStatus(a: object, b: object) {
+    if (typeof (a as any).ref === 'undefined' || typeof (b as any).ref === 'undefined') {
         return 0;
     }
-    if (a.ref.status === b.ref.status) {
+    if ((a as any).ref.status === (b as any).ref.status) {
         return 0;
     }
-    if (a.ref.state === 'offline') {
+    if ((a as any).ref.state === 'offline') {
         return 1;
     }
-    return sortStatus(a.ref.status, b.ref.status);
+    return sortStatus((a as any).ref.status, (b as any).ref.status);
 }
 
 /**
@@ -161,9 +161,9 @@ function compareByStatus(a, b) {
  * @param {object} b
  * @returns
  */
-function compareByLastActive(a, b) {
-    if (a.state === 'online' && b.state === 'online') {
-        if (a.ref?.$online_for && b.ref?.$online_for && a.ref.$online_for === b.ref.$online_for) {
+function compareByLastActive(a: object, b: object) {
+    if ((a as any).state === 'online' && (b as any).state === 'online') {
+        if ((a as any).ref?.$online_for && (b as any).ref?.$online_for && (a as any).ref.$online_for === (b as any).ref.$online_for) {
             return compareByActivityField(a, b, 'last_login');
         }
         return compareByActivityField(a, b, '$online_for');
@@ -172,7 +172,7 @@ function compareByLastActive(a, b) {
     return compareByActivityField(a, b, 'last_activity');
 }
 
-function compareByLastActiveRef(a, b) {
+function compareByLastActiveRef(a: { state: any; $online_for?: any; last_login?: any; last_activity?: any; }, b: { state: any; $online_for?: any; last_login?: any; last_activity?: any; }) {
     if (a.state === 'online' && b.state === 'online') {
         if (a.$online_for && b.$online_for && a.$online_for === b.$online_for) {
             return a.last_login < b.last_login ? 1 : -1;
@@ -189,7 +189,7 @@ function compareByLastActiveRef(a, b) {
  * @param {object} b
  * @returns
  */
-function compareByLastSeen(a, b) {
+function compareByLastSeen(a: object, b: object) {
     return compareByActivityField(a, b, '$lastSeen');
 }
 
@@ -199,23 +199,23 @@ function compareByLastSeen(a, b) {
  * @param {string} field
  * @returns
  */
-function compareByActivityField(a, b, field) {
-    if (typeof a.ref === 'undefined' || typeof b.ref === 'undefined') {
+function compareByActivityField(a: object, b: object, field: string) {
+    if (typeof (a as any).ref === 'undefined' || typeof (b as any).ref === 'undefined') {
         return 0;
     }
 
     // When the field is just and empty string, it means they've been
     // in whatever active state for the longest
-    if (a.ref[field] < b.ref[field] || (a.ref[field] !== '' && b.ref[field] === '')) {
+    if ((a as any).ref[field] < (b as any).ref[field] || ((a as any).ref[field] !== '' && (b as any).ref[field] === '')) {
         return 1;
     }
-    if (a.ref[field] > b.ref[field] || (a.ref[field] === '' && b.ref[field] !== '')) {
+    if ((a as any).ref[field] > (b as any).ref[field] || ((a as any).ref[field] === '' && (b as any).ref[field] !== '')) {
         return -1;
     }
     return 0;
 }
 
-function compareByTimeInInstance(a, b) {
+function compareByTimeInInstance(a: { ref: { $location_at: number; }; pendingOffline: any; }, b: { ref: { $location_at: number; }; pendingOffline: any; }) {
     if (!a.ref || !b.ref) {
         return 0;
     }
@@ -238,20 +238,20 @@ function compareByTimeInInstance(a, b) {
  * @param {object} b
  * @returns
  */
-function compareByLocationAt(a, b) {
-    if (a.location === 'traveling' && b.location === 'traveling') {
+function compareByLocationAt(a: object, b: object) {
+    if ((a as any).location === 'traveling' && (b as any).location === 'traveling') {
         return 0;
     }
-    if (a.location === 'traveling') {
+    if ((a as any).location === 'traveling') {
         return 1;
     }
-    if (b.location === 'traveling') {
+    if ((b as any).location === 'traveling') {
         return -1;
     }
-    if (a.$location_at < b.$location_at) {
+    if ((a as any).$location_at < (b as any).$location_at) {
         return -1;
     }
-    if (a.$location_at > b.$location_at) {
+    if ((a as any).$location_at > (b as any).$location_at) {
         return 1;
     }
     return 0;
@@ -264,15 +264,15 @@ function compareByLocationAt(a, b) {
  * @param {object} b
  * @returns
  */
-function compareByLocation(a, b) {
-    if (typeof a.ref === 'undefined' || typeof b.ref === 'undefined') {
+function compareByLocation(a: object, b: object) {
+    if (typeof (a as any).ref === 'undefined' || typeof (b as any).ref === 'undefined') {
         return 0;
     }
-    if (a.state !== 'online' || b.state !== 'online') {
+    if ((a as any).state !== 'online' || (b as any).state !== 'online') {
         return 0;
     }
 
-    return a.ref.location.localeCompare(b.ref.location);
+    return (a as any).ref.location.localeCompare((b as any).ref.location);
 }
 
 /**
@@ -282,11 +282,11 @@ function compareByLocation(a, b) {
  * @param {object} b
  * @returns
  */
-function compareByFriendOrder(a, b) {
+function compareByFriendOrder(a: object, b: object) {
     if (typeof a === 'undefined' || typeof b === 'undefined') {
         return 0;
     }
-    return b.$friendNumber - a.$friendNumber;
+    return (b as any).$friendNumber - (a as any).$friendNumber;
 }
 
 export {

@@ -40,7 +40,7 @@ export function useSearchMarketplace() {
     /**
      * @param go
      */
-    async function moreSearchMarketplace(go) {
+    async function moreSearchMarketplace(go?: number | undefined) {
         const params = searchMarketplaceParams.value;
         if (go) {
             params.offset += params.n * go;
@@ -63,6 +63,10 @@ export function useSearchMarketplace() {
                         authorName: replaceBioSymbols(json.authorName)
                     });
                 }
+
+
+
+
                 searchMarketplaceResults.value = Array.from(map.values());
                 searchMarketplaceHasNext.value = Boolean(args.json.hasNext);
                 return args;

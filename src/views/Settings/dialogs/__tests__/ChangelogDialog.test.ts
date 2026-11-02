@@ -14,12 +14,12 @@ const openExternalLinkFn = vi.fn();
 
 vi.mock('pinia', () => ({
     storeToRefs: () => ({ changeLogDialog }),
-    defineStore: (id, fn) => fn
+    defineStore: (id: any, fn: any) => fn
 }));
 
 vi.mock('vue-i18n', () => ({
     useI18n: () => ({
-        t: (key) => key,
+        t: (key: any) => key,
         locale: require('vue').ref('en')
     })
 }));
@@ -29,7 +29,7 @@ vi.mock('../../../../stores', () => ({
 }));
 
 vi.mock('../../../../shared/utils', () => ({
-    openExternalLink: (...args) => openExternalLinkFn(...args)
+    openExternalLink: (...args: any[]) => openExternalLinkFn(...args)
 }));
 
 // Stub VueShowdown since it's async and we don't need real markdown rendering
@@ -116,6 +116,10 @@ describe('ChangelogDialog.vue', () => {
             const closeBtn = buttons.find((b) => b.text().includes('dialog.change_log.close'));
             expect(closeBtn).toBeTruthy();
 
+
+
+
+
             await closeBtn.trigger('click');
             expect(changeLogDialog.value.visible).toBe(false);
         });
@@ -125,6 +129,10 @@ describe('ChangelogDialog.vue', () => {
             const buttons = wrapper.findAll('button');
             const githubBtn = buttons.find((b) => b.text().includes('dialog.change_log.github'));
             expect(githubBtn).toBeTruthy();
+
+
+
+
 
             await githubBtn.trigger('click');
             expect(openExternalLinkFn).toHaveBeenCalledWith('https://github.com/vrcx-team/VRCX/releases');

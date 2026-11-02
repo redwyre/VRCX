@@ -5,13 +5,17 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock('pinia', () => ({
-    storeToRefs: (store) => store
+    storeToRefs: (store: any) => store
 }));
 
 vi.mock('../../../../stores', () => ({
     useSearchStore: () => ({
         searchText: mocks.searchText,
-        moreSearchUser: (...args) => mocks.moreSearchUser(...args)
+
+
+
+
+        moreSearchUser: (...args: any[]) => mocks.moreSearchUser(...args)
     })
 }));
 
@@ -33,6 +37,10 @@ describe('useSearchUser', () => {
             customFields: 'displayName',
             sort: 'relevance'
         };
+
+
+
+
 
         await api.handleMoreSearchUser(-1);
 

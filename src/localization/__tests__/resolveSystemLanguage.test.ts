@@ -10,10 +10,18 @@ describe('resolveSystemLanguage', () => {
         });
 
         test('null', () => {
+
+
+
+
             expect(resolveSystemLanguage(null, languageCodes)).toBeNull();
         });
 
         test('undefined', () => {
+
+
+
+
             expect(resolveSystemLanguage(undefined, languageCodes)).toBeNull();
         });
 

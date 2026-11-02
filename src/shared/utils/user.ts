@@ -12,13 +12,13 @@ const THEME_COLOR_LIMITS = Object.freeze({
  * @param {object} ctx
  * @returns {string | null}
  */
-function userOnlineForTimestamp(ctx) {
-    if (ctx.ref.state === 'online' && ctx.ref.$online_for) {
-        return new Date(ctx.ref.$online_for).toJSON();
-    } else if (ctx.ref.state === 'active' && ctx.ref.$active_for) {
-        return new Date(ctx.ref.$active_for).toJSON();
-    } else if (ctx.ref.$offline_for) {
-        return new Date(ctx.ref.$offline_for).toJSON();
+function userOnlineForTimestamp(ctx: object) {
+    if ((ctx as any).ref.state === 'online' && (ctx as any).ref.$online_for) {
+        return new Date((ctx as any).ref.$online_for).toJSON();
+    } else if ((ctx as any).ref.state === 'active' && (ctx as any).ref.$active_for) {
+        return new Date((ctx as any).ref.$active_for).toJSON();
+    } else if ((ctx as any).ref.$offline_for) {
+        return new Date((ctx as any).ref.$offline_for).toJSON();
     }
     return null;
 }
@@ -27,11 +27,11 @@ function userOnlineForTimestamp(ctx) {
  * @param {string} language
  * @returns
  */
-function languageClass(language) {
-    const style = {};
-    const mapping = languageMappings[language];
+function languageClass(language: string) {
+    const style: { unknown?: boolean } = {};
+    const mapping = languageMappings[language as keyof typeof languageMappings];
     if (typeof mapping !== 'undefined') {
-        style[mapping] = true;
+        (style as any)[mapping] = true;
     } else {
         style.unknown = true;
     }
@@ -43,8 +43,8 @@ function languageClass(language) {
  * @param {boolean} isDarkMode
  * @returns
  */
-async function getNameColour(userId, isDarkMode) {
-    const hue = await AppApi.GetColourFromUserID(userId);
+async function getNameColour(userId: string, isDarkMode: boolean) {
+    const hue = await (AppApi as any).GetColourFromUserID(userId);
     return HueToHex(hue, isDarkMode);
 }
 
@@ -52,7 +52,7 @@ async function getNameColour(userId, isDarkMode) {
  * @param {string} value
  * @returns {string | null}
  */
-function normalizeProfileHex(value) {
+function normalizeProfileHex(value: string) {
     const hex = String(value || '')
         .trim()
         .replace(/^#/, '')
@@ -67,7 +67,7 @@ function normalizeProfileHex(value) {
  * @param {string} hex
  * @returns {{ r: number; g: number; b: number } | null}
  */
-function hexToRgb(hex) {
+function hexToRgb(hex: string) {
     const match = /^#?([0-9a-f]{6})$/i.exec(hex);
     if (!match) {
         return null;
@@ -84,8 +84,8 @@ function hexToRgb(hex) {
  * @param {{ r: number; g: number; b: number }} rgb
  * @returns {string}
  */
-function rgbToHex(rgb) {
-    const toHex = (value) => {
+function rgbToHex(rgb: { r: number; g: number; b: number; }) {
+    const toHex = (value: number) => {
         const n = Math.max(0, Math.min(255, Math.round(value)));
         return n.toString(16).padStart(2, '0');
     };
@@ -96,8 +96,8 @@ function rgbToHex(rgb) {
  * @param {{ r: number; g: number; b: number }} rgb
  * @returns {number}
  */
-function getRelativeLuminance(rgb) {
-    const channel = (value) => {
+function getRelativeLuminance(rgb: { r: number; g: number; b: number; }) {
+    const channel = (value: number) => {
         const normalized = value / 255;
         if (normalized <= 0.03928) {
             return normalized / 12.92;
@@ -116,7 +116,7 @@ function getRelativeLuminance(rgb) {
  * @param {number} weight
  * @returns {{ r: number; g: number; b: number }}
  */
-function mixRgb(from, to, weight) {
+function mixRgb(from: { r: number; g: number; b: number; }, to: { r: number; g: number; b: number; }, weight: number) {
     return {
         r: from.r + (to.r - from.r) * weight,
         g: from.g + (to.g - from.g) * weight,
@@ -130,7 +130,7 @@ function mixRgb(from, to, weight) {
  * @param {boolean} isDarkMode
  * @returns {string}
  */
-function getReadableProfileThemeColor(colorValue, fallback, isDarkMode) {
+function getReadableProfileThemeColor(colorValue: string, fallback: string, isDarkMode: boolean) {
     const normalized = normalizeProfileHex(colorValue);
     if (!normalized) {
         return fallback;
@@ -163,7 +163,7 @@ function getReadableProfileThemeColor(colorValue, fallback, isDarkMode) {
  * @param {string} colorValue
  * @returns {string}
  */
-function invertHexColor(colorValue) {
+function invertHexColor(colorValue: string) {
     const normalized = normalizeProfileHex(colorValue);
     if (!normalized) {
         return colorValue;
@@ -186,7 +186,7 @@ function invertHexColor(colorValue) {
  * @param {object} currentUser - Current user object from useUserStore
  * @returns
  */
-function userStatusClass(user, pendingOffline = false, currentUser) {
+function userStatusClass(user: object, pendingOffline: boolean = false, currentUser: object) {
     const style = {
         'status-icon': true
     };
@@ -194,85 +194,85 @@ function userStatusClass(user, pendingOffline = false, currentUser) {
         return null;
     }
     let id = '';
-    if (user.id) {
-        id = user.id;
-    } else if (user.userId) {
-        id = user.userId;
+    if ((user as any).id) {
+        id = (user as any).id;
+    } else if ((user as any).userId) {
+        id = (user as any).userId;
     }
-    if (id === currentUser?.id) {
-        const platform = currentUser.presence?.platform;
+    if (id === (currentUser as any)?.id) {
+        const platform = (currentUser as any).presence?.platform;
         return {
-            ...style,
-            ...statusClass(user.status),
-            mobile: platform && platform !== 'standalonewindows' && platform !== 'web'
-        };
+    ...style,
+    ...statusClass((user as any).status),
+    mobile: platform && platform !== 'standalonewindows' && platform !== 'web'
+};
     }
-    if (!user.isFriend) {
+    if (!(user as any).isFriend) {
         return null;
     }
     if (pendingOffline) {
         // Pending offline
-        style.offline = true;
+(style as any).offline = true;
     } else if (
-        user.status !== 'active' &&
-        user.location === 'private' &&
-        user.state === '' &&
-        id &&
-        !(currentUser?.onlineFriends || []).includes(id)
+        (user as any).status !== 'active' &&
+    (user as any).location === 'private' &&
+    (user as any).state === '' &&
+    id &&
+    !((currentUser as any)?.onlineFriends || []).includes(id)
     ) {
         // temp fix
-        if ((currentUser?.activeFriends || []).includes(id)) {
+        if (((currentUser as any)?.activeFriends || []).includes(id)) {
             // Active
-            if (user.status === 'join me') {
-                style['active-joinme'] = true;
-            } else if (user.status === 'ask me') {
-                style['active-askme'] = true;
-            } else if (user.status === 'busy') {
-                style['active-busy'] = true;
+            if ((user as any).status === 'join me') {
+                style['active-joinme' as keyof typeof style] = true;
+            } else if ((user as any).status === 'ask me') {
+                style['active-askme' as keyof typeof style] = true;
+            } else if ((user as any).status === 'busy') {
+                style['active-busy' as keyof typeof style] = true;
             } else {
-                style.active = true;
+                (style as any).active = true;
             }
         } else {
             // Offline
-            style.offline = true;
+(style as any).offline = true;
         }
-    } else if (user.state === 'active') {
+    } else if ((user as any).state === 'active') {
         // Active
-        if (user.status === 'join me') {
-            style['active-joinme'] = true;
-        } else if (user.status === 'ask me') {
-            style['active-askme'] = true;
-        } else if (user.status === 'busy') {
-            style['active-busy'] = true;
+        if ((user as any).status === 'join me') {
+            style['active-joinme' as keyof typeof style] = true;
+        } else if ((user as any).status === 'ask me') {
+            style['active-askme' as keyof typeof style] = true;
+        } else if ((user as any).status === 'busy') {
+            style['active-busy' as keyof typeof style] = true;
         } else {
-            style.active = true;
+            (style as any).active = true;
         }
-    } else if (user.location === 'offline') {
+    } else if ((user as any).location === 'offline') {
         // Offline
-        style.offline = true;
-    } else if (user.status === 'active') {
+(style as any).offline = true;
+    } else if ((user as any).status === 'active') {
         // Online
-        style.online = true;
-    } else if (user.status === 'join me') {
+(style as any).online = true;
+    } else if ((user as any).status === 'join me') {
         // Join Me
-        style.joinme = true;
-    } else if (user.status === 'ask me') {
+(style as any).joinme = true;
+    } else if ((user as any).status === 'ask me') {
         // Ask Me
-        style.askme = true;
-    } else if (user.status === 'busy') {
+(style as any).askme = true;
+    } else if ((user as any).status === 'busy') {
         // Do Not Disturb
-        style.busy = true;
+(style as any).busy = true;
     } else {
         // Unknown status
         return null;
     }
     if (
-        user.$platform &&
-        user.$platform !== 'standalonewindows' &&
-        user.$platform !== 'web' &&
-        user.state === 'online'
+        (user as any).$platform &&
+    (user as any).$platform !== 'standalonewindows' &&
+    (user as any).$platform !== 'web' &&
+    (user as any).state === 'online'
     ) {
-        style.mobile = true;
+        (style as any).mobile = true;
     }
     return style;
 }
@@ -281,7 +281,7 @@ function userStatusClass(user, pendingOffline = false, currentUser) {
  * @param {string} status
  * @returns {object}
  */
-function statusClass(status) {
+function statusClass(status: string) {
     if (typeof status === 'undefined') {
         return null;
     }
@@ -290,16 +290,16 @@ function statusClass(status) {
     };
     if (status === 'active') {
         // Online
-        style.online = true;
+(style as any).online = true;
     } else if (status === 'join me') {
         // Join Me
-        style.joinme = true;
+(style as any).joinme = true;
     } else if (status === 'ask me') {
         // Ask Me
-        style.askme = true;
+(style as any).askme = true;
     } else if (status === 'busy') {
         // Do Not Disturb
-        style.busy = true;
+(style as any).busy = true;
     } else {
         return null;
     }
@@ -312,30 +312,30 @@ function statusClass(status) {
  * @param {string} resolution - Requested icon resolution (default 128),
  * @returns {string} - Img url
  */
-function userImage(user, isIcon = false, resolution = '128') {
+function userImage(user: object, isIcon: boolean = false, resolution: string = '128') {
     if (!user) {
         return '';
     }
-    if (user.iconUrl) {
+    if ((user as any).iconUrl) {
         if (isIcon) {
-            return convertFileUrlToImageUrl(user.iconUrl);
+            return convertFileUrlToImageUrl((user as any).iconUrl);
         }
-        return user.iconUrl;
+        return (user as any).iconUrl;
     }
-    if (user.thumbnailUrl) {
-        return user.thumbnailUrl;
+    if ((user as any).thumbnailUrl) {
+        return (user as any).thumbnailUrl;
     }
-    if (user.currentAvatarThumbnailImageUrl) {
+    if ((user as any).currentAvatarThumbnailImageUrl) {
         if (isIcon) {
-            return user.currentAvatarThumbnailImageUrl.replace('/256', `/${resolution}`);
+            return (user as any).currentAvatarThumbnailImageUrl.replace('/256', `/${resolution}`);
         }
-        return user.currentAvatarThumbnailImageUrl;
+        return (user as any).currentAvatarThumbnailImageUrl;
     }
-    if (user.currentAvatarImageUrl) {
+    if ((user as any).currentAvatarImageUrl) {
         if (isIcon) {
-            return convertFileUrlToImageUrl(user.currentAvatarImageUrl);
+            return convertFileUrlToImageUrl((user as any).currentAvatarImageUrl);
         }
-        return user.currentAvatarImageUrl;
+        return (user as any).currentAvatarImageUrl;
     }
     return '';
 }
@@ -344,24 +344,24 @@ function userImage(user, isIcon = false, resolution = '128') {
  * @param {object} user
  * @returns {string | any}
  */
-function userImageFull(user) {
+function userImageFull(user: object) {
     if (!user) {
         return '';
     }
-    if (user.iconUrl) {
-        return user.iconUrl;
+    if ((user as any).iconUrl) {
+        return (user as any).iconUrl;
     }
-    if (user.profilePicOverride) {
-        return user.profilePicOverride;
+    if ((user as any).profilePicOverride) {
+        return (user as any).profilePicOverride;
     }
-    return user.currentAvatarImageUrl;
+    return (user as any).currentAvatarImageUrl;
 }
 
 /**
  * @param {string} user
  * @returns {any | string}
  */
-function parseUserUrl(user) {
+function parseUserUrl(user: string) {
     const url = new URL(user);
     const urlPath = url.pathname;
     if (urlPath.substring(5, 11) === '/user/') {
@@ -378,7 +378,11 @@ function parseUserUrl(user) {
  * @param {Map<string, Set<string>>} [cachedUserIdsByDisplayName]
  * @returns {object | undefined}
  */
-function findUserByDisplayName(cachedUsers, displayName, cachedUserIdsByDisplayName) {
+
+
+
+
+function findUserByDisplayName(cachedUsers: Map, displayName: string, cachedUserIdsByDisplayName?: Map<string, Set<string>>) {
     const indexedUserIds = cachedUserIdsByDisplayName?.get(displayName);
     if (indexedUserIds) {
         for (const userId of indexedUserIds) {

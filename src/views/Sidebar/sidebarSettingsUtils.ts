@@ -3,7 +3,7 @@
  * @param {string[]} allKeys - All available group keys
  * @returns {string[]} Resolved group keys
  */
-export function resolveFavoriteGroups(stored, allKeys) {
+export function resolveFavoriteGroups(stored: string[], allKeys: string[]) {
     if (stored.length === 0) {
         return allKeys;
     }
@@ -15,7 +15,7 @@ export function resolveFavoriteGroups(stored, allKeys) {
  * @param {string[]} allKeys - All available group keys
  * @returns {string[]} Value to store
  */
-export function normalizeFavoriteGroupsChange(value, allKeys) {
+export function normalizeFavoriteGroupsChange(value: string[] | null, allKeys: string[]) {
     if (!value || value.length === 0) {
         return [];
     }

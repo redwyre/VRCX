@@ -9,7 +9,7 @@ import { formatDateFilter } from '../../../shared/utils';
 
 const { t } = i18n.global;
 
-const sortButton = ({ column, label, descFirst = false }) => (
+const sortButton = ({ column, label, descFirst = false }: any) => (
     <Button
         variant="ghost"
         size="sm"
@@ -28,7 +28,7 @@ const sortButton = ({ column, label, descFirst = false }) => (
     </Button>
 );
 
-const resolveBool = (maybeRef) => {
+const resolveBool = (maybeRef: { value: any; }) => {
     if (maybeRef && typeof maybeRef === 'object' && 'value' in maybeRef) {
         return !!maybeRef.value;
     }
@@ -37,26 +37,34 @@ const resolveBool = (maybeRef) => {
 
 const baseDateColumn = () => ({
     id: 'created_at',
-    accessorFn: (row) => (row?.created_at ? Date.parse(row.created_at) : 0),
+    accessorFn: (row: { created_at: string; }) => (row?.created_at ? Date.parse(row.created_at) : 0),
     size: 170,
-    header: ({ column }) =>
+    header: ({ column }: any) =>
         sortButton({
             column,
             label: t('table.previous_instances.date'),
             descFirst: true
         }),
-    cell: ({ row }) => <span>{formatDateFilter(row.original?.created_at, 'long')}</span>
+
+
+
+
+    cell: ({ row }: any) => <span>{formatDateFilter(row.original?.created_at, 'long')}</span>
 });
 
 const timeColumn = () => ({
     id: 'time',
-    accessorFn: (row) => row?.time ?? 0,
+    accessorFn: (row: { time: any; }) => row?.time ?? 0,
     size: 100,
-    header: ({ column }) => sortButton({ column, label: t('table.previous_instances.time') }),
-    cell: ({ row }) => <span>{row.original?.timer ?? ''}</span>
+    header: ({ column }: any) => sortButton({ column, label: t('table.previous_instances.time') }),
+
+
+
+
+    cell: ({ row }: any) => <span>{row.original?.timer ?? ''}</span>
 });
 
-const actionsColumn = ({ shiftHeld, onShowInfo, onDelete, onDeletePrompt, onLaunch = null }) => ({
+const actionsColumn = ({ shiftHeld, onShowInfo, onDelete, onDeletePrompt, onLaunch = null }: any) => ({
     id: 'actions',
     enableSorting: false,
     size: onLaunch ? 140 : 120,
@@ -65,18 +73,22 @@ const actionsColumn = ({ shiftHeld, onShowInfo, onDelete, onDeletePrompt, onLaun
         thClass: 'text-right',
         tdClass: 'text-right'
     },
-    cell: ({ row }) => {
+    cell: ({ row }: any) => {
         const original = row.original;
         const isShiftHeld = resolveBool(shiftHeld);
 
         return (
+
+
+
+
             <div class="inline-flex items-center justify-end gap-1">
                 {onLaunch ? (
                     <Button
                         size="icon-sm"
                         variant="ghost"
                         class="w-6 h-6 text-xs"
-                        onClick={(event) => {
+                        onClick={(event: { stopPropagation: () => void; }) => {
                             event.stopPropagation();
                             onLaunch?.(original?.location);
                         }}
@@ -89,7 +101,7 @@ const actionsColumn = ({ shiftHeld, onShowInfo, onDelete, onDeletePrompt, onLaun
                     size="icon-sm"
                     variant="ghost"
                     class="w-6 h-6 text-xs"
-                    onClick={(event) => {
+                    onClick={(event: { stopPropagation: () => void; }) => {
                         event.stopPropagation();
                         onShowInfo?.(original?.$location?.tag);
                     }}
@@ -102,7 +114,7 @@ const actionsColumn = ({ shiftHeld, onShowInfo, onDelete, onDeletePrompt, onLaun
                     variant="ghost"
                     class="w-6 h-6 text-xs"
                     style={isShiftHeld ? { color: '#f56c6c' } : undefined}
-                    onClick={(event) => {
+                    onClick={(event: { stopPropagation: () => void; }) => {
                         event.stopPropagation();
                         if (isShiftHeld) {
                             onDelete?.(original);
@@ -113,19 +125,23 @@ const actionsColumn = ({ shiftHeld, onShowInfo, onDelete, onDeletePrompt, onLaun
                 >
                     <Trash2 class="h-4 w-4" />
                 </Button>
+
+
+
+
             </div>
         );
     }
 });
 
-export const createPreviousInstancesColumns = (variant, config) => {
+export const createPreviousInstancesColumns = (variant: string, config: { shiftHeld: any; onLaunch: any; onShowInfo: any; onDelete: any; onDeletePrompt: any; currentUserId: any; forceUpdateKey: any; }) => {
     if (variant === 'user') {
         return [
             baseDateColumn(),
             {
                 id: 'world',
-                accessorFn: (row) => row?.worldName ?? row?.name ?? '',
-                header: ({ column }) =>
+                accessorFn: (row: { worldName: any; name: any; }) => row?.worldName ?? row?.name ?? '',
+                header: ({ column }: any) =>
                     sortButton({
                         column,
                         label: t('table.previous_instances.world')
@@ -133,7 +149,7 @@ export const createPreviousInstancesColumns = (variant, config) => {
                 meta: {
                     stretch: true
                 },
-                cell: ({ row }) => (
+                cell: ({ row }: any) => (
                     <Location
                         location={row.original?.location}
                         hint={row.original?.worldName}
@@ -143,10 +159,10 @@ export const createPreviousInstancesColumns = (variant, config) => {
             },
             {
                 id: 'creator',
-                accessorFn: (row) => row?.$location?.userId ?? '',
+                accessorFn: (row: { $location: { userId: any; }; }) => row?.$location?.userId ?? '',
                 size: 170,
                 header: () => t('table.previous_instances.instance_creator'),
-                cell: ({ row }) => (
+                cell: ({ row }: any) => (
                     <DisplayName userid={row.original?.$location?.userId} location={row.original?.$location?.tag} />
                 )
             },
@@ -166,12 +182,12 @@ export const createPreviousInstancesColumns = (variant, config) => {
             baseDateColumn(),
             {
                 id: 'instance',
-                accessorFn: (row) => row?.$location?.tag ?? row?.location ?? '',
+                accessorFn: (row: { $location: { tag: any; }; location: any; }) => row?.$location?.tag ?? row?.location ?? '',
                 header: () => t('table.previous_instances.instance_name'),
                 meta: {
                     stretch: true
                 },
-                cell: ({ row }) => (
+                cell: ({ row }: any) => (
                     <LocationWorld
                         class="w-fit"
                         locationobject={row.original?.$location}
@@ -182,10 +198,10 @@ export const createPreviousInstancesColumns = (variant, config) => {
             },
             {
                 id: 'creator',
-                accessorFn: (row) => row?.$location?.userId ?? '',
+                accessorFn: (row: { $location: { userId: any; }; }) => row?.$location?.userId ?? '',
                 size: 170,
                 header: () => t('table.previous_instances.instance_creator'),
-                cell: ({ row }) => (
+                cell: ({ row }: any) => (
                     <DisplayName
                         userid={row.original?.$location?.userId}
                         location={row.original?.$location?.tag}
@@ -207,12 +223,12 @@ export const createPreviousInstancesColumns = (variant, config) => {
         baseDateColumn(),
         {
             id: 'instance',
-            accessorFn: (row) => row?.worldName ?? row?.name ?? '',
+            accessorFn: (row: { worldName: any; name: any; }) => row?.worldName ?? row?.name ?? '',
             header: () => t('table.previous_instances.instance_name'),
             meta: {
                 stretch: true
             },
-            cell: ({ row }) => (
+            cell: ({ row }: any) => (
                 <Location
                     location={row.original?.$location?.tag ?? row.original?.location}
                     grouphint={row.original?.groupName}

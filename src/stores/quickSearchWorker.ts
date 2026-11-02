@@ -70,7 +70,7 @@ const regexLineBreakCombiningMarks =
 const regexSymbolWithCombiningMarks =
     /([\0-\u02FF\u0370-\u1AAF\u1B00-\u1DBF\u1E00-\u20CF\u2100-\uD7FF\uE000-\uFE1F\uFE30-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])([\u0300-\u036F\u1AB0-\u1AFF\u1DC0-\u1DFF\u20D0-\u20FF\uFE20-\uFE2F]+)/g;
 
-function removeConfusables(a) {
+function removeConfusables(a: string) {
     if (nonConfusables.test(a)) {
         return a;
     }
@@ -85,11 +85,11 @@ function removeConfusables(a) {
     return ret;
 }
 
-function removeWhitespace(a) {
+function removeWhitespace(a: string) {
     return a.replace(/\s/g, '');
 }
 
-function localeIncludes(str, search, comparer) {
+function localeIncludes(str: string | any[], search: string, comparer: { compare: (arg0: string, arg1: string) => number; }) {
     if (search === '') return true;
     if (!str || !search) return false;
     const strObj = String(str);
@@ -103,24 +103,24 @@ function localeIncludes(str, search, comparer) {
     return false;
 }
 
-function matchName(name, cleanQuery, comparer, normalizedName) {
+function matchName(name: any, cleanQuery: any, comparer: any, normalizedName: any) {
     if (!name || !cleanQuery) return false;
     const cleanName = normalizedName || removeConfusables(name);
     if (localeIncludes(cleanName, cleanQuery, comparer)) return true;
     return localeIncludes(name, cleanQuery, comparer);
 }
 
-function isPrefixMatch(name, cleanQuery, comparer) {
+function isPrefixMatch(name: string, cleanQuery: string | any[], comparer: { compare: (arg0: any, arg1: any) => number; }) {
     if (!name || !cleanQuery) return false;
     return comparer.compare(name.substring(0, cleanQuery.length), cleanQuery) === 0;
 }
 
-let indexedFriends = []; // { id, name, memo, note, imageUrl }
-let indexedAvatars = []; // { id, name, authorId, imageUrl }
-let indexedWorlds = []; // { id, name, authorId, imageUrl }
-let indexedGroups = []; // { id, name, ownerId, imageUrl }
-let indexedFavAvatars = []; // { id, name, imageUrl }
-let indexedFavWorlds = []; // { id, name, imageUrl }
+let indexedFriends: any = []; // { id, name, memo, note, imageUrl }
+let indexedAvatars: any = []; // { id, name, authorId, imageUrl }
+let indexedWorlds: any = []; // { id, name, authorId, imageUrl }
+let indexedGroups: any = []; // { id, name, ownerId, imageUrl }
+let indexedFavAvatars: any = []; // { id, name, imageUrl }
+let indexedFavWorlds: any = []; // { id, name, imageUrl }
 
 /**
  * Update the search index with fresh data snapshots.
@@ -128,7 +128,7 @@ let indexedFavWorlds = []; // { id, name, imageUrl }
  *
  * @param payload
  */
-function updateIndex(payload) {
+function updateIndex(payload: { friends: any[]; avatars: any[]; worlds: any[]; groups: any[]; favAvatars: any[]; favWorlds: any[]; }) {
     if (payload.friends) {
         indexedFriends = payload.friends;
         for (const f of indexedFriends) {
@@ -169,7 +169,7 @@ function updateIndex(payload) {
 
 // ── Search functions ────────────────────────────────────────────────
 
-function searchFriends(query, cleanQuery, comparer, limit = 10) {
+function searchFriends(query: any, cleanQuery: any, comparer: any, limit = 10) {
     const results = [];
     for (const ctx of indexedFriends) {
         let match = matchName(ctx.name, cleanQuery, comparer, ctx._normalized);
@@ -197,10 +197,10 @@ function searchFriends(query, cleanQuery, comparer, limit = 10) {
     return sortAndLimit(results, cleanQuery, comparer, limit);
 }
 
-function sortAndLimit(results, cleanQuery, comparer, limit) {
+function sortAndLimit(results: any, cleanQuery: any, comparer: any, limit: any) {
     // Pre-compute prefix matches to avoid repeated Collator calls in sort
-    const prefixMatches = new Set(results.filter((r) => isPrefixMatch(r.name, cleanQuery, comparer)));
-    results.sort((a, b) => {
+    const prefixMatches = new Set(results.filter((r: any) => isPrefixMatch(r.name, cleanQuery, comparer)));
+    results.sort((a: any, b: any) => {
         const aIsPrefix = prefixMatches.has(a);
         const bIsPrefix = prefixMatches.has(b);
         if (aIsPrefix && !bIsPrefix) return -1;
@@ -211,7 +211,7 @@ function sortAndLimit(results, cleanQuery, comparer, limit) {
     return results;
 }
 
-function searchItems(cleanQuery, items, type, comparer, ownerKey, ownerId, limit = 10) {
+function searchItems(cleanQuery: any, items: any, type: any, comparer: any, ownerKey: string | number, ownerId: any, limit = 10) {
     const results = [];
     for (const ref of items) {
         if (!ref || !ref.name) continue;
@@ -228,7 +228,7 @@ function searchItems(cleanQuery, items, type, comparer, ownerKey, ownerId, limit
     return sortAndLimit(results, cleanQuery, comparer, limit);
 }
 
-function handleSearch(payload) {
+function handleSearch(payload: any) {
     const { seq, query, currentUserId, language } = payload;
 
     if (!query || query.length < 1) {
@@ -258,19 +258,31 @@ function handleSearch(payload) {
 
     const friends = searchFriends(query, cleanQuery, comparer);
     const ownAvatars = searchItems(cleanQuery, indexedAvatars, 'avatar', comparer, 'authorId', currentUserId);
+
+
+
+
     const favAvatars = searchItems(cleanQuery, indexedFavAvatars, 'avatar', comparer, null, null);
     const ownWorlds = searchItems(cleanQuery, indexedWorlds, 'world', comparer, 'authorId', currentUserId);
+
+
+
+
     const favWorlds = searchItems(cleanQuery, indexedFavWorlds, 'world', comparer, null, null);
     const ownGroups = searchItems(cleanQuery, indexedGroups, 'group', comparer, 'ownerId', currentUserId);
+
+
+
+
     const joinedGroups = searchItems(cleanQuery, indexedGroups, 'group', comparer, null, null);
 
     // Deduplicate favorites against own
-    const ownAvatarIds = new Set(ownAvatars.map((r) => r.id));
-    const dedupedFavAvatars = favAvatars.filter((r) => !ownAvatarIds.has(r.id));
-    const ownWorldIds = new Set(ownWorlds.map((r) => r.id));
-    const dedupedFavWorlds = favWorlds.filter((r) => !ownWorldIds.has(r.id));
-    const ownGroupIds = new Set(ownGroups.map((r) => r.id));
-    const dedupedJoinedGroups = joinedGroups.filter((r) => !ownGroupIds.has(r.id));
+    const ownAvatarIds = new Set(ownAvatars.map((r: any) => r.id));
+    const dedupedFavAvatars = favAvatars.filter((r: any) => !ownAvatarIds.has(r.id));
+    const ownWorldIds = new Set(ownWorlds.map((r: any) => r.id));
+    const dedupedFavWorlds = favWorlds.filter((r: any) => !ownWorldIds.has(r.id));
+    const ownGroupIds = new Set(ownGroups.map((r: any) => r.id));
+    const dedupedJoinedGroups = joinedGroups.filter((r: any) => !ownGroupIds.has(r.id));
 
     self.postMessage({
         type: 'searchResult',

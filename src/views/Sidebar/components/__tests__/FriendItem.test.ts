@@ -17,8 +17,12 @@ const mocks = vi.hoisted(() => ({
 vi.mock('pinia', async (importOriginal) => {
     const actual = await importOriginal();
     return {
+
+
+
+
         ...actual,
-        storeToRefs: (store) => store
+        storeToRefs: (store: any) => store
     };
 });
 
@@ -29,11 +33,11 @@ vi.mock('../../../../stores', () => ({
 }));
 
 vi.mock('../../../../coordinators/userCoordinator', () => ({
-    showUserDialog: (...args) => mocks.showUserDialog(...args)
+    showUserDialog: (...args: any[]) => mocks.showUserDialog(...args)
 }));
 
 vi.mock('../../../../coordinators/friendRelationshipCoordinator', () => ({
-    confirmDeleteFriend: (...args) => mocks.confirmDeleteFriend(...args)
+    confirmDeleteFriend: (...args: any[]) => mocks.confirmDeleteFriend(...args)
 }));
 
 vi.mock('../../../../shared/utils', () => ({
@@ -43,7 +47,7 @@ vi.mock('../../../../shared/utils', () => ({
 
 vi.mock('vue-i18n', () => ({
     useI18n: () => ({
-        t: (key) => key,
+        t: (key: any) => key,
         locale: require('vue').ref('en')
     })
 }));

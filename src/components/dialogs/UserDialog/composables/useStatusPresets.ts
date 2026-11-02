@@ -13,37 +13,45 @@ const STATUS_CLASS_MAP = {
 };
 
 const presets = ref([]);
-let loadPromise = null;
+let loadPromise: Promise<void> | null = null;
 
 export function useStatusPresets() {
     async function loadPresets() {
         try {
+
+
+
+
             presets.value = await configRepository.getArray(STORAGE_KEY, []);
         } catch {
             presets.value = [];
         }
     }
 
-    async function addPreset(status, statusDescription) {
+    async function addPreset(status: any, statusDescription: any) {
         if (presets.value.length >= MAX_PRESETS) {
             return 'limit';
         }
-        const exists = presets.value.some((p) => p.status === status && p.statusDescription === statusDescription);
+        const exists = presets.value.some((p) => (p as any).status === status && (p as any).statusDescription === statusDescription);
         if (exists) {
             return 'exists';
         }
+
+
+
+
         presets.value.push({ status, statusDescription });
         await configRepository.setArray(STORAGE_KEY, presets.value);
         return 'ok';
     }
 
-    async function removePreset(index) {
+    async function removePreset(index: number) {
         presets.value.splice(index, 1);
         await configRepository.setArray(STORAGE_KEY, presets.value);
     }
 
-    function getStatusClass(status) {
-        return STATUS_CLASS_MAP[status] || 'online';
+    function getStatusClass(status: string | number) {
+        return STATUS_CLASS_MAP[status as keyof typeof STATUS_CLASS_MAP] || 'online';
     }
 
     if (!loadPromise) {

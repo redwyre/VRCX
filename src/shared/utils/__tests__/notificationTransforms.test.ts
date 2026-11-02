@@ -21,13 +21,13 @@ describe('sanitizeNotificationJson', () => {
         // replaceBioSymbols replaces Unicode look-alikes with ASCII, not zero-width spaces
         const json = { message: 'hello？ world' };
         const result = sanitizeNotificationJson(json);
-        expect(result.message).toContain('?');
+        expect((result as any).message).toContain('?');
     });
 
     it('should apply replaceBioSymbols to title', () => {
         const json = { title: 'hello？ world' };
         const result = sanitizeNotificationJson(json);
-        expect(result.title).toContain('?');
+        expect((result as any).title).toContain('?');
     });
 
     it('should not touch other fields', () => {

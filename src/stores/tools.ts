@@ -19,25 +19,25 @@ const initialDialogState = () => ({
 export const useToolsStore = defineStore('Tools', () => {
     const dialogs = reactive(initialDialogState());
 
-    function setDialogVisible(dialogKey, value) {
+    function setDialogVisible(dialogKey: string, value: boolean) {
         if (!(dialogKey in dialogs)) {
             console.warn(`[toolsStore] Unknown dialog key "${dialogKey}" passed to setDialogVisible`);
             return;
         }
-        dialogs[dialogKey] = value;
+        dialogs[dialogKey as keyof typeof dialogs] = value;
     }
 
-    function openDialog(dialogKey) {
+    function openDialog(dialogKey: any) {
         setDialogVisible(dialogKey, true);
     }
 
-    function closeDialog(dialogKey) {
+    function closeDialog(dialogKey: any) {
         setDialogVisible(dialogKey, false);
     }
 
     function closeAllDialogs() {
         Object.keys(dialogs).forEach((dialogKey) => {
-            dialogs[dialogKey] = false;
+            dialogs[dialogKey as keyof typeof dialogs] = false;
         });
     }
 

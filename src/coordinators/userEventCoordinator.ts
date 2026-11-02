@@ -21,7 +21,18 @@ import { useWorldStore } from '../stores/world';
  * @param {function} [options.nowIso] ISO timestamp provider.
  * @returns {Promise<void>}
  */
-export async function runHandleUserUpdateFlow(ref, props, { now = Date.now, nowIso = () => new Date().toJSON() } = {}) {
+export async function runHandleUserUpdateFlow(ref: object, props: object, { now = Date.now, nowIso = () => new Date().toJSON() }: {
+
+
+
+
+    now?: function;
+
+
+
+
+    nowIso?: function;
+} = {}) {
     const friendStore = useFriendStore();
     const userStore = useUserStore();
     const worldStore = useWorldStore();
@@ -36,14 +47,14 @@ export async function runHandleUserUpdateFlow(ref, props, { now = Date.now, nowI
     let feed;
     let newLocation;
     let previousLocation;
-    const friend = friendStore.friends.get(ref.id);
+    const friend = friendStore.friends.get((ref as any).id);
     if (typeof friend === 'undefined') {
         return;
     }
-    if (props.location) {
+    if ((props as any).location) {
         // update instancePlayerCount
-        previousLocation = props.location[1];
-        newLocation = props.location[0];
+previousLocation = (props as any).location[1];
+        newLocation = (props as any).location[0];
         let oldCount = state.instancePlayerCount.get(previousLocation);
         if (typeof oldCount !== 'undefined') {
             oldCount--;
@@ -62,7 +73,7 @@ export async function runHandleUserUpdateFlow(ref, props, { now = Date.now, nowI
 
         const previousLocationL = parseLocation(previousLocation);
         const newLocationL = parseLocation(newLocation);
-        if (previousLocationL.tag === userDialog.$location.tag || newLocationL.tag === userDialog.$location.tag) {
+        if (previousLocationL.tag === (userDialog.$location as any).tag || newLocationL.tag === (userDialog.$location as any).tag) {
             // update user dialog instance occupants
             applyUserDialogLocation(true);
         }
@@ -80,28 +91,28 @@ export async function runHandleUserUpdateFlow(ref, props, { now = Date.now, nowI
         }
     }
     if (
-        !props.state &&
-        props.location &&
-        props.location[0] !== 'offline' &&
-        props.location[0] !== '' &&
-        props.location[1] !== 'offline' &&
-        props.location[1] !== '' &&
-        props.location[0] !== 'traveling'
+        !(props as any).state &&
+    (props as any).location &&
+    (props as any).location[0] !== 'offline' &&
+    (props as any).location[0] !== '' &&
+    (props as any).location[1] !== 'offline' &&
+    (props as any).location[1] !== '' &&
+    (props as any).location[0] !== 'traveling'
     ) {
         // skip GPS if user is offline or traveling
-        previousLocation = props.location[1];
-        newLocation = props.location[0];
-        let time = props.location[2];
-        if (previousLocation === 'traveling' && ref.$previousLocation) {
-            previousLocation = ref.$previousLocation;
-            const travelTime = now() - ref.$travelingToTime;
+previousLocation = (props as any).location[1];
+        newLocation = (props as any).location[0];
+        let time = (props as any).location[2];
+        if (previousLocation === 'traveling' && (ref as any).$previousLocation) {
+            previousLocation = (ref as any).$previousLocation;
+            const travelTime = now() - (ref as any).$travelingToTime;
             time -= travelTime;
             if (time < 0) {
                 time = 0;
             }
         }
         if (AppDebug.debugFriendState && previousLocation) {
-            console.log(`${ref.displayName} GPS ${previousLocation} -> ${newLocation}`);
+            console.log(`${(ref as any).displayName} GPS ${previousLocation} -> ${newLocation}`);
         }
         if (previousLocation === 'offline') {
             previousLocation = '';
@@ -109,25 +120,25 @@ export async function runHandleUserUpdateFlow(ref, props, { now = Date.now, nowI
         if (!previousLocation) {
             // no previous location
             if (AppDebug.debugFriendState) {
-                console.log(ref.displayName, 'Ignoring GPS, no previous location', newLocation);
+                console.log((ref as any).displayName, 'Ignoring GPS, no previous location', newLocation);
             }
-        } else if (ref.$previousLocation === newLocation) {
+        } else if ((ref as any).$previousLocation === newLocation) {
             // location traveled to is the same
-            ref.$location_at = now() - time;
+(ref as any).$location_at = now() - time;
         } else {
             const worldName = await getWorldName(newLocation);
             const groupName = await getGroupName(newLocation);
             feed = {
-                created_at: nowIso(),
-                type: 'GPS',
-                userId: ref.id,
-                displayName: ref.displayName,
-                location: newLocation,
-                worldName,
-                groupName,
-                previousLocation,
-                time
-            };
+    created_at: nowIso(),
+    type: 'GPS',
+    userId: (ref as any).id,
+    displayName: (ref as any).displayName,
+    location: newLocation,
+    worldName,
+    groupName,
+    previousLocation,
+    time
+};
             notificationStore.queueFeedNoty(feed);
             sharedFeedStore.addEntry(feed);
             const persistedFeed = await database.addGPSToDatabase(feed);
@@ -135,18 +146,18 @@ export async function runHandleUserUpdateFlow(ref, props, { now = Date.now, nowI
                 feedStore.addFeedEntry(persistedFeed);
             }
             // clear previousLocation after GPS
-            ref.$previousLocation = '';
-            ref.$travelingToTime = now();
+(ref as any).$previousLocation = '';
+            (ref as any).$travelingToTime = now();
         }
     }
-    if (props.location && props.location[0] === 'traveling' && props.location[1] !== 'traveling') {
+    if ((props as any).location && (props as any).location[0] === 'traveling' && (props as any).location[1] !== 'traveling') {
         // store previous location when user is traveling
-        ref.$previousLocation = props.location[1];
-        ref.$travelingToTime = now();
+(ref as any).$previousLocation = (props as any).location[1];
+        (ref as any).$travelingToTime = now();
     }
-    if (ref.bannerType === 'avatarBanner' && props.bannerUrl && props.bannerUrl[0]) {
-        const currentBannerUrl = props.bannerUrl[0];
-        const previousBannerUrl = props.bannerUrl[1];
+    if ((ref as any).bannerType === 'avatarBanner' && (props as any).bannerUrl && (props as any).bannerUrl[0]) {
+        const currentBannerUrl = (props as any).bannerUrl[0];
+        const previousBannerUrl = (props as any).bannerUrl[1];
         let avatarInfo = {
             ownerId: '',
             avatarName: ''
@@ -167,19 +178,19 @@ export async function runHandleUserUpdateFlow(ref, props, { now = Date.now, nowI
                 console.log(err);
             }
             feed = {
-                created_at: nowIso(),
-                type: 'Avatar',
-                userId: ref.id,
-                displayName: ref.displayName,
-                ownerId: avatarInfo.ownerId,
-                previousOwnerId: previousAvatarInfo.ownerId,
-                avatarName: avatarInfo.avatarName,
-                previousAvatarName: previousAvatarInfo.avatarName,
-                currentAvatarImageUrl: avatarInfo.ownerId ? currentBannerUrl : '',
-                currentAvatarThumbnailImageUrl: avatarInfo.ownerId ? currentBannerUrl : '',
-                previousCurrentAvatarImageUrl: previousAvatarInfo.ownerId ? previousBannerUrl : '',
-                previousCurrentAvatarThumbnailImageUrl: previousAvatarInfo.ownerId ? previousBannerUrl : ''
-            };
+    created_at: nowIso(),
+    type: 'Avatar',
+    userId: (ref as any).id,
+    displayName: (ref as any).displayName,
+    ownerId: avatarInfo.ownerId,
+    previousOwnerId: previousAvatarInfo.ownerId,
+    avatarName: avatarInfo.avatarName,
+    previousAvatarName: previousAvatarInfo.avatarName,
+    currentAvatarImageUrl: avatarInfo.ownerId ? currentBannerUrl : '',
+    currentAvatarThumbnailImageUrl: avatarInfo.ownerId ? currentBannerUrl : '',
+    previousCurrentAvatarImageUrl: previousAvatarInfo.ownerId ? previousBannerUrl : '',
+    previousCurrentAvatarThumbnailImageUrl: previousAvatarInfo.ownerId ? previousBannerUrl : ''
+};
             notificationStore.queueFeedNoty(feed);
             sharedFeedStore.addEntry(feed);
             const persistedFeed = await database.addAvatarToDatabase(feed);
@@ -187,9 +198,9 @@ export async function runHandleUserUpdateFlow(ref, props, { now = Date.now, nowI
                 feedStore.addFeedEntry(persistedFeed);
             }
         }
-    } else if (props.iconUrl && props.iconUrl[0]) {
-        const currentIconUrl = props.iconUrl[0];
-        const previousIconUrl = props.iconUrl[1];
+    } else if ((props as any).iconUrl && (props as any).iconUrl[0]) {
+        const currentIconUrl = (props as any).iconUrl[0];
+        const previousIconUrl = (props as any).iconUrl[1];
         let avatarInfo = {
             ownerId: '',
             avatarName: ''
@@ -210,19 +221,19 @@ export async function runHandleUserUpdateFlow(ref, props, { now = Date.now, nowI
                 console.log(err);
             }
             feed = {
-                created_at: nowIso(),
-                type: 'Avatar',
-                userId: ref.id,
-                displayName: ref.displayName,
-                ownerId: avatarInfo.ownerId,
-                previousOwnerId: previousAvatarInfo.ownerId,
-                avatarName: avatarInfo.avatarName,
-                previousAvatarName: previousAvatarInfo.avatarName,
-                currentAvatarImageUrl: avatarInfo.ownerId ? currentIconUrl : '',
-                currentAvatarThumbnailImageUrl: avatarInfo.ownerId ? currentIconUrl : '',
-                previousCurrentAvatarImageUrl: previousAvatarInfo.ownerId ? previousIconUrl : '',
-                previousCurrentAvatarThumbnailImageUrl: previousAvatarInfo.ownerId ? previousIconUrl : ''
-            };
+    created_at: nowIso(),
+    type: 'Avatar',
+    userId: (ref as any).id,
+    displayName: (ref as any).displayName,
+    ownerId: avatarInfo.ownerId,
+    previousOwnerId: previousAvatarInfo.ownerId,
+    avatarName: avatarInfo.avatarName,
+    previousAvatarName: previousAvatarInfo.avatarName,
+    currentAvatarImageUrl: avatarInfo.ownerId ? currentIconUrl : '',
+    currentAvatarThumbnailImageUrl: avatarInfo.ownerId ? currentIconUrl : '',
+    previousCurrentAvatarImageUrl: previousAvatarInfo.ownerId ? previousIconUrl : '',
+    previousCurrentAvatarThumbnailImageUrl: previousAvatarInfo.ownerId ? previousIconUrl : ''
+};
             notificationStore.queueFeedNoty(feed);
             sharedFeedStore.addEntry(feed);
             const persistedFeed = await database.addAvatarToDatabase(feed);
@@ -233,45 +244,45 @@ export async function runHandleUserUpdateFlow(ref, props, { now = Date.now, nowI
     }
     // if status is offline, ignore status and statusDescription
     if (
-        (props.status && props.status[0] !== 'offline' && props.status[1] !== 'offline') ||
-        (!props.status && props.statusDescription)
+        ((props as any).status && (props as any).status[0] !== 'offline' && (props as any).status[1] !== 'offline') ||
+    (!(props as any).status && (props as any).statusDescription)
     ) {
         let status = '';
         let previousStatus = '';
         let statusDescription = '';
         let previousStatusDescription = '';
-        if (props.status) {
-            if (props.status[0]) {
-                status = props.status[0];
+        if ((props as any).status) {
+            if ((props as any).status[0]) {
+                status = (props as any).status[0];
             }
-            if (props.status[1]) {
-                previousStatus = props.status[1];
+            if ((props as any).status[1]) {
+                previousStatus = (props as any).status[1];
             }
-        } else if (ref.status) {
-            status = ref.status;
-            previousStatus = ref.status;
+        } else if ((ref as any).status) {
+            status = (ref as any).status;
+            previousStatus = (ref as any).status;
         }
-        if (props.statusDescription) {
-            if (props.statusDescription[0]) {
-                statusDescription = props.statusDescription[0];
+        if ((props as any).statusDescription) {
+            if ((props as any).statusDescription[0]) {
+                statusDescription = (props as any).statusDescription[0];
             }
-            if (props.statusDescription[1]) {
-                previousStatusDescription = props.statusDescription[1];
+            if ((props as any).statusDescription[1]) {
+                previousStatusDescription = (props as any).statusDescription[1];
             }
-        } else if (ref.statusDescription) {
-            statusDescription = ref.statusDescription;
-            previousStatusDescription = ref.statusDescription;
+        } else if ((ref as any).statusDescription) {
+            statusDescription = (ref as any).statusDescription;
+            previousStatusDescription = (ref as any).statusDescription;
         }
         feed = {
-            created_at: nowIso(),
-            type: 'Status',
-            userId: ref.id,
-            displayName: ref.displayName,
-            status,
-            statusDescription,
-            previousStatus,
-            previousStatusDescription
-        };
+    created_at: nowIso(),
+    type: 'Status',
+    userId: (ref as any).id,
+    displayName: (ref as any).displayName,
+    status,
+    statusDescription,
+    previousStatus,
+    previousStatusDescription
+};
         notificationStore.queueFeedNoty(feed);
         sharedFeedStore.addEntry(feed);
         const persistedFeed = await database.addStatusToDatabase(feed);
@@ -279,7 +290,7 @@ export async function runHandleUserUpdateFlow(ref, props, { now = Date.now, nowI
             feedStore.addFeedEntry(persistedFeed);
         }
     }
-    if (props.note && props.note[0] !== null && props.note[0] !== props.note[1]) {
-        checkNote(ref.id, props.note[0]);
+    if ((props as any).note && (props as any).note[0] !== null && (props as any).note[0] !== (props as any).note[1]) {
+        checkNote((ref as any).id, (props as any).note[0]);
     }
 }

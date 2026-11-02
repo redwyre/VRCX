@@ -2,12 +2,12 @@ import { toast } from 'vue-sonner';
 
 import { useAuthStore, useModalStore, useNotificationStore, useUpdateLoopStore } from '../stores';
 import { getCurrentUser } from '../coordinators/userCoordinator';
-import { AppDebug, isApiLogSuppressed, logWebRequest } from './appConfig.js';
+import { AppDebug, isApiLogSuppressed, logWebRequest } from './appConfig';
 import { i18n } from '../plugins/i18n';
-import { statusCodes } from '../shared/constants/api.js';
+import { statusCodes } from '../shared/constants/api';
 import { watchState } from './watchState';
 
-import webApiService from './webapi.js';
+import webApiService from './webapi';
 
 const pendingGetRequests = new Map();
 export let failedGetRequests = new Map();
@@ -19,9 +19,17 @@ const t = i18n.global.t;
  * @param {import('@/types/vrcx').RequestOptions} [options]
  * @returns {import('@/types/vrcx').WebApiOptions} Init object ready for webApiService.execute
  */
-export function buildRequestInit(endpoint, options) {
+
+
+
+
+export function buildRequestInit(endpoint: string, options?: import('@/types/vrcx').RequestOptions) {
     /** @type {import('@/types/vrcx').WebApiOptions} */
-    const init = {
+
+
+
+
+    const init: import('@/types/vrcx').WebApiOptions = {
         url: `${AppDebug.endpointDomain}/${endpoint}`,
         method: 'GET',
         ...options
@@ -55,7 +63,7 @@ export function buildRequestInit(endpoint, options) {
  * @param {{ status: number; data?: string | object }} response
  * @returns {{ status: number; data?: any; hasApiError?: boolean; parseError?: boolean }}
  */
-export function parseResponse(response) {
+export function parseResponse(response: any) {
     if (!response.data) {
         return response;
     }
@@ -76,7 +84,11 @@ export function parseResponse(response) {
  * @param {import('@/types/vrcx').RequestOptions} [options]
  * @returns {Promise<T>}
  */
-export function request(endpoint, options) {
+
+
+
+
+export function request<T = any>(endpoint: string, options?: import('@/types/vrcx').RequestOptions) {
     const authStore = useAuthStore();
     const modalStore = useModalStore();
     const notificationStore = useNotificationStore();
@@ -232,7 +244,7 @@ export function request(endpoint, options) {
  * @param {string} [endpoint]
  * @returns {boolean}
  */
-export function shouldIgnoreError(code, endpoint) {
+export function shouldIgnoreError(code: number, endpoint?: string) {
     if (
         (code === 404 || code === -1) &&
         typeof endpoint === 'string' &&
@@ -266,10 +278,10 @@ export function shouldIgnoreError(code, endpoint) {
  * @param {string} [endpoint]
  * @returns {never}
  */
-export function $throw(code, error, endpoint) {
+export function $throw(code: number, error?: string | object, endpoint?: string) {
     let message = [];
     if (code > 0) {
-        const status = statusCodes[code];
+        const status = statusCodes[code as keyof typeof statusCodes];
         if (typeof status === 'undefined') {
             message.push(`${code}`);
         } else {
@@ -300,7 +312,7 @@ export function $throw(code, error, endpoint) {
         });
     }
     /** @type {any} */
-    const e = new Error(text);
+    const e: any = new Error(text);
     e.status = code;
     e.endpoint = endpoint;
     throw e;
@@ -331,7 +343,26 @@ export function $throw(code, error, endpoint) {
  *   success
  * @returns {Promise<void>} Promise that resolves when bulk processing is complete
  */
-export async function processBulk(options) {
+export async function processBulk(options: {
+
+
+
+
+    fn: function;
+    params?: object;
+    N?: number;
+    limitParam?: string;
+
+
+
+
+    handle?: function;
+
+
+
+
+    done?: function;
+}) {
     const { fn, params: rawParams = {}, N = -1, limitParam = 'n', handle, done } = options;
 
     if (typeof fn !== 'function') {
@@ -339,10 +370,10 @@ export async function processBulk(options) {
     }
 
     const params = { ...rawParams };
-    if (typeof params.offset !== 'number') {
-        params.offset = 0;
+    if (typeof (params as any).offset !== 'number') {
+        (params as any).offset = 0;
     }
-    const pageSize = params[limitParam];
+    const pageSize = (params as any)[limitParam];
 
     let totalFetched = 0;
 
@@ -381,7 +412,7 @@ export async function processBulk(options) {
             } else {
                 totalFetched += batchSize;
             }
-            params.offset += batchSize;
+            (params as any).offset += batchSize;
         }
 
         if (typeof done === 'function') {

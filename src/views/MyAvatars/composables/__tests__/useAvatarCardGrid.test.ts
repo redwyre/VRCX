@@ -157,6 +157,10 @@ describe('useAvatarCardGrid', () => {
 
         it('returns empty array for null input', () => {
             const { chunkIntoRows } = createGrid();
+
+
+
+
             expect(chunkIntoRows(null)).toEqual([]);
         });
 
@@ -246,21 +250,21 @@ describe('useAvatarCardGrid', () => {
 
     describe('persistence', () => {
         it('calls configRepository.setString when scale changes', async () => {
-            const config = (await import('../../../../services/config.js')).default;
+            const config = (await import('../../../../services/config')).default;
             const { cardScale } = createGrid();
             cardScale.value = 0.7;
             expect(config.setString).toHaveBeenCalledWith('VRCX_MyAvatarsCardScale', '0.7');
         });
 
         it('calls configRepository.setString when spacing changes', async () => {
-            const config = (await import('../../../../services/config.js')).default;
+            const config = (await import('../../../../services/config')).default;
             const { cardSpacing } = createGrid();
             cardSpacing.value = 0.8;
             expect(config.setString).toHaveBeenCalledWith('VRCX_MyAvatarsCardSpacing', '0.8');
         });
 
         it('uses custom config keys', async () => {
-            const config = (await import('../../../../services/config.js')).default;
+            const config = (await import('../../../../services/config')).default;
             const { cardScale } = createGrid({
                 scaleConfigKey: 'CUSTOM_SCALE'
             });

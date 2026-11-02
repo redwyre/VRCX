@@ -1,6 +1,6 @@
 import { dbVars } from '../database';
 
-import sqliteService from '../sqlite.js';
+import sqliteService from '../sqlite';
 
 const mutualGraph = {
     async getMutualGraphSnapshot() {
@@ -10,13 +10,13 @@ const mutualGraph = {
         }
         const friendTable = `${dbVars.userPrefix}_mutual_graph_friends`;
         const linkTable = `${dbVars.userPrefix}_mutual_graph_links`;
-        await sqliteService.execute((dbRow) => {
+        await sqliteService.execute((dbRow: any) => {
             const friendId = dbRow[0];
             if (friendId && !snapshot.has(friendId)) {
                 snapshot.set(friendId, []);
             }
         }, `SELECT friend_id FROM ${friendTable}`);
-        await sqliteService.execute((dbRow) => {
+        await sqliteService.execute((dbRow: any) => {
             const friendId = dbRow[0];
             const mutualId = dbRow[1];
             if (!friendId || !mutualId) {
@@ -32,7 +32,7 @@ const mutualGraph = {
         return snapshot;
     },
 
-    async saveMutualGraphSnapshot(entries) {
+    async saveMutualGraphSnapshot(entries: Map<any, any>) {
         if (!dbVars.userPrefix) {
             return;
         }
@@ -106,7 +106,7 @@ const mutualGraph = {
         }
     },
 
-    async updateMutualsForFriend(friendId, mutualIds) {
+    async updateMutualsForFriend(friendId: string, mutualIds: string[]) {
         if (!dbVars.userPrefix || !friendId) {
             return;
         }
@@ -139,7 +139,7 @@ const mutualGraph = {
             return mutualCountMap;
         }
         const linkTable = `${dbVars.userPrefix}_mutual_graph_links`;
-        await sqliteService.execute((dbRow) => {
+        await sqliteService.execute((dbRow: any) => {
             const mutualId = dbRow[0];
             const count = dbRow[1];
             if (mutualId) {
@@ -153,7 +153,7 @@ const mutualGraph = {
      * @param {string} friendId
      * @param {{ lastFetchedAt?: string; optedOut: boolean }} meta
      */
-    async upsertMutualGraphMeta(friendId, { lastFetchedAt, optedOut }) {
+    async upsertMutualGraphMeta(friendId: string, { lastFetchedAt, optedOut }: { lastFetchedAt?: string; optedOut: boolean; }) {
         if (!dbVars.userPrefix || !friendId) {
             return;
         }
@@ -166,14 +166,14 @@ const mutualGraph = {
         );
     },
 
-    async bulkUpsertMutualGraphMeta(entries) {
+    async bulkUpsertMutualGraphMeta(entries: Map<any, any>) {
         if (!dbVars.userPrefix || !entries || entries.size === 0) {
             return;
         }
         const metaTable = `${dbVars.userPrefix}_mutual_graph_meta`;
         let values = '';
         const now = new Date().toISOString();
-        entries.forEach(({ optedOut }, friendId) => {
+        entries.forEach(({ optedOut }, friendId: string) => {
             if (!friendId) return;
             const escapedId = friendId.replace(/'/g, "''");
             const optedOutInt = optedOut ? 1 : 0;
@@ -193,7 +193,7 @@ const mutualGraph = {
             return metaMap;
         }
         const metaTable = `${dbVars.userPrefix}_mutual_graph_meta`;
-        await sqliteService.execute((dbRow) => {
+        await sqliteService.execute((dbRow: number[]) => {
             const friendId = dbRow[0];
             if (friendId) {
                 metaMap.set(friendId, {

@@ -163,6 +163,10 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             configRepository.getString('VRCX_avatarAutoCleanup', 'Off'),
             configRepository.getString('VRCX_userGeneratedContentPath', ''),
             configRepository.getBool('VRCX_autoDeleteOldPrints', false),
+
+
+
+
             configRepository.getFloat('VRCX_notificationOpacity', 100),
             configRepository.getBool('VRCX_saveInstanceEmoji', false),
             configRepository.getBool('VRCX_vrcRegistryAutoBackup', true),
@@ -206,6 +210,10 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         avatarAutoCleanup.value = avatarAutoCleanupConfig;
         ugcFolderPath.value = ugcFolderPathConfig;
         autoDeleteOldPrints.value = autoDeleteOldPrintsConfig;
+
+
+
+
         notificationOpacity.value = notificationOpacityConfig;
         saveInstanceEmoji.value = saveInstanceEmojiConfig;
         vrcRegistryAutoBackup.value = vrcRegistryAutoBackupConfig;
@@ -226,14 +234,14 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     /**
      * @param {boolean} value
      */
-    function setEnablePrimaryPasswordConfigRepository(value) {
+    function setEnablePrimaryPasswordConfigRepository(value: boolean) {
         configRepository.setBool('enablePrimaryPassword', value);
     }
 
     /**
      * @param {boolean} value
      */
-    function setEnablePrimaryPassword(value) {
+    function setEnablePrimaryPassword(value: boolean) {
         enablePrimaryPassword.value = value;
     }
     function setRelaunchVRChatAfterCrash() {
@@ -268,7 +276,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     /**
      * @param {boolean} value
      */
-    function setAvatarRemoteDatabase(value) {
+    function setAvatarRemoteDatabase(value: boolean) {
         avatarRemoteDatabase.value = value;
         configRepository.setBool('VRCX_avatarRemoteDatabase', avatarRemoteDatabase.value);
     }
@@ -310,33 +318,33 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     /**
      * @param {string} value
      */
-    async function setYouTubeApiKey(value) {
+    async function setYouTubeApiKey(value: string) {
         youTubeApiKey.value = value;
         await configRepository.setString('VRCX_youtubeAPIKey', youTubeApiKey.value);
     }
-    async function setTranslationApiKey(value) {
+    async function setTranslationApiKey(value: string) {
         translationApiKey.value = value;
         await configRepository.setString('VRCX_translationAPIKey', translationApiKey.value);
     }
-    async function setTranslationApiType(value) {
+    async function setTranslationApiType(value: string) {
         translationApiType.value = value || 'google';
         await configRepository.setString('VRCX_translationAPIType', translationApiType.value);
     }
-    async function setTranslationApiEndpoint(value) {
+    async function setTranslationApiEndpoint(value: string) {
         translationApiEndpoint.value = value;
         await configRepository.setString('VRCX_translationAPIEndpoint', translationApiEndpoint.value);
     }
-    async function setTranslationApiModel(value) {
+    async function setTranslationApiModel(value: string) {
         translationApiModel.value = value;
         await configRepository.setString('VRCX_translationAPIModel', translationApiModel.value);
     }
-    async function setTranslationApiPrompt(value) {
+    async function setTranslationApiPrompt(value: string) {
         translationApiPrompt.value = value;
         await configRepository.setString('VRCX_translationAPIPrompt', translationApiPrompt.value);
     }
 
     async function fetchAvailableModels(overrides = {}) {
-        const baseURL = overrides.endpoint || translationApiEndpoint.value;
+        const baseURL = (overrides as any).endpoint || translationApiEndpoint.value;
 
         if (!baseURL) {
             toast.warning('Translation endpoint not configured');
@@ -372,8 +380,8 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         }
 
         /** @type {Record<string, string>} */
-        const headers = {};
-        const keyToUse = overrides.key ?? translationApiKey.value;
+        const headers: Record<string, string> = {};
+        const keyToUse = (overrides as any).key ?? translationApiKey.value;
         if (keyToUse) {
             headers.Authorization = `Bearer ${keyToUse}`;
         }
@@ -394,8 +402,8 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
 
             if (data.data && Array.isArray(data.data)) {
                 return data.data
-                    .map((model) => model.id)
-                    .filter((id) => id && typeof id === 'string')
+                    .map((model: { id: any; }) => model.id)
+                    .filter((id: any) => id && typeof id === 'string')
                     .sort();
             }
 
@@ -409,12 +417,12 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             throw new Error('Unexpected API response format');
         } catch (error) {
             console.error('Failed to fetch models:', error);
-            toast.error(`Failed to fetch models: ${error.message}`);
+            toast.error(`Failed to fetch models: ${(error as any).message}`);
             return [];
         }
     }
 
-    function setBioLanguage(language) {
+    function setBioLanguage(language: string) {
         bioLanguage.value = language;
         configRepository.setString('VRCX_bioLanguage', language);
     }
@@ -435,7 +443,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         await configRepository.setBool('VRCX_gameLogDisabled', gameLogDisabled.value);
     }
 
-    async function setAvatarAutoCleanup(value) {
+    async function setAvatarAutoCleanup(value: string) {
         avatarAutoCleanup.value = value;
         await configRepository.setString('VRCX_avatarAutoCleanup', value);
     }
@@ -443,7 +451,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     /**
      * @param {number | null} days - Number of days to keep. Null means delete all.
      */
-    async function purgeAvatarFeedData(days) {
+    async function purgeAvatarFeedData(days: number | null) {
         let cutoffDate = null;
         if (days !== null) {
             const cutoff = new Date();
@@ -480,7 +488,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
      *
      * @param {string} userId - Current user ID for per-user cleanup tracking.
      */
-    async function runAvatarAutoCleanup(userId) {
+    async function runAvatarAutoCleanup(userId: string) {
         const cleanupSetting = await configRepository.getString('VRCX_avatarAutoCleanup', 'Off');
         if (cleanupSetting === 'Off') return;
 
@@ -515,7 +523,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         await configRepository.setBool('VRCX_saveInstanceEmoji', saveInstanceEmoji.value);
     }
 
-    async function setUGCFolderPath(path) {
+    async function setUGCFolderPath(path: string | undefined) {
         if (typeof path !== 'string') {
             path = '';
         }
@@ -528,7 +536,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         await configRepository.setBool('VRCX_autoDeleteOldPrints', autoDeleteOldPrints.value);
     }
 
-    async function setNotificationOpacity(value) {
+    async function setNotificationOpacity(value: number) {
         notificationOpacity.value = value;
         await configRepository.setInt('VRCX_notificationOpacity', value);
     }
@@ -641,17 +649,13 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     }
 
     function handleSetAppLauncherSettings() {
-        AppApi.SetAppLauncherSettings(
-            enableAppLauncher.value,
-            enableAppLauncherAutoClose.value,
-            enableAppLauncherRunProcessOnce.value
-        );
+        (AppApi as any).SetAppLauncherSettings(enableAppLauncher.value, enableAppLauncherAutoClose.value, enableAppLauncherRunProcessOnce.value);
     }
 
     /**
      * @param {string} videoId
      */
-    async function lookupYouTubeVideo(videoId) {
+    async function lookupYouTubeVideo(videoId: string) {
         if (!youTubeApiKey.value) {
             console.warn('no Youtube API key configured');
             return null;
@@ -685,7 +689,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         return data;
     }
 
-    async function translateText(text, targetLang, overrides) {
+    async function translateText(text: any, targetLang: any, overrides: { type: any; key: string; endpoint: any; model: any; prompt: any; }) {
         if (!translationApi.value) {
             toast.warning('Translation API disabled');
             return null;
@@ -721,7 +725,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
                 logWebRequest('[EXTERNAL POST]', url, `(${response.status})`, data);
                 return data.data.translations[0].translatedText;
             } catch (err) {
-                toast.error(`Translation failed: ${err.message}`);
+                toast.error(`Translation failed: ${(err as any).message}`);
                 return null;
             }
         }
@@ -747,7 +751,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         };
         const keyToUse = overrides?.key ?? translationApiKey.value;
         if (keyToUse) {
-            headers.Authorization = `Bearer ${keyToUse}`;
+            (headers as any).Authorization = `Bearer ${keyToUse}`;
         }
 
         try {
@@ -801,7 +805,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
                     position: 'bottom-right'
                 });
                 try {
-                    await AppApi.CropAllPrints(ugcFolderPath.value);
+                    await (AppApi as any).CropAllPrints(ugcFolderPath.value);
                     toast.success('Batch print cropping complete');
                 } catch (err) {
                     console.error(err);
@@ -843,7 +847,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
                     position: 'bottom-right'
                 });
                 try {
-                    await AppApi.DeleteAllScreenshotMetadata();
+                    await (AppApi as any).DeleteAllScreenshotMetadata();
                     toast.success('Batch metadata removal complete');
                 } catch (err) {
                     console.error(err);
@@ -863,10 +867,10 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         if (LINUX && ugcFolderPath.value == null) {
             resetUGCFolder();
         }
-        await AppApi.OpenUGCPhotosFolder(ugcFolderPath.value);
+        await (AppApi as any).OpenUGCPhotosFolder(ugcFolderPath.value);
     }
 
-    async function folderSelectorDialog(oldPath) {
+    async function folderSelectorDialog(oldPath: string) {
         if (state.folderSelectorDialogVisible) return;
         if (!oldPath) {
             oldPath = '';
@@ -875,7 +879,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         state.folderSelectorDialogVisible = true;
         let newFolder = '';
         if (WINDOWS) {
-            newFolder = await AppApi.OpenFolderSelectorDialog(oldPath);
+            newFolder = await (AppApi as any).OpenFolderSelectorDialog(oldPath);
         } else {
             newFolder = await window.electron.openDirectoryDialog();
         }

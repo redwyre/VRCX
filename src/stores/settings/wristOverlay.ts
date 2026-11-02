@@ -80,7 +80,7 @@ export const useWristOverlaySettingsStore = defineStore('WristOverlaySettings', 
     /**
      * @param {string} value
      */
-    function setOverlayHand(value) {
+    function setOverlayHand(value: string) {
         overlayHand.value = value;
         let overlayHandInt = parseInt(value, 10);
         if (isNaN(overlayHandInt)) {

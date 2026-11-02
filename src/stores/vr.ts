@@ -15,6 +15,22 @@ import { useUserStore } from './user';
 import { useWristOverlaySettingsStore } from './settings/wristOverlay';
 import { watchState } from '../services/watchState';
 
+export type VrConfigVarsPayload = {
+    overlayNotifications: boolean;
+    hideDevicesFromFeed: boolean;
+    vrOverlayCpuUsage: boolean;
+    minimalFeed: boolean;
+    notificationPosition: string;
+    notificationTimeout: number;
+    photonOverlayMessageTimeout: number;
+    notificationTheme: string;
+    backgroundEnabled: boolean;
+    dtHour12: boolean;
+    pcUptimeOnFeed: boolean;
+    appLanguage: string;
+    notificationOpacity: number;
+    isWristDisabled: boolean;
+};
 export const useVrStore = defineStore('Vr', () => {
     const friendStore = useFriendStore();
     const advancedSettingsStore = useAdvancedSettingsStore();
@@ -51,13 +67,13 @@ export const useVrStore = defineStore('Vr', () => {
     async function saveOpenVROption() {
         updateVRConfigVars();
         updateVRLastLocation();
-        AppApi.ExecuteVrOverlayFunction('notyClear', '');
+        (AppApi as any).ExecuteVrOverlayFunction('notyClear', '');
         updateOpenVR();
     }
 
     function updateVrNowPlaying() {
         const json = JSON.stringify(gameLogStore.nowPlaying);
-        AppApi.ExecuteVrOverlayFunction('nowPlayingUpdate', json);
+        (AppApi as any).ExecuteVrOverlayFunction('nowPlayingUpdate', json);
     }
 
     function updateVRLastLocation() {
@@ -84,7 +100,7 @@ export const useVrStore = defineStore('Vr', () => {
             onlineFor
         };
         const json = JSON.stringify(lastLocation);
-        AppApi.ExecuteVrOverlayFunction('lastLocationUpdate', json);
+        (AppApi as any).ExecuteVrOverlayFunction('lastLocationUpdate', json);
     }
 
     function updateVRConfigVars() {
@@ -93,6 +109,10 @@ export const useVrStore = defineStore('Vr', () => {
             notificationTheme = 'sunset';
         }
 
+        // TODO(ts-migrate): Declare it as a type of its own; references to it are annotated
+        // with any.
+        // @typedef VrConfigVarsPayload stays a comment because the file already declares that
+        // name
         /**
          * @typedef {object} VrConfigVarsPayload
          * @property {boolean} overlayNotifications
@@ -112,7 +132,7 @@ export const useVrStore = defineStore('Vr', () => {
          */
 
         /** @type {VrConfigVarsPayload} */
-        const VRConfigVars = {
+        const VRConfigVars: VrConfigVarsPayload = {
             overlayNotifications: notificationsSettingsStore.overlayNotifications,
             hideDevicesFromFeed: wristOverlaySettingsStore.hideDevicesFromFeed,
             vrOverlayCpuUsage: wristOverlaySettingsStore.vrOverlayCpuUsage,
@@ -130,8 +150,8 @@ export const useVrStore = defineStore('Vr', () => {
         };
 
         /** @type {string} */
-        const json = JSON.stringify(VRConfigVars);
-        AppApi.ExecuteVrOverlayFunction('configUpdate', json);
+        const json: string = JSON.stringify(VRConfigVars);
+        (AppApi as any).ExecuteVrOverlayFunction('configUpdate', json);
     }
 
     function updateOpenVR() {
@@ -165,13 +185,7 @@ export const useVrStore = defineStore('Vr', () => {
             };
         }
 
-        AppApi.SetVR(
-            newState.active,
-            newState.hmdOverlay,
-            newState.wristOverlay,
-            newState.menuButton,
-            newState.overlayHand
-        );
+        (AppApi as any).SetVR(newState.active, newState.hmdOverlay, newState.wristOverlay, newState.menuButton, newState.overlayHand);
         if (!newState.active) {
             gameStore.setIsHmdAfk(false);
         }

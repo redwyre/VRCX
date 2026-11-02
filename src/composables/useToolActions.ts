@@ -16,38 +16,44 @@ import { useAdvancedSettingsStore, useLaunchStore, useToolsStore, useVrcxStore }
  * @param {object} deps.vrcxStore
  */
 export async function executeToolAction(
-    definition,
-    { router, t, toolsStore, advancedSettingsStore, launchStore, vrcxStore }
+    definition: object, { router, t, toolsStore, advancedSettingsStore, launchStore, vrcxStore }: {
+    router: object;
+    t: Function;
+    toolsStore: object;
+    advancedSettingsStore: object;
+    launchStore: object;
+    vrcxStore: object;
+}
 ) {
-    if (!definition?.action) {
+    if (!(definition as any)?.action) {
         return;
     }
 
-    const { action } = definition;
+    const { action }: any = definition;
 
     if (action.type === 'route') {
-        router.push({ name: action.routeName });
+        (router as any).push({ name: action.routeName });
         return;
     }
 
     if (action.type === 'dialog') {
-        toolsStore.openDialog(toDialogStoreKey(action.dialogKey));
+        (toolsStore as any).openDialog(toDialogStoreKey(action.dialogKey));
         return;
     }
 
     if (action.type === 'store-action') {
-        const targetStore = {
-            advancedSettings: advancedSettingsStore,
-            launch: launchStore,
-            vrcx: vrcxStore
-        }[action.target];
+        const targetStore = ({
+    advancedSettings: advancedSettingsStore,
+    launch: launchStore,
+    vrcx: vrcxStore
+} as any)[action.target];
 
         targetStore?.[action.method]?.();
         return;
     }
 
     if (action.type === 'app-api') {
-        const result = await AppApi[action.method]();
+        const result = await (AppApi as any)[action.method]();
         if (result) {
             toast.success(t(action.successMessageKey));
             return;
@@ -60,7 +66,7 @@ export async function executeToolAction(
  * @param {string} dialogKey
  * @returns {string}
  */
-export function toDialogStoreKey(dialogKey) {
+export function toDialogStoreKey(dialogKey: string) {
     return dialogKey.replace(/-([a-z])/g, (_, char) => char.toUpperCase());
 }
 
@@ -73,7 +79,7 @@ export function useToolActions() {
     const launchStore = useLaunchStore();
     const vrcxStore = useVrcxStore();
 
-    async function triggerTool(toolOrKey) {
+    async function triggerTool(toolOrKey: any) {
         const definition = typeof toolOrKey === 'string' ? toolDefinitionMap.get(toolOrKey) : toolOrKey;
 
         await executeToolAction(definition, {

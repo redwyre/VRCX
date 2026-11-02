@@ -2,7 +2,7 @@ import { ref, watch } from 'vue';
 import { defineStore } from 'pinia';
 import { toast } from 'vue-sonner';
 import { useMagicKeys } from '@vueuse/core';
-import { useRouter } from 'vue-router';
+import { useRouter, RouteRecordNameGeneric } from 'vue-router';
 
 import { AppDebug } from '../services/appConfig';
 import { refreshCustomCss } from '../shared/utils/base/ui';
@@ -81,44 +81,48 @@ export const useUiStore = defineStore('Ui', () => {
         }
     });
 
-    function pushDialogCrumb(data) {
+    function pushDialogCrumb(data: { label: any; id: any; type?: any; }) {
         const { type, id, label } = data;
         if (!type || !id) {
             return;
         }
         const items = dialogCrumbs.value;
         const last = items[items.length - 1];
-        if (last && last.type === type && last.id === id) {
-            if (label && last.label !== label) {
-                last.label = label;
+        if (last && (last as any).type === type && (last as any).id === id) {
+            if (label && (last as any).label !== label) {
+                (last as any).label = label;
             }
             return;
         }
-        const existingIndex = items.findIndex((item) => item.type === type && item.id === id);
+        const existingIndex = items.findIndex((item) => (item as any).type === type && (item as any).id === id);
         if (existingIndex !== -1) {
             items.splice(existingIndex + 1);
             if (label) {
-                items[existingIndex].label = label;
+                (items[existingIndex] as any).label = label;
             }
             return;
         }
         if (!data.label) {
             data.label = data.id;
         }
+
+
+
+
         items.push(data);
     }
 
-    function setDialogCrumbLabel(type, id, label) {
+    function setDialogCrumbLabel(type: any, id: any, label: any) {
         if (!type || !id || !label) {
             return;
         }
-        const item = dialogCrumbs.value.find((entry) => entry.type === type && entry.id === id);
+        const item = dialogCrumbs.value.find((entry) => (entry as any).type === type && (entry as any).id === id);
         if (item) {
-            item.label = label;
+            (item as any).label = label;
         }
     }
 
-    function jumpDialogCrumb(index) {
+    function jumpDialogCrumb(index: number) {
         if (index < 0 || index >= dialogCrumbs.value.length) {
             return;
         }
@@ -136,53 +140,53 @@ export const useUiStore = defineStore('Ui', () => {
         handleBreadcrumbClick(dialogCrumbs.value.length - 1);
     }
 
-    function handleBreadcrumbClick(index) {
+    function handleBreadcrumbClick(index: number) {
         const item = dialogCrumbs.value[index];
         if (!item) {
             return;
         }
         jumpDialogCrumb(index);
-        if (item.type === 'user') {
-            showUserDialog(item.id);
+        if ((item as any).type === 'user') {
+            showUserDialog((item as any).id);
             return;
         }
-        if (item.type === 'world') {
-            showWorldDialog(item.tag, item.shortName);
+        if ((item as any).type === 'world') {
+            showWorldDialog((item as any).tag, (item as any).shortName);
             return;
         }
-        if (item.type === 'avatar') {
-            showAvatarDialog(item.id);
+        if ((item as any).type === 'avatar') {
+            showAvatarDialog((item as any).id);
             return;
         }
-        if (item.type === 'group') {
-            showGroupDialog(item.id);
+        if ((item as any).type === 'group') {
+            showGroupDialog((item as any).id);
             return;
         }
-        if (item.type === 'previous-instances-user') {
-            instanceStore.showPreviousInstancesListDialog('user', item.id);
+        if ((item as any).type === 'previous-instances-user') {
+            instanceStore.showPreviousInstancesListDialog('user', (item as any).id);
             return;
         }
-        if (item.type === 'previous-instances-world') {
-            instanceStore.showPreviousInstancesListDialog('world', item.id);
+        if ((item as any).type === 'previous-instances-world') {
+            instanceStore.showPreviousInstancesListDialog('world', (item as any).id);
             return;
         }
-        if (item.type === 'previous-instances-group') {
-            instanceStore.showPreviousInstancesListDialog('group', item.id);
+        if ((item as any).type === 'previous-instances-group') {
+            instanceStore.showPreviousInstancesListDialog('group', (item as any).id);
             return;
         }
-        if (item.type === 'previous-instances-info') {
-            instanceStore.showPreviousInstancesInfoDialog(item.id);
+        if ((item as any).type === 'previous-instances-info') {
+            instanceStore.showPreviousInstancesInfoDialog((item as any).id);
             return;
         }
-        if (item.type === 'group-member-moderation') {
-            showGroupMemberModerationDialog(item.id);
+        if ((item as any).type === 'group-member-moderation') {
+            showGroupMemberModerationDialog((item as any).id);
             return;
         }
-        if (item.type === 'group-roles') {
-            showGroupRolesDialog(item.id);
+        if ((item as any).type === 'group-roles') {
+            showGroupRolesDialog((item as any).id);
             return;
         }
-        console.error(`Unknown dialog crumb type: ${item.type}, closing dialog`);
+        console.error(`Unknown dialog crumb type: ${(item as any).type}, closing dialog`);
         closeMainDialog();
     }
 
@@ -217,7 +221,13 @@ export const useUiStore = defineStore('Ui', () => {
      * @param {string} [data.label]
      * @returns {boolean}
      */
-    function openDialog(data) {
+    function openDialog(data: {
+    type: string;
+    id: string;
+    tag?: string;
+    shortName?: string;
+    label?: string;
+}) {
         const { type } = data;
         const userStore = useUserStore();
         const worldStore = useWorldStore();
@@ -264,6 +274,10 @@ export const useUiStore = defineStore('Ui', () => {
         if (!hadActiveDialog) {
             clearDialogCrumbs();
         }
+
+
+
+
         pushDialogCrumb(data);
         return hadActiveDialog;
     }
@@ -275,7 +289,7 @@ export const useUiStore = defineStore('Ui', () => {
     });
 
     function showConsole() {
-        AppApi.ShowDevTools();
+        (AppApi as any).ShowDevTools();
         if (AppDebug.debug || AppDebug.debugWebRequests || AppDebug.debugWebSocket || AppDebug.debugUserDiff) {
             return;
         }
@@ -302,15 +316,23 @@ export const useUiStore = defineStore('Ui', () => {
         }
     );
 
-    function notifyMenu(index) {
+    function notifyMenu(index: RouteRecordNameGeneric) {
         const currentRouteName = router.currentRoute.value?.name;
+
+
+
+
         if (index !== currentRouteName && !notifiedMenus.value.includes(index)) {
+
+
+
+
             notifiedMenus.value.push(index);
             updateTrayIconNotify();
         }
     }
 
-    function removeNotify(index) {
+    function removeNotify(index: string) {
         notifiedMenus.value = notifiedMenus.value.filter((i) => i !== index);
         updateTrayIconNotify();
     }
@@ -323,6 +345,10 @@ export const useUiStore = defineStore('Ui', () => {
     function updateTrayIconNotify(force = false) {
         const newState =
             appearanceSettings.notificationIconDot &&
+
+
+
+
             (notifiedMenus.value.includes('notification') || notifiedMenus.value.includes('friend-log'));
 
         if (trayIconNotify.value !== newState || force) {
@@ -331,7 +357,7 @@ export const useUiStore = defineStore('Ui', () => {
                 window.electron.setTrayIconNotification(trayIconNotify.value);
                 return;
             }
-            AppApi.SetTrayIconNotification(trayIconNotify.value);
+            (AppApi as any).SetTrayIconNotification(trayIconNotify.value);
         }
     }
     updateTrayIconNotify(true);

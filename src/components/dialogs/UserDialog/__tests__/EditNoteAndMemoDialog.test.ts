@@ -11,8 +11,8 @@ const mocks = vi.hoisted(() => ({
     getUser: vi.fn()
 }));
 
-vi.mock('pinia', async (i) => ({ ...(await i()), storeToRefs: (s) => s }));
-vi.mock('vue-i18n', () => ({ useI18n: () => ({ t: (k) => k }) }));
+vi.mock('pinia', async (i) => ({ ...(await i()), storeToRefs: (s: any) => s }));
+vi.mock('vue-i18n', () => ({ useI18n: () => ({ t: (k: any) => k }) }));
 vi.mock('../../../../stores', () => ({
     useUserStore: () => ({
         userDialog: ref({
@@ -29,13 +29,17 @@ vi.mock('../../../../stores', () => ({
     })
 }));
 vi.mock('../../../../api', () => ({
-    miscRequest: { saveNote: (...a) => mocks.saveNote(...a) },
-    userRequest: { getUser: (...a) => mocks.getUser(...a) }
+
+
+
+
+    miscRequest: { saveNote: (...a: any[]) => mocks.saveNote(...a) },
+    userRequest: { getUser: (...a: any[]) => mocks.getUser(...a) }
 }));
 vi.mock('../../../../coordinators/memoCoordinator', () => ({
-    saveUserMemo: (...a) => mocks.saveUserMemo(...a)
+    saveUserMemo: (...a: any[]) => mocks.saveUserMemo(...a)
 }));
-vi.mock('../../../../shared/utils', () => ({ replaceBioSymbols: (s) => s }));
+vi.mock('../../../../shared/utils', () => ({ replaceBioSymbols: (s: any) => s }));
 vi.mock('@/components/ui/dialog', () => ({
     Dialog: { template: '<div><slot /></div>' },
     DialogContent: { template: '<div><slot /></div>' },

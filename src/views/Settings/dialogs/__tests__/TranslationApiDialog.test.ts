@@ -37,12 +37,12 @@ vi.mock('pinia', () => ({
         translationApiModel,
         translationApiPrompt
     }),
-    defineStore: (id, fn) => fn
+    defineStore: (id: any, fn: any) => fn
 }));
 
 vi.mock('vue-i18n', () => ({
     useI18n: () => ({
-        t: (key, params) => (params ? `${key}:${JSON.stringify(params)}` : key),
+        t: (key: any, params: any) => (params ? `${key}:${JSON.stringify(params)}` : key),
         locale: require('vue').ref('en')
     })
 }));
@@ -61,7 +61,7 @@ vi.mock('../../../../stores', () => ({
 }));
 
 vi.mock('../../../../shared/utils', () => ({
-    openExternalLink: (...args) => mocks.openExternalLink(...args)
+    openExternalLink: (...args: any[]) => mocks.openExternalLink(...args)
 }));
 
 vi.mock('vue-sonner', () => ({
@@ -69,7 +69,7 @@ vi.mock('vue-sonner', () => ({
 }));
 
 vi.mock('../../../../localization', () => ({
-    getLanguageName: (code) => `Language_${code}`,
+    getLanguageName: (code: any) => `Language_${code}`,
     languageCodes: ['en', 'ja', 'ko', 'zh-CN', 'fr']
 }));
 
@@ -223,6 +223,10 @@ describe('TranslationApiDialog.vue', () => {
             const wrapper = mountComponent();
 
             const guideBtn = wrapper.findAll('button').find((b) => b.text().includes('dialog.translation_api.guide'));
+
+
+
+
             await guideBtn.trigger('click');
 
             expect(mocks.openExternalLink).toHaveBeenCalledWith(
@@ -282,6 +286,10 @@ describe('TranslationApiDialog.vue', () => {
             const wrapper = mountComponent();
 
             const saveBtn = wrapper.findAll('button').find((b) => b.text().includes('dialog.translation_api.save'));
+
+
+
+
             await saveBtn.trigger('click');
             await flushPromises();
 
@@ -298,6 +306,10 @@ describe('TranslationApiDialog.vue', () => {
             await nextTick();
 
             const saveBtn = wrapper.findAll('button').find((b) => b.text().includes('dialog.translation_api.save'));
+
+
+
+
             await saveBtn.trigger('click');
             await flushPromises();
 
@@ -310,10 +322,18 @@ describe('TranslationApiDialog.vue', () => {
             const wrapper = mountComponent();
 
             const saveBtn = wrapper.findAll('button').find((b) => b.text().includes('dialog.translation_api.save'));
+
+
+
+
             await saveBtn.trigger('click');
             await flushPromises();
 
             expect(wrapper.emitted('update:isTranslationApiDialogVisible')).toBeTruthy();
+
+
+
+
             expect(wrapper.emitted('update:isTranslationApiDialogVisible')[0]).toEqual([false]);
         });
     });
@@ -327,6 +347,10 @@ describe('TranslationApiDialog.vue', () => {
             await nextTick();
 
             const testBtn = wrapper.findAll('button').find((b) => b.text().includes('dialog.translation_api.test'));
+
+
+
+
             await testBtn.trigger('click');
             await flushPromises();
 
@@ -349,6 +373,10 @@ describe('TranslationApiDialog.vue', () => {
             await nextTick();
 
             const testBtn = wrapper.findAll('button').find((b) => b.text().includes('dialog.translation_api.test'));
+
+
+
+
             await testBtn.trigger('click');
             await flushPromises();
 
@@ -363,6 +391,10 @@ describe('TranslationApiDialog.vue', () => {
             await nextTick();
 
             const testBtn = wrapper.findAll('button').find((b) => b.text().includes('dialog.translation_api.test'));
+
+
+
+
             await testBtn.trigger('click');
             await flushPromises();
 
@@ -381,6 +413,10 @@ describe('TranslationApiDialog.vue', () => {
             const fetchBtn = wrapper
                 .findAll('button')
                 .find((b) => b.text().includes('dialog.translation_api.fetch_models'));
+
+
+
+
             await fetchBtn.trigger('click');
             await flushPromises();
 
@@ -400,6 +436,10 @@ describe('TranslationApiDialog.vue', () => {
             const fetchBtn = wrapper
                 .findAll('button')
                 .find((b) => b.text().includes('dialog.translation_api.fetch_models'));
+
+
+
+
             await fetchBtn.trigger('click');
             await flushPromises();
 

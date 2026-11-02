@@ -1,13 +1,25 @@
 import { ArrowRight, Download } from 'lucide-vue-next';
 
 import Location from '@/components/Location.vue';
+
+
+
+
 import { TooltipWrapper } from '@/components/ui/tooltip';
+
+
+
+
 import { i18n } from '@/plugins';
+
+
+
+
 import { formatDateFilter, statusClass } from '@/shared/utils';
 
 const { t } = i18n.global;
 
-const statusLabel = (key) => {
+const statusLabel = (key: string) => {
     if (key === 'active') return t('dialog.user.status.active');
     if (key === 'join me') return t('dialog.user.status.join_me');
     if (key === 'ask me') return t('dialog.user.status.ask_me');
@@ -15,44 +27,77 @@ const statusLabel = (key) => {
     return t('dialog.user.status.offline');
 };
 
-const avatarStatusLabel = (status) => {
+const avatarStatusLabel = (status: string) => {
     if (status === 'public') return t('dialog.avatar.labels.public');
     if (status === 'private') return t('dialog.avatar.labels.private');
     return '';
 };
 
-const avatarStatusClass = (status) => {
+const avatarStatusClass = (status: string) => {
     if (status === 'public') return 'avatar-info-public';
     if (status === 'private') return 'avatar-info-own';
     return null;
 };
 
-function DetailCell({ row, isPrevious, onShowAvatar, onShowGroup, onShowWorld, onShowImage }) {
+type Props = {
+    row?: any;
+    isPrevious?: boolean;
+    onShowAvatar?: any;
+    onShowGroup?: any;
+    onShowWorld?: any;
+    onShowImage?: any;
+};
+
+function DetailCell({ row, isPrevious, onShowAvatar, onShowGroup, onShowWorld, onShowImage }: Props) {
     const r = row;
     if (!r) return null;
 
     if (r.type === 'ChangeAvatar') {
         return (
             <>
+
+
+
+
                 <span
                     class="cursor-pointer"
-                    onClick={(e) => {
+                    onClick={(e: { stopPropagation: () => void; }) => {
                         e.stopPropagation();
                         onShowAvatar?.(r.avatar?.id);
                     }}
                 >
                     {r.avatar?.name}
+
+
+
+
                 </span>
                 &nbsp;
                 {!r.inCache ? (
+
+
+
+
                     <span style="color: #aaa">
                         <Download />
                         &nbsp;
+
+
+
+
                     </span>
                 ) : null}
                 {r.avatar?.releaseStatus ? (
+
+
+
+
                     <span class={avatarStatusClass(r.avatar.releaseStatus)}>
                         {avatarStatusLabel(r.avatar.releaseStatus)}
+
+
+
+
                     </span>
                 ) : null}
                 {isPrevious && r.avatar?.description && r.avatar?.name !== r.avatar?.description ? (
@@ -73,24 +118,52 @@ function DetailCell({ row, isPrevious, onShowAvatar, onShowGroup, onShowWorld, o
                         <TooltipWrapper
                             side="top"
                             v-slots={{
+
+
+
+
                                 content: () => <span>{statusLabel(r.previousStatus)}</span>
                             }}
                         >
+
+
+
+
                             <i class={['x-user-status', statusClass(r.previousStatus)]}></i>
                         </TooltipWrapper>
+
+
+
+
                         <span>
                             <ArrowRight />
+
+
+
+
                         </span>
                         <TooltipWrapper
                             side="top"
                             v-slots={{
+
+
+
+
                                 content: () => <span>{statusLabel(r.status)}</span>
                             }}
                         >
+
+
+
+
                             <i class={['x-user-status', statusClass(r.status)]} style="margin-right: 5px"></i>
                         </TooltipWrapper>
                     </>
                 ) : null}
+
+
+
+
                 {r.statusDescription !== r.previousStatusDescription ? <span>{r.statusDescription}</span> : null}
             </>
         );
@@ -99,28 +172,52 @@ function DetailCell({ row, isPrevious, onShowAvatar, onShowGroup, onShowWorld, o
     if (r.type === 'ChangeGroup') {
         return (
             <>
+
+
+
+
                 <span
                     class="cursor-pointer"
                     style="margin-right: 5px"
-                    onClick={(e) => {
+                    onClick={(e: { stopPropagation: () => void; }) => {
                         e.stopPropagation();
                         onShowGroup?.(r.previousGroupId);
                     }}
                 >
                     {r.previousGroupName || r.previousGroupId}
+
+
+
+
                 </span>
+
+
+
+
                 <span>
                     <ArrowRight />
+
+
+
+
                 </span>
+
+
+
+
                 <span
                     class="cursor-pointer"
                     style="margin-left: 5px"
-                    onClick={(e) => {
+                    onClick={(e: { stopPropagation: () => void; }) => {
                         e.stopPropagation();
                         onShowGroup?.(r.groupId);
                     }}
                 >
                     {r.groupName || r.groupId}
+
+
+
+
                 </span>
             </>
         );
@@ -128,19 +225,31 @@ function DetailCell({ row, isPrevious, onShowAvatar, onShowGroup, onShowWorld, o
 
     if (r.type === 'PortalSpawn') {
         return (
+
+
+
+
             <span
                 class="cursor-pointer"
-                onClick={(e) => {
+                onClick={(e: { stopPropagation: () => void; }) => {
                     e.stopPropagation();
                     onShowWorld?.(r.location, r.shortName);
                 }}
             >
                 <Location location={r.location} hint={r.worldName} grouphint={r.groupName} link={false} />
+
+
+
+
             </span>
         );
     }
 
     if (r.type === 'ChatBoxMessage') {
+
+
+
+
         return <span>{r.text}</span>;
     }
 
@@ -148,31 +257,67 @@ function DetailCell({ row, isPrevious, onShowAvatar, onShowGroup, onShowWorld, o
         return (
             <>
                 {r.platform === 'Desktop' ? (
+
+
+
+
                     <span>Desktop&nbsp;</span>
                 ) : r.platform === 'VR' ? (
+
+
+
+
                     <span>VR&nbsp;</span>
                 ) : r.platform === 'Quest' ? (
+
+
+
+
                     <span>Android&nbsp;</span>
                 ) : null}
+
+
+
+
                 <span
                     class="cursor-pointer"
-                    onClick={(e) => {
+                    onClick={(e: { stopPropagation: () => void; }) => {
                         e.stopPropagation();
                         onShowAvatar?.(r.avatar?.id);
                     }}
                 >
                     {r.avatar?.name}
+
+
+
+
                 </span>
                 &nbsp;
                 {!r.inCache ? (
+
+
+
+
                     <span style="color: #aaa">
                         <Download />
                         &nbsp;
+
+
+
+
                     </span>
                 ) : null}
                 {r.avatar?.releaseStatus ? (
+
+
+
+
                     <span class={avatarStatusClass(r.avatar.releaseStatus)}>
                         {avatarStatusLabel(r.avatar.releaseStatus)}
+
+
+
+
                     </span>
                 ) : null}
             </>
@@ -185,12 +330,16 @@ function DetailCell({ row, isPrevious, onShowAvatar, onShowGroup, onShowWorld, o
                 side="right"
                 v-slots={{
                     content: () => (
+
+
+
+
                         <img
                             src={r.imageUrl}
                             class="friends-list-avatar"
                             style="height: 500px; cursor: pointer"
                             loading="lazy"
-                            onClick={(e) => {
+                            onClick={(e: { stopPropagation: () => void; }) => {
                                 e.stopPropagation();
                                 onShowImage?.(r.imageUrl);
                             }}
@@ -198,33 +347,57 @@ function DetailCell({ row, isPrevious, onShowAvatar, onShowGroup, onShowWorld, o
                     )
                 }}
             >
+
+
+
+
                 <span>{r.fileId}</span>
             </TooltipWrapper>
         ) : (
+
+
+
+
             <span>{r.text}</span>
         );
     }
 
     if (r.color === 'yellow') {
+
+
+
+
         return <span style="color: yellow">{r.text}</span>;
     }
+
+
+
+
 
     return <span>{r.text}</span>;
 }
 
-export const createColumns = ({ isPrevious, onShowUser, onShowAvatar, onShowGroup, onShowWorld, onShowImage }) => [
+export const createColumns = ({ isPrevious, onShowUser, onShowAvatar, onShowGroup, onShowWorld, onShowImage }: any) => [
     {
         id: 'created_at',
-        accessorFn: (row) => (row?.created_at ? Date.parse(row.created_at) : 0),
+        accessorFn: (row: { created_at: string; }) => (row?.created_at ? Date.parse(row.created_at) : 0),
         header: () => t('table.playerList.date'),
         size: 130,
-        cell: ({ row }) => (
+        cell: ({ row }: any) => (
             <TooltipWrapper
                 side="right"
                 v-slots={{
+
+
+
+
                     content: () => <span>{formatDateFilter(row.original?.created_at, 'long')}</span>
                 }}
             >
+
+
+
+
                 <span>{formatDateFilter(row.original?.created_at, 'short')}</span>
             </TooltipWrapper>
         )
@@ -234,16 +407,24 @@ export const createColumns = ({ isPrevious, onShowUser, onShowAvatar, onShowGrou
         header: () => t('table.playerList.user'),
         size: 160,
         enableSorting: false,
-        cell: ({ row }) => (
+        cell: ({ row }: any) => (
+
+
+
+
             <span
                 class="cursor-pointer"
                 style="padding-right: 10px"
-                onClick={(e) => {
+                onClick={(e: { stopPropagation: () => void; }) => {
                     e.stopPropagation();
                     onShowUser?.(row.original);
                 }}
             >
                 {row.original?.displayName}
+
+
+
+
             </span>
         )
     },
@@ -261,7 +442,7 @@ export const createColumns = ({ isPrevious, onShowUser, onShowAvatar, onShowGrou
         meta: {
             stretch: true
         },
-        cell: ({ row }) => (
+        cell: ({ row }: any) => (
             <DetailCell
                 row={row.original}
                 isPrevious={!!isPrevious}

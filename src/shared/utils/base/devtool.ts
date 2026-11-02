@@ -6,7 +6,7 @@ import { compareUnityVersion } from '../avatar';
  * @param {string} input
  * @returns {Promise<string | null>}
  */
-async function getBundleLocation(input) {
+async function getBundleLocation(input: string) {
     const authStore = useAuthStore();
     const sdkUnityVersion = authStore.cachedConfig.sdkUnityVersion;
     const worldStore = useWorldStore();
@@ -17,8 +17,8 @@ async function getBundleLocation(input) {
     let variant = '';
     if (assetUrl) {
         // continue
-    } else if (avatarStore.avatarDialog.visible && avatarStore.avatarDialog.ref.unityPackages.length > 0) {
-        unityPackages = avatarStore.avatarDialog.ref.unityPackages;
+    } else if (avatarStore.avatarDialog.visible && (avatarStore.avatarDialog.ref as any).unityPackages.length > 0) {
+        unityPackages = (avatarStore.avatarDialog.ref as any).unityPackages;
         for (let i = unityPackages.length - 1; i > -1; i--) {
             unityPackage = unityPackages[i];
             if (unityPackage.variant && unityPackage.variant !== 'standard' && unityPackage.variant !== 'security') {
@@ -35,10 +35,10 @@ async function getBundleLocation(input) {
                 break;
             }
         }
-    } else if (avatarStore.avatarDialog.visible && avatarStore.avatarDialog.ref.assetUrl) {
-        assetUrl = avatarStore.avatarDialog.ref.assetUrl;
-    } else if (worldStore.worldDialog.visible && worldStore.worldDialog.ref.unityPackages.length > 0) {
-        unityPackages = worldStore.worldDialog.ref.unityPackages;
+    } else if (avatarStore.avatarDialog.visible && (avatarStore.avatarDialog.ref as any).assetUrl) {
+        assetUrl = (avatarStore.avatarDialog.ref as any).assetUrl;
+    } else if (worldStore.worldDialog.visible && (worldStore.worldDialog.ref as any).unityPackages.length > 0) {
+        unityPackages = (worldStore.worldDialog.ref as any).unityPackages;
         for (let i = unityPackages.length - 1; i > -1; i--) {
             unityPackage = unityPackages[i];
             if (
@@ -49,8 +49,8 @@ async function getBundleLocation(input) {
                 break;
             }
         }
-    } else if (worldStore.worldDialog.visible && worldStore.worldDialog.ref.assetUrl) {
-        assetUrl = worldStore.worldDialog.ref.assetUrl;
+    } else if (worldStore.worldDialog.visible && (worldStore.worldDialog.ref as any).assetUrl) {
+        assetUrl = (worldStore.worldDialog.ref as any).assetUrl;
     }
     if (!assetUrl) {
         return null;
@@ -58,13 +58,8 @@ async function getBundleLocation(input) {
     const fileId = extractFileId(assetUrl);
     const fileVersion = parseInt(extractFileVersion(assetUrl), 10);
     const variantVersion = parseInt(extractVariantVersion(assetUrl), 10);
-    const assetLocation = await AssetBundleManager.GetVRChatCacheFullLocation(
-        fileId,
-        fileVersion,
-        variant,
-        variantVersion
-    );
-    const cacheInfo = await AssetBundleManager.CheckVRChatCache(fileId, fileVersion, variant, variantVersion);
+    const assetLocation = await (AssetBundleManager as any).GetVRChatCacheFullLocation(fileId, fileVersion, variant, variantVersion);
+    const cacheInfo = await (AssetBundleManager as any).CheckVRChatCache(fileId, fileVersion, variant, variantVersion);
     let inCache = false;
     if (cacheInfo.Item1 > 0) {
         inCache = true;

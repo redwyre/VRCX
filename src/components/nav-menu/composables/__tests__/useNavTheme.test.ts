@@ -23,7 +23,7 @@ describe('useNavTheme', () => {
         const toggleThemeMode = vi.fn();
 
         const { handleThemeSelect, handleTableDensitySelect, handleThemeToggle } = useNavTheme({
-            t: (key) => key,
+            t: (key: any) => key,
             appearanceSettingsStore: {
                 setThemeMode,
                 setTableDensity,
@@ -42,7 +42,7 @@ describe('useNavTheme', () => {
 
     it('forwards theme color apply request', async () => {
         const { handleThemeColorSelect } = useNavTheme({
-            t: (key) => key,
+            t: (key: any) => key,
             appearanceSettingsStore: {
                 setThemeMode: vi.fn(),
                 setTableDensity: vi.fn(),

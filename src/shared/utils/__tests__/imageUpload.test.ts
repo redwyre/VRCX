@@ -74,7 +74,7 @@ describe('handleImageUploadInput', () => {
         size,
         type
     });
-    const makeEvent = (file) => ({
+    const makeEvent = (file: { size: number; type: string; }) => ({
         target: { files: file ? [file] : [] }
     });
 

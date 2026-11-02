@@ -8,7 +8,7 @@ import { moveArrayItem } from './base/array';
  * @param {string[]} groupIds
  * @returns {string[]}
  */
-export function normalizeGroupOrder(order, groupIds) {
+export function normalizeGroupOrder(order: string[], groupIds: string[]) {
     const validGroupIds = new Set(groupIds);
     const seen = new Set();
     const normalized = [];
@@ -35,7 +35,7 @@ export function normalizeGroupOrder(order, groupIds) {
  * @param {number} toIndex
  * @returns {boolean}
  */
-export function moveGroupInOrder(order, groupId, toIndex) {
+export function moveGroupInOrder(order: string[], groupId: string, toIndex: number) {
     const fromIndex = order.indexOf(groupId);
     if (fromIndex === -1 || toIndex < 0 || toIndex >= order.length || fromIndex === toIndex) {
         return false;

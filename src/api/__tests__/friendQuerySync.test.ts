@@ -1,26 +1,38 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 const mockRequest = vi.fn();
+
+
+
+
 const mockInvalidateQueries = vi.fn().mockResolvedValue();
 const mockApplyUser = vi.fn((json) => json);
 
 vi.mock('../../services/request', () => ({
-    request: (...args) => mockRequest(...args)
+    request: (...args: any[]) => mockRequest(...args)
 }));
 
 vi.mock('../../stores/user', () => ({
     useUserStore: () => ({
-        applyUser: (...args) => mockApplyUser(...args)
+
+
+
+
+        applyUser: (...args: any[]) => mockApplyUser(...args)
     })
 }));
 
 vi.mock('../../coordinators/userCoordinator', () => ({
-    applyUser: (...args) => mockApplyUser(...args)
+
+
+
+
+    applyUser: (...args: any[]) => mockApplyUser(...args)
 }));
 
 vi.mock('../../queries', () => ({
     queryClient: {
-        invalidateQueries: (...args) => mockInvalidateQueries(...args)
+        invalidateQueries: (...args: any[]) => mockInvalidateQueries(...args)
     },
     entityQueryPolicies: {
         user: {},

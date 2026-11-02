@@ -128,7 +128,7 @@ export const entityQueryPolicies = Object.freeze({
  * @param {{ staleTime: number; gcTime: number; retry: number; refetchOnWindowFocus: boolean }} policy
  * @returns {{ staleTime: number; gcTime: number; retry: number; refetchOnWindowFocus: boolean }}
  */
-export function toQueryOptions(policy) {
+export function toQueryOptions(policy: { staleTime: number; gcTime: number; retry: number; refetchOnWindowFocus: boolean; }) {
     return {
         staleTime: policy.staleTime,
         gcTime: policy.gcTime,

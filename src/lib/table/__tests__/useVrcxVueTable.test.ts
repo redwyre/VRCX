@@ -5,7 +5,7 @@ import { useVrcxVueTable } from '../useVrcxVueTable';
 /**
  * @param {...any} ids
  */
-function makeColumns(...ids) {
+function makeColumns(...ids: any[]) {
     return ids.map((id) => ({ id, header: id, accessorKey: id }));
 }
 
@@ -26,6 +26,10 @@ describe('useVrcxVueTable persistence', () => {
 
         // Wait for debounce (200ms default)
         await new Promise((r) => setTimeout(r, 300));
+
+
+
+
 
         const stored = JSON.parse(localStorage.getItem('vrcx:table:test-sort'));
         expect(stored).toBeTruthy();
@@ -81,6 +85,10 @@ describe('useVrcxVueTable persistence', () => {
 
         await new Promise((r) => setTimeout(r, 300));
 
+
+
+
+
         const stored = JSON.parse(localStorage.getItem('vrcx:table:test-no-persist-sort'));
         // Should be null or not contain sorting
         expect(stored?.sorting).toBeUndefined();
@@ -103,6 +111,10 @@ describe('useVrcxVueTable persistence', () => {
 
         // Wait for sorting debounce to fire
         await new Promise((r) => setTimeout(r, 300));
+
+
+
+
 
         const stored = JSON.parse(localStorage.getItem('vrcx:table:test-both'));
         expect(stored).toBeTruthy();
@@ -132,6 +144,10 @@ describe('useVrcxVueTable persistence', () => {
         columnOrder.value = ['date', 'name', 'status'];
 
         await new Promise((r) => setTimeout(r, 300));
+
+
+
+
 
         const stored = JSON.parse(localStorage.getItem('vrcx:table:test-col-order'));
         expect(stored).toBeTruthy();
@@ -165,6 +181,10 @@ describe('useVrcxVueTable persistence', () => {
 
         await new Promise((r) => setTimeout(r, 300));
 
+
+
+
+
         const stored = JSON.parse(localStorage.getItem('vrcx:table:test-stale-order'));
         expect(stored).toBeTruthy();
         // 'removed_col' should be filtered out
@@ -183,6 +203,10 @@ describe('useVrcxVueTable persistence', () => {
 
         await new Promise((r) => setTimeout(r, 300));
 
+
+
+
+
         const stored = JSON.parse(localStorage.getItem('vrcx:table:test-no-persist-order'));
         expect(stored?.columnOrder).toBeUndefined();
     });
@@ -197,6 +221,10 @@ describe('useVrcxVueTable persistence', () => {
         columnVisibility.value = { name: false, status: true };
 
         await new Promise((r) => setTimeout(r, 300));
+
+
+
+
 
         const stored = JSON.parse(localStorage.getItem('vrcx:table:test-col-vis'));
         expect(stored).toBeTruthy();
@@ -226,6 +254,10 @@ describe('useVrcxVueTable persistence', () => {
 
         await new Promise((r) => setTimeout(r, 300));
 
+
+
+
+
         const stored = JSON.parse(localStorage.getItem('vrcx:table:test-stale-vis'));
         expect(stored).toBeTruthy();
         expect(stored.columnVisibility).toEqual({ name: false });
@@ -243,6 +275,10 @@ describe('useVrcxVueTable persistence', () => {
 
         await new Promise((r) => setTimeout(r, 300));
 
+
+
+
+
         const stored = JSON.parse(localStorage.getItem('vrcx:table:test-no-persist-vis'));
         expect(stored?.columnVisibility).toBeUndefined();
     });
@@ -258,6 +294,10 @@ describe('useVrcxVueTable persistence', () => {
         table.setPageSize(25);
 
         await new Promise((r) => setTimeout(r, 300));
+
+
+
+
 
         const stored = JSON.parse(localStorage.getItem('vrcx:table:test-page-size'));
         expect(stored).toBeTruthy();
@@ -301,6 +341,10 @@ describe('useVrcxVueTable persistence', () => {
 
         await new Promise((r) => setTimeout(r, 300));
 
+
+
+
+
         const stored = JSON.parse(localStorage.getItem('vrcx:table:test-no-persist-ps'));
         expect(stored?.pageSize).toBeUndefined();
     });
@@ -325,6 +369,10 @@ describe('useVrcxVueTable persistence', () => {
         expect(columnOrder.value).toEqual([]);
         expect(columnVisibility.value).toEqual({});
 
+
+
+
+
         const stored = JSON.parse(localStorage.getItem('vrcx:table:test-reset-all'));
         expect(stored?.columnSizing).toBeUndefined();
         expect(stored?.columnOrder).toBeUndefined();
@@ -344,6 +392,10 @@ describe('useVrcxVueTable persistence', () => {
 
         // Watcher is async, wait for it to fire
         await new Promise((r) => setTimeout(r, 50));
+
+
+
+
 
         const stored = JSON.parse(localStorage.getItem('vrcx:table:test-lock-order'));
         expect(stored?.columnOrderLocked).toBe(true);
@@ -369,9 +421,9 @@ describe('useVrcxVueTable persistence', () => {
         });
 
         const meta = table.options.meta;
-        expect(meta.resetAll).toBeTypeOf('function');
-        expect(meta.columnOrderLocked).toBeDefined();
-        expect(meta.columnOrderLocked.value).toBe(false);
+        expect((meta as any).resetAll).toBeTypeOf('function');
+        expect((meta as any).columnOrderLocked).toBeDefined();
+        expect((meta as any).columnOrderLocked.value).toBe(false);
     });
 
     it('does not attach controls to meta without persistKey', () => {
@@ -381,7 +433,7 @@ describe('useVrcxVueTable persistence', () => {
         });
 
         const meta = table.options.meta;
-        expect(meta.resetAll).toBeUndefined();
-        expect(meta.columnOrderLocked).toBeUndefined();
+        expect((meta as any).resetAll).toBeUndefined();
+        expect((meta as any).columnOrderLocked).toBeUndefined();
     });
 });

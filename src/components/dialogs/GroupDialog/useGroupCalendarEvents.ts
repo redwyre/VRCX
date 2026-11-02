@@ -11,7 +11,7 @@ import { computed } from 'vue';
  *     updateFollowingCalendarData: (event: Object) => void;
  * }}
  */
-export function useGroupCalendarEvents(groupDialog) {
+export function useGroupCalendarEvents(groupDialog: import('vue').Ref) {
     const pastCalenderEvents = computed(() => {
         if (!groupDialog.value.calendar) {
             return [];
@@ -61,10 +61,10 @@ export function useGroupCalendarEvents(groupDialog) {
     /**
      * @param {object} event
      */
-    function updateFollowingCalendarData(event) {
+    function updateFollowingCalendarData(event: object) {
         const calendar = groupDialog.value.calendar;
         for (let i = 0; i < calendar.length; i++) {
-            if (calendar[i].id === event.id) {
+            if (calendar[i].id === (event as any).id) {
                 calendar[i] = {
                     ...calendar[i],
                     ...event

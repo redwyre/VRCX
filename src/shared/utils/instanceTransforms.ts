@@ -5,13 +5,13 @@
  * @param {string[]} settingsList - List of all possible content setting keys
  * @returns {string[]} Array of disabled setting keys
  */
-export function computeDisabledContentSettings(contentSettings, settingsList) {
-    const disabled = [];
+export function computeDisabledContentSettings(contentSettings: object, settingsList: string[]) {
+    const disabled: string[] = [];
     if (!contentSettings || Object.keys(contentSettings).length === 0) {
         return disabled;
     }
     for (const setting of settingsList) {
-        if (typeof contentSettings[setting] === 'undefined' || contentSettings[setting] === true) {
+        if (typeof (contentSettings as any)[setting] === 'undefined' || (contentSettings as any)[setting] === true) {
             continue;
         }
         disabled.push(setting);
@@ -25,8 +25,12 @@ export function computeDisabledContentSettings(contentSettings, settingsList) {
  * @param {Partial<import('@/types/vrcx').VrcxInstance>} json - API response to merge
  * @returns {import('@/types/vrcx').VrcxInstance}
  */
-export function createDefaultInstanceRef(json) {
-    return /** @type {import('@/types/vrcx').VrcxInstance} */ ({
+
+
+
+
+export function createDefaultInstanceRef(json: Partial<import('@/types/vrcx').VrcxInstance>) {
+    return ({
         id: '',
         location: '',
         instanceId: '',
@@ -88,5 +92,5 @@ export function createDefaultInstanceRef(json) {
         $fetchedAt: '',
         $disabledContentSettings: [],
         ...json
-    });
+    } as import('@/types/vrcx').VrcxInstance);
 }

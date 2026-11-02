@@ -25,7 +25,7 @@ const friendReq = {
         return request('auth/user/friends', {
             method: 'GET',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -38,6 +38,10 @@ const friendReq = {
                 // hacky way to add state to bulk fetch at startup
                 if (!watchState.isFriendsLoaded) {
                     for (const item of json) {
+
+
+
+
                         if (userStore.currentUser.activeFriends.includes(item.id)) {
                             item.state = 'active';
                         } else if (userStore.currentUser.onlineFriends.includes(item.id)) {
@@ -56,7 +60,7 @@ const friendReq = {
     sendFriendRequest(params: { userId: string }): Promise<{ json: Json<Notification>; params: { userId: string } }> {
         return request(`user/${params.userId}/friendRequest`, {
             method: 'POST'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -69,7 +73,7 @@ const friendReq = {
     cancelFriendRequest(params: { userId: string }): Promise<{ json: Json<Success>; params: { userId: string } }> {
         return request(`user/${params.userId}/friendRequest`, {
             method: 'DELETE'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -79,11 +83,11 @@ const friendReq = {
         });
     },
 
-    deleteFriend(params: { userId: string }, customMsg): Promise<{ json: Json<Success>; params: { userId: string } }> {
+    deleteFriend(params: { userId: string }, customMsg?: undefined): Promise<{ json: Json<Success>; params: { userId: string } }> {
         return request(`auth/user/friends/${params.userId}`, {
             method: 'DELETE',
             customMsg
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -99,7 +103,7 @@ const friendReq = {
     }): Promise<{ json: Json<FriendStatus>; params: { userId: string; currentUserId: string } }> {
         return request(`user/${params.userId}/friendStatus`, {
             method: 'GET'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -116,7 +120,7 @@ const friendReq = {
         return request(`user/${userId}/friendRequest`, {
             method: 'DELETE',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params,

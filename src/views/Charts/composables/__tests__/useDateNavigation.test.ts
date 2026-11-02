@@ -15,11 +15,11 @@ beforeAll(() => {
     dayjs.tz.setDefault('UTC');
 });
 
-function makeDates(...strings) {
+function makeDates(...strings: any[]) {
     return ref(new Set(strings));
 }
 
-function setup(dateStrings, reloadData = vi.fn()) {
+function setup(dateStrings: string[], reloadData = vi.fn()) {
     const allDates = makeDates(...dateStrings);
     const result = useDateNavigation(allDates, reloadData);
     return { ...result, reloadData };

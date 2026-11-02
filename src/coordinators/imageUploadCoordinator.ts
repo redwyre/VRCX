@@ -1,18 +1,18 @@
 import { toast } from 'vue-sonner';
 
 import { $throw } from '../services/request';
-import { AppDebug } from '../services/appConfig.js';
+import { AppDebug } from '../services/appConfig';
 import { extractFileId } from '../shared/utils';
 import { imageRequest } from '../api';
 
-function resolveMessage(message) {
+function resolveMessage(message: () => any) {
     if (typeof message === 'function') {
         return message();
     }
     return message;
 }
 
-function getInputElement(selector) {
+function getInputElement(selector: string | (() => any)) {
     if (!selector) {
         return null;
     }
@@ -25,7 +25,7 @@ function getInputElement(selector) {
     return selector;
 }
 
-export function handleImageUploadInput(event, options = {}) {
+export function handleImageUploadInput(event: any, options = {}) {
     const {
         inputSelector,
         // 20MB
@@ -34,7 +34,7 @@ export function handleImageUploadInput(event, options = {}) {
         tooLargeMessage,
         invalidTypeMessage,
         onClear
-    } = options;
+    }: any = options;
 
     const clearInput = () => {
         onClear?.();
@@ -79,9 +79,9 @@ export function handleImageUploadInput(event, options = {}) {
  * @param {string} base64Data - Base64 encoded image
  * @returns {Promise<string>} Resized base64 encoded image
  */
-export async function resizeImageToFitLimits(base64Data) {
+export async function resizeImageToFitLimits(base64Data: string) {
     // frontend limit check = 20MB
-    return AppApi.ResizeImageToFitLimits(base64Data);
+return (AppApi as any).ResizeImageToFitLimits(base64Data);
 }
 
 /**
@@ -94,7 +94,12 @@ export async function resizeImageToFitLimits(base64Data) {
  * @param {string} opts.base64File - Base64 encoded image data
  * @param {Blob} opts.blob - The original blob (used for file size)
  */
-export async function uploadImageLegacy(type, { entityId, imageUrl, base64File, blob }) {
+export async function uploadImageLegacy(type: 'avatar' | 'world', { entityId, imageUrl, base64File, blob }: {
+    entityId: string;
+    imageUrl: string;
+    base64File: string;
+    blob: Blob;
+}) {
     const apiMap = {
         avatar: {
             uploadImage: imageRequest.uploadAvatarImage,
@@ -115,11 +120,11 @@ export async function uploadImageLegacy(type, { entityId, imageUrl, base64File, 
     };
     const api = apiMap[type];
 
-    const fileMd5 = await AppApi.MD5File(base64File);
+    const fileMd5 = await (AppApi as any).MD5File(base64File);
     const fileSizeInBytes = blob.size;
-    const base64SignatureFile = await AppApi.SignFile(base64File);
-    const signatureMd5 = await AppApi.MD5File(base64SignatureFile);
-    const signatureSizeInBytes = parseInt(await AppApi.FileLength(base64SignatureFile), 10);
+    const base64SignatureFile = await (AppApi as any).SignFile(base64File);
+    const signatureMd5 = await (AppApi as any).MD5File(base64SignatureFile);
+    const signatureSizeInBytes = parseInt(await (AppApi as any).FileLength(base64SignatureFile), 10);
     const fileId = extractFileId(imageUrl);
 
     // imageInit

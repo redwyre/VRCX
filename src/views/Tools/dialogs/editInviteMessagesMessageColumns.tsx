@@ -1,4 +1,7 @@
 import CountdownTimer from '@/components/CountdownTimer.vue';
+
+
+
 import { i18n } from '@/plugins';
 
 const { t } = i18n.global;
@@ -23,6 +26,6 @@ export const columns = [
         meta: {
             tdClass: 'text-right'
         },
-        cell: ({ row }) => <CountdownTimer datetime={row.original?.updatedAt} hours={1} />
+        cell: ({ row }: any) => <CountdownTimer datetime={row.original?.updatedAt} hours={1} />
     }
 ];

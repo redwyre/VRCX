@@ -1,9 +1,13 @@
-import sqliteService from '../sqlite.js';
+import sqliteService from '../sqlite';
 
 const worldFavorites = {
-    addWorldToCache(entry) {
+    addWorldToCache(entry: { id: any; authorId: any; authorName: any; created_at: any; description: any; imageUrl: any; name: any; releaseStatus: any; thumbnailImageUrl: any; updated_at: any; version: any; }) {
         sqliteService.executeNonQuery(
             `INSERT OR REPLACE INTO cache_world (id, added_at, author_id, author_name, created_at, description, image_url, name, release_status, thumbnail_image_url, updated_at, version) VALUES (@id, @added_at, @author_id, @author_name, @created_at, @description, @image_url, @name, @release_status, @thumbnail_image_url, @updated_at, @version)`,
+
+
+
+
             {
                 '@id': entry.id,
                 '@added_at': new Date().toJSON(),
@@ -21,9 +25,13 @@ const worldFavorites = {
         );
     },
 
-    addWorldToFavorites(worldId, groupName) {
+    addWorldToFavorites(worldId: string, groupName: string) {
         sqliteService.executeNonQuery(
             'INSERT OR REPLACE INTO favorite_world (world_id, group_name, created_at) VALUES (@world_id, @group_name, @created_at)',
+
+
+
+
             {
                 '@world_id': worldId,
                 '@group_name': groupName,
@@ -32,9 +40,13 @@ const worldFavorites = {
         );
     },
 
-    renameWorldFavoriteGroup(newGroupName, groupName) {
+    renameWorldFavoriteGroup(newGroupName: string, groupName: string) {
         sqliteService.executeNonQuery(
             `UPDATE favorite_world SET group_name = @new_group_name WHERE group_name = @group_name`,
+
+
+
+
             {
                 '@new_group_name': newGroupName,
                 '@group_name': groupName
@@ -42,15 +54,23 @@ const worldFavorites = {
         );
     },
 
-    deleteWorldFavoriteGroup(groupName) {
+    deleteWorldFavoriteGroup(groupName: string) {
+
+
+
+
         sqliteService.executeNonQuery(`DELETE FROM favorite_world WHERE group_name = @group_name`, {
             '@group_name': groupName
         });
     },
 
-    removeWorldFromFavorites(worldId, groupName) {
+    removeWorldFromFavorites(worldId: string, groupName: string) {
         sqliteService.executeNonQuery(
             `DELETE FROM favorite_world WHERE world_id = @world_id AND group_name = @group_name`,
+
+
+
+
             {
                 '@world_id': worldId,
                 '@group_name': groupName
@@ -59,8 +79,8 @@ const worldFavorites = {
     },
 
     async getWorldFavorites() {
-        var data = [];
-        await sqliteService.execute((dbRow) => {
+        var data: { created_at: any; worldId: any; groupName: any; }[] = [];
+        await sqliteService.execute((dbRow: any) => {
             var row = {
                 created_at: dbRow[1],
                 worldId: dbRow[2],
@@ -71,15 +91,23 @@ const worldFavorites = {
         return data;
     },
 
-    removeWorldFromCache(worldId) {
+    removeWorldFromCache(worldId: unknown) {
+
+
+
+
         sqliteService.executeNonQuery(`DELETE FROM cache_world WHERE id = @world_id`, {
             '@world_id': worldId
         });
     },
 
     async getWorldCache() {
-        var data = [];
-        await sqliteService.execute((dbRow) => {
+        var data: {
+            id: any;
+            // added_at: dbRow[1],
+            authorId: any; authorName: any; created_at: any; description: any; imageUrl: any; name: any; releaseStatus: any; thumbnailImageUrl: any; updated_at: any; version: any;
+        }[] = [];
+        await sqliteService.execute((dbRow: any) => {
             var row = {
                 id: dbRow[0],
                 // added_at: dbRow[1],
@@ -99,10 +127,10 @@ const worldFavorites = {
         return data;
     },
 
-    async getCachedWorldById(id) {
+    async getCachedWorldById(id: string) {
         var data = null;
         await sqliteService.execute(
-            (dbRow) => {
+            (dbRow: any) => {
                 data = {
                     id: dbRow[0],
                     // added_at: dbRow[1],
@@ -119,6 +147,10 @@ const worldFavorites = {
                 };
             },
             `SELECT * FROM cache_world WHERE id = @id`,
+
+
+
+
             {
                 '@id': id
             }

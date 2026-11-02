@@ -6,12 +6,12 @@ vi.mock('vue-i18n', () => ({
     useI18n: () => {
         const { ref } = require('vue');
         return {
-            t: (key, params) => (params ? `${key}:${JSON.stringify(params)}` : key),
+            t: (key: any, params: any) => (params ? `${key}:${JSON.stringify(params)}` : key),
             locale: ref('en')
         };
     },
     createI18n: () => ({
-        global: { t: (key) => key },
+        global: { t: (key: any) => key },
         install: vi.fn()
     })
 }));
@@ -34,6 +34,10 @@ vi.mock('vue-router', async (importOriginal) => {
     const actual = await importOriginal();
     const { ref } = require('vue');
     return {
+
+
+
+
         ...actual,
         useRouter: vi.fn(() => ({
             push: vi.fn(),
@@ -114,6 +118,10 @@ function mountComponent(overrides = {}) {
     });
 
     const advancedSettingsStore = useAdvancedSettingsStore(pinia);
+
+
+
+
     advancedSettingsStore.$patch({
         bioLanguage: 'en',
         translationApi: '',
@@ -124,74 +132,74 @@ function mountComponent(overrides = {}) {
 
     const userStore = useUserStore(pinia);
     userStore.$patch({
-        userDialog: {
-            id: 'usr_target',
-            friend: {
-                state: 'online',
-                ref: {
-                    location: 'wrld_test:123'
-                }
-            },
+    userDialog: {
+        id: 'usr_target',
+        friend: {
+            state: 'online',
             ref: {
-                id: 'usr_target',
-                location: 'wrld_test:123',
-                travelingToLocation: '',
-                profilePicOverride: '',
-                currentAvatarImageUrl: '',
-                currentAvatarTags: [],
-                bio: '',
-                bioLinks: [],
-                state: 'online',
-                $online_for: 1000,
-                last_login: '2025-01-01T00:00:00.000Z',
-                last_activity: '2025-01-01T00:00:00.000Z',
-                date_joined: '2020-01-01',
-                allowAvatarCopying: true,
-                displayName: 'Target'
-            },
-            $location: {
-                tag: 'wrld_test:123',
-                shortName: 'Test',
-                userId: '',
-                user: null
-            },
-            instance: {
-                ref: {},
-                friendCount: 0
-            },
-            users: [
-                {
-                    id: 'usr_friend_1',
-                    displayName: 'Friend A',
-                    $userColour: '#ffffff',
-                    location: 'traveling',
-                    $travelingToTime: Date.now(),
-                    $location_at: Date.now()
-                }
-            ],
-            note: '',
-            memo: '',
-            isRepresentedGroupLoading: false,
-            representedGroup: null,
-            lastSeen: '2025-01-01T00:00:00.000Z',
-            joinCount: 0,
-            timeSpent: 0,
-            dateFriendedInfo: [],
-            unFriended: false,
-            dateFriended: '2025-01-01T00:00:00.000Z',
-            $homeLocationName: '',
-            ...overrides.userDialog
+                location: 'wrld_test:123'
+            }
         },
-        currentUser: {
-            id: 'usr_me',
+        ref: {
+            id: 'usr_target',
+            location: 'wrld_test:123',
+            travelingToLocation: '',
+            profilePicOverride: '',
+            currentAvatarImageUrl: '',
+            currentAvatarTags: [],
+            bio: '',
+            bioLinks: [],
+            state: 'online',
+            $online_for: 1000,
+            last_login: '2025-01-01T00:00:00.000Z',
+            last_activity: '2025-01-01T00:00:00.000Z',
+            date_joined: '2020-01-01',
             allowAvatarCopying: true,
-            isBoopingEnabled: true,
-            hasSharedConnectionsOptOut: false,
-            hasDiscordFriendsOptOut: false,
-            homeLocation: '',
-            ...overrides.currentUser
-        }
-    });
+            displayName: 'Target'
+        },
+        $location: {
+            tag: 'wrld_test:123',
+            shortName: 'Test',
+            userId: '',
+            user: null
+        },
+        instance: {
+            ref: {},
+            friendCount: 0
+        },
+        users: [
+            {
+                id: 'usr_friend_1',
+                displayName: 'Friend A',
+                $userColour: '#ffffff',
+                location: 'traveling',
+                $travelingToTime: Date.now(),
+                $location_at: Date.now()
+            }
+        ],
+        note: '',
+        memo: '',
+        isRepresentedGroupLoading: false,
+        representedGroup: null,
+        lastSeen: '2025-01-01T00:00:00.000Z',
+        joinCount: 0,
+        timeSpent: 0,
+        dateFriendedInfo: [],
+        unFriended: false,
+        dateFriended: '2025-01-01T00:00:00.000Z',
+        $homeLocationName: '',
+        ...(overrides as any).userDialog
+    },
+    currentUser: {
+        id: 'usr_me',
+        allowAvatarCopying: true,
+        isBoopingEnabled: true,
+        hasSharedConnectionsOptOut: false,
+        hasDiscordFriendsOptOut: false,
+        homeLocation: '',
+        ...(overrides as any).currentUser
+    }
+});
 
     const locationStore = useLocationStore(pinia);
     locationStore.$patch({
@@ -223,6 +231,10 @@ describe('UserDialogInfoTab.vue', () => {
 
     describe('unit behavior', () => {
         test('onTabActivated fetches VRChat credits only once after first success', async () => {
+
+
+
+
             const creditsSpy = vi.spyOn(miscRequest, 'getVRChatCredits').mockResolvedValue({ json: { balance: 42 } });
             const wrapper = mountComponent();
 

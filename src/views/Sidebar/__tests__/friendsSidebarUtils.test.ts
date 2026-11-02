@@ -102,7 +102,15 @@ describe('buildInstanceHeaderRow', () => {
 
 describe('estimateRowSize', () => {
     test('returns 44 for null/undefined', () => {
+
+
+
+
         expect(estimateRowSize(null)).toBe(44);
+
+
+
+
         expect(estimateRowSize(undefined)).toBe(44);
     });
 

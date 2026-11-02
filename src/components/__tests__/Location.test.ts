@@ -30,6 +30,10 @@ vi.mock('../../plugins/router', () => ({
 vi.mock('vue-router', async (importOriginal) => {
     const actual = await importOriginal();
     return {
+
+
+
+
         ...actual,
         useRouter: vi.fn(() => ({
             push: vi.fn(),

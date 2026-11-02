@@ -4,18 +4,18 @@ import { ref } from 'vue';
 
 const mocks = vi.hoisted(() => ({
     lookup: vi.fn(),
-    makeRef: (value) => ({ value, __v_isRef: true }),
+    makeRef: (value: any) => ({ value, __v_isRef: true }),
     setSessionsViewMode: vi.fn(),
     table: { value: { vip: false, filter: [], search: '' } },
     sessionsViewMode: { value: 'table', __v_isRef: true }
 }));
 
-vi.mock('pinia', async (i) => ({ ...(await i()), storeToRefs: (s) => s }));
-vi.mock('vue-i18n', () => ({ useI18n: () => ({ t: (k) => k }) }));
+vi.mock('pinia', async (i) => ({ ...(await i()), storeToRefs: (s: any) => s }));
+vi.mock('vue-i18n', () => ({ useI18n: () => ({ t: (k: any) => k }) }));
 vi.mock('../../../stores', () => ({
     useGameLogStore: () => ({
-        gameLogTableLookup: (...a) => mocks.lookup(...a),
-        setSessionsViewMode: (...a) => mocks.setSessionsViewMode(...a),
+        gameLogTableLookup: (...a: any[]) => mocks.lookup(...a),
+        setSessionsViewMode: (...a: any[]) => mocks.setSessionsViewMode(...a),
         gameLogTable: mocks.table,
         gameLogTableData: ref([]),
         sessionsViewMode: mocks.sessionsViewMode

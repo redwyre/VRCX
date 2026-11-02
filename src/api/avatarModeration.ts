@@ -12,7 +12,7 @@ const avatarModerationReq = {
     getAvatarModerations(): Promise<{ json: Json<AvatarModeration[]> }> {
         return request('auth/user/avatarmoderations', {
             method: 'GET'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json
             };
@@ -26,7 +26,7 @@ const avatarModerationReq = {
         return request('auth/user/avatarmoderations', {
             method: 'POST',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -45,7 +45,7 @@ const avatarModerationReq = {
             {
                 method: 'DELETE'
             }
-        ).then((json) => {
+        ).then((json: any) => {
             const args = {
                 json,
                 params

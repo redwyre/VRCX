@@ -90,7 +90,7 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
                         const args = await groupRequest.getUsersGroupInstances();
                         handleGroupUserInstances(args);
                     }
-                    AppApi.CheckGameRunning();
+                    (AppApi as any).CheckGameRunning();
                 }
                 if (--state.nextAppUpdateCheck <= 0) {
                     state.nextAppUpdateCheck = 3600; // 1hour
@@ -118,14 +118,14 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
                 }
                 if (LINUX && --state.nextGetLogCheck <= 0) {
                     state.nextGetLogCheck = 0.5;
-                    const logLines = await LogWatcher.GetLogLines();
+                    const logLines = await (LogWatcher as any).GetLogLines();
                     if (logLines) {
-                        await Promise.all(logLines.map((logLine) => addGameLogEvent(logLine)));
+                        await Promise.all(logLines.map((logLine: string) => addGameLogEvent(logLine)));
                     }
                 }
                 if (LINUX && --state.nextGameRunningCheck <= 0) {
                     state.nextGameRunningCheck = 1;
-                    await runUpdateIsGameRunningFlow(await AppApi.IsGameRunning(), await AppApi.IsSteamVRRunning());
+                    await runUpdateIsGameRunningFlow(await (AppApi as any).IsGameRunning(), await (AppApi as any).IsSteamVRRunning());
                     vrStore.vrInit(); // TODO: make this event based
                 }
                 if (--state.nextDatabaseOptimize <= 0) {
@@ -148,35 +148,35 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
     /**
      * @param value
      */
-    function setNextClearVRCXCacheCheck(value) {
+    function setNextClearVRCXCacheCheck(value: number) {
         state.nextClearVRCXCacheCheck = value;
     }
 
     /**
      * @param value
      */
-    function setNextGroupInstanceRefresh(value) {
+    function setNextGroupInstanceRefresh(value: number) {
         state.nextGroupInstanceRefresh = value;
     }
 
     /**
      * @param value
      */
-    function setNextDiscordUpdate(value) {
+    function setNextDiscordUpdate(value: number) {
         state.nextDiscordUpdate = value;
     }
 
     /**
      * @param value
      */
-    function setIpcTimeout(value) {
+    function setIpcTimeout(value: number) {
         state.ipcTimeout = value;
     }
 
     /**
      * @param value
      */
-    function setNextCurrentUserRefresh(value) {
+    function setNextCurrentUserRefresh(value: number) {
         state.nextCurrentUserRefresh = value;
     }
 

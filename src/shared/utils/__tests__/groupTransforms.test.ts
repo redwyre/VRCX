@@ -1,3 +1,7 @@
+// TODO(ts-migrate): Check that this import is the one meant; TypeScript offered the name from
+// several modules.
+// describe was taken from vitest, over node:test. it was taken from vitest, over node:test.
+import { describe, it, expect } from 'vitest';
 import { createDefaultGroupRef } from '../groupTransforms';
 
 describe('createDefaultGroupRef', () => {

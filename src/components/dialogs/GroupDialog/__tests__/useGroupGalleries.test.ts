@@ -64,6 +64,10 @@ describe('useGroupGalleries', () => {
             const { groupGalleryTabs } = useGroupGalleries(groupDialog);
             expect(groupGalleryTabs.value).toHaveLength(0);
 
+
+
+
+
             groupDialog.value.ref.galleries = [{ id: 'g1', name: 'New Gallery' }];
             expect(groupGalleryTabs.value).toHaveLength(1);
         });
@@ -115,10 +119,10 @@ describe('useGroupGalleries', () => {
                     galleries: [{ id: 'g1', name: 'Gallery' }]
                 }
             });
-            queryRequest.fetch.mockResolvedValue({
-                json: [],
-                params: { groupId: 'grp_1' }
-            });
+            (queryRequest.fetch as any).mockResolvedValue({
+    json: [],
+    params: { groupId: 'grp_1' }
+});
 
             const { getGroupGalleries, isGroupGalleryLoading } = useGroupGalleries(groupDialog);
             expect(isGroupGalleryLoading.value).toBe(false);
@@ -139,10 +143,10 @@ describe('useGroupGalleries', () => {
                     ]
                 }
             });
-            queryRequest.fetch.mockResolvedValue({
-                json: [],
-                params: { groupId: 'grp_1' }
-            });
+            (queryRequest.fetch as any).mockResolvedValue({
+    json: [],
+    params: { groupId: 'grp_1' }
+});
 
             const { getGroupGalleries } = useGroupGalleries(groupDialog);
             await getGroupGalleries();
@@ -156,64 +160,64 @@ describe('useGroupGalleries', () => {
             const groupDialog = createGroupDialog();
             const { getGroupGallery } = useGroupGalleries(groupDialog);
 
-            queryRequest.fetch.mockResolvedValueOnce({
-                json: [
-                    {
-                        groupId: 'grp_1',
-                        galleryId: 'g1',
-                        id: 'img1',
-                        imageUrl: 'url1'
-                    },
-                    {
-                        groupId: 'grp_1',
-                        galleryId: 'g1',
-                        id: 'img2',
-                        imageUrl: 'url2'
-                    }
-                ],
-                params: { groupId: 'grp_1' }
-            });
+            (queryRequest.fetch as any).mockResolvedValueOnce({
+    json: [
+        {
+            groupId: 'grp_1',
+            galleryId: 'g1',
+            id: 'img1',
+            imageUrl: 'url1'
+        },
+        {
+            groupId: 'grp_1',
+            galleryId: 'g1',
+            id: 'img2',
+            imageUrl: 'url2'
+        }
+    ],
+    params: { groupId: 'grp_1' }
+});
 
             await getGroupGallery('grp_1', 'g1');
 
-            expect(groupDialog.value.galleries['g1']).toHaveLength(2);
-            expect(groupDialog.value.galleries['g1'][0].id).toBe('img1');
+            expect((groupDialog.value.galleries as any)['g1']).toHaveLength(2);
+            expect((groupDialog.value.galleries as any)['g1'][0].id).toBe('img1');
         });
 
         test('ignores images from different groups', async () => {
             const groupDialog = createGroupDialog();
             const { getGroupGallery } = useGroupGalleries(groupDialog);
 
-            queryRequest.fetch.mockResolvedValueOnce({
-                json: [
-                    {
-                        groupId: 'grp_other',
-                        galleryId: 'g1',
-                        id: 'img1',
-                        imageUrl: 'url1'
-                    }
-                ],
-                params: { groupId: 'grp_other' }
-            });
+            (queryRequest.fetch as any).mockResolvedValueOnce({
+    json: [
+        {
+            groupId: 'grp_other',
+            galleryId: 'g1',
+            id: 'img1',
+            imageUrl: 'url1'
+        }
+    ],
+    params: { groupId: 'grp_other' }
+});
 
             await getGroupGallery('grp_1', 'g1');
 
-            expect(groupDialog.value.galleries['g1']).toBeUndefined();
+            expect((groupDialog.value.galleries as any)['g1']).toBeUndefined();
         });
 
         test('stops pagination when fewer than 100 results returned', async () => {
             const groupDialog = createGroupDialog();
             const { getGroupGallery } = useGroupGalleries(groupDialog);
 
-            queryRequest.fetch.mockResolvedValueOnce({
-                json: Array.from({ length: 50 }, (_, i) => ({
-                    groupId: 'grp_1',
-                    galleryId: 'g1',
-                    id: `img${i}`,
-                    imageUrl: `url${i}`
-                })),
-                params: { groupId: 'grp_1' }
-            });
+            (queryRequest.fetch as any).mockResolvedValueOnce({
+    json: Array.from({ length: 50 }, (_, i) => ({
+        groupId: 'grp_1',
+        galleryId: 'g1',
+        id: `img${i}`,
+        imageUrl: `url${i}`
+    })),
+    params: { groupId: 'grp_1' }
+});
 
             await getGroupGallery('grp_1', 'g1');
 
@@ -225,7 +229,7 @@ describe('useGroupGalleries', () => {
             const { getGroupGallery } = useGroupGalleries(groupDialog);
             const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-            queryRequest.fetch.mockRejectedValueOnce(new Error('API Error'));
+            (queryRequest.fetch as any).mockRejectedValueOnce(new Error('API Error'));
 
             await expect(getGroupGallery('grp_1', 'g1')).resolves.toBeUndefined();
             expect(consoleSpy).toHaveBeenCalled();

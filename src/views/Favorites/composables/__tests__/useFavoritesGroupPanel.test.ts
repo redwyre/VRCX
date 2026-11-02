@@ -7,13 +7,13 @@ import { useFavoritesGroupPanel } from '../useFavoritesGroupPanel';
  * @param options
  */
 function createPanel(options = {}) {
-    const remoteGroups = options.remoteGroups ?? ref([]);
-    const localGroups = options.localGroups ?? ref([]);
-    const localFavorites = options.localFavorites ?? ref({});
-    const clearSelection = options.clearSelection ?? vi.fn();
-    const placeholders = options.placeholders ?? [];
-    const hasHistory = options.hasHistory ?? false;
-    const historyItems = options.historyItems ?? null;
+    const remoteGroups = (options as any).remoteGroups ?? ref([]);
+    const localGroups = (options as any).localGroups ?? ref([]);
+    const localFavorites = (options as any).localFavorites ?? ref({});
+    const clearSelection = (options as any).clearSelection ?? vi.fn();
+    const placeholders = (options as any).placeholders ?? [];
+    const hasHistory = (options as any).hasHistory ?? false;
+    const historyItems = (options as any).historyItems ?? null;
 
     const panel = useFavoritesGroupPanel({
         remoteGroups,

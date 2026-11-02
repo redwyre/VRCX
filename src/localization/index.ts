@@ -10,7 +10,7 @@ const localizedStringsUrls = import.meta.glob('./*.json', {
  * @param {string} code - The language code
  * @returns {Promise<Object>} A promise that resolves to the localized strings
  */
-async function getLocalizedStrings(code) {
+async function getLocalizedStrings(code: string) {
     const fallbackUrl = localizedStringsUrls['./en.json'];
     const url = localizedStringsUrls[`./${code}.json`] || fallbackUrl;
 
@@ -42,7 +42,7 @@ const languageNames = import.meta.glob('./*.json', {
  * @param {string} code - The language code
  * @returns {string} The language name
  */
-function getLanguageName(code) {
+function getLanguageName(code: string) {
     return String(languageNames[`./${code}.json`] ?? code);
 }
 
@@ -53,7 +53,7 @@ function getLanguageName(code) {
  * @param {string[]} codes - Supported language codes
  * @returns {string | null} Matched language code, or null
  */
-function resolveSystemLanguage(systemLanguage, codes) {
+function resolveSystemLanguage(systemLanguage: string, codes: string[]) {
     if (!systemLanguage) return null;
 
     // Exact match (e.g. zh-CN → zh-CN)

@@ -1,29 +1,45 @@
 import { Trash2 } from 'lucide-vue-next';
 
+
+
+
+
 import { Button } from '@/components/ui/button';
+
+
+
+
 import { InputGroupTextareaField } from '@/components/ui/input-group';
+
+
+
+
 import { i18n } from '@/plugins';
 
 const { t } = i18n.global;
 
-export const createColumns = ({ userImage, userImageFull, onShowFullscreenImage, onShowUser, onRemove }) => [
+export const createColumns = ({ userImage, userImageFull, onShowFullscreenImage, onShowUser, onRemove }: any) => [
     {
         id: 'image',
         header: () => t('table.import.image'),
         enableSorting: false,
         size: 70,
-        cell: ({ row }) => {
+        cell: ({ row }: any) => {
             const original = row.original;
             const ref = original?.ref;
             const thumb = userImage?.(ref);
             const full = userImageFull?.(ref);
 
             return (
+
+
+
+
                 <img
                     src={thumb}
                     class="friends-list-avatar"
                     loading="lazy"
-                    onClick={(e) => {
+                    onClick={(e: { stopPropagation: () => void; }) => {
                         e.stopPropagation();
                         if (full) {
                             onShowFullscreenImage?.(full);
@@ -37,17 +53,25 @@ export const createColumns = ({ userImage, userImageFull, onShowFullscreenImage,
         id: 'name',
         header: () => t('table.import.name'),
         size: 170,
-        cell: ({ row }) => {
+        cell: ({ row }: any) => {
             const original = row.original;
             return (
+
+
+
+
                 <span
                     class="cursor-pointer"
-                    onClick={(e) => {
+                    onClick={(e: { stopPropagation: () => void; }) => {
                         e.stopPropagation();
                         onShowUser?.(original?.id);
                     }}
                 >
                     {original?.name}
+
+
+
+
                 </span>
             );
         }
@@ -60,12 +84,12 @@ export const createColumns = ({ userImage, userImageFull, onShowFullscreenImage,
         meta: {
             stretch: true
         },
-        cell: ({ row }) => {
+        cell: ({ row }: any) => {
             const original = row.original;
             return (
                 <InputGroupTextareaField
                     modelValue={original?.memo ?? ''}
-                    onUpdate:modelValue={(value) => {
+                    onUpdate:modelValue={(value: any) => {
                         original.memo = value;
                     }}
                     maxlength={256}
@@ -84,13 +108,13 @@ export const createColumns = ({ userImage, userImageFull, onShowFullscreenImage,
         meta: {
             tdClass: 'text-right'
         },
-        cell: ({ row }) => {
+        cell: ({ row }: any) => {
             const original = row.original;
             return (
                 <Button
                     size="icon-sm"
                     variant="ghost"
-                    onClick={(e) => {
+                    onClick={(e: { stopPropagation: () => void; }) => {
                         e.stopPropagation();
                         onRemove?.(original);
                     }}

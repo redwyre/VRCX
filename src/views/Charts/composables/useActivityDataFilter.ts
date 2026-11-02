@@ -1,10 +1,10 @@
-import { computed } from 'vue';
+import { computed, Ref } from 'vue';
 
 export function useActivityDataFilter(
-    activityDetailData,
-    isDetailVisible,
-    isSoloInstanceVisible,
-    isNoFriendInstanceVisible
+    activityDetailData: Ref<any[], any[]>,
+    isDetailVisible: Ref<boolean, boolean>,
+    isSoloInstanceVisible: Ref<boolean, boolean>,
+    isNoFriendInstanceVisible: Ref<boolean, boolean>
 ) {
     const filteredActivityDetailData = computed(() => {
         if (!isDetailVisible.value) {
@@ -20,7 +20,7 @@ export function useActivityDataFilter(
                 if (arr.length === 1) {
                     return true;
                 }
-                return arr.some((item) => item.isFriend);
+                return arr.some((item: { isFriend: any; }) => item.isFriend);
             });
         }
         return result;

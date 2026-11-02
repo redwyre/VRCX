@@ -1,3 +1,8 @@
+// TODO(ts-migrate): Check that this import is the one meant; TypeScript offered the name from
+// several modules.
+// describe was taken from vitest, over node:test. test was taken from vitest, over node:test
+// and node:test.
+import { describe, test, expect } from 'vitest';
 import { removeFromArray, arraysMatch, moveArrayItem, replaceReactiveObject } from '../array';
 
 describe('Array Utils', () => {
@@ -28,7 +33,7 @@ describe('Array Utils', () => {
 
         test('handles null items', () => {
             const arr = [1, null, 2];
-            // @ts-ignore
+
             expect(removeFromArray(arr, null)).toBe(true);
             expect(arr).toEqual([1, 2]);
         });
@@ -52,10 +57,18 @@ describe('Array Utils', () => {
         });
 
         test('returns false for non-array first arg', () => {
+
+
+
+
             expect(arraysMatch(null, [])).toBe(false);
         });
 
         test('returns false for non-array second arg', () => {
+
+
+
+
             expect(arraysMatch([], null)).toBe(false);
         });
 
@@ -97,6 +110,10 @@ describe('Array Utils', () => {
         });
 
         test('no-ops for non-array input', () => {
+
+
+
+
             expect(() => moveArrayItem(null, 0, 1)).not.toThrow();
         });
     });

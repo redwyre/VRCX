@@ -47,7 +47,7 @@ const baseFeatures = {
 /**
  * @param str
  */
-export function safeJsonParse(str) {
+export function safeJsonParse(str: string | null | undefined) {
     if (!str) {
         return null;
     }
@@ -62,9 +62,9 @@ export function safeJsonParse(str) {
  * @param fn
  * @param wait
  */
-function debounce(fn, wait) {
-    let t = null;
-    return (...args) => {
+function debounce(fn: any, wait: any) {
+    let t: any = null;
+    return (...args: any[]) => {
         if (t) {
             clearTimeout(t);
         }
@@ -76,15 +76,15 @@ function debounce(fn, wait) {
  * @param sizing
  * @param columns
  */
-export function filterSizingByColumns(sizing, columns) {
+export function filterSizingByColumns(sizing: string | { [s: string]: unknown; } | ArrayLike<unknown> | null, columns: { id: any; }[] | null) {
     if (!sizing || typeof sizing !== 'object') {
         return {};
     }
-    const ids = new Set((columns ?? []).map((c) => c?.id).filter(Boolean));
+    const ids = new Set((columns ?? []).map((c: { id: any; }) => c?.id).filter(Boolean));
     const out = {};
     for (const [key, value] of Object.entries(sizing)) {
         if (ids.has(key)) {
-            out[key] = value;
+            (out as any)[key] = value;
         }
     }
     return out;
@@ -94,11 +94,11 @@ export function filterSizingByColumns(sizing, columns) {
  * @param sorting
  * @param columns
  */
-export function filterSortingByColumns(sorting, columns) {
+export function filterSortingByColumns(sorting: string | any[] | null, columns: { id: any; }[] | null) {
     if (!Array.isArray(sorting)) {
         return [];
     }
-    const ids = new Set((columns ?? []).map((c) => c?.id).filter(Boolean));
+    const ids = new Set((columns ?? []).map((c: { id: any; }) => c?.id).filter(Boolean));
     return sorting.filter((s) => s && ids.has(s.id));
 }
 
@@ -106,11 +106,11 @@ export function filterSortingByColumns(sorting, columns) {
  * @param order
  * @param columns
  */
-export function filterOrderByColumns(order, columns) {
+export function filterOrderByColumns(order: any[] | null, columns: { id: any; }[] | null) {
     if (!Array.isArray(order)) {
         return [];
     }
-    const ids = new Set((columns ?? []).map((c) => c?.id).filter(Boolean));
+    const ids = new Set((columns ?? []).map((c: { id: any; }) => c?.id).filter(Boolean));
     return order.filter((id) => ids.has(id));
 }
 
@@ -118,15 +118,15 @@ export function filterOrderByColumns(order, columns) {
  * @param visibility
  * @param columns
  */
-export function filterVisibilityByColumns(visibility, columns) {
+export function filterVisibilityByColumns(visibility: number | { [s: string]: unknown; } | ArrayLike<unknown> | null, columns: { id: any; }[] | null) {
     if (!visibility || typeof visibility !== 'object') {
         return {};
     }
-    const ids = new Set((columns ?? []).map((c) => c?.id).filter(Boolean));
+    const ids = new Set((columns ?? []).map((c: { id: any; }) => c?.id).filter(Boolean));
     const out = {};
     for (const [key, value] of Object.entries(visibility)) {
         if (ids.has(key)) {
-            out[key] = value;
+            (out as any)[key] = value;
         }
     }
     return out;
@@ -135,14 +135,14 @@ export function filterVisibilityByColumns(visibility, columns) {
 /**
  * @param col
  */
-export function getColumnId(col) {
+export function getColumnId(col: { id?: any; accessorKey?: any; } | null | undefined) {
     return col?.id ?? col?.accessorKey ?? null;
 }
 
 /**
  * @param columns
  */
-export function findStretchColumnId(columns) {
+export function findStretchColumnId(columns: string | ({ id: string; meta?: undefined; } | { id: string; meta: { stretch: boolean; }; })[] | { accessorKey: string; meta: { stretch: boolean; }; }[] | null) {
     if (!Array.isArray(columns)) {
         return null;
     }
@@ -158,14 +158,14 @@ export function findStretchColumnId(columns) {
  * @param updaterOrValue
  * @param targetRef
  */
-function setRef(updaterOrValue, targetRef) {
+function setRef(updaterOrValue: (arg0: any) => any, targetRef: { value: any; }) {
     targetRef.value = isFunction(updaterOrValue) ? updaterOrValue(targetRef.value) : updaterOrValue;
 }
 
 /**
  * @param func
  */
-function resolveMaybeGetter(func) {
+function resolveMaybeGetter(func: () => any) {
     return typeof func === 'function' ? func() : unref(func);
 }
 
@@ -175,7 +175,7 @@ function resolveMaybeGetter(func) {
  * @param spacerId
  * @param stretchAfterId
  */
-export function withSpacerColumn(columns, enabled, spacerId, stretchAfterId) {
+export function withSpacerColumn(columns: any[] | null, enabled: boolean, spacerId?: string | undefined, stretchAfterId?: string | undefined) {
     if (!enabled) {
         return columns;
     }
@@ -212,7 +212,7 @@ export function withSpacerColumn(columns, enabled, spacerId, stretchAfterId) {
 /**
  * @param options
  */
-export function useVrcxVueTable(options) {
+export function useVrcxVueTable(options: any) {
     const {
         getRowId,
         getRowCanExpand,
@@ -277,7 +277,7 @@ export function useVrcxVueTable(options) {
     /**
      * @param patch
      */
-    function writePersisted(patch) {
+    function writePersisted(patch: any) {
         if (!storageKey) {
             return;
         }
@@ -289,7 +289,7 @@ export function useVrcxVueTable(options) {
     /**
      * @param keys
      */
-    function removePersisted(keys) {
+    function removePersisted(keys: any) {
         if (!storageKey) {
             return;
         }
@@ -344,7 +344,7 @@ export function useVrcxVueTable(options) {
      * @param rowModelPart
      * @param extraPart
      */
-    function register(enabled, key, r, onChangeKey, rowModelPart, extraPart) {
+    function register(enabled: any, key: any, r: any, onChangeKey: any, rowModelPart?: any, extraPart?: any) {
         if (!enabled) {
             return;
         }
@@ -354,7 +354,7 @@ export function useVrcxVueTable(options) {
             get: () => r.value
         });
 
-        if (onChangeKey) handlers[onChangeKey] = (val) => setRef(val, r);
+        if (onChangeKey) (handlers as any)[onChangeKey] = (val: any) => setRef(val, r);
         if (rowModelPart) Object.assign(rowModels, rowModelPart);
         if (extraPart) Object.assign(extra, extraPart);
     }
@@ -424,6 +424,10 @@ export function useVrcxVueTable(options) {
     watch(
         columnsSource,
         (next) => {
+
+
+
+
             table.setOptions((prev) => ({
                 ...prev,
                 columns: withSpacerColumn(next, fillRemainingSpace, spacerColumnId, findStretchColumnId(next))
@@ -432,7 +436,7 @@ export function useVrcxVueTable(options) {
         { immediate: true }
     );
 
-    const persistWrite = debounce((payload) => writePersisted(payload), persistDebounceMs);
+    const persistWrite = debounce((payload: any) => writePersisted(payload), persistDebounceMs);
 
     if (storageKey && persistColumnSizing) {
         watch(
@@ -512,7 +516,7 @@ export function useVrcxVueTable(options) {
         for (const col of cols) {
             const id = getColumnId(col);
             if (id && col?.meta?.defaultHidden) {
-                defaultHiddenVisibility[id] = false;
+                (defaultHiddenVisibility as any)[id] = false;
             }
         }
         columnVisibility.value = defaultHiddenVisibility;

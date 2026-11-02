@@ -1,3 +1,8 @@
+// TODO(ts-migrate): Check that this import is the one meant; TypeScript offered the name from
+// several modules.
+// describe was taken from vitest, over node:test. test was taken from vitest, over node:test
+// and node:test.
+import { vi, describe, test, expect } from 'vitest';
 import { isRpcWorld } from '../world';
 
 // Mock transitive deps

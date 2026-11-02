@@ -27,6 +27,10 @@ vi.mock('vue-router', async (importOriginal) => {
     const actual = await importOriginal();
     const { ref } = require('vue');
     return {
+
+
+
+
         ...actual,
         useRouter: vi.fn(() => ({
             push: vi.fn(),
@@ -80,17 +84,17 @@ vi.mock('../../../../services/request', () => ({
 }));
 vi.mock('vue-i18n', () => ({
     useI18n: () => ({
-        t: (key) => key,
+        t: (key: any) => key,
         locale: require('vue').ref('en')
     }),
     createI18n: () => ({
-        global: { t: (key) => key, locale: require('vue').ref('en') },
+        global: { t: (key: any) => key, locale: require('vue').ref('en') },
         install: vi.fn()
     })
 }));
 vi.mock('worker-timers', () => ({
-    setTimeout: (fn, ms) => globalThis.setTimeout(fn, ms),
-    clearTimeout: (id) => globalThis.clearTimeout(id)
+    setTimeout: (fn: () => void, ms: number | undefined) => globalThis.setTimeout(fn, ms),
+    clearTimeout: (id: string | number | NodeJS.Timeout | undefined) => globalThis.clearTimeout(id)
 }));
 
 import { useGroupMembers } from '../useGroupMembers';
@@ -123,7 +127,7 @@ function createDeps(overrides = {}) {
         currentUser: ref({ id: 'usr_me' }),
         applyGroupMember: vi.fn((json) => json),
         handleGroupMember: vi.fn(),
-        t: (key) => key,
+        t: (key: any) => key,
         ...overrides
     };
 }
@@ -131,7 +135,7 @@ function createDeps(overrides = {}) {
 describe('useGroupMembers', () => {
     beforeEach(() => {
         vi.clearAllMocks();
-        queryRequest.fetch.mockReset();
+        (queryRequest.fetch as any).mockReset();
     });
 
     describe('groupDialogMemberSortValue', () => {
@@ -200,6 +204,10 @@ describe('useGroupMembers', () => {
             // should have a filters group
             const filtersGroup = groups.find((g) => g.key === 'filters');
             expect(filtersGroup).toBeDefined();
+
+
+
+
             expect(filtersGroup.items.length).toBeGreaterThan(0);
         });
 
@@ -252,10 +260,10 @@ describe('useGroupMembers', () => {
 
         test('calls API when search is 3 or more characters', async () => {
             const groupDialog = createGroupDialog({ memberSearch: 'abc' });
-            groupRequest.getGroupMembersSearch.mockResolvedValue({
-                json: { results: [{ userId: 'usr_1' }] },
-                params: { groupId: 'grp_1' }
-            });
+            (groupRequest.getGroupMembersSearch as any).mockResolvedValue({
+    json: { results: [{ userId: 'usr_1' }] },
+    params: { groupId: 'grp_1' }
+});
 
             const deps = createDeps();
             const { groupMembersSearch } = useGroupMembers(groupDialog, deps);
@@ -275,10 +283,10 @@ describe('useGroupMembers', () => {
         test('collapses rapid input into a single API call with the latest query', async () => {
             vi.useFakeTimers();
             const groupDialog = createGroupDialog({ memberSearch: 'joh' });
-            groupRequest.getGroupMembersSearch.mockResolvedValue({
-                json: { results: [] },
-                params: { groupId: 'grp_1' }
-            });
+            (groupRequest.getGroupMembersSearch as any).mockResolvedValue({
+    json: { results: [] },
+    params: { groupId: 'grp_1' }
+});
 
             const { groupMembersSearch } = useGroupMembers(groupDialog, createDeps());
             groupMembersSearch();
@@ -303,17 +311,13 @@ describe('useGroupMembers', () => {
             vi.useFakeTimers();
             const groupDialog = createGroupDialog({ memberSearch: 'john' });
             let resolveFirst;
-            groupRequest.getGroupMembersSearch
-                .mockImplementationOnce(
-                    () =>
-                        new Promise((resolve) => {
-                            resolveFirst = resolve;
-                        })
-                )
-                .mockResolvedValueOnce({
-                    json: { results: [{ userId: 'usr_new' }] },
-                    params: { groupId: 'grp_1' }
-                });
+            (groupRequest.getGroupMembersSearch as any).mockImplementationOnce(() => new Promise((resolve) => {
+    resolveFirst = resolve;
+}))
+    .mockResolvedValueOnce({
+    json: { results: [{ userId: 'usr_new' }] },
+    params: { groupId: 'grp_1' }
+});
 
             const { groupMembersSearch } = useGroupMembers(groupDialog, createDeps());
             groupMembersSearch();
@@ -324,6 +328,10 @@ describe('useGroupMembers', () => {
             await vi.advanceTimersByTimeAsync(200); // second request for "johnny" resolves
 
             expect(groupDialog.value.memberSearchResults).toEqual([{ userId: 'usr_new' }]);
+
+
+
+
 
             resolveFirst({
                 json: { results: [{ userId: 'usr_stale' }] },
@@ -340,19 +348,23 @@ describe('useGroupMembers', () => {
                 memberSearch: 'jam',
                 members: [{ userId: 'usr_2', user: { displayName: 'Other User' } }]
             });
-            groupRequest.getGroupMembersSearch.mockResolvedValue({
-                json: { results: [] },
-                params: { groupId: 'grp_1' }
-            });
-            queryRequest.fetch.mockResolvedValue({
-                json: [{ userId: 'usr_1', user: { displayName: 'Jamie Doe' } }],
-                params: { groupId: 'grp_1', n: 100, offset: 0 }
-            });
+            (groupRequest.getGroupMembersSearch as any).mockResolvedValue({
+    json: { results: [] },
+    params: { groupId: 'grp_1' }
+});
+            (queryRequest.fetch as any).mockResolvedValue({
+    json: [{ userId: 'usr_1', user: { displayName: 'Jamie Doe' } }],
+    params: { groupId: 'grp_1', n: 100, offset: 0 }
+});
 
             const { groupMembersSearch, loadMoreGroupMembersParams, isGroupMembersDone } = useGroupMembers(
                 groupDialog,
                 createDeps()
             );
+
+
+
+
             loadMoreGroupMembersParams.value = {
                 n: 100,
                 offset: 100,
@@ -396,15 +408,19 @@ describe('useGroupMembers', () => {
 
         test('marks done when fewer than n results returned', async () => {
             const groupDialog = createGroupDialog();
-            queryRequest.fetch.mockResolvedValue({
-                json: [{ userId: 'usr_1' }],
-                params: { groupId: 'grp_1', n: 100, offset: 0 }
-            });
+            (queryRequest.fetch as any).mockResolvedValue({
+    json: [{ userId: 'usr_1' }],
+    params: { groupId: 'grp_1', n: 100, offset: 0 }
+});
 
             const { loadMoreGroupMembers, isGroupMembersDone, loadMoreGroupMembersParams } = useGroupMembers(
                 groupDialog,
                 createDeps()
             );
+
+
+
+
 
             loadMoreGroupMembersParams.value = {
                 n: 100,
@@ -422,12 +438,16 @@ describe('useGroupMembers', () => {
             const groupDialog = createGroupDialog({
                 members: [{ userId: 'existing' }]
             });
-            queryRequest.fetch.mockResolvedValue({
-                json: [{ userId: 'usr_new' }],
-                params: { groupId: 'grp_1', n: 100, offset: 0 }
-            });
+            (queryRequest.fetch as any).mockResolvedValue({
+    json: [{ userId: 'usr_new' }],
+    params: { groupId: 'grp_1', n: 100, offset: 0 }
+});
 
             const { loadMoreGroupMembers, loadMoreGroupMembersParams } = useGroupMembers(groupDialog, createDeps());
+
+
+
+
 
             loadMoreGroupMembersParams.value = {
                 n: 100,
@@ -446,12 +466,16 @@ describe('useGroupMembers', () => {
             const groupDialog = createGroupDialog({
                 members: [{ userId: 'usr_me' }]
             });
-            queryRequest.fetch.mockResolvedValue({
-                json: [{ userId: 'usr_me' }, { userId: 'usr_2' }],
-                params: { groupId: 'grp_1', n: 100, offset: 0 }
-            });
+            (queryRequest.fetch as any).mockResolvedValue({
+    json: [{ userId: 'usr_me' }, { userId: 'usr_2' }],
+    params: { groupId: 'grp_1', n: 100, offset: 0 }
+});
 
             const { loadMoreGroupMembers, loadMoreGroupMembersParams } = useGroupMembers(groupDialog, deps);
+
+
+
+
 
             loadMoreGroupMembersParams.value = {
                 n: 100,
@@ -463,18 +487,22 @@ describe('useGroupMembers', () => {
             await loadMoreGroupMembers();
 
             // duplicate at position 0 should be removed
-            const userIds = groupDialog.value.members.map((m) => m.userId);
+const userIds = groupDialog.value.members.map((m) => (m as any).userId);
             expect(userIds).toEqual(['usr_me', 'usr_2']);
         });
 
         test('marks done on error', async () => {
             const groupDialog = createGroupDialog();
-            queryRequest.fetch.mockRejectedValue(new Error('fail'));
+            (queryRequest.fetch as any).mockRejectedValue(new Error('fail'));
 
             const { loadMoreGroupMembers, isGroupMembersDone, loadMoreGroupMembersParams } = useGroupMembers(
                 groupDialog,
                 createDeps()
             );
+
+
+
+
 
             loadMoreGroupMembersParams.value = {
                 n: 100,

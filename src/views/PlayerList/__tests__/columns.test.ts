@@ -12,17 +12,21 @@ const mocks = vi.hoisted(() => ({
 vi.mock('../../../plugins', () => ({
     i18n: {
         global: {
-            t: (key) => key
+            t: (key: any) => key
         }
     }
 }));
 
 vi.mock('../../../shared/utils', () => ({
-    openExternalLink: (...args) => mocks.openExternalLink(...args),
-    userImage: (...args) => mocks.userImage(...args),
-    getFaviconUrl: (...args) => mocks.getFaviconUrl(...args),
+    openExternalLink: (...args: any[]) => mocks.openExternalLink(...args),
+    userImage: (...args: any[]) => mocks.userImage(...args),
+
+
+
+
+    getFaviconUrl: (...args: any[]) => mocks.getFaviconUrl(...args),
     statusClass: () => 'status-online',
-    languageClass: (lang) => `lang-${lang}`
+    languageClass: (lang: any) => `lang-${lang}`
 }));
 
 vi.mock('../../../components/Timer.vue', () => ({ default: 'Timer' }));
@@ -38,9 +42,9 @@ vi.mock('lucide-vue-next', () => ({
     IdCard: 'IdCard'
 }));
 
-import { createColumns } from '../columns.jsx';
+import { createColumns } from '../columns';
 
-function createElement(type, props, ...children) {
+function createElement(type: any, props: any, ...children: any[]) {
     return {
         type,
         props: props ?? {},
@@ -48,7 +52,7 @@ function createElement(type, props, ...children) {
     };
 }
 
-function findNode(node, predicate) {
+function findNode(node: { children: any; }, predicate: { (n: any): boolean; (n: any): boolean; (arg0: any): any; }): any {
     if (!node) return null;
     if (Array.isArray(node)) {
         for (const item of node) {
@@ -83,9 +87,9 @@ function makeRow(overrides = {}) {
         ...overrides
     };
     return {
-        original,
-        getValue: (key) => original[key]
-    };
+    original,
+    getValue: (key: string | number) => (original as any)[key]
+};
 }
 
 describe('views/PlayerList/columns.jsx', () => {
@@ -108,6 +112,10 @@ describe('views/PlayerList/columns.jsx', () => {
             sortAlphabetically: mocks.sortAlphabetically
         });
         const displayNameCol = cols.find((c) => c.id === 'displayName');
+
+
+
+
 
         const result = displayNameCol.sortFn(
             { original: { displayName: 'Alice' } },
@@ -132,8 +140,12 @@ describe('views/PlayerList/columns.jsx', () => {
             sortAlphabetically: mocks.sortAlphabetically
         });
         const photonCol = cols.find((c) => c.id === 'photonId');
+
+
+
+
         const blockCell = photonCol.cell({ row });
-        findNode(blockCell, (n) => n.type === 'button').props.onClick({
+        findNode(blockCell, (n: { type: string; }) => n.type === 'button').props.onClick({
             stopPropagation: vi.fn()
         });
         expect(mocks.onBlockChatbox).toHaveBeenCalledWith(row.original.ref);
@@ -147,8 +159,12 @@ describe('views/PlayerList/columns.jsx', () => {
             sortAlphabetically: mocks.sortAlphabetically
         });
         const photonBlocked = colsBlocked.find((c) => c.id === 'photonId');
+
+
+
+
         const unblockCell = photonBlocked.cell({ row });
-        findNode(unblockCell, (n) => n.type === 'button').props.onClick({
+        findNode(unblockCell, (n: { type: string; }) => n.type === 'button').props.onClick({
             stopPropagation: vi.fn()
         });
         expect(mocks.onUnblockChatbox).toHaveBeenCalledWith('usr_1');
@@ -166,6 +182,10 @@ describe('views/PlayerList/columns.jsx', () => {
 
         const master = { original: { isMaster: true } };
         const friend = { original: { isFriend: true } };
+
+
+
+
 
         expect(iconCol.sortFn(master, friend, 'icon')).toBeGreaterThan(0);
     });

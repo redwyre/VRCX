@@ -11,7 +11,13 @@ import { useAuthStore } from '../stores/auth';
  * @param {object} [options] Test seams.
  * @param {function} [options.isOnline] Online-check provider.
  */
-export async function runHandleAutoLoginFlow({ isOnline = () => navigator.onLine } = {}) {
+export async function runHandleAutoLoginFlow({ isOnline = () => navigator.onLine }: {
+
+
+
+
+    isOnline?: function;
+} = {}) {
     const authStore = useAuthStore();
     const advancedSettingsStore = useAdvancedSettingsStore();
     const t = i18n.global.t;
@@ -34,16 +40,14 @@ export async function runHandleAutoLoginFlow({ isOnline = () => navigator.onLine
         return;
     }
     const currentTimestamp = Date.now();
-    const attemptsInLastHour = Array.from(authStore.autoLoginAttempts).filter(
-        (timestamp) => timestamp > currentTimestamp - 3600000
-    ).length;
+    const attemptsInLastHour = Array.from(authStore.autoLoginAttempts).filter((timestamp) => timestamp as any > currentTimestamp - 3600000).length;
     if (attemptsInLastHour >= 3) {
         console.error(
             'More than 3 auto login attempts within the past hour, logging out instead of attempting auto login.'
         );
         authStore.setAttemptingAutoLogin(false);
         await authStore.handleLogoutEvent();
-        AppApi.FlashWindow();
+        (AppApi as any).FlashWindow();
         return;
     }
     authStore.autoLoginAttempts.add(currentTimestamp);
@@ -53,17 +57,29 @@ export async function runHandleAutoLoginFlow({ isOnline = () => navigator.onLine
         if (AppDebug.errorNoty) {
             toast.dismiss(AppDebug.errorNoty);
         }
+
+
+
+
         AppDebug.errorNoty = toast.success(t('message.auth.auto_login_success'));
         console.log('Automatically logged in.');
     } catch (err) {
         if (AppDebug.errorNoty) {
             toast.dismiss(AppDebug.errorNoty);
         }
+
+
+
+
         AppDebug.errorNoty = toast.error(t('message.auth.auto_login_failed'));
         console.error('Failed to login automatically.', err);
     } finally {
         authStore.setAttemptingAutoLogin(false);
         if (!isOnline()) {
+
+
+
+
             AppDebug.errorNoty = toast.error(t('message.auth.offline'));
             console.error(`You're offline.`);
         }

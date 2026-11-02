@@ -3,7 +3,7 @@ import { mount } from '@vue/test-utils';
 import { nextTick } from 'vue';
 
 const mocks = vi.hoisted(() => ({
-    makeRef: (value) => ({ value, __v_isRef: true }),
+    makeRef: (value: any) => ({ value, __v_isRef: true }),
     onlineFriends: null,
     allFavoriteOnlineFriends: null,
     allFavoriteFriendIds: null,
@@ -25,31 +25,87 @@ const mocks = vi.hoisted(() => ({
     virtualMeasure: vi.fn()
 }));
 
+
+
+
+
 mocks.onlineFriends = mocks.makeRef([]);
+
+
+
+
 mocks.allFavoriteOnlineFriends = mocks.makeRef([]);
+
+
+
+
 mocks.allFavoriteFriendIds = mocks.makeRef(new Set());
+
+
+
+
 mocks.activeFriends = mocks.makeRef([]);
+
+
+
+
 mocks.offlineFriends = mocks.makeRef([]);
+
+
+
+
 mocks.friendsInSameInstance = mocks.makeRef([]);
+
+
+
+
 mocks.isSidebarDivideByFriendGroup = mocks.makeRef(false);
+
+
+
+
 mocks.sidebarFavoriteGroups = mocks.makeRef([]);
+
+
+
+
 mocks.sidebarFavoriteGroupOrder = mocks.makeRef([]);
+
+
+
+
 mocks.sidebarSortMethods = mocks.makeRef('status');
+
+
+
+
 mocks.favoriteFriendGroups = mocks.makeRef([]);
+
+
+
+
 mocks.groupedByGroupKeyFavoriteFriends = mocks.makeRef({});
+
+
+
+
 mocks.localFriendFavorites = mocks.makeRef({});
+
+
+
+
 mocks.lastLocation = mocks.makeRef({
     location: 'wrld_home:123',
     friendList: new Map()
 });
 
 vi.mock('pinia', () => ({
-    storeToRefs: (store) => store
+    storeToRefs: (store: any) => store
 }));
 
 vi.mock('vue-i18n', () => ({
     useI18n: () => ({
-        t: (key) => key,
+        t: (key: any) => key,
         locale: require('vue').ref('en')
     })
 }));
@@ -81,30 +137,30 @@ vi.mock('../../../stores', () => ({
 
 vi.mock('../../../services/config.js', () => ({
     default: {
-        getString: (...args) => mocks.configGetString(...args),
-        getBool: (...args) => mocks.configGetBool(...args),
-        setString: (...args) => mocks.configSetString(...args),
-        setBool: (...args) => mocks.configSetBool(...args)
+        getString: (...args: any[]) => mocks.configGetString(...args),
+        getBool: (...args: any[]) => mocks.configGetBool(...args),
+        setString: (...args: any[]) => mocks.configSetString(...args),
+        setBool: (...args: any[]) => mocks.configSetBool(...args)
     }
 }));
 
 vi.mock('../../../shared/utils/location.js', () => ({
-    getFriendsLocations: (friends) => friends?.[0]?.ref?.location ?? ''
+    getFriendsLocations: (friends: { ref: { location: any; }; }[]) => friends?.[0]?.ref?.location ?? ''
 }));
 
 vi.mock('../../../shared/utils', () => ({
-    debounce: (fn, delay) => {
-        let timer = null;
-        return (...args) => {
+    debounce: (fn: any, delay: any) => {
+        let timer: any = null;
+        return (...args: any[]) => {
             clearTimeout(timer);
             timer = setTimeout(() => fn(...args), delay);
         };
     },
-    getFriendsSortFunction: () => (a, b) => String(a?.displayName ?? '').localeCompare(String(b?.displayName ?? ''))
+    getFriendsSortFunction: () => (a: any, b: any) => String(a?.displayName ?? '').localeCompare(String(b?.displayName ?? ''))
 }));
 
 vi.mock('@tanstack/vue-virtual', () => ({
-    useVirtualizer: (optionsRef) => ({
+    useVirtualizer: (optionsRef: { value: { count: number; }; }) => ({
         value: {
             getVirtualItems: () =>
                 Array.from({ length: optionsRef.value.count }, (_, index) => ({
@@ -113,7 +169,7 @@ vi.mock('@tanstack/vue-virtual', () => ({
                     start: index * 64
                 })),
             getTotalSize: () => optionsRef.value.count * 64,
-            measure: (...args) => mocks.virtualMeasure(...args),
+            measure: (...args: any[]) => mocks.virtualMeasure(...args),
             measureElement: vi.fn()
         }
     })
@@ -204,7 +260,7 @@ vi.mock('../components/FriendsLocationsCard.vue', () => ({
 
 import FriendsLocations from '../FriendsLocations.vue';
 
-function makeFriend(id, displayName, location = 'wrld_1:instance') {
+function makeFriend(id: string, displayName: string, location = 'wrld_1:instance') {
     return {
         id,
         displayName,
@@ -225,19 +281,75 @@ async function flushSettings() {
 
 describe('FriendsLocations.vue', () => {
     beforeEach(() => {
+
+
+
+
         mocks.onlineFriends.value = [];
+
+
+
+
         mocks.allFavoriteOnlineFriends.value = [];
+
+
+
+
         mocks.allFavoriteFriendIds.value = new Set();
+
+
+
+
         mocks.activeFriends.value = [];
+
+
+
+
         mocks.offlineFriends.value = [];
+
+
+
+
         mocks.friendsInSameInstance.value = [];
+
+
+
+
         mocks.isSidebarDivideByFriendGroup.value = false;
+
+
+
+
         mocks.sidebarFavoriteGroups.value = [];
+
+
+
+
         mocks.sidebarFavoriteGroupOrder.value = [];
+
+
+
+
         mocks.sidebarSortMethods.value = 'status';
+
+
+
+
         mocks.favoriteFriendGroups.value = [];
+
+
+
+
         mocks.groupedByGroupKeyFavoriteFriends.value = {};
+
+
+
+
         mocks.localFriendFavorites.value = {};
+
+
+
+
         mocks.lastLocation.value = {
             location: 'wrld_home:123',
             friendList: new Map()
@@ -254,6 +366,10 @@ describe('FriendsLocations.vue', () => {
     });
 
     test('renders online friend cards after initial settings load', async () => {
+
+
+
+
         mocks.onlineFriends.value = [makeFriend('usr_1', 'Alice'), makeFriend('usr_2', 'Bob')];
         const wrapper = mount(FriendsLocations);
         await flushSettings();
@@ -263,6 +379,10 @@ describe('FriendsLocations.vue', () => {
     });
 
     test('filters cards by search text in DOM', async () => {
+
+
+
+
         mocks.onlineFriends.value = [makeFriend('usr_1', 'Alice'), makeFriend('usr_2', 'Bob')];
         const wrapper = mount(FriendsLocations);
         await flushSettings();
@@ -275,7 +395,15 @@ describe('FriendsLocations.vue', () => {
     });
 
     test('switches to offline segment and renders offline cards', async () => {
+
+
+
+
         mocks.onlineFriends.value = [makeFriend('usr_1', 'Alice')];
+
+
+
+
         mocks.offlineFriends.value = [makeFriend('usr_3', 'Carol')];
         const wrapper = mount(FriendsLocations);
         await flushSettings();

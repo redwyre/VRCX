@@ -7,16 +7,16 @@
  * @param {object} col - TanStack column instance
  * @returns {boolean}
  */
-export function isSpacer(col) {
-    return col?.id === '__spacer';
+export function isSpacer(col: object) {
+    return (col as any)?.id === '__spacer';
 }
 
 /**
  * @param {object} col - TanStack column instance
  * @returns {boolean}
  */
-export function isStretch(col) {
-    return !!col?.columnDef?.meta?.stretch;
+export function isStretch(col: object) {
+    return !!(col as any)?.columnDef?.meta?.stretch;
 }
 
 /**
@@ -26,10 +26,10 @@ export function isStretch(col) {
  * @param {object} col - TanStack column instance
  * @returns {string}
  */
-export function resolveHeaderLabel(col) {
-    const label = col?.columnDef?.meta?.label;
+export function resolveHeaderLabel(col: object) {
+    const label = (col as any)?.columnDef?.meta?.label;
     if (typeof label === 'function') return label();
-    return label ?? col?.id ?? '';
+    return label ?? (col as any)?.id ?? '';
 }
 
 /**
@@ -38,7 +38,7 @@ export function resolveHeaderLabel(col) {
  * @param {Array} cols - Array of TanStack column instances
  * @returns {Array}
  */
-export function getToggleableColumns(cols) {
+export function getToggleableColumns(cols: Array<any>) {
     if (!Array.isArray(cols)) return [];
     return cols.filter((col) => {
         if (isSpacer(col)) return false;
@@ -54,11 +54,11 @@ export function getToggleableColumns(cols) {
  * @param {object} col - TanStack column instance
  * @returns {object | null}
  */
-export function getColStyle(col) {
+export function getColStyle(col: object) {
     if (isSpacer(col)) return { width: '0px' };
     if (isStretch(col)) return null;
 
-    const size = col?.getSize?.();
+    const size = (col as any)?.getSize?.();
     if (!Number.isFinite(size)) return null;
     return { width: `${size}px` };
 }
@@ -70,8 +70,12 @@ export function getColStyle(col) {
  * @param {function} getPinnedState - Function to check if column is pinned
  * @returns {boolean}
  */
-export function isReorderable(header, getPinnedState) {
-    const col = header?.column;
+
+
+
+
+export function isReorderable(header: object, getPinnedState: function) {
+    const col = (header as any)?.column;
     if (!col) return false;
     if (isSpacer(col)) return false;
     if (!col.columnDef?.meta?.label) return false;

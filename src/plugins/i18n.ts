@@ -14,7 +14,7 @@ const i18n = createI18n({
     fallbackWarn: false
 });
 
-async function loadLocalizedStrings(code) {
+async function loadLocalizedStrings(code: string) {
     const localesToLoad = code === FALLBACK_LOCALE ? [FALLBACK_LOCALE] : [FALLBACK_LOCALE, code];
 
     for (const locale of localesToLoad) {
@@ -35,7 +35,7 @@ async function updateLocalizedStrings() {
  * @param {import('vue-i18n').NamedValue=} params
  * @returns {Promise<string>}
  */
-async function tForLocale(locale, key, params = {}) {
+async function tForLocale(locale: string, key: string, params: import('vue-i18n').NamedValue = {}) {
     await loadLocalizedStrings(locale);
     return i18n.global.t(key, params, { locale });
 }

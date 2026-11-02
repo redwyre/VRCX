@@ -7,10 +7,10 @@ import { replaceBioSymbols } from './base/string';
  * @param {string[]} fields - Field names to sanitize
  * @returns {object} The mutated json
  */
-export function sanitizeEntityJson(json, fields) {
+export function sanitizeEntityJson(json: object, fields: string[]) {
     for (const field of fields) {
-        if (json[field]) {
-            json[field] = replaceBioSymbols(json[field]);
+        if ((json as any)[field]) {
+            (json as any)[field] = replaceBioSymbols((json as any)[field]);
         }
     }
     return json;
@@ -22,8 +22,12 @@ export function sanitizeEntityJson(json, fields) {
  * @param {Partial<import('@/types/vrcx').Json<import('vrchat').FavoriteGroup>>} json
  * @returns {import('@/types/vrcx').Json<import('vrchat').FavoriteGroup>}
  */
-export function createDefaultFavoriteGroupRef(json) {
-    return /** @type {import('@/types/vrcx').Json<import('vrchat').FavoriteGroup>} */ ({
+
+
+
+
+export function createDefaultFavoriteGroupRef(json: Partial<import('@/types/vrcx').Json<import('vrchat').FavoriteGroup>>) {
+    return ({
         id: '',
         ownerId: '',
         ownerDisplayName: '',
@@ -33,7 +37,7 @@ export function createDefaultFavoriteGroupRef(json) {
         visibility: '',
         tags: [],
         ...json
-    });
+    } as import('@/types/vrcx').Json<import('vrchat').FavoriteGroup>);
 }
 
 /**
@@ -43,8 +47,12 @@ export function createDefaultFavoriteGroupRef(json) {
  * @param {Partial<import('@/types/vrcx').VrcxFavorite>} json
  * @returns {import('@/types/vrcx').VrcxFavorite}
  */
-export function createDefaultFavoriteCachedRef(json) {
-    const ref = /** @type {import('@/types/vrcx').VrcxFavorite} */ ({
+
+
+
+
+export function createDefaultFavoriteCachedRef(json: Partial<import('@/types/vrcx').VrcxFavorite>) {
+    const ref = ({
         id: '',
         type: '',
         favoriteId: '',
@@ -53,7 +61,7 @@ export function createDefaultFavoriteCachedRef(json) {
         $groupKey: '',
         //
         ...json
-    });
+    } as import('@/types/vrcx').VrcxFavorite);
     ref.$groupKey = `${ref.type}:${String(ref.tags[0])}`;
     return ref;
 }

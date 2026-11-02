@@ -64,7 +64,7 @@ export const useAvatarProviderStore = defineStore('AvatarProvider', () => {
     /**
      * @param {string} url
      */
-    function addAvatarProvider(url) {
+    function addAvatarProvider(url: string) {
         if (!url) {
             return;
         }
@@ -78,7 +78,7 @@ export const useAvatarProviderStore = defineStore('AvatarProvider', () => {
     /**
      * @param {string} url
      */
-    function removeAvatarProvider(url) {
+    function removeAvatarProvider(url: string) {
         const length = avatarRemoteDatabaseProviderList.value.length;
         for (let i = 0; i < length; ++i) {
             if (avatarRemoteDatabaseProviderList.value[i] === url) {
@@ -111,7 +111,7 @@ export const useAvatarProviderStore = defineStore('AvatarProvider', () => {
     /**
      * @param {string} provider
      */
-    function setAvatarProvider(provider) {
+    function setAvatarProvider(provider: string) {
         avatarRemoteDatabaseProvider.value = provider;
     }
 

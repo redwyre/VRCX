@@ -19,7 +19,7 @@ export function getSentry() {
 /**
  * @param {import('vue').App} app
  */
-export async function initSentry(app) {
+export async function initSentry(app: import('vue').App) {
     if (!NIGHTLY) return;
 
     try {
@@ -40,6 +40,10 @@ export async function initSentry(app) {
         }
         const dsn = atob(response.data);
         const Sentry = await getSentry();
+
+
+
+
         Sentry.init({
             app,
             dsn,
@@ -49,7 +53,7 @@ export async function initSentry(app) {
             replaysOnErrorSampleRate: 1.0,
             tracesSampleRate: 0.0001,
             beforeSend(event, hint) {
-                const error = /** @type {any} */ (hint.originalException);
+                const error = (hint.originalException as any);
                 if (error && typeof error.message === 'string') {
                     if (
                         error.message.includes('401') ||
@@ -75,11 +79,23 @@ export async function initSentry(app) {
             },
 
             integrations: [
+
+
+
+
                 Sentry.replayIntegration({
                     maskAllText: true,
                     blockAllMedia: true
                 }),
+
+
+
+
                 Sentry.browserTracingIntegration({ router }),
+
+
+
+
                 Sentry.vueIntegration({
                     tracingOptions: {
                         trackComponents: true

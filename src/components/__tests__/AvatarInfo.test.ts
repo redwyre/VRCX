@@ -26,6 +26,10 @@ vi.mock('../../plugins/router', () => ({
 vi.mock('vue-router', async (importOriginal) => {
     const actual = await importOriginal();
     return {
+
+
+
+
         ...actual,
         useRouter: vi.fn(() => ({
             push: vi.fn(),
@@ -76,6 +80,10 @@ vi.mock('../../services/watchState', () => ({
 import * as avatarCoordinatorModule from '../../coordinators/avatarCoordinator';
 vi.mock('../../coordinators/avatarCoordinator', async (importOriginal) => {
     const actual = await importOriginal();
+
+
+
+
     return { ...actual, showAvatarAuthorDialog: vi.fn() };
 });
 

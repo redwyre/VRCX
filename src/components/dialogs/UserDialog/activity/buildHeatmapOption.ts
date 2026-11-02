@@ -8,12 +8,12 @@ export function buildHeatmapOption({
     emptyColor,
     scaleColors,
     unitLabel
-}) {
+}: any) {
     return {
         tooltip: {
             confine: true,
             position: 'top',
-            formatter: (params) => {
+            formatter: (params: { data: [any, any]; }) => {
                 const [hour, dayIndex] = params.data;
                 const originalDay = (dayIndex + weekStartsOn) % 7;
                 const slot = originalDay * 24 + hour;
@@ -86,7 +86,7 @@ export function buildHeatmapOption({
     };
 }
 
-export function toHeatmapSeriesData(normalizedBuckets, weekStartsOn) {
+export function toHeatmapSeriesData(normalizedBuckets: any, weekStartsOn: number) {
     const data = [];
     for (let day = 0; day < 7; day++) {
         for (let hour = 0; hour < 24; hour++) {

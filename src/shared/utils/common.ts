@@ -1,7 +1,7 @@
 import { extractFileId, extractFileVersion, extractVariantVersion } from './fileUtils';
 import { replaceBioSymbols } from './base/string';
 import { getFaviconUrl, replaceVrcPackageUrl } from './urlUtils';
-import { AppDebug } from '../../services/appConfig.js';
+import { AppDebug } from '../../services/appConfig';
 import { getAvailablePlatforms } from './platformUtils';
 
 /**
@@ -10,7 +10,7 @@ import { getAvailablePlatforms } from './platformUtils';
  * @param endpointDomain
  * @returns {string}
  */
-function convertFileUrlToImageUrl(url, resolution = 128, endpointDomain = AppDebug.endpointDomain) {
+function convertFileUrlToImageUrl(url: string, resolution: number = 128, endpointDomain = AppDebug.endpointDomain) {
     if (!url || typeof url !== 'string') {
         return '';
     }
@@ -39,9 +39,9 @@ function convertFileUrlToImageUrl(url, resolution = 128, endpointDomain = AppDeb
  * @param func
  * @param delay
  */
-function debounce(func, delay) {
-    let timer = null;
-    return function (...args) {
+function debounce(func: any, delay: any) {
+    let timer: any = null;
+    return function (this: any, ...args: any[]) {
         const context = this;
         clearTimeout(timer);
         timer = setTimeout(() => {

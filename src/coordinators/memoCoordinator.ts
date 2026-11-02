@@ -6,14 +6,14 @@ import { syncFriendSearchIndex } from './searchIndexCoordinator';
  * @returns {Promise<void>}
  */
 async function migrateMemos() {
-    const json = JSON.parse(await VRCXStorage.GetAll());
+    const json = JSON.parse(await (VRCXStorage as any).GetAll());
     for (const line in json) {
         if (line.substring(0, 8) === 'memo_usr') {
             const userId = line.substring(5);
             const memo = json[line];
             if (memo) {
                 await saveUserMemo(userId, memo);
-                VRCXStorage.Remove(`memo_${userId}`);
+                (VRCXStorage as any).Remove(`memo_${userId}`);
             }
         }
     }
@@ -23,7 +23,7 @@ async function migrateMemos() {
  * @param {string} userId
  * @param {string} memo
  */
-function applyUserMemo(userId, memo) {
+function applyUserMemo(userId: string, memo: string) {
     const userStore = useUserStore();
     const friendStore = useFriendStore();
     const text = String(memo || '');
@@ -42,10 +42,10 @@ function applyUserMemo(userId, memo) {
  * @param {string} userId
  * @returns
  */
-async function getUserMemo(userId) {
+async function getUserMemo(userId: string) {
     try {
         const row = await database.getUserMemo(userId);
-        applyUserMemo(userId, row.memo);
+        applyUserMemo(userId, (row as any).memo);
         return row;
     } catch (err) {
         console.error(err);
@@ -61,7 +61,7 @@ async function getUserMemo(userId) {
  * @param {string} id
  * @param {string} memo
  */
-async function saveUserMemo(id, memo) {
+async function saveUserMemo(id: string, memo: string) {
     const userStore = useUserStore();
     if (memo) {
         await database.setUserMemo({
@@ -92,7 +92,7 @@ async function getAllUserMemos() {
  * @param {string} worldId
  * @returns
  */
-async function getWorldMemo(worldId) {
+async function getWorldMemo(worldId: string) {
     try {
         return await database.getWorldMemo(worldId);
     } catch (err) {

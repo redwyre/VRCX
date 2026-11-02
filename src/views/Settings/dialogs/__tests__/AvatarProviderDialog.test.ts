@@ -10,14 +10,18 @@ const mocks = vi.hoisted(() => ({
 vi.mock('pinia', async (importOriginal) => {
     const actual = await importOriginal();
     return {
+
+
+
+
         ...actual,
-        storeToRefs: (store) => store
+        storeToRefs: (store: any) => store
     };
 });
 
 vi.mock('vue-i18n', () => ({
     useI18n: () => ({
-        t: (key) => key,
+        t: (key: any) => key,
         locale: require('vue').ref('en')
     })
 }));
@@ -25,8 +29,8 @@ vi.mock('vue-i18n', () => ({
 vi.mock('../../../../stores', () => ({
     useAvatarProviderStore: () => ({
         avatarRemoteDatabaseProviderList: mocks.avatarRemoteDatabaseProviderList,
-        saveAvatarProviderList: (...args) => mocks.saveAvatarProviderList(...args),
-        removeAvatarProvider: (...args) => mocks.removeAvatarProvider(...args)
+        saveAvatarProviderList: (...args: any[]) => mocks.saveAvatarProviderList(...args),
+        removeAvatarProvider: (...args: any[]) => mocks.removeAvatarProvider(...args)
     })
 }));
 

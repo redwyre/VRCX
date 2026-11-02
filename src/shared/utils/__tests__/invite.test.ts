@@ -39,6 +39,10 @@ describe('Invite Utils', () => {
 
         test('returns false for empty location', () => {
             expect(checkCanInvite('', defaultInviteDeps)).toBe(false);
+
+
+
+
             expect(checkCanInvite(null, defaultInviteDeps)).toBe(false);
         });
 
@@ -99,6 +103,10 @@ describe('Invite Utils', () => {
 
         test('returns false for empty location', () => {
             expect(checkCanInviteSelf('', defaultSelfDeps)).toBe(false);
+
+
+
+
             expect(checkCanInviteSelf(null, defaultSelfDeps)).toBe(false);
         });
 

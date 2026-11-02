@@ -32,30 +32,30 @@ export function useSearchWorld() {
     /**
      * @param ref
      */
-    function searchWorld(ref) {
+    function searchWorld(ref: { index: null; sortHeading: any; sortOrder: string; sortOwnership: string; tag: any; }) {
         searchWorldOption.value = '';
         searchWorldCategoryIndex.value = ref?.index ?? null;
         const params = createDefaultSearchWorldParams();
         switch (ref.sortHeading) {
             case 'featured':
-                params.sort = 'order';
-                params.featured = true;
+                (params as any).sort = 'order';
+                (params as any).featured = true;
                 break;
             case 'trending':
-                params.sort = 'popularity';
-                params.featured = false;
+                (params as any).sort = 'popularity';
+                (params as any).featured = false;
                 break;
             case 'updated':
-                params.sort = 'updated';
+                (params as any).sort = 'updated';
                 break;
             case 'created':
-                params.sort = 'created';
+                (params as any).sort = 'created';
                 break;
             case 'publication':
-                params.sort = 'publicationDate';
+                (params as any).sort = 'publicationDate';
                 break;
             case 'shuffle':
-                params.sort = 'shuffle';
+                (params as any).sort = 'shuffle';
                 break;
             case 'active':
                 searchWorldOption.value = 'active';
@@ -67,30 +67,30 @@ export function useSearchWorld() {
                 searchWorldOption.value = 'favorites';
                 break;
             case 'labs':
-                params.sort = 'labsPublicationDate';
+                (params as any).sort = 'labsPublicationDate';
                 break;
             case 'heat':
-                params.sort = 'heat';
-                params.featured = false;
+                (params as any).sort = 'heat';
+                (params as any).featured = false;
                 break;
             default:
-                params.sort = 'relevance';
-                params.search = replaceBioSymbols(searchText.value);
+                (params as any).sort = 'relevance';
+                (params as any).search = replaceBioSymbols(searchText.value);
                 break;
         }
-        params.order = ref.sortOrder || 'descending';
+        (params as any).order = ref.sortOrder || 'descending';
         if (ref.sortOwnership === 'mine') {
-            params.user = 'me';
-            params.releaseStatus = 'all';
+            (params as any).user = 'me';
+            (params as any).releaseStatus = 'all';
         }
         if (ref.tag) {
-            params.tag = ref.tag;
+            (params as any).tag = ref.tag;
         }
         if (!searchWorldLabs.value) {
-            if (params.tag) {
-                params.tag += ',system_approved';
+            if ((params as any).tag) {
+                (params as any).tag += ',system_approved';
             } else {
-                params.tag = 'system_approved';
+                (params as any).tag = 'system_approved';
             }
         }
         // TODO: option.platform
@@ -101,16 +101,16 @@ export function useSearchWorld() {
     /**
      * @param index
      */
-    function handleSearchWorldCategorySelect(index) {
+    function handleSearchWorldCategorySelect(index: null) {
         searchWorldCategoryIndex.value = index;
-        const row = cachedConfig.value?.dynamicWorldRows?.find((r) => r.index === index);
+        const row = cachedConfig.value?.dynamicWorldRows?.find((r: { index: any; }) => r.index === index);
         searchWorld(row || {});
     }
 
     /**
      * @param go
      */
-    function moreSearchWorld(go) {
+    function moreSearchWorld(go?: number | undefined) {
         const params = searchWorldParams.value;
         if (go) {
             params.offset += params.n * go;
@@ -132,6 +132,10 @@ export function useSearchWorld() {
                         map.set(ref.id, ref);
                     }
                 }
+
+
+
+
                 searchWorldResults.value = Array.from(map.values());
                 return args;
             });

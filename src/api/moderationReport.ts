@@ -15,7 +15,7 @@ const moderationReportReq = {
         return request('moderationReports', {
             method: 'GET',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -30,7 +30,7 @@ const moderationReportReq = {
         return request('moderationReports', {
             method: 'POST',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -45,7 +45,7 @@ const moderationReportReq = {
     }): Promise<{ json: Json<SuccessFlag>; params: { moderationReportId: string } }> {
         return request(`moderationReports/${params.moderationReportId}`, {
             method: 'DELETE'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params

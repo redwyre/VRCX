@@ -21,12 +21,12 @@ const isLaunchOptionsDialogVisible = ref(true);
 
 vi.mock('pinia', () => ({
     storeToRefs: () => ({ isLaunchOptionsDialogVisible }),
-    defineStore: (id, fn) => fn
+    defineStore: (id: any, fn: any) => fn
 }));
 
 vi.mock('vue-i18n', () => ({
     useI18n: () => ({
-        t: (key) => key,
+        t: (key: any) => key,
         locale: require('vue').ref('en')
     })
 }));
@@ -40,7 +40,7 @@ vi.mock('../../../../services/config', () => ({
 }));
 
 vi.mock('../../../../shared/utils', () => ({
-    openExternalLink: (...args) => mocks.openExternalLink(...args)
+    openExternalLink: (...args: any[]) => mocks.openExternalLink(...args)
 }));
 
 vi.mock('vue-sonner', () => ({
@@ -94,7 +94,7 @@ describe('LaunchOptionsDialog.vue', () => {
         isLaunchOptionsDialogVisible.value = true;
         mocks.configRepository.getString.mockResolvedValue('');
         vi.clearAllMocks();
-        globalThis.LINUX = false;
+        (globalThis as any).LINUX = false;
     });
 
     describe('rendering', () => {
@@ -126,14 +126,14 @@ describe('LaunchOptionsDialog.vue', () => {
         });
 
         test('renders path override section when not Linux', async () => {
-            globalThis.LINUX = false;
+            (globalThis as any).LINUX = false;
             const wrapper = mountComponent();
             await flushPromises();
             expect(wrapper.text()).toContain('dialog.launch_options.path_override');
         });
 
         test('hides path override section on Linux', async () => {
-            globalThis.LINUX = true;
+            (globalThis as any).LINUX = true;
             const wrapper = mountComponent();
             await flushPromises();
             expect(wrapper.text()).not.toContain('dialog.launch_options.path_override');
@@ -185,6 +185,10 @@ describe('LaunchOptionsDialog.vue', () => {
             await flushPromises();
 
             const saveBtn = wrapper.findAll('button').find((b) => b.text().includes('dialog.launch_options.save'));
+
+
+
+
             await saveBtn.trigger('click');
 
             expect(mocks.configRepository.setString).toHaveBeenCalledWith('launchArguments', '--fps=90 --debug');
@@ -201,6 +205,10 @@ describe('LaunchOptionsDialog.vue', () => {
             await flushPromises();
 
             const saveBtn = wrapper.findAll('button').find((b) => b.text().includes('dialog.launch_options.save'));
+
+
+
+
             await saveBtn.trigger('click');
 
             expect(mocks.toast.error).toHaveBeenCalledWith('message.launch.invalid_path');
@@ -217,6 +225,10 @@ describe('LaunchOptionsDialog.vue', () => {
             await flushPromises();
 
             const saveBtn = wrapper.findAll('button').find((b) => b.text().includes('dialog.launch_options.save'));
+
+
+
+
             await saveBtn.trigger('click');
 
             expect(mocks.toast.error).not.toHaveBeenCalled();
@@ -228,6 +240,10 @@ describe('LaunchOptionsDialog.vue', () => {
             await flushPromises();
 
             const saveBtn = wrapper.findAll('button').find((b) => b.text().includes('dialog.launch_options.save'));
+
+
+
+
             await saveBtn.trigger('click');
 
             expect(isLaunchOptionsDialogVisible.value).toBe(false);
@@ -242,6 +258,10 @@ describe('LaunchOptionsDialog.vue', () => {
             const docsBtn = wrapper
                 .findAll('button')
                 .find((b) => b.text().includes('dialog.launch_options.vrchat_docs'));
+
+
+
+
             await docsBtn.trigger('click');
 
             expect(mocks.openExternalLink).toHaveBeenCalledWith('https://docs.vrchat.com/docs/launch-options');
@@ -254,6 +274,10 @@ describe('LaunchOptionsDialog.vue', () => {
             const unityBtn = wrapper
                 .findAll('button')
                 .find((b) => b.text().includes('dialog.launch_options.unity_manual'));
+
+
+
+
             await unityBtn.trigger('click');
 
             expect(mocks.openExternalLink).toHaveBeenCalledWith(

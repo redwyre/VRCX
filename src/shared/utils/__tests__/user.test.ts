@@ -54,7 +54,15 @@ describe('User Utils', () => {
 
         test('returns empty string for falsy input', () => {
             expect(removeEmojis('')).toBe('');
+
+
+
+
             expect(removeEmojis(null)).toBe('');
+
+
+
+
             expect(removeEmojis(undefined)).toBe('');
         });
 
@@ -97,6 +105,10 @@ describe('User Utils', () => {
         });
 
         test('returns null for undefined status', () => {
+
+
+
+
             expect(statusClass(undefined)).toBeNull();
         });
 
@@ -175,7 +187,7 @@ describe('User Utils', () => {
     });
 
     describe('userStatusClass (explicit currentUser)', () => {
-        let currentUser;
+        let currentUser: any;
 
         beforeEach(() => {
             vi.clearAllMocks();
@@ -193,6 +205,10 @@ describe('User Utils', () => {
         });
 
         test('returns null for undefined user', () => {
+
+
+
+
             expect(userStatusClass(undefined, false, currentUser)).toBeNull();
         });
 
@@ -223,7 +239,7 @@ describe('User Utils', () => {
                 false,
                 currentUser
             );
-            expect(result.mobile).toBe(true);
+            expect((result as any).mobile).toBe(true);
         });
 
         test('returns null for non-friend users', () => {
@@ -287,7 +303,7 @@ describe('User Utils', () => {
                     false,
                     currentUser
                 );
-                expect(result[expected]).toBe(true);
+                expect((result as any)[expected]).toBe(true);
             }
         });
 
@@ -303,7 +319,7 @@ describe('User Utils', () => {
                 false,
                 currentUser
             );
-            expect(result.offline).toBe(true);
+            expect((result as any).offline).toBe(true);
         });
 
         test('sets mobile flag for non-PC platform friend', () => {
@@ -319,7 +335,7 @@ describe('User Utils', () => {
                 false,
                 currentUser
             );
-            expect(result.mobile).toBe(true);
+            expect((result as any).mobile).toBe(true);
         });
 
         test('no mobile flag for standalonewindows platform', () => {
@@ -335,7 +351,7 @@ describe('User Utils', () => {
                 false,
                 currentUser
             );
-            expect(result.mobile).toBeUndefined();
+            expect((result as any).mobile).toBeUndefined();
         });
 
         test('uses userId as fallback when id is not present', () => {
@@ -367,23 +383,39 @@ describe('User Utils', () => {
                 false,
                 currentUser
             );
-            expect(result.offline).toBe(true);
+            expect((result as any).offline).toBe(true);
         });
     });
 
     describe('userImage (explicit settings)', () => {
         test('does not access appearance store when setting is passed (pure path)', () => {
+
+
+
+
             userImage({ thumbnailUrl: 'https://img.com/thumb' }, false, '128', false, false);
             expect(storeMocks.useAppearanceSettingsStore).not.toHaveBeenCalled();
         });
 
         test('returns empty string for falsy user', () => {
+
+
+
+
             expect(userImage(null, false, '128', false, false)).toBe('');
+
+
+
+
             expect(userImage(undefined, false, '128', false, false)).toBe('');
         });
 
         test('returns thumbnailUrl as fallback', () => {
             const user = { thumbnailUrl: 'https://img.com/thumb' };
+
+
+
+
             expect(userImage(user, false, '128', false, false)).toBe('https://img.com/thumb');
         });
 
@@ -391,6 +423,10 @@ describe('User Utils', () => {
             const user = {
                 currentAvatarThumbnailImageUrl: 'https://img.com/avatar/256/thumb'
             };
+
+
+
+
             expect(userImage(user, false, '128', false, false)).toBe('https://img.com/avatar/256/thumb');
         });
 
@@ -398,6 +434,10 @@ describe('User Utils', () => {
             const user = {
                 currentAvatarThumbnailImageUrl: 'https://img.com/avatar/256/thumb'
             };
+
+
+
+
             expect(userImage(user, true, '64', false, false)).toBe('https://img.com/avatar/64/thumb');
         });
 
@@ -405,6 +445,10 @@ describe('User Utils', () => {
             const user = {
                 currentAvatarImageUrl: 'https://img.com/avatar/full'
             };
+
+
+
+
             expect(userImage(user, false, '128', false, false)).toBe('https://img.com/avatar/full');
         });
 
@@ -412,21 +456,37 @@ describe('User Utils', () => {
             const user = {
                 currentAvatarImageUrl: 'https://img.com/avatar/full'
             };
+
+
+
+
             expect(userImage(user, true, '128', false, false)).toBe('converted:https://img.com/avatar/full');
         });
 
         test('returns empty string when user has no image fields', () => {
+
+
+
+
             expect(userImage({}, false, '128', false, false)).toBe('');
         });
     });
 
     describe('userImageFull (explicit settings)', () => {
         test('does not access appearance store when setting is passed (pure path)', () => {
+
+
+
+
             userImageFull({ currentAvatarImageUrl: 'https://img.com/avatar' }, false);
             expect(storeMocks.useAppearanceSettingsStore).not.toHaveBeenCalled();
         });
 
         test('returns empty string for falsy user', () => {
+
+
+
+
             expect(userImageFull(null, false)).toBe('');
         });
 
@@ -435,6 +495,10 @@ describe('User Utils', () => {
                 profilePicOverride: 'https://img.com/full',
                 currentAvatarImageUrl: 'https://img.com/avatar'
             };
+
+
+
+
             expect(userImageFull(user, false)).toBe('https://img.com/full');
         });
 
@@ -442,6 +506,10 @@ describe('User Utils', () => {
             const user = {
                 currentAvatarImageUrl: 'https://img.com/avatar'
             };
+
+
+
+
             expect(userImageFull(user, false)).toBe('https://img.com/avatar');
         });
     });

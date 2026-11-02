@@ -46,7 +46,7 @@ describe('findMatchingDetailData', () => {
     });
 
     it('finds matching detail data by location and joinTime', () => {
-        const joinTime = { isSame: (other) => other === 100 };
+        const joinTime = { isSame: (other: number) => other === 100 };
         const activityItem = { location: 'wrld_abc', joinTime: 100 };
         const detailData = [
             [

@@ -20,7 +20,7 @@ import Graph from 'graphology';
  * @param {number} max
  * @returns {number}
  */
-function clampNumber(value, min, max) {
+function clampNumber(value: number, min: number, max: number) {
     const normalized = Number.isFinite(value) ? value : min;
     return Math.min(max, Math.max(min, normalized));
 }
@@ -33,7 +33,7 @@ function clampNumber(value, min, max) {
  * @param {number} t
  * @returns {number}
  */
-function lerp(a, b, t) {
+function lerp(a: number, b: number, t: number) {
     return a + (b - a) * t;
 }
 
@@ -43,7 +43,7 @@ function lerp(a, b, t) {
  * @param {Graph} graph
  * @param {number} magnitude
  */
-function jitterPositions(graph, magnitude) {
+function jitterPositions(graph: Graph, magnitude: number) {
     graph.forEachNode((node, attrs) => {
         if (!Number.isFinite(attrs.x) || !Number.isFinite(attrs.y)) return;
         graph.mergeNodeAttributes(node, {
@@ -58,7 +58,7 @@ function jitterPositions(graph, magnitude) {
  *
  * @param {Graph} graph
  */
-function initPositions(graph) {
+function initPositions(graph: Graph) {
     const n = graph.order;
     const radius = Math.max(50, Math.sqrt(n) * 30);
     graph.forEachNode((node) => {
@@ -81,8 +81,8 @@ const LAYOUT_ITERATIONS_MAX = 1500;
  *
  * @param {object} data - Message data from main thread
  */
-function runLayout(data) {
-    const { nodes, edges, settings } = data;
+function runLayout(data: object) {
+    const { nodes, edges, settings }: any = data;
 
     // Reconstruct graph in worker
     const graph = new Graph({
@@ -140,7 +140,7 @@ function runLayout(data) {
     // Extract positions
     const positions = {};
     graph.forEachNode((node, attrs) => {
-        positions[node] = { x: attrs.x, y: attrs.y };
+        (positions as any)[node] = { x: attrs.x, y: attrs.y };
     });
 
     return positions;
@@ -152,6 +152,6 @@ self.addEventListener('message', (event) => {
         const positions = runLayout(event.data);
         self.postMessage({ requestId, positions });
     } catch (err) {
-        self.postMessage({ requestId, error: err.message });
+        self.postMessage({ requestId, error: (err as any).message });
     }
 });

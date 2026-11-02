@@ -5,7 +5,7 @@
  * @param {string} auditLogType
  * @returns {string}
  */
-export function getAuditLogTypeName(auditLogType) {
+export function getAuditLogTypeName(auditLogType: string) {
     if (!auditLogType) return '';
     return auditLogType
         .replace('group.', '')
@@ -20,7 +20,7 @@ export function getAuditLogTypeName(auditLogType) {
  * @param {{ id: string; name: string }[]} roles - Available roles
  * @returns {string}
  */
-export function resolveRoleNames(roleIds, roles) {
+export function resolveRoleNames(roleIds: string[], roles: { id: string; name: string; }[]) {
     const ids = Array.isArray(roleIds) ? roleIds : [];
     const roleList = Array.isArray(roles) ? roles : [];
     const names = [];

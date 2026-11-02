@@ -1,3 +1,8 @@
+// TODO(ts-migrate): Check that this import is the one meant; TypeScript offered the name from
+// several modules.
+// describe was taken from vitest, over node:test. test was taken from vitest, over node:test
+// and node:test.
+import { describe, test, expect } from 'vitest';
 import {
     compareByCreatedAt,
     compareByCreatedAtAscending,
@@ -467,7 +472,15 @@ describe('Compare Functions', () => {
         });
 
         test('handles undefined inputs', () => {
+
+
+
+
             expect(compareByFriendOrder(undefined, { $friendNumber: 1 })).toBe(0);
+
+
+
+
             expect(compareByFriendOrder({ $friendNumber: 1 }, undefined)).toBe(0);
         });
     });
@@ -475,7 +488,15 @@ describe('Compare Functions', () => {
     describe('edge cases and boundary conditions', () => {
         test('handles null objects', () => {
             // compareByName doesn't handle null objects - it will throw
+
+
+
+
             expect(() => compareByName(null, { name: 'test' })).toThrow();
+
+
+
+
             expect(() => compareByName({ name: 'test' }, null)).toThrow();
         });
 

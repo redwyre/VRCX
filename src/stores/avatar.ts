@@ -60,21 +60,21 @@ export const useAvatarStore = defineStore('Avatar', () => {
     /**
      * @param {boolean} value
      */
-    function setAvatarDialogLoading(value) {
+    function setAvatarDialogLoading(value: boolean) {
         avatarDialog.value.loading = value;
     }
 
     /**
      * @param {boolean} value
      */
-    function setAvatarDialogVisible(value) {
+    function setAvatarDialogVisible(value: boolean) {
         avatarDialog.value.visible = value;
     }
 
     /**
      * @param {boolean} value
      */
-    function setAvatarDialogIsFavorite(value) {
+    function setAvatarDialogIsFavorite(value: boolean) {
         avatarDialog.value.isFavorite = value;
     }
 
@@ -82,29 +82,37 @@ export const useAvatarStore = defineStore('Avatar', () => {
      * @param {string} avatarId
      * @returns {Promise<{ id: string; url: string }[]>}
      */
-    async function getAvatarGallery(avatarId) {
+    async function getAvatarGallery(avatarId: string) {
         const D = avatarDialog.value;
         const args = await queryRequest.fetch('avatarGallery.force', { avatarId }).finally(() => {
             D.galleryLoading = false;
         });
-        if (args.params.galleryId !== D.id) {
+        if ((args as any).params.galleryId !== D.id) {
             return;
         }
         D.galleryImages = [];
         // wtf is this? why is order sorting only needed if it's your own avatar?
-        const sortedGallery = args.json.sort((a, b) => {
-            if (!a.order && !b.order) {
-                return 0;
-            }
-            return a.order - b.order;
-        });
+const sortedGallery = (args as any).json.sort((a: {
+    order: number;
+}, b: {
+    order: number;
+}) => {
+    if (!a.order && !b.order) {
+        return 0;
+    }
+    return a.order - b.order;
+});
         for (const file of sortedGallery) {
             const url = file.versions[file.versions.length - 1].file.url;
+
+
+
+
             D.galleryImages.push({ id: file.id, url });
         }
 
         // for JSON tab treeData
-        D.ref.gallery = args.json;
+(D.ref as any).gallery = (args as any).json;
         return D.galleryImages;
     }
 
@@ -112,13 +120,13 @@ export const useAvatarStore = defineStore('Avatar', () => {
      * @param {object} json
      * @returns {object} Ref
      */
-    function applyAvatarModeration(json) {
+    function applyAvatarModeration(json: object) {
         // fix inconsistent Unix time response
-        if (typeof json.created === 'number') {
-            json.created = new Date(json.created).toJSON();
+        if (typeof (json as any).created === 'number') {
+            (json as any).created = new Date((json as any).created).toJSON();
         }
 
-        let ref = cachedAvatarModerations.get(json.targetAvatarId);
+        let ref = cachedAvatarModerations.get((json as any).targetAvatarId);
         if (typeof ref === 'undefined') {
             ref = {
                 avatarModerationType: '',
@@ -170,14 +178,18 @@ export const useAvatarStore = defineStore('Avatar', () => {
     /**
      * @param {Array} value
      */
-    function setAvatarHistory(value) {
+    function setAvatarHistory(value: Array<any>) {
+
+
+
+
         avatarHistory.value = value;
     }
 
     /**
      * @param {any} value
      */
-    function setLoadingToastId(value) {
+    function setLoadingToastId(value: any) {
         loadingToastId.value = value;
     }
 

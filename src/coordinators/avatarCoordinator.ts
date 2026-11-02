@@ -35,19 +35,19 @@ import webApiService from '../services/webapi';
  * @param {object} json
  * @returns {object} Ref
  */
-export function applyAvatar(json) {
+export function applyAvatar(json: object) {
     const avatarStore = useAvatarStore();
     const favoriteStore = useFavoriteStore();
 
     sanitizeEntityJson(json, ['name', 'description']);
-    let ref = avatarStore.cachedAvatars.get(json.id);
+    let ref = avatarStore.cachedAvatars.get((json as any).id);
     if (typeof ref === 'undefined') {
         ref = createDefaultAvatarRef(json);
         avatarStore.cachedAvatars.set(ref.id, ref);
     } else {
         const { unityPackages } = ref;
         Object.assign(ref, json);
-        if (json.unityPackages?.length > 0 && unityPackages.length > 0 && !json.unityPackages[0].assetUrl) {
+        if ((json as any).unityPackages?.length > 0 && unityPackages.length > 0 && !(json as any).unityPackages[0].assetUrl) {
             ref.unityPackages = unityPackages;
         }
     }
@@ -73,7 +73,7 @@ export function applyAvatar(json) {
  * @param options
  * @returns
  */
-export function showAvatarDialog(avatarId, options = {}) {
+export function showAvatarDialog(avatarId: string, options = {}) {
     const avatarStore = useAvatarStore();
     const uiStore = useUiStore();
     const favoriteStore = useFavoriteStore();
@@ -81,14 +81,14 @@ export function showAvatarDialog(avatarId, options = {}) {
     const t = i18n.global.t;
 
     const D = avatarStore.avatarDialog;
-    const forceRefresh = Boolean(options?.forceRefresh);
+    const forceRefresh = Boolean((options as any)?.forceRefresh);
     const isMainDialogOpen = uiStore.openDialog({
         type: 'avatar',
         id: avatarId
     });
     D.visible = true;
     if (isMainDialogOpen && D.id === avatarId && !forceRefresh) {
-        uiStore.setDialogCrumbLabel('avatar', D.id, D.ref?.name || D.id);
+        uiStore.setDialogCrumbLabel('avatar', D.id, (D.ref as any)?.name || D.id);
         nextTick(() => (D.loading = false));
         return;
     }
@@ -115,7 +115,7 @@ export function showAvatarDialog(avatarId, options = {}) {
     const ref2 = avatarStore.cachedAvatars.get(avatarId);
     if (typeof ref2 !== 'undefined') {
         D.ref = ref2;
-        uiStore.setDialogCrumbLabel('avatar', D.id, D.ref?.name || D.id);
+        uiStore.setDialogCrumbLabel('avatar', D.id, (D.ref as any)?.name || D.id);
         nextTick(() => (D.loading = false));
     }
     const loadAvatarRequest = forceRefresh
@@ -123,9 +123,9 @@ export function showAvatarDialog(avatarId, options = {}) {
         : queryRequest.fetch('avatar.dialog', { avatarId });
     loadAvatarRequest
         .then((args) => {
-            const ref = applyAvatar(args.json);
+            const ref = applyAvatar((args as any).json);
             D.ref = ref;
-            uiStore.setDialogCrumbLabel('avatar', D.id, D.ref?.name || D.id);
+            uiStore.setDialogCrumbLabel('avatar', D.id, (D.ref as any)?.name || D.id);
             avatarStore.getAvatarGallery(avatarId);
             avatarStore.updateVRChatAvatarCache();
             if (/quest/.test(ref.tags)) {
@@ -150,6 +150,10 @@ export function showAvatarDialog(avatarId, options = {}) {
         })
         .catch((err) => {
             D.loading = false;
+
+
+
+
             D.id = null;
             D.visible = false;
             uiStore.jumpBackDialogCrumb();
@@ -182,7 +186,7 @@ export async function getAvatarHistory() {
 /**
  * @param {string} avatarId
  */
-export function addAvatarToHistory(avatarId) {
+export function addAvatarToHistory(avatarId: string) {
     if (!avatarId) {
         return;
     }
@@ -203,10 +207,14 @@ export function addAvatarToHistory(avatarId) {
 
             const historyArray = avatarStore.avatarHistory;
             for (let i = 0; i < historyArray.length; ++i) {
-                if (historyArray[i].id === ref.id) {
+                if ((historyArray[i] as any).id === ref.id) {
                     historyArray.splice(i, 1);
                 }
             }
+
+
+
+
 
             avatarStore.avatarHistory.unshift(ref);
         })
@@ -237,7 +245,7 @@ export function promptClearAvatarHistory() {
  * @param {string} imageUrl
  * @returns {Promise<{ ownerId: string; avatarName: string; fileCreatedAt?: string }>}
  */
-export async function getAvatarName(imageUrl) {
+export async function getAvatarName(imageUrl: string) {
     const avatarStore = useAvatarStore();
 
     const fileId = extractFileId(imageUrl);
@@ -272,7 +280,7 @@ export async function getAvatarName(imageUrl) {
  * @param type
  * @param search
  */
-export async function lookupAvatars(type, search) {
+export async function lookupAvatars(type: string, search: string | number | boolean) {
     const avatarProviderStore = useAvatarProviderStore();
     const vrcxUpdaterStore = useVRCXUpdaterStore();
 
@@ -293,7 +301,7 @@ export async function lookupAvatars(type, search) {
             const json = JSON.parse(response.data);
             logWebRequest('[EXTERNAL GET]', url, `(${response.status})`, json);
             if (response.status === 200 && typeof json === 'object') {
-                json.forEach((avatar) => {
+                json.forEach((avatar: { Id: any; }) => {
                     if (!avatars.has(avatar.Id)) {
                         const ref = {
                             authorId: '',
@@ -324,7 +332,7 @@ export async function lookupAvatars(type, search) {
         for (let i = 0; i < length; ++i) {
             const url = avatarProviderStore.avatarRemoteDatabaseProviderList[i];
             const avatarArray = await lookupAvatarsByAuthor(url, search);
-            avatarArray.forEach((avatar) => {
+            avatarArray.forEach((avatar: { id: any; }) => {
                 if (!avatars.has(avatar.id)) {
                     avatars.set(avatar.id, avatar);
                 }
@@ -338,7 +346,7 @@ export async function lookupAvatars(type, search) {
  * @param authorId
  * @param fileId
  */
-export async function lookupAvatarByImageFileId(authorId, fileId) {
+export async function lookupAvatarByImageFileId(authorId: any, fileId: string) {
     const avatarProviderStore = useAvatarProviderStore();
 
     for (const providerUrl of avatarProviderStore.avatarRemoteDatabaseProviderList) {
@@ -363,7 +371,7 @@ export async function lookupAvatarByImageFileId(authorId, fileId) {
  * @param providerUrl
  * @param fileId
  */
-async function lookupAvatarByFileId(providerUrl, fileId) {
+async function lookupAvatarByFileId(providerUrl: string, fileId: string | number | boolean) {
     const vrcxUpdaterStore = useVRCXUpdaterStore();
 
     try {
@@ -406,10 +414,10 @@ async function lookupAvatarByFileId(providerUrl, fileId) {
  * @param providerUrl
  * @param authorId
  */
-async function lookupAvatarsByAuthor(providerUrl, authorId) {
+async function lookupAvatarsByAuthor(providerUrl: string, authorId: string | number | boolean) {
     const vrcxUpdaterStore = useVRCXUpdaterStore();
 
-    const avatars = [];
+    const avatars: any = [];
     if (!providerUrl || !authorId) {
         return avatars;
     }
@@ -426,7 +434,7 @@ async function lookupAvatarsByAuthor(providerUrl, authorId) {
         const json = JSON.parse(response.data);
         logWebRequest('[EXTERNAL GET]', url, `(${response.status})`, json);
         if (response.status === 200 && typeof json === 'object') {
-            json.forEach((avatar) => {
+            json.forEach((avatar: any) => {
                 const ref = {
                     authorId: '',
                     authorName: '',
@@ -456,7 +464,7 @@ async function lookupAvatarsByAuthor(providerUrl, authorId) {
 /**
  * @param id
  */
-export function selectAvatarWithConfirmation(id) {
+export function selectAvatarWithConfirmation(id: any) {
     const modalStore = useModalStore();
     const t = i18n.global.t;
 
@@ -475,7 +483,7 @@ export function selectAvatarWithConfirmation(id) {
 /**
  * @param id
  */
-export async function selectAvatarWithoutConfirmation(id) {
+export async function selectAvatarWithoutConfirmation(id: string) {
     const userStore = useUserStore();
     const t = i18n.global.t;
 
@@ -495,7 +503,7 @@ export async function selectAvatarWithoutConfirmation(id) {
 /**
  * @param fileId
  */
-export function checkAvatarCache(fileId) {
+export function checkAvatarCache(fileId: string) {
     const avatarStore = useAvatarStore();
 
     let avatarId = '';
@@ -511,13 +519,17 @@ export function checkAvatarCache(fileId) {
  * @param fileId
  * @param ownerUserId
  */
-export async function checkAvatarCacheRemote(fileId, ownerUserId) {
+export async function checkAvatarCacheRemote(fileId: string, ownerUserId: any) {
     const advancedSettingsStore = useAdvancedSettingsStore();
     const avatarStore = useAvatarStore();
     const t = i18n.global.t;
 
     if (advancedSettingsStore.avatarRemoteDatabase) {
         try {
+
+
+
+
             toast.dismiss(avatarStore.loadingToastId);
             avatarStore.setLoadingToastId(toast.loading(t('message.avatar_lookup.loading')));
             const avatarId = await lookupAvatarByImageFileId(ownerUserId, fileId);
@@ -525,6 +537,10 @@ export async function checkAvatarCacheRemote(fileId, ownerUserId) {
         } catch (err) {
             console.error('Failed to lookup avatar by image file id:', err);
         } finally {
+
+
+
+
             toast.dismiss(avatarStore.loadingToastId);
         }
     }
@@ -536,7 +552,7 @@ export async function checkAvatarCacheRemote(fileId, ownerUserId) {
  * @param ownerUserId
  * @param currentAvatarImageUrl
  */
-export async function showAvatarAuthorDialog(refUserId, ownerUserId, currentAvatarImageUrl) {
+export async function showAvatarAuthorDialog(refUserId: string, ownerUserId: any, currentAvatarImageUrl: string) {
     const userStore = useUserStore();
     const t = i18n.global.t;
 
@@ -575,7 +591,7 @@ export async function showAvatarAuthorDialog(refUserId, ownerUserId, currentAvat
 /**
  * @param avatarId
  */
-export function addAvatarWearTime(avatarId) {
+export function addAvatarWearTime(avatarId: string) {
     const userStore = useUserStore();
 
     if (!userStore.currentUser.$previousAvatarSwapTime || !avatarId) {
@@ -601,7 +617,7 @@ export async function preloadOwnAvatars() {
         fn: avatarRequest.getAvatars,
         N: -1,
         params,
-        handle: (args) => {
+        handle: (args: { json: any; }) => {
             for (const json of args.json) {
                 applyAvatar(json);
             }
@@ -612,7 +628,7 @@ export async function preloadOwnAvatars() {
 /**
  * @param {string} id
  */
-export function removeAvatarFromCache(id) {
+export function removeAvatarFromCache(id: string) {
     const avatarStore = useAvatarStore();
     avatarStore.cachedAvatars.delete(id);
     removeAvatarSearchIndex(id);

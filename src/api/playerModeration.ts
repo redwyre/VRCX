@@ -6,7 +6,7 @@ const playerModerationReq = {
     getPlayerModerations(): Promise<{ json: Json<PlayerModeration[]> }> {
         return request('auth/user/playermoderations', {
             method: 'GET'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json
             };
@@ -21,7 +21,7 @@ const playerModerationReq = {
         return request('auth/user/playermoderations', {
             method: 'POST',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -35,7 +35,7 @@ const playerModerationReq = {
         return request('auth/user/unplayermoderate', {
             method: 'PUT',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -50,7 +50,7 @@ const playerModerationReq = {
         return request('auth/user/unplayermoderate', {
             method: 'PUT',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params

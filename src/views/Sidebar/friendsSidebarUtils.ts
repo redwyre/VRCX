@@ -9,14 +9,14 @@
  * @param {Function | null} [opts.onClick] - Click handler
  * @returns {object} Row object
  */
-export function buildToggleRow({
-    key,
-    label,
-    count = null,
-    expanded = true,
-    headerPadding = null,
-    paddingBottom = null,
-    onClick = null
+export function buildToggleRow({ key, label, count = null, expanded = true, headerPadding = null, paddingBottom = null, onClick = null }: {
+    key: string;
+    label: string;
+    count?: number | null;
+    expanded?: boolean;
+    headerPadding?: any;
+    paddingBottom?: number | null;
+    onClick?: Function | null;
 }) {
     return {
         type: 'toggle-header',
@@ -39,7 +39,11 @@ export function buildToggleRow({
  * @param {object} [options.itemStyle] - Additional style
  * @returns {object} Row object
  */
-export function buildFriendRow(friend, key, options = {}) {
+export function buildFriendRow(friend: object, key: string, options: {
+    isGroupByInstance?: boolean;
+    paddingBottom?: number;
+    itemStyle?: object;
+} = {}) {
     return {
         type: 'friend-item',
         key,
@@ -56,7 +60,7 @@ export function buildFriendRow(friend, key, options = {}) {
  * @param {string} key - Unique key
  * @returns {object} Row object
  */
-export function buildInstanceHeaderRow(location, count, key) {
+export function buildInstanceHeaderRow(location: string, count: number, key: string) {
     return {
         type: 'instance-header',
         key,
@@ -72,18 +76,18 @@ export function buildInstanceHeaderRow(location, count, key) {
  * @param {object} row - Row object with type property
  * @returns {number} Estimated height in pixels
  */
-export function estimateRowSize(row) {
+export function estimateRowSize(row: object) {
     if (!row) {
         return 44;
     }
-    if (row.type === 'toggle-header') {
-        return 28 + (row.paddingBottom || 0);
+    if ((row as any).type === 'toggle-header') {
+        return 28 + ((row as any).paddingBottom || 0);
     }
-    if (row.type === 'vip-subheader') {
-        return 24 + (row.paddingBottom || 0);
+    if ((row as any).type === 'vip-subheader') {
+        return 24 + ((row as any).paddingBottom || 0);
     }
-    if (row.type === 'instance-header') {
-        return 26 + (row.paddingBottom || 0);
+    if ((row as any).type === 'instance-header') {
+        return 26 + ((row as any).paddingBottom || 0);
     }
-    return 52 + (row.paddingBottom || 0);
+    return 52 + ((row as any).paddingBottom || 0);
 }

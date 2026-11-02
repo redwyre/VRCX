@@ -65,11 +65,13 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
             };
             newOnPlayerJoining.unshift(feedEntry);
         }
+
+
+
+
         onPlayerJoining.value = newOnPlayerJoining;
 
-        sharedFeedData.value = sharedFeedData.value.filter(
-            (ctx) => !(ctx.type === 'OnPlayerJoining' || (ctx.type === 'GPS' && ctx.isTraveling))
-        );
+        sharedFeedData.value = sharedFeedData.value.filter((ctx) => !((ctx as any).type === 'OnPlayerJoining' || ((ctx as any).type === 'GPS' && (ctx as any).isTraveling)));
         sharedFeedData.value.unshift(...onPlayerJoining.value);
         if (sharedFeedData.value.length > maxEntries) {
             sharedFeedData.value.splice(maxEntries);
@@ -98,21 +100,17 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
     const maxEntries = 25;
 
     async function loadSharedFeed() {
-        let newFeed = [];
+        let newFeed: any = [];
         const wristFilter = notificationsSettingsStore.sharedFeedFilters.wrist;
         // run after fav and friendlist init
         const vipList = Array.from(friendStore.localFavoriteFriends.values());
         const friendList = Array.from(friendStore.friends.keys());
 
         // Filters
-        const vipFilters = Object.keys(wristFilter).filter((key) => wristFilter[key] === 'VIP');
-        const friendsFilters = Object.keys(wristFilter).filter((key) => wristFilter[key] === 'Friends');
-        const everyoneFilters = Object.keys(wristFilter).filter(
-            (key) => wristFilter[key] === 'On' || wristFilter[key] === 'Everyone'
-        );
-        const everyoneAndFriendsFilters = Object.keys(wristFilter).filter(
-            (key) => wristFilter[key] === 'Friends' || wristFilter[key] === 'On' || wristFilter[key] === 'Everyone'
-        );
+const vipFilters = Object.keys(wristFilter).filter((key) => wristFilter[key as keyof typeof wristFilter] === 'VIP');
+        const friendsFilters = Object.keys(wristFilter).filter((key) => wristFilter[key as keyof typeof wristFilter] === 'Friends');
+        const everyoneFilters = Object.keys(wristFilter).filter((key) => wristFilter[key as keyof typeof wristFilter] === 'On' || wristFilter[key as keyof typeof wristFilter] === 'Everyone');
+        const everyoneAndFriendsFilters = Object.keys(wristFilter).filter((key) => wristFilter[key as keyof typeof wristFilter] === 'Friends' || wristFilter[key as keyof typeof wristFilter] === 'On' || wristFilter[key as keyof typeof wristFilter] === 'Everyone');
 
         // Feed
         if (vipFilters.length) {
@@ -155,11 +153,11 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
 
         // hide private worlds from feed
         if (wristOverlaySettingsStore.hidePrivateFromFeed) {
-            newFeed = newFeed.filter((ctx) => !(ctx.type === 'GPS' && ctx.location === 'private'));
+            newFeed = newFeed.filter((ctx: { type: string; location: string; }) => !(ctx.type === 'GPS' && ctx.location === 'private'));
         }
 
         // remove current user
-        newFeed = newFeed.filter((ctx) => ctx.userId !== userStore.currentUser.id);
+        newFeed = newFeed.filter((ctx: { userId: string; }) => ctx.userId !== userStore.currentUser.id);
 
         // FriendLog, Moderations Against (nope, not worth it)
 
@@ -186,7 +184,7 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
         rebuildOnPlayerJoining(); // also sends updated feed
     }
 
-    async function addEntry(data) {
+    async function addEntry(data: any) {
         const ctx = { ...data };
         const userId = ctx.userId || ctx.senderUserId;
         const wristFilter = notificationsSettingsStore.sharedFeedFilters.wrist;
@@ -274,11 +272,11 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
         }
 
         if (
-            wristFilter[ctx.type] &&
-            (wristFilter[ctx.type] === 'On' ||
-                wristFilter[ctx.type] === 'Everyone' ||
-                (wristFilter[ctx.type] === 'Friends' && isFriend) ||
-                (wristFilter[ctx.type] === 'VIP' && isFavorite))
+            (wristFilter as any)[ctx.type] &&
+    ((wristFilter as any)[ctx.type] === 'On' ||
+        (wristFilter as any)[ctx.type] === 'Everyone' ||
+        ((wristFilter as any)[ctx.type] === 'Friends' && isFriend) ||
+        ((wristFilter as any)[ctx.type] === 'VIP' && isFavorite))
         ) {
             addToSharedFeed({
                 ...ctx,
@@ -289,7 +287,11 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
         }
     }
 
-    function addToSharedFeed(ref) {
+    function addToSharedFeed(ref: { created_at: any; type: string; displayName: any; userId: any; isFavorite: any; isFriend: any; tagColour: any; }) {
+
+
+
+
         sharedFeedData.value.unshift(ref);
         if (sharedFeedData.value.length > maxEntries) {
             sharedFeedData.value.splice(maxEntries);
@@ -297,7 +299,7 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
         sendSharedFeed();
     }
 
-    function moderationAgainstCheck(ctx) {
+    function moderationAgainstCheck(ctx: { userId: any; type: any; created_at: any; displayName: any; isFavorite: any; isFriend: any; tagColour: any; }) {
         const wristFilter = notificationsSettingsStore.sharedFeedFilters.wrist;
         // BlockedOnPlayerJoined, BlockedOnPlayerLeft, MutedOnPlayerJoined, MutedOnPlayerLeft
         for (const ref of moderationStore.cachedPlayerModerations.values()) {
@@ -325,21 +327,21 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
             };
             notificationStore.queueGameLogNoty(entry);
             if (
-                wristFilter[type] &&
-                (wristFilter[type] === 'Everyone' ||
-                    (wristFilter[type] === 'Friends' && ctx.isFriend) ||
-                    (wristFilter[type] === 'VIP' && ctx.isFavorite))
+                wristFilter[type as keyof typeof wristFilter] &&
+    (wristFilter[type as keyof typeof wristFilter] === 'Everyone' ||
+        (wristFilter[type as keyof typeof wristFilter] === 'Friends' && ctx.isFriend) ||
+        (wristFilter[type as keyof typeof wristFilter] === 'VIP' && ctx.isFavorite))
             ) {
                 addToSharedFeed(entry);
             }
         }
     }
 
-    function addTag(userId, colour) {
+    function addTag(userId: any, colour: any) {
         let changed = false;
         for (const entry of sharedFeedData.value) {
-            if (entry.userId === userId) {
-                entry.tagColour = colour;
+            if ((entry as any).userId === userId) {
+                (entry as any).tagColour = colour;
                 changed = true;
             }
         }
@@ -349,7 +351,7 @@ export const useSharedFeedStore = defineStore('SharedFeed', () => {
     }
 
     async function sendSharedFeed() {
-        await AppApi.ExecuteVrOverlayFunction('wristFeedUpdate', JSON.stringify(sharedFeedData.value));
+        await (AppApi as any).ExecuteVrOverlayFunction('wristFeedUpdate', JSON.stringify(sharedFeedData.value));
     }
 
     return {

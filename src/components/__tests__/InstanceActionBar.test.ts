@@ -33,26 +33,29 @@ const mocks = vi.hoisted(() => ({
 vi.mock('pinia', async (importOriginal) => {
     const actual = await importOriginal();
     return {
-        ...actual,
-        storeToRefs: (store) =>
-            Object.fromEntries(
-                Object.entries(store).map(([key, value]) => [
-                    key,
-                    key === 'instanceJoinHistory' ? value : (value?.value ?? value)
-                ])
-            )
-    };
+
+
+
+
+    ...actual,
+    storeToRefs: (store: {
+        [s: string]: unknown;
+    } | ArrayLike<unknown>) => Object.fromEntries(Object.entries(store).map(([key, value]) => [
+        key,
+        key === 'instanceJoinHistory' ? value : ((value as any)?.value ?? value)
+    ]))
+};
 });
 
 vi.mock('vue-i18n', () => ({
     useI18n: () => ({
-        t: (key) => key
+        t: (key: any) => key
     })
 }));
 
 vi.mock('vue-sonner', () => ({
     toast: {
-        success: (...args) => mocks.toastSuccess(...args)
+        success: (...args: any[]) => mocks.toastSuccess(...args)
     }
 }));
 
@@ -68,15 +71,19 @@ vi.mock('../../stores', () => ({
     }),
     useInstanceStore: () => ({
         instanceJoinHistory: mocks.instanceJoinHistory,
-        applyInstance: (...args) => mocks.applyInstance(...args)
+        applyInstance: (...args: any[]) => mocks.applyInstance(...args)
     }),
     useModalStore: () => ({
-        confirm: (...args) => mocks.modalConfirm(...args)
+
+
+
+
+        confirm: (...args: any[]) => mocks.modalConfirm(...args)
     }),
     useLaunchStore: () => ({
         isOpeningInstance: mocks.isOpeningInstance,
-        showLaunchDialog: (...args) => mocks.showLaunchDialog(...args),
-        tryOpenInstanceInVrc: (...args) => mocks.tryOpenInstanceInVrc(...args)
+        showLaunchDialog: (...args: any[]) => mocks.showLaunchDialog(...args),
+        tryOpenInstanceInVrc: (...args: any[]) => mocks.tryOpenInstanceInVrc(...args)
     }),
     useInviteStore: () => ({
         canOpenInstanceInGame: mocks.canOpenInstanceInGame
@@ -85,27 +92,51 @@ vi.mock('../../stores', () => ({
 
 vi.mock('../../composables/useInviteChecks', () => ({
     useInviteChecks: () => ({
-        checkCanInviteSelf: (...args) => mocks.checkCanInviteSelf(...args)
+
+
+
+
+        checkCanInviteSelf: (...args: any[]) => mocks.checkCanInviteSelf(...args)
     })
 }));
 
 vi.mock('../../shared/utils', () => ({
-    parseLocation: (...args) => mocks.parseLocation(...args),
-    hasGroupPermission: (...args) => mocks.hasGroupPermission(...args),
-    formatDateFilter: (...args) => mocks.formatDateFilter(...args)
+
+
+
+
+    parseLocation: (...args: any[]) => mocks.parseLocation(...args),
+
+
+
+
+    hasGroupPermission: (...args: any[]) => mocks.hasGroupPermission(...args),
+
+
+
+
+    formatDateFilter: (...args: any[]) => mocks.formatDateFilter(...args)
 }));
 
 vi.mock('../../api', () => ({
     instanceRequest: {
-        selfInvite: (...args) => mocks.selfInvite(...args)
+
+
+
+
+        selfInvite: (...args: any[]) => mocks.selfInvite(...args)
     },
     miscRequest: {
-        closeInstance: (...args) => mocks.closeInstance(...args)
+
+
+
+
+        closeInstance: (...args: any[]) => mocks.closeInstance(...args)
     }
 }));
 
 vi.mock('../../coordinators/userCoordinator', () => ({
-    showUserDialog: (...args) => mocks.showUserDialog(...args)
+    showUserDialog: (...args: any[]) => mocks.showUserDialog(...args)
 }));
 
 vi.mock('@/components/ui/button', () => ({

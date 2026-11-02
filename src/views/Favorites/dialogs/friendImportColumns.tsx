@@ -5,23 +5,27 @@ import { i18n } from '../../../plugins';
 
 const { t } = i18n.global;
 
-export const createColumns = ({ userImage, userImageFull, onShowFullscreenImage, onShowUser, onDelete }) => [
+export const createColumns = ({ userImage, userImageFull, onShowFullscreenImage, onShowUser, onDelete }: any) => [
     {
         id: 'image',
         header: () => t('table.import.image'),
         enableSorting: false,
         size: 70,
-        cell: ({ row }) => {
+        cell: ({ row }: any) => {
             const original = row.original;
             const thumb = userImage?.(original);
             const full = userImageFull?.(original);
 
             return (
+
+
+
+
                 <img
                     class="friends-list-avatar"
                     src={thumb}
                     loading="lazy"
-                    onClick={(e) => {
+                    onClick={(e: { stopPropagation: () => void; }) => {
                         e.stopPropagation();
                         if (full) {
                             onShowFullscreenImage?.(full);
@@ -38,18 +42,26 @@ export const createColumns = ({ userImage, userImageFull, onShowFullscreenImage,
         meta: {
             stretch: true
         },
-        cell: ({ row }) => {
+        cell: ({ row }: any) => {
             const original = row.original;
             return (
+
+
+
+
                 <span
                     class="cursor-pointer"
                     title={original?.displayName}
-                    onClick={(e) => {
+                    onClick={(e: { stopPropagation: () => void; }) => {
                         e.stopPropagation();
                         onShowUser?.(original?.id);
                     }}
                 >
                     {original?.displayName}
+
+
+
+
                 </span>
             );
         }
@@ -62,13 +74,13 @@ export const createColumns = ({ userImage, userImageFull, onShowFullscreenImage,
         meta: {
             tdClass: 'text-right'
         },
-        cell: ({ row }) => {
+        cell: ({ row }: any) => {
             const original = row.original;
             return (
                 <Button
                     size="icon-sm"
                     variant="ghost"
-                    onClick={(e) => {
+                    onClick={(e: { stopPropagation: () => void; }) => {
                         e.stopPropagation();
                         onDelete?.(original);
                     }}

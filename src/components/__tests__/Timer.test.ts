@@ -8,7 +8,11 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock('../../shared/utils', () => ({
-    timeToText: (...args) => mocks.timeToText(...args)
+
+
+
+
+    timeToText: (...args: any[]) => mocks.timeToText(...args)
 }));
 
 vi.mock('@vueuse/core', () => ({
@@ -20,6 +24,10 @@ import Timer from '../Timer.vue';
 describe('Timer.vue', () => {
     beforeEach(() => {
         mocks.timeToText.mockClear();
+
+
+
+
         mocks.nowRef = ref(10000);
     });
 

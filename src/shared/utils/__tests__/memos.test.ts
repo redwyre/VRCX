@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, Mock, test, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => ({
     friends: new Map(),
@@ -21,7 +21,7 @@ vi.mock('../../../stores', () => ({
         friends: mocks.friends
     }),
     useUserStore: () => ({
-        setUserDialogMemo: (...args) => mocks.setUserDialogMemo(...args)
+        setUserDialogMemo: (...args: any[]) => mocks.setUserDialogMemo(...args)
     })
 }));
 
@@ -29,10 +29,10 @@ vi.mock('../../../services/database', () => ({
     database: mocks.database
 }));
 
-import { getUserMemo, getWorldMemo, migrateMemos } from '../../../coordinators/memoCoordinator.js';
+import { getUserMemo, getWorldMemo, migrateMemos } from '../../../coordinators/memoCoordinator';
 
 describe('memos utils', () => {
-    let consoleErrorSpy;
+    let consoleErrorSpy: Mock<(...data: any[]) => void>;
 
     beforeEach(() => {
         consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
@@ -45,7 +45,7 @@ describe('memos utils', () => {
         mocks.database.getWorldMemo.mockReset();
         mocks.storage.GetAll.mockReset();
         mocks.storage.Remove.mockReset();
-        globalThis.VRCXStorage = mocks.storage;
+        (globalThis as any).VRCXStorage = mocks.storage;
     });
 
     afterEach(() => {

@@ -1,16 +1,24 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 
 const mockRequest = vi.fn();
+
+
+
+
 const mockInvalidateQueries = vi.fn().mockResolvedValue();
 const mockApplyGroup = vi.fn((json) => json);
 
 vi.mock('../../services/request', () => ({
-    request: (...args) => mockRequest(...args)
+    request: (...args: any[]) => mockRequest(...args)
 }));
 
 vi.mock('../../stores', () => ({
     useGroupStore: () => ({
-        applyGroup: (...args) => mockApplyGroup(...args)
+
+
+
+
+        applyGroup: (...args: any[]) => mockApplyGroup(...args)
     }),
     useUserStore: () => ({
         currentUser: { id: 'usr_me' }
@@ -19,7 +27,7 @@ vi.mock('../../stores', () => ({
 
 vi.mock('../../queries', () => ({
     queryClient: {
-        invalidateQueries: (...args) => mockInvalidateQueries(...args)
+        invalidateQueries: (...args: any[]) => mockInvalidateQueries(...args)
     },
     entityQueryPolicies: {
         user: {},

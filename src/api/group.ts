@@ -66,7 +66,7 @@ function getCurrentUserId() {
     return useUserStore().currentUser.id;
 }
 
-function refetchActiveGroupScope(groupId) {
+function refetchActiveGroupScope(groupId: string) {
     if (!groupId) {
         return;
     }
@@ -84,7 +84,7 @@ const groupReq = {
         return request(`groups/${groupId}/representation`, {
             method: 'PUT',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 groupId,
@@ -95,10 +95,10 @@ const groupReq = {
         });
     },
 
-    cancelGroupRequest(params: { groupId: string }): Promise<{ json: unknown; params }> {
+    cancelGroupRequest(params: { groupId: string }): Promise<{ json: unknown; params: any }> {
         return request(`groups/${params.groupId}/requests`, {
             method: 'DELETE'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -107,10 +107,10 @@ const groupReq = {
         });
     },
 
-    deleteGroupPost(params: { groupId: string; postId: string }): Promise<{ json: Json<Success>; params }> {
+    deleteGroupPost(params: { groupId: string; postId: string }): Promise<{ json: Json<Success>; params: any }> {
         return request(`groups/${params.groupId}/posts/${params.postId}`, {
             method: 'DELETE'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -127,7 +127,7 @@ const groupReq = {
             params: {
                 includeRoles: params.includeRoles || false
             }
-        }).then((json) => {
+        }).then((json: object) => {
             const args = {
                 json,
                 params,
@@ -136,10 +136,10 @@ const groupReq = {
             return args;
         });
     },
-    getRepresentedGroup(params: { userId: string }): Promise<{ json: Json<RepresentedGroup>; params }> {
+    getRepresentedGroup(params: { userId: string }): Promise<{ json: Json<RepresentedGroup>; params: any }> {
         return request(`users/${params.userId}/groups/represented`, {
             method: 'GET'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -147,10 +147,10 @@ const groupReq = {
             return args;
         });
     },
-    getGroups(params: { userId: string }): Promise<{ json: Json<LimitedUserGroups[]>; params }> {
+    getGroups(params: { userId: string }): Promise<{ json: Json<LimitedUserGroups[]>; params: any }> {
         return request(`users/${params.userId}/groups`, {
             method: 'GET'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -167,7 +167,7 @@ const groupReq = {
             params: {
                 transferTargetId: params.transferTargetId
             }
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -184,7 +184,7 @@ const groupReq = {
             params: {
                 transferTargetId: params.transferTargetId
             }
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -202,7 +202,7 @@ const groupReq = {
             params: {
                 hardDelete: params.hardDelete ?? false
             }
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -211,10 +211,10 @@ const groupReq = {
         });
     },
 
-    joinGroup(params: { groupId: string }): Promise<{ json: Json<GroupMember>; params }> {
+    joinGroup(params: { groupId: string }): Promise<{ json: Json<GroupMember>; params: any }> {
         return request(`groups/${params.groupId}/join`, {
             method: 'POST'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -223,10 +223,10 @@ const groupReq = {
             return args;
         });
     },
-    leaveGroup(params: { groupId: string }): Promise<{ json: unknown; params }> {
+    leaveGroup(params: { groupId: string }): Promise<{ json: unknown; params: { groupId: any; } }> {
         return request(`groups/${params.groupId}/leave`, {
             method: 'POST'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -235,11 +235,11 @@ const groupReq = {
             return args;
         });
     },
-    groupStrictsearch(params: { query: string }): Promise<{ json: any; params }> {
+    groupStrictsearch(params: { query: string }): Promise<{ json: any; params: any }> {
         return request(`groups/strictsearch`, {
             method: 'GET',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -255,7 +255,7 @@ const groupReq = {
         return request(`groups/${groupId}/members/${userId}`, {
             method: 'PUT',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 userId,
@@ -270,10 +270,10 @@ const groupReq = {
         userId: string;
         groupId: string;
         roleId: string;
-    }): Promise<{ json: Json<GroupRoleIdList>; params }> {
+    }): Promise<{ json: Json<GroupRoleIdList>; params: any }> {
         return request(`groups/${params.groupId}/members/${params.userId}/roles/${params.roleId}`, {
             method: 'PUT'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -286,10 +286,10 @@ const groupReq = {
         userId: string;
         groupId: string;
         roleId: string;
-    }): Promise<{ json: Json<GroupRoleIdList>; params }> {
+    }): Promise<{ json: Json<GroupRoleIdList>; params: any }> {
         return request(`groups/${params.groupId}/members/${params.userId}/roles/${params.roleId}`, {
             method: 'DELETE'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -303,7 +303,7 @@ const groupReq = {
     }): Promise<{ json: Json<UserAllGroupPermissions>; params: { userId: string } }> {
         return request(`users/${params.userId}/groups/permissions`, {
             method: 'GET'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -317,7 +317,7 @@ const groupReq = {
         return request(`groups/${params.groupId}/posts`, {
             method: 'GET',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -332,7 +332,7 @@ const groupReq = {
         return request(`groups/${params.groupId}/posts/${params.postId}`, {
             method: 'PUT',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -347,7 +347,7 @@ const groupReq = {
         return request(`groups/${params.groupId}/posts`, {
             method: 'POST',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -359,10 +359,10 @@ const groupReq = {
     getGroupMember(params: {
         groupId: string;
         userId: string;
-    }): Promise<{ json: Json<GetGroupMemberResponse>; params; ref?: any }> {
+    }): Promise<{ json: Json<GetGroupMemberResponse>; params: any; ref?: any }> {
         return request(`groups/${params.groupId}/members/${params.userId}`, {
             method: 'GET'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -376,7 +376,7 @@ const groupReq = {
         return request(`groups/${params.groupId}/members`, {
             method: 'GET',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -390,7 +390,7 @@ const groupReq = {
         return request(`groups/${params.groupId}/members/search`, {
             method: 'GET',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -401,10 +401,10 @@ const groupReq = {
 
     getMyGroupsByStatus(params: {
         membershipStatus: 'invited' | 'requested' | 'userblocked';
-    }): Promise<{ json: Json<Group[]>; params }> {
+    }): Promise<{ json: Json<Group[]>; params: any }> {
         return request(`users/${getCurrentUserId()}/groups/${params.membershipStatus}`, {
             method: 'GET'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -413,10 +413,10 @@ const groupReq = {
         });
     },
 
-    blockGroup(params: { groupId: string }): Promise<{ json: Json<Success>; params }> {
+    blockGroup(params: { groupId: string }): Promise<{ json: Json<Success>; params: any }> {
         return request(`groups/${params.groupId}/block`, {
             method: 'POST'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -425,10 +425,10 @@ const groupReq = {
             return args;
         });
     },
-    unblockGroup(params: { groupId: string; userId: string }): Promise<{ json: Json<Success>; params }> {
+    unblockGroup(params: { groupId: string; userId: string }): Promise<{ json: Json<Success>; params: any }> {
         return request(`groups/${params.groupId}/members/${params.userId}`, {
             method: 'DELETE'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -437,10 +437,10 @@ const groupReq = {
             return args;
         });
     },
-    declineGroupInvite(params: { groupId: string }): Promise<{ json: Json<Success>; params }> {
+    declineGroupInvite(params: { groupId: string }): Promise<{ json: Json<Success>; params: any }> {
         return request(`groups/${params.groupId}/members/${getCurrentUserId()}`, {
             method: 'DELETE'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -456,7 +456,7 @@ const groupReq = {
             params: {
                 userId: params.userId
             }
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -464,10 +464,10 @@ const groupReq = {
             return args;
         });
     },
-    kickGroupMember(params: { groupId: string; userId: string }): Promise<{ json: Json<Success>; params }> {
+    kickGroupMember(params: { groupId: string; userId: string }): Promise<{ json: Json<Success>; params: any }> {
         return request(`groups/${params.groupId}/members/${params.userId}`, {
             method: 'DELETE'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -484,7 +484,7 @@ const groupReq = {
             params: {
                 userId: params.userId
             }
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -499,7 +499,7 @@ const groupReq = {
     }): Promise<{ json: Json<GroupMember>; params: { groupId: string; userId: string } }> {
         return request(`groups/${params.groupId}/bans/${params.userId}`, {
             method: 'DELETE'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -508,10 +508,10 @@ const groupReq = {
             return args;
         });
     },
-    deleteSentGroupInvite(params: { groupId: string; userId: string }): Promise<{ json: Json<Success>; params }> {
+    deleteSentGroupInvite(params: { groupId: string; userId: string }): Promise<{ json: Json<Success>; params: any }> {
         return request(`groups/${params.groupId}/invites/${params.userId}`, {
             method: 'DELETE'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -525,7 +525,7 @@ const groupReq = {
     }): Promise<{ json: Json<Success>; params: { groupId: string; userId: string } }> {
         return request(`groups/${params.groupId}/members/${params.userId}`, {
             method: 'DELETE'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -542,7 +542,7 @@ const groupReq = {
             params: {
                 action: 'accept'
             }
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -560,7 +560,7 @@ const groupReq = {
             params: {
                 action: 'reject'
             }
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -579,7 +579,7 @@ const groupReq = {
                 action: 'reject',
                 block: true
             }
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -594,7 +594,7 @@ const groupReq = {
         return request(`groups/${params.groupId}/bans`, {
             method: 'GET',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -602,10 +602,10 @@ const groupReq = {
             return args;
         });
     },
-    getGroupAuditLogTypes(params: { groupId: string }): Promise<{ json: Json<GroupAuditLogEntryType[]>; params }> {
+    getGroupAuditLogTypes(params: { groupId: string }): Promise<{ json: Json<GroupAuditLogEntryType[]>; params: { groupId: string; } }> {
         return request(`groups/${params.groupId}/auditLogTypes`, {
             method: 'GET'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -620,7 +620,7 @@ const groupReq = {
         return request(`groups/${params.groupId}/auditLogs`, {
             method: 'GET',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -634,7 +634,7 @@ const groupReq = {
         return request(`groups/${params.groupId}/invites`, {
             method: 'GET',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -648,7 +648,7 @@ const groupReq = {
         return request(`groups/${params.groupId}/requests`, {
             method: 'GET',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -658,10 +658,10 @@ const groupReq = {
     },
     getGroupInstances(params: {
         groupId: string;
-    }): Promise<{ json: Json<GetUserGroupInstancesForGroupResponse>; params }> {
+    }): Promise<{ json: Json<GetUserGroupInstancesForGroupResponse>; params: { groupId: string; } }> {
         return request(`users/${getCurrentUserId()}/instances/groups/${params.groupId}`, {
             method: 'GET'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -669,11 +669,11 @@ const groupReq = {
             return args;
         });
     },
-    getGroupRoles(params: { groupId: string }): Promise<{ json: Json<GroupRole[]>; params }> {
+    getGroupRoles(params: { groupId: string }): Promise<{ json: Json<GroupRole[]>; params: { groupId: string; } }> {
         return request(`groups/${params.groupId}/roles`, {
             method: 'GET',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -700,7 +700,7 @@ const groupReq = {
         return request(`groups/${groupId}/roles`, {
             method: 'POST',
             params: body
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -728,7 +728,7 @@ const groupReq = {
         return request(`groups/${groupId}/roles/${roleId}`, {
             method: 'PUT',
             params: body
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -738,10 +738,10 @@ const groupReq = {
         });
     },
 
-    deleteGroupRole(params: { groupId: string; roleId: string }): Promise<{ json: Json<GroupRole[]>; params }> {
+    deleteGroupRole(params: { groupId: string; roleId: string }): Promise<{ json: Json<GroupRole[]>; params: any }> {
         return request(`groups/${params.groupId}/roles/${params.roleId}`, {
             method: 'DELETE'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -751,10 +751,10 @@ const groupReq = {
         });
     },
 
-    getGroupPermissionList(params: { groupId: string }): Promise<{ json: Json<GroupPermission[]>; params }> {
+    getGroupPermissionList(params: { groupId: string }): Promise<{ json: Json<GroupPermission[]>; params: { groupId: string; } }> {
         return request(`groups/${params.groupId}/permissions`, {
             method: 'GET'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -766,7 +766,7 @@ const groupReq = {
     getUsersGroupInstances(): Promise<{ json: Json<GetUserGroupInstancesResponse> }> {
         return request(`users/${getCurrentUserId()}/instances/groups`, {
             method: 'GET'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json
             };
@@ -778,7 +778,7 @@ const groupReq = {
         return request(`groups`, {
             method: 'GET',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -796,7 +796,7 @@ const groupReq = {
                 n: params.n,
                 offset: params.offset
             }
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -813,7 +813,7 @@ const groupReq = {
         return request(`groups/${groupId}/galleries`, {
             method: 'POST',
             params: body
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -829,7 +829,7 @@ const groupReq = {
     }): Promise<{ json: Json<Success>; params: { groupId: string; galleryId: string } }> {
         return request(`groups/${params.groupId}/galleries/${params.galleryId}`, {
             method: 'DELETE'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -847,7 +847,7 @@ const groupReq = {
         return request(`groups/${groupId}/galleries/${galleryId}`, {
             method: 'PUT',
             params: body
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -866,7 +866,7 @@ const groupReq = {
             params: {
                 fileId: params.fileId
             }
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -883,7 +883,7 @@ const groupReq = {
     }): Promise<{ json: Json<Success>; params: { groupId: string; galleryId: string; imageId: string } }> {
         return request(`groups/${params.groupId}/galleries/${params.galleryId}/images/${params.imageId}`, {
             method: 'DELETE'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -900,7 +900,7 @@ const groupReq = {
         return request(`calendar/${groupId}`, {
             method: 'GET',
             params: query
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params: {
@@ -914,10 +914,10 @@ const groupReq = {
     getGroupCalendarEvent(params: {
         groupId: string;
         eventId: string;
-    }): Promise<{ json: Json<CalendarEvent>; params }> {
+    }): Promise<{ json: Json<CalendarEvent>; params: any }> {
         return request(`calendar/${params.groupId}/${params.eventId}`, {
             method: 'GET'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -959,7 +959,7 @@ const groupReq = {
             params: {
                 isFollowing: params.isFollowing
             }
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -974,7 +974,7 @@ const groupReq = {
     }): Promise<{ json: Json<Success>; params: { groupId: string; eventId: string } }> {
         return request(`calendar/${params.groupId}/${params.eventId}`, {
             method: 'DELETE'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -989,7 +989,7 @@ const groupReq = {
         return request(`calendar/${params.groupId}/event`, {
             method: 'POST',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -1011,7 +1011,7 @@ const groupReq = {
         return request(`calendar/${params.groupId}/${params.eventId}/event`, {
             method: 'PUT',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -1024,7 +1024,7 @@ const groupReq = {
         return request('groups', {
             method: 'POST',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -1040,7 +1040,7 @@ const groupReq = {
         return request(`groups/${params.id}`, {
             method: 'PUT',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -1052,7 +1052,7 @@ const groupReq = {
     getRoleTemplates(): Promise<{ json: Json<GetGroupRoleTemplatesResponse> }> {
         return request('groups/roleTemplates', {
             method: 'GET'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json
             };

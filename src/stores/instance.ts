@@ -87,7 +87,7 @@ export const useInstanceStore = defineStore('Instance', () => {
     });
 
     /** @type {import('vue').Ref<any>} */
-    const currentInstanceLocation = ref({});
+    const currentInstanceLocation: import('vue').Ref<any> = ref({});
 
     const queuedInstances = reactive(new Map());
 
@@ -178,7 +178,7 @@ export const useInstanceStore = defineStore('Instance', () => {
      * @param location
      * @param dateTime
      */
-    function addInstanceJoinHistory(location, dateTime) {
+    function addInstanceJoinHistory(location: any, dateTime: string | number | Date) {
         if (!location || !dateTime) {
             return;
         }
@@ -199,21 +199,21 @@ export const useInstanceStore = defineStore('Instance', () => {
     /**
      * @param {boolean} value
      */
-    function setPreviousInstancesInfoDialogVisible(value) {
+    function setPreviousInstancesInfoDialogVisible(value: boolean) {
         previousInstancesInfoDialog.value.visible = value;
     }
 
     /**
      * @param {boolean} value
      */
-    function setPreviousInstancesListDialogVisible(value) {
+    function setPreviousInstancesListDialogVisible(value: boolean) {
         previousInstancesListDialog.value.visible = value;
     }
 
     /**
      * @param input
      */
-    function resolveUserRef(input) {
+    function resolveUserRef(input: string | object | null | undefined) {
         return resolveRef(input, {
             emptyDefault: { id: '', displayName: '' },
             idAlias: 'userId',
@@ -225,7 +225,7 @@ export const useInstanceStore = defineStore('Instance', () => {
     /**
      * @param input
      */
-    function resolveWorldRef(input) {
+    function resolveWorldRef(input: string | object | null | undefined) {
         return resolveRef(input, {
             emptyDefault: { id: '', name: '' },
             idAlias: 'worldId',
@@ -237,7 +237,7 @@ export const useInstanceStore = defineStore('Instance', () => {
     /**
      * @param input
      */
-    function resolveGroupRef(input) {
+    function resolveGroupRef(input: string | object | null | undefined) {
         return resolveRef(input, {
             emptyDefault: { id: '', name: '' },
             idAlias: 'groupId',
@@ -249,8 +249,8 @@ export const useInstanceStore = defineStore('Instance', () => {
     /**
      * @param accessTypeNameRaw
      */
-    function translateAccessType(accessTypeNameRaw) {
-        const key = accessTypeLocaleKeyMap[accessTypeNameRaw];
+    function translateAccessType(accessTypeNameRaw: string) {
+        const key = accessTypeLocaleKeyMap[accessTypeNameRaw as keyof typeof accessTypeLocaleKeyMap];
         if (!key) {
             return accessTypeNameRaw;
         }
@@ -265,7 +265,7 @@ export const useInstanceStore = defineStore('Instance', () => {
      * @param instanceId
      * @param worldNameOverride
      */
-    function formatPreviousInstancesInfoLabel(instanceId, worldNameOverride = '') {
+    function formatPreviousInstancesInfoLabel(instanceId: string, worldNameOverride = '') {
         const location = parseLocation(instanceId);
         const worldId = location.worldId;
         const worldName = worldNameOverride || (worldId ? worldStore.cachedWorlds.get(worldId)?.name : '') || '';
@@ -280,7 +280,7 @@ export const useInstanceStore = defineStore('Instance', () => {
     /**
      * @param instanceId
      */
-    function showPreviousInstancesInfoDialog(instanceId) {
+    function showPreviousInstancesInfoDialog(instanceId: string) {
         previousInstancesInfoDialog.value.visible = true;
         previousInstancesInfoDialog.value.instanceId = instanceId;
         uiStore.openDialog({
@@ -294,11 +294,7 @@ export const useInstanceStore = defineStore('Instance', () => {
                 queryRequest
                     .fetch('world.dialog', { worldId: location.worldId })
                     .then((args) => {
-                        uiStore.setDialogCrumbLabel(
-                            'previous-instances-info',
-                            instanceId,
-                            formatPreviousInstancesInfoLabel(instanceId, args?.ref?.name || '')
-                        );
+                        uiStore.setDialogCrumbLabel('previous-instances-info', instanceId, formatPreviousInstancesInfoLabel(instanceId, (args as any)?.ref?.name || ''));
                     })
                     .catch(() => {});
             }
@@ -309,26 +305,38 @@ export const useInstanceStore = defineStore('Instance', () => {
      * @param variant
      * @param targetRef
      */
-    async function showPreviousInstancesListDialog(variant, targetRef) {
+    async function showPreviousInstancesListDialog(variant: string, targetRef: any) {
         previousInstancesListDialog.value.variant = variant;
         let resolved = null;
         if (variant === 'user') {
             resolved = await resolveUserRef(targetRef);
+
+
+
+
             previousInstancesListDialog.value.userRef = resolved;
         } else if (variant === 'world') {
             resolved = await resolveWorldRef(targetRef);
+
+
+
+
             previousInstancesListDialog.value.worldRef = resolved;
         } else {
             resolved = await resolveGroupRef(targetRef);
+
+
+
+
             previousInstancesListDialog.value.groupRef = resolved;
         }
         previousInstancesListDialog.value.visible = true;
-        const dialogId = resolved?.id || '';
-        const label = resolved?.id
-            ? variant === 'user'
-                ? resolved.displayName || resolved.id
-                : resolved.name || resolved.id
-            : '';
+        const dialogId = (resolved as any)?.id || '';
+        const label = (resolved as any)?.id
+    ? variant === 'user'
+        ? (resolved as any).displayName || (resolved as any).id
+        : (resolved as any).name || (resolved as any).id
+    : '';
         uiStore.openDialog({
             type: `previous-instances-${variant}`,
             id: dialogId,
@@ -408,17 +416,17 @@ export const useInstanceStore = defineStore('Instance', () => {
                     worldId: currentInstanceLocation.value.worldId
                 })
                 .then((args) => {
-                    currentInstanceWorld.value.ref = args.ref;
-                    const { isPC, isQuest, isIos } = getAvailablePlatforms(args.ref.unityPackages);
+                    currentInstanceWorld.value.ref = (args as any).ref;
+                    const { isPC, isQuest, isIos } = getAvailablePlatforms((args as any).ref.unityPackages);
                     currentInstanceWorld.value.isPC = isPC;
                     currentInstanceWorld.value.isQuest = isQuest;
                     currentInstanceWorld.value.isIos = isIos;
-                    checkVRChatCache(args.ref).then((cacheInfo) => {
-                        if (cacheInfo.Item1 > 0) {
-                            currentInstanceWorld.value.inCache = true;
-                            currentInstanceWorld.value.cacheSize = formatFileSize(cacheInfo.Item1);
-                        }
-                    });
+                    checkVRChatCache((args as any).ref).then((cacheInfo) => {
+    if (cacheInfo.Item1 > 0) {
+        currentInstanceWorld.value.inCache = true;
+        currentInstanceWorld.value.cacheSize = formatFileSize(cacheInfo.Item1);
+    }
+});
                 });
         }
         if (isRealInstance(instanceId)) {
@@ -448,14 +456,14 @@ export const useInstanceStore = defineStore('Instance', () => {
      * @param {object} json
      * @returns {object} Ref
      */
-    function applyInstance(json) {
-        if (!json?.id) {
+    function applyInstance(json: object) {
+        if (!(json as any)?.id) {
             return null;
         }
-        if (!json.$fetchedAt) {
-            json.$fetchedAt = new Date().toJSON();
+        if (!(json as any).$fetchedAt) {
+            (json as any).$fetchedAt = new Date().toJSON();
         }
-        let ref = cachedInstances.get(json.id);
+        let ref = cachedInstances.get((json as any).id);
         if (typeof ref === 'undefined') {
             ref = createDefaultInstanceRef(json);
             cachedInstances.set(ref.id, ref);
@@ -470,18 +478,18 @@ export const useInstanceStore = defineStore('Instance', () => {
                     worldId: ref.world.id
                 })
                 .then((args) => {
-                    ref.world = args.ref;
+                    ref.world = (args as any).ref;
                     return args;
                 });
         }
         if (ref?.world?.name) {
             ref.world.name = replaceBioSymbols(ref.world.name);
         }
-        ref.$disabledContentSettings = computeDisabledContentSettings(json.contentSettings, instanceContentSettings);
+        ref.$disabledContentSettings = computeDisabledContentSettings((json as any).contentSettings, instanceContentSettings);
         if (ref.displayName) {
             ref.displayName = replaceBioSymbols(ref.displayName);
         }
-        if (userStore.userDialog.visible && userStore.userDialog.ref?.$location?.tag === ref.id) {
+        if (userStore.userDialog.visible && (userStore.userDialog.ref as any)?.$location?.tag === ref.id) {
             userStore.applyUserDialogLocation();
         }
         if (worldStore.worldDialog.visible && worldStore.worldDialog.id === ref.worldId) {
@@ -491,8 +499,8 @@ export const useInstanceStore = defineStore('Instance', () => {
             applyGroupDialogInstances();
         }
         for (const groupInstance of groupStore.groupInstances) {
-            if (groupInstance.instance.id === ref.id) {
-                groupInstance.instance = ref;
+            if ((groupInstance as any).instance.id === ref.id) {
+                (groupInstance as any).instance = ref;
             }
         }
         lastInstanceApplied.value = ref.id;
@@ -502,7 +510,7 @@ export const useInstanceStore = defineStore('Instance', () => {
     /**
      * @param location
      */
-    async function getInstanceName(location) {
+    async function getInstanceName(location: string) {
         let instanceName = '';
 
         const L = parseLocation(location);
@@ -512,6 +520,10 @@ export const useInstanceStore = defineStore('Instance', () => {
                     worldId: L.worldId,
                     instanceId: L.instanceId
                 });
+
+
+
+
                 instanceName = args.ref.displayName;
             } catch (e) {
                 console.error('getInstanceName failed location', location, e);
@@ -526,7 +538,7 @@ export const useInstanceStore = defineStore('Instance', () => {
      * @param {any} options
      * @returns {Promise<{ json: any; params } | null>}
      */
-    async function createNewInstance(worldId = '', options) {
+    async function createNewInstance(worldId: string = '', options?: any) {
         let D = options;
 
         if (!D) {
@@ -580,21 +592,21 @@ export const useInstanceStore = defineStore('Instance', () => {
             region
         };
         if (type === 'group') {
-            params.groupAccessType = D.groupAccessType;
+            (params as any).groupAccessType = D.groupAccessType;
             params.ownerId = D.groupId;
-            params.queueEnabled = D.queueEnabled;
+            (params as any).queueEnabled = D.queueEnabled;
             if (D.groupAccessType === 'members') {
-                params.roleIds = D.roleIds;
+                (params as any).roleIds = D.roleIds;
             }
             if (D.minimumAvatarPerformance) {
-                params.minimumAvatarPerformance = D.minimumAvatarPerformance;
+                (params as any).minimumAvatarPerformance = D.minimumAvatarPerformance;
             }
         }
         if (D.ageGate && type === 'group' && hasGroupPermission(D.groupRef, 'group-instance-age-gated-create')) {
-            params.ageGate = true;
+            (params as any).ageGate = true;
         }
         if (D.displayName) {
-            params.displayName = D.displayName;
+            (params as any).displayName = D.displayName;
         }
         try {
             const args = await instanceRequest.createInstance(params);
@@ -611,40 +623,40 @@ export const useInstanceStore = defineStore('Instance', () => {
 
     function applyWorldDialogInstancesDebounced() {
         let ref;
-        let instance;
+        let instance: any;
         const D = worldStore.worldDialog;
         if (!D.visible) {
             return;
         }
         const instances = {};
-        if (D.ref.slimInstances) {
-            for (instance of D.ref.slimInstances) {
+        if ((D.ref as any).slimInstances) {
+            for (instance of (D.ref as any).slimInstances) {
                 const { instanceId, n_users } = instance;
-                instances[instanceId] = {
-                    id: instanceId,
-                    tag: `${D.id}:${instanceId}`,
-                    $location: {},
-                    friendCount: 0,
-                    users: [],
-                    shortName: '',
-                    ref: {
-                        userCount: n_users,
-                        capacity: D.ref.capacity
-                    }
-                };
+                (instances as any)[instanceId] = {
+    id: instanceId,
+    tag: `${D.id}:${instanceId}`,
+    $location: {},
+    friendCount: 0,
+    users: [],
+    shortName: '',
+    ref: {
+        userCount: n_users,
+        capacity: (D.ref as any).capacity
+    }
+};
             }
         }
-        const { instanceId, shortName } = D?.$location || {};
-        if (instanceId && typeof instances[instanceId] === 'undefined') {
-            instances[instanceId] = {
-                id: instanceId,
-                tag: `${D.id}:${instanceId}`,
-                $location: {},
-                friendCount: 0,
-                users: [],
-                shortName,
-                ref: {}
-            };
+        const { instanceId, shortName }: any = D?.$location || {};
+        if (instanceId && typeof (instances as any)[instanceId] === 'undefined') {
+            (instances as any)[instanceId] = {
+    id: instanceId,
+    tag: `${D.id}:${instanceId}`,
+    $location: {},
+    friendCount: 0,
+    users: [],
+    shortName,
+    ref: {}
+};
         }
         const cachedCurrentUser = userStore.cachedUsers.get(userStore.currentUser.id);
         const lastLocation$ = cachedCurrentUser?.$location;
@@ -661,10 +673,10 @@ export const useInstanceStore = defineStore('Instance', () => {
                 shortName: '',
                 ref: {}
             };
-            instances[instance.id] = instance;
+            (instances as any)[instance.id] = instance;
             for (const friend of friendsInInstance.values()) {
                 // if friend isn't in instance add them
-                const addUser = !instance.users.some(function (user) {
+                const addUser = !instance.users.some(function (user: { id: any; }) {
                     return friend.userId === user.id;
                 });
                 if (addUser) {
@@ -692,7 +704,7 @@ export const useInstanceStore = defineStore('Instance', () => {
                 continue;
             }
             const { instanceId } = ref.$location;
-            instance = instances[instanceId];
+            instance = (instances as any)[instanceId];
             if (typeof instance === 'undefined') {
                 instance = {
                     id: instanceId,
@@ -703,14 +715,14 @@ export const useInstanceStore = defineStore('Instance', () => {
                     shortName: '',
                     ref: {}
                 };
-                instances[instanceId] = instance;
+                (instances as any)[instanceId] = instance;
             }
             instance.users.push(ref);
         }
         ref = userStore.cachedUsers.get(userStore.currentUser.id);
         if (typeof ref !== 'undefined' && ref.$location.worldId === D.id) {
             const { instanceId } = ref.$location;
-            instance = instances[instanceId];
+            instance = (instances as any)[instanceId];
             if (typeof instance === 'undefined') {
                 instance = {
                     id: instanceId,
@@ -721,7 +733,7 @@ export const useInstanceStore = defineStore('Instance', () => {
                     shortName: '',
                     ref: {}
                 };
-                instances[instanceId] = instance;
+                (instances as any)[instanceId] = instance;
             }
             instance.users.push(ref); // add self
         }
@@ -735,7 +747,7 @@ export const useInstanceStore = defineStore('Instance', () => {
                 L.shortName = instance.shortName;
             }
             instance.$location = L;
-            L.user = {};
+            (L as any).user = {};
             if (L.userId) {
                 ref = userStore.cachedUsers.get(L.userId);
                 if (typeof ref === 'undefined') {
@@ -745,13 +757,13 @@ export const useInstanceStore = defineStore('Instance', () => {
                         })
                         .then((args) => {
                             if (args.ref.id === L.userId) {
-                                Object.assign(L.user, args.ref);
+                                Object.assign((L as any).user, args.ref);
                                 instance.$location = L;
                                 applyWorldDialogInstances();
                             }
                         });
                 } else {
-                    L.user = ref;
+                    (L as any).user = ref;
                 }
             }
             if (instance.friendCount === 0) {
@@ -773,16 +785,16 @@ export const useInstanceStore = defineStore('Instance', () => {
         }
         rooms.sort(function (a, b) {
             // sort selected and current instance to top
-            if (b.location === D.$location.tag || b.location === lastLocation$?.tag) {
+            if (b.location === (D.$location as any).tag || b.location === lastLocation$?.tag) {
                 // sort selected instance above current instance
-                if (a.location === D.$location.tag) {
+                if (a.location === (D.$location as any).tag) {
                     return -1;
                 }
                 return 1;
             }
-            if (a.location === D.$location.tag || a.location === lastLocation$?.tag) {
+            if (a.location === (D.$location as any).tag || a.location === lastLocation$?.tag) {
                 // sort selected instance above current instance
-                if (b.location === D.$location.tag) {
+                if (b.location === (D.$location as any).tag) {
                     return 1;
                 }
                 return -1;
@@ -804,13 +816,17 @@ export const useInstanceStore = defineStore('Instance', () => {
             // sort by id
             return compareById(a, b);
         });
+
+
+
+
         D.rooms = rooms;
     }
 
     /**
      * @param {object} inputInstances
      */
-    function applyGroupDialogInstances(inputInstances) {
+    function applyGroupDialogInstances(inputInstances?: object) {
         let ref;
         let instance;
         const D = groupStore.groupDialog;
@@ -819,23 +835,31 @@ export const useInstanceStore = defineStore('Instance', () => {
         }
         const instances = {};
         for (instance of D.instances) {
-            instances[instance.tag] = {
-                ...instance,
-                friendCount: 0,
-                users: []
-            };
+            (instances as any)[(instance as any).tag] = {
+
+
+
+
+    ...instance,
+    friendCount: 0,
+    users: []
+};
         }
         if (typeof inputInstances !== 'undefined') {
+
+
+
+
             for (instance of inputInstances) {
-                instances[instance.location] = {
-                    id: instance.instanceId,
-                    tag: instance.location,
-                    $location: {},
-                    friendCount: 0,
-                    users: [],
-                    shortName: instance.shortName,
-                    ref: instance
-                };
+                (instances as any)[instance.location] = {
+    id: instance.instanceId,
+    tag: instance.location,
+    $location: {},
+    friendCount: 0,
+    users: [],
+    shortName: instance.shortName,
+    ref: instance
+};
             }
         }
         const cachedCurrentUser = userStore.cachedUsers.get(userStore.currentUser.id);
@@ -853,15 +877,19 @@ export const useInstanceStore = defineStore('Instance', () => {
                 shortName: '',
                 ref: {}
             };
-            instances[currentLocation] = instance;
+            (instances as any)[currentLocation] = instance;
             for (const friend of friendsInInstance.values()) {
                 // if friend isn't in instance add them
                 const addUser = !instance.users.some(function (user) {
-                    return friend.userId === user.id;
+                    return friend.userId === (user as any).id;
                 });
                 if (addUser) {
                     ref = userStore.cachedUsers.get(friend.userId);
                     if (typeof ref !== 'undefined') {
+
+
+
+
                         instance.users.push(ref);
                     }
                 }
@@ -884,7 +912,7 @@ export const useInstanceStore = defineStore('Instance', () => {
                 continue;
             }
             const { instanceId, tag } = ref.$location;
-            instance = instances[tag];
+            instance = (instances as any)[tag];
             if (typeof instance === 'undefined') {
                 instance = {
                     id: instanceId,
@@ -895,14 +923,14 @@ export const useInstanceStore = defineStore('Instance', () => {
                     shortName: '',
                     ref: {}
                 };
-                instances[tag] = instance;
+                (instances as any)[tag] = instance;
             }
             instance.users.push(ref);
         }
         ref = userStore.cachedUsers.get(userStore.currentUser.id);
         if (typeof ref !== 'undefined' && ref.$location.groupId === D.id) {
             const { instanceId, tag } = ref.$location;
-            instance = instances[tag];
+            instance = (instances as any)[tag];
             if (typeof instance === 'undefined') {
                 instance = {
                     id: instanceId,
@@ -913,60 +941,64 @@ export const useInstanceStore = defineStore('Instance', () => {
                     shortName: '',
                     ref: {}
                 };
-                instances[tag] = instance;
+                (instances as any)[tag] = instance;
             }
             instance.users.push(ref); // add self
         }
         const rooms = [];
         for (instance of Object.values(instances)) {
             // due to references on callback of API.getUser()
-            // this should be block scope variable
-            const L = parseLocation(instance.tag);
-            instance.location = instance.tag;
-            instance.$location = L;
-            if (instance.friendCount === 0) {
-                instance.friendCount = instance.users.length;
+// this should be block scope variable
+const L = parseLocation((instance as any).tag);
+            (instance as any).location = (instance as any).tag;
+            (instance as any).$location = L;
+            if ((instance as any).friendCount === 0) {
+                (instance as any).friendCount = (instance as any).users.length;
             }
             if (appearanceSettingsStore.instanceUsersSortAlphabetical) {
-                instance.users.sort(compareByDisplayName);
+                (instance as any).users.sort(compareByDisplayName);
             } else {
-                instance.users.sort(compareByLocationAt);
+                (instance as any).users.sort(compareByLocationAt);
             }
             rooms.push(instance);
         }
         // get instance
         for (const room of rooms) {
-            ref = cachedInstances.get(room.tag);
+            ref = cachedInstances.get((room as any).tag);
             if (typeof ref !== 'undefined') {
-                Object.assign(room.ref, ref);
-            } else if (isRealInstance(room.tag)) {
+                Object.assign((room as any).ref, ref);
+            } else if (isRealInstance((room as any).tag)) {
                 instanceRequest.getInstance({
-                    worldId: room.$location.worldId,
-                    instanceId: room.$location.instanceId
-                });
+    worldId: (room as any).$location.worldId,
+    instanceId: (room as any).$location.instanceId
+});
             }
         }
         rooms.sort(function (a, b) {
             // sort current instance to top
-            if (b.location === currentLocation) {
+            if ((b as any).location === currentLocation) {
                 return 1;
             }
-            if (a.location === currentLocation) {
+            if ((a as any).location === currentLocation) {
                 return -1;
             }
             // sort by number of users when no friends in instance
-            if (a.users.length === 0 && b.users.length === 0) {
-                if (a.ref?.userCount < b.ref?.userCount) {
+            if ((a as any).users.length === 0 && (b as any).users.length === 0) {
+                if ((a as any).ref?.userCount < (b as any).ref?.userCount) {
                     return 1;
                 }
                 return -1;
             }
             // sort by number of friends in instance
-            if (a.users.length < b.users.length) {
+            if ((a as any).users.length < (b as any).users.length) {
                 return 1;
             }
             return -1;
         });
+
+
+
+
         D.instances = rooms;
     }
 
@@ -981,7 +1013,7 @@ export const useInstanceStore = defineStore('Instance', () => {
     /**
      * @param {string} instanceId
      */
-    function removeQueuedInstance(instanceId) {
+    function removeQueuedInstance(instanceId: string) {
         const ref = queuedInstances.get(instanceId);
         if (typeof ref !== 'undefined') {
             toast.dismiss(ref.$msgBox);
@@ -992,7 +1024,7 @@ export const useInstanceStore = defineStore('Instance', () => {
     /**
      * @param {string} instanceId
      */
-    function applyQueuedInstance(instanceId) {
+    function applyQueuedInstance(instanceId: string) {
         queuedInstances.forEach((ref) => {
             if (ref.location !== instanceId) {
                 toast.info(
@@ -1031,7 +1063,7 @@ export const useInstanceStore = defineStore('Instance', () => {
     /**
      * @param {string} instanceId
      */
-    function instanceQueueReady(instanceId) {
+    function instanceQueueReady(instanceId: string) {
         const ref = queuedInstances.get(instanceId);
         if (typeof ref !== 'undefined') {
             toast.dismiss(ref.$msgBox);
@@ -1061,6 +1093,10 @@ export const useInstanceStore = defineStore('Instance', () => {
         }
         notificationStore.queueNotificationNoty(noty);
         sharedFeedStore.addEntry(noty);
+
+
+
+
         notificationStore.notificationTable.data.push(noty);
     }
 
@@ -1070,7 +1106,7 @@ export const useInstanceStore = defineStore('Instance', () => {
      * @param {number} queueSize
      * @returns {Promise<void>}
      */
-    async function instanceQueueUpdate(instanceId, position, queueSize) {
+    async function instanceQueueUpdate(instanceId: string, position: number, queueSize: number) {
         let ref = queuedInstances.get(instanceId);
         if (typeof ref === 'undefined') {
             ref = {
@@ -1115,6 +1151,10 @@ export const useInstanceStore = defineStore('Instance', () => {
             state.updatePlayerListPending = true;
         } else {
             updatePlayerListExecute();
+
+
+
+
             state.updatePlayerListTimer = setTimeout(() => {
                 if (state.updatePlayerListPending) {
                     updatePlayerListExecute();
@@ -1135,8 +1175,8 @@ export const useInstanceStore = defineStore('Instance', () => {
     }
 
     function updatePlayerListDebounce() {
-        const users = [];
-        const pushUser = function (ref, profileRef) {
+        const users: { ref: any; profileRef: any; displayName: any; timer: any; $trustSortNum: any; photonId: number; isMaster: boolean; isModerator: boolean; inVRMode: any; groupOnNameplate: string; isFriend: boolean; timeoutTime: number; isBlocked: boolean; isMuted: boolean; isAvatarInteractionDisabled: boolean; isChatBoxMuted: boolean; ageVerified: boolean; }[] = [];
+        const pushUser = function (ref: { id: any; displayName: any; isFriend: boolean; $moderations: { isBlocked: boolean; isMuted: boolean; isAvatarInteractionDisabled: boolean; isChatBoxMuted: boolean; }; ageVerificationStatus: string; $location_at: any; $trustSortNum: any; }, profileRef: any) {
             let photonId = -1;
             let isFriend = false;
             let isBlocked = false;
@@ -1184,14 +1224,14 @@ export const useInstanceStore = defineStore('Instance', () => {
                     photonStore.timeoutHudOverlayFilter === 'Friends'
                 ) {
                     photonStore.photonLobbyTimeout.forEach((ref1) => {
-                        if (ref1.userId === ref.id) {
-                            timeoutTime = ref1.time;
+                        if ((ref1 as any).userId === ref.id) {
+                            timeoutTime = (ref1 as any).time;
                         }
                     });
                 } else {
                     photonStore.photonLobbyTimeout.forEach((ref1) => {
-                        if (ref1.displayName === ref.displayName) {
-                            timeoutTime = ref1.time;
+                        if ((ref1 as any).displayName === ref.displayName) {
+                            timeoutTime = (ref1 as any).time;
                         }
                     });
                 }
@@ -1258,6 +1298,10 @@ export const useInstanceStore = defineStore('Instance', () => {
                 }
             }
         }
+
+
+
+
         currentInstanceUsersData.value = users;
     }
 

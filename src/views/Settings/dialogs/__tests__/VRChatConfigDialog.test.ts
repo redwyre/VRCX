@@ -31,21 +31,21 @@ const VRChatTotalCacheSize = ref('30');
 const VRChatCacheSizeLoading = ref(false);
 
 vi.mock('pinia', () => ({
-    storeToRefs: (store) => {
+    storeToRefs: (store: { [x: string]: any; }) => {
         const result = {};
         for (const key in store) {
             if (store[key] && typeof store[key] === 'object' && '__v_isRef' in store[key]) {
-                result[key] = store[key];
+                (result as any)[key] = store[key];
             }
         }
         return result;
     },
-    defineStore: (id, fn) => fn
+    defineStore: (id: any, fn: any) => fn
 }));
 
 vi.mock('vue-i18n', () => ({
     useI18n: () => ({
-        t: (key, params) => (params ? `${key}:${JSON.stringify(params)}` : key),
+        t: (key: any, params: any) => (params ? `${key}:${JSON.stringify(params)}` : key),
         locale: require('vue').ref('en')
     })
 }));
@@ -67,13 +67,21 @@ vi.mock('../../../../stores', () => ({
 }));
 
 vi.mock('../../../../shared/utils', () => ({
-    openExternalLink: (...args) => mocks.openExternalLink(...args),
-    getVRChatResolution: (...args) => mocks.getVRChatResolution(...args)
+    openExternalLink: (...args: any[]) => mocks.openExternalLink(...args),
+
+
+
+
+    getVRChatResolution: (...args: any[]) => mocks.getVRChatResolution(...args)
 }));
 
 vi.mock('../../../../shared/constants', async (importOriginal) => {
     const actual = await importOriginal();
     return {
+
+
+
+
         ...actual,
         VRChatCameraResolutions: [
             { name: '1920x1080 (1080p)', width: 1920, height: 1080 },
@@ -93,12 +101,12 @@ vi.mock('vue-sonner', () => ({
 }));
 
 vi.mock('../../../../coordinators/gameCoordinator', () => ({
-    runSweepVRChatCacheFlow: (...args) => mocks.sweepVRChatCache(...args)
+    runSweepVRChatCacheFlow: (...args: any[]) => mocks.sweepVRChatCache(...args)
 }));
 
 // Set global mocks for CefSharp-injected APIs
-globalThis.AppApi = mocks.appApi;
-globalThis.AssetBundleManager = mocks.assetBundleManager;
+(globalThis as any).AppApi = mocks.appApi;
+(globalThis as any).AssetBundleManager = mocks.assetBundleManager;
 
 import VRChatConfigDialog from '../VRChatConfigDialog.vue';
 

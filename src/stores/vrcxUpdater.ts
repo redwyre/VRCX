@@ -75,7 +75,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
             autoUpdateVRCX.value = 'Off';
         }
 
-        appVersion.value = await AppApi.GetVersion();
+        appVersion.value = await (AppApi as any).GetVersion();
         vrcxId.value = VRCX_id;
 
         await initBranch();
@@ -106,7 +106,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
     /**
      * @param {string} value
      */
-    async function setAutoUpdateVRCX(value) {
+    async function setAutoUpdateVRCX(value: string) {
         if (value === 'Off') {
             pendingVRCXUpdate.value = false;
         }
@@ -116,13 +116,13 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
     /**
      * @param {string} value
      */
-    function setLatestAppVersion(value) {
+    function setLatestAppVersion(value: string) {
         latestAppVersion.value = value;
     }
     /**
      * @param {string} value
      */
-    function setBranch(value) {
+    function setBranch(value: string) {
         branch.value = value;
         configRepository.setString('VRCX_branch', value);
     }
@@ -183,7 +183,11 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
             visible: true,
             titleKey: release.titleKey,
             subtitleKey: release.subtitleKey,
-            items: release.items.map((item) => ({ ...item }))
+
+
+
+
+            items: release.items.map((item: any) => ({ ...item }))
         };
 
         return true;
@@ -222,7 +226,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
             await configRepository.setString('VRCX_id', vrcxId.value);
         }
     }
-    function getAssetOfInterest(assets) {
+    function getAssetOfInterest(assets: any) {
         let downloadUrl = '';
         let hashString = '';
         let size = 0;
@@ -271,11 +275,11 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
             // move Beta users to stable
             setBranch('Stable');
         }
-        if (typeof branches[branch.value] === 'undefined') {
+        if (typeof (branches as any)[branch.value] === 'undefined') {
             // handle invalid branch
             setBranch('Stable');
         }
-        const url = branches[branch.value].urlLatest;
+        const url = (branches as any)[branch.value].urlLatest;
         checkingForVRCXUpdate.value = true;
         let response;
         let json;
@@ -347,7 +351,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
         const D = VRCXUpdateDialog.value;
         D.visible = true;
         D.updatePendingIsLatest = false;
-        D.updatePending = await AppApi.CheckForUpdateExe();
+        D.updatePending = await (AppApi as any).CheckForUpdateExe();
         if (updateInProgress.value) {
             return;
         }
@@ -356,7 +360,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
 
     async function loadBranchVersions() {
         const D = VRCXUpdateDialog.value;
-        const url = branches[branch.value].urlReleases;
+        const url = (branches as any)[branch.value].urlReleases;
         checkingForVRCXUpdate.value = true;
         let response;
         let json;
@@ -404,6 +408,10 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
                 }
             }
         }
+
+
+
+
         D.releases = releases;
         D.release = releases[0]?.name ?? '';
         VRCXUpdateDialog.value.updatePendingIsLatest = false;
@@ -413,14 +421,14 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
         }
         setBranch(branch.value);
     }
-    async function downloadVRCXUpdate(downloadUrl, hashString, size, releaseName) {
+    async function downloadVRCXUpdate(downloadUrl: string, hashString: string, size: number, releaseName: string) {
         if (updateInProgress.value) {
             return;
         }
         try {
             updateInProgress.value = true;
             await downloadFileProgress();
-            await AppApi.DownloadUpdate(downloadUrl, hashString, size);
+            await (AppApi as any).DownloadUpdate(downloadUrl, hashString, size);
             pendingVRCXInstall.value = releaseName;
         } catch (err) {
             console.error(err);
@@ -431,27 +439,27 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
         }
     }
     async function downloadFileProgress() {
-        updateProgress.value = await AppApi.CheckUpdateProgress();
+        updateProgress.value = await (AppApi as any).CheckUpdateProgress();
         if (updateInProgress.value) {
             workerTimers.setTimeout(() => downloadFileProgress(), 150);
         }
     }
     function installVRCXUpdate() {
         for (const release of VRCXUpdateDialog.value.releases) {
-            if (release.name !== VRCXUpdateDialog.value.release) {
+            if ((release as any).name !== VRCXUpdateDialog.value.release) {
                 continue;
             }
-            const { downloadUrl, hashString, size } = getAssetOfInterest(release.assets);
+            const { downloadUrl, hashString, size } = getAssetOfInterest((release as any).assets);
             if (!downloadUrl) {
                 return;
             }
-            const releaseName = release.name;
+            const releaseName = (release as any).name;
             downloadVRCXUpdate(downloadUrl, hashString, size, releaseName);
             break;
         }
     }
     async function showChangeLogDialog(options = {}) {
-        const { prefetch = false } = options;
+        const { prefetch = false }: any = options;
 
         if (prefetch) {
             const loaded = await ensureChangeLogReady();
@@ -473,9 +481,9 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
         }
         return checkForVRCXUpdate();
     }
-    function restartVRCX(isUpgrade) {
+    function restartVRCX(isUpgrade: any) {
         if (!LINUX) {
-            AppApi.RestartApplication(isUpgrade);
+            (AppApi as any).RestartApplication(isUpgrade);
         } else {
             window.electron.restartApp();
         }
@@ -487,7 +495,7 @@ export const useVRCXUpdaterStore = defineStore('VRCXUpdater', () => {
         return `${updateProgress.value}%`;
     }
     async function cancelUpdate() {
-        await AppApi.CancelUpdate();
+        await (AppApi as any).CancelUpdate();
         updateInProgress.value = false;
         updateProgress.value = 0;
     }

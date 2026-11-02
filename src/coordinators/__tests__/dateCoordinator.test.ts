@@ -5,7 +5,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock('../../stores', () => ({
-    useAppearanceSettingsStore: (...args) => mocks.useAppearanceSettingsStore(...args)
+    useAppearanceSettingsStore: (...args: any[]) => mocks.useAppearanceSettingsStore(...args)
 }));
 
 import { formatDateFilter } from '../dateCoordinator';
@@ -22,7 +22,15 @@ describe('dateCoordinator.formatDateFilter', () => {
 
     test('returns "-" for empty and invalid input', () => {
         expect(formatDateFilter('', 'long')).toBe('-');
+
+
+
+
         expect(formatDateFilter(null, 'long')).toBe('-');
+
+
+
+
         expect(formatDateFilter(undefined, 'long')).toBe('-');
         expect(formatDateFilter('invalid-date', 'long')).toBe('-');
     });
@@ -118,6 +126,10 @@ describe('dateCoordinator.formatDateFilter', () => {
 
     test('returns "-" and warns when format is unknown', () => {
         const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+
+
+
 
         const result = formatDateFilter('2024-01-02T03:04:05Z', 'unknown');
 

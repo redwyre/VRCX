@@ -23,10 +23,10 @@ const imageReq = {
             const fileVersion = json.versions[json.versions.length - 1].version;
             request(`file/${fileId}/${fileVersion}/signature/finish`, {
                 method: 'PUT'
-            }).catch((err) => console.error('Failed to finish signature:', err));
+            }).catch((err: any) => console.error('Failed to finish signature:', err));
             request(`file/${fileId}/${fileVersion}/file/finish`, {
                 method: 'PUT'
-            }).catch((err) => console.error('Failed to finish file:', err));
+            }).catch((err: any) => console.error('Failed to finish file:', err));
         } catch (error) {
             console.error('Failed to cleanup avatar upload:', error);
         }
@@ -41,7 +41,7 @@ const imageReq = {
             return await request(`file/${fileId}`, {
                 method: 'POST',
                 params
-            }).then((json) => {
+            }).then((json: any) => {
                 const args = {
                     json,
                     params,
@@ -63,7 +63,7 @@ const imageReq = {
         try {
             return await request(`file/${params.fileId}/${params.fileVersion}/file/start`, {
                 method: 'PUT'
-            }).then((json) => {
+            }).then((json: any) => {
                 const args = {
                     json,
                     params
@@ -86,7 +86,7 @@ const imageReq = {
                 maxParts: 0,
                 nextPartNumber: 0
             }
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -102,7 +102,7 @@ const imageReq = {
         try {
             return await request(`file/${params.fileId}/${params.fileVersion}/signature/start`, {
                 method: 'PUT'
-            }).then((json) => {
+            }).then((json: any) => {
                 const args = {
                     json,
                     params
@@ -125,7 +125,7 @@ const imageReq = {
                 maxParts: 0,
                 nextPartNumber: 0
             }
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -140,7 +140,7 @@ const imageReq = {
         return request(`avatars/${params.id}`, {
             method: 'PUT',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -159,10 +159,10 @@ const imageReq = {
             const fileVersion = json.versions[json.versions.length - 1].version;
             request(`file/${fileId}/${fileVersion}/signature/finish`, {
                 method: 'PUT'
-            }).catch((err) => console.error('Failed to finish signature:', err));
+            }).catch((err: any) => console.error('Failed to finish signature:', err));
             request(`file/${fileId}/${fileVersion}/file/finish`, {
                 method: 'PUT'
-            }).catch((err) => console.error('Failed to finish file:', err));
+            }).catch((err: any) => console.error('Failed to finish file:', err));
         } catch (error) {
             console.error('Failed to cleanup world upload:', error);
         }
@@ -177,7 +177,7 @@ const imageReq = {
             return await request(`file/${fileId}`, {
                 method: 'POST',
                 params
-            }).then((json) => {
+            }).then((json: any) => {
                 const args = {
                     json,
                     params,
@@ -189,6 +189,10 @@ const imageReq = {
             console.error(err);
             imageReq.uploadWorldFailCleanup(fileId);
         }
+
+
+
+
         return void 0;
     },
 
@@ -199,7 +203,7 @@ const imageReq = {
         try {
             return await request(`file/${params.fileId}/${params.fileVersion}/file/start`, {
                 method: 'PUT'
-            }).then((json) => {
+            }).then((json: any) => {
                 const args = {
                     json,
                     params
@@ -210,6 +214,10 @@ const imageReq = {
             console.error(err);
             imageReq.uploadWorldFailCleanup(params.fileId);
         }
+
+
+
+
         return void 0;
     },
 
@@ -223,7 +231,7 @@ const imageReq = {
                 maxParts: 0,
                 nextPartNumber: 0
             }
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -239,7 +247,7 @@ const imageReq = {
         try {
             return await request(`file/${params.fileId}/${params.fileVersion}/signature/start`, {
                 method: 'PUT'
-            }).then((json) => {
+            }).then((json: any) => {
                 const args = {
                     json,
                     params
@@ -250,6 +258,10 @@ const imageReq = {
             console.error(err);
             imageReq.uploadWorldFailCleanup(params.fileId);
         }
+
+
+
+
         return void 0;
     },
 
@@ -263,7 +275,7 @@ const imageReq = {
                 maxParts: 0,
                 nextPartNumber: 0
             }
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -278,7 +290,7 @@ const imageReq = {
         return request(`worlds/${params.id}`, {
             method: 'PUT',
             params
-        }).then((json) => {
+        }).then((json: object) => {
             return {
                 json,
                 params,
@@ -290,7 +302,7 @@ const imageReq = {
     getAvatarImages(params: { fileId: string }): Promise<{ json: Json<File>; params: { fileId: string } }> {
         return request(`file/${params.fileId}`, {
             method: 'GET'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -303,7 +315,7 @@ const imageReq = {
         return request(`file/${params.fileId}`, {
             method: 'GET',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params

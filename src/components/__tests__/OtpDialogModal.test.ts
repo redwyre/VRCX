@@ -23,6 +23,10 @@ vi.mock('../../plugins/router', () => ({
 vi.mock('vue-router', async (importOriginal) => {
     const actual = await importOriginal();
     return {
+
+
+
+
         ...actual,
         useRouter: vi.fn(() => ({
             push: vi.fn(),
@@ -243,6 +247,10 @@ describe('OtpDialogModal.vue', () => {
             const spy = vi.spyOn(store, 'handleOtpCancel');
 
             const cancelBtn = wrapper.findAll('button').find((b) => b.text() === 'Cancel');
+
+
+
+
             await cancelBtn.trigger('click');
 
             expect(spy).toHaveBeenCalledWith('');

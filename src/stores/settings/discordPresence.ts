@@ -135,11 +135,19 @@ export const useDiscordPresenceSettingsStore = defineStore('DiscordPresenceSetti
         let startTime = locationStore.lastLocation.date;
         if (locationStore.lastLocation.location === 'traveling') {
             currentLocation = locationStore.lastLocationDestination;
+
+
+
+
             startTime = locationStore.lastLocationDestinationTime;
         }
         if (!currentLocation) {
             // game log disabled, use API location
             currentLocation = userStore.currentUser.$locationTag;
+
+
+
+
             startTime = userStore.currentUser.$location_at;
             if (userStore.currentUser.$travelingToLocation) {
                 currentLocation = userStore.currentUser.$travelingToLocation;
@@ -169,10 +177,10 @@ export const useDiscordPresenceSettingsStore = defineStore('DiscordPresenceSetti
                 const args = await queryRequest.fetch('world.location', {
                     worldId: L.worldId
                 });
-                state.lastLocationDetails.worldName = args.ref.name;
-                state.lastLocationDetails.thumbnailImageUrl = args.ref.thumbnailImageUrl;
-                state.lastLocationDetails.worldCapacity = args.ref.capacity;
-                if (args.ref.releaseStatus === 'public') {
+                state.lastLocationDetails.worldName = (args as any).ref.name;
+                state.lastLocationDetails.thumbnailImageUrl = (args as any).ref.thumbnailImageUrl;
+                state.lastLocationDetails.worldCapacity = (args as any).ref.capacity;
+                if ((args as any).ref.releaseStatus === 'public') {
                     state.lastLocationDetails.worldLink = `https://vrchat.com/home/world/${L.worldId}`;
                 }
                 const instanceName = await instanceStore.getInstanceName(currentLocation);
@@ -192,6 +200,10 @@ export const useDiscordPresenceSettingsStore = defineStore('DiscordPresenceSetti
                     t
                 );
             }
+
+
+
+
             state.lastLocationDetails.groupAccessType = L.groupAccessType;
             if (L.groupAccessType) {
                 if (L.groupAccessType === 'public') {
@@ -220,6 +232,10 @@ export const useDiscordPresenceSettingsStore = defineStore('DiscordPresenceSetti
                 case 'group':
                     state.lastLocationDetails.accessName = `${t('dialog.new_instance.access_type_group')} #${L.instanceName}${platform}`;
                     try {
+
+
+
+
                         const groupName = await getGroupName(L.groupId);
                         if (groupName) {
                             state.lastLocationDetails.accessName = `${t('dialog.new_instance.access_type_group')}${state.lastLocationDetails.groupAccessName}(${groupName}) #${L.instanceName}${platform}`;
@@ -305,6 +321,10 @@ export const useDiscordPresenceSettingsStore = defineStore('DiscordPresenceSetti
             }
 
             if (np.length > 0) {
+
+
+
+
                 startTime = np.startTime * 1000;
                 endTime = (np.startTime + np.length / np.speed) * 1000;
             }
@@ -324,6 +344,10 @@ export const useDiscordPresenceSettingsStore = defineStore('DiscordPresenceSetti
             detailsUrl = '';
             details = t('view.settings.discord_presence.rpc.private_world');
             stateText = '';
+
+
+
+
             startTime = 0;
             endTime = 0;
             appId = '883308884863901717'; // default VRChat app id
@@ -335,29 +359,22 @@ export const useDiscordPresenceSettingsStore = defineStore('DiscordPresenceSetti
             // 글자 수가 짧으면 업데이트가 안된다..
             details += '\uFFA0'.repeat(2 - details.length);
         }
-        Discord.SetAssets(
-            details, // main text
-            stateText, // secondary text
-            detailsUrl, // details url
-
-            bigIcon, // big icon
-            poweredBy, // big icon hover text
-
-            statusImage, // small icon
-            statusName, // small icon hover text
-
-            startTime,
-            endTime,
-
-            partyId, // party id
-            partySize, // party size
-            partyMaxSize, // party max size
-            buttonText, // button text
-            buttonUrl, // button url
-            appId, // app id
-            activityType, // activity type
-            statusDisplayType // status display type
-        );
+        (Discord as any).SetAssets(details, // main text
+stateText, // secondary text
+detailsUrl, // details url
+bigIcon, // big icon
+poweredBy, // big icon hover text
+statusImage, // small icon
+statusName, // small icon hover text
+startTime, endTime, partyId, // party id
+partySize, // party size
+partyMaxSize, // party max size
+buttonText, // button text
+buttonUrl, // button url
+appId, // app id
+activityType, // activity type
+statusDisplayType // status display type
+);
     }
 
     function getMediaImage() {
@@ -374,9 +391,9 @@ export const useDiscordPresenceSettingsStore = defineStore('DiscordPresenceSetti
     /**
      * @param active
      */
-    async function setIsDiscordActive(active) {
+    async function setIsDiscordActive(active: boolean) {
         if (active !== state.isDiscordActive) {
-            state.isDiscordActive = await Discord.SetActive(active);
+            state.isDiscordActive = await (Discord as any).SetActive(active);
         }
     }
 

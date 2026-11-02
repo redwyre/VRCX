@@ -21,10 +21,10 @@ import { languageCodes } from './localization/locales';
  *
  * @returns {import('vite').Plugin}
  */
-function remixiconWoff2Only() {
+function remixiconWoff2Only(): import('vite').Plugin {
     return {
         name: 'remixicon-woff2-only',
-        generateBundle(_, bundle) {
+        generateBundle(_: any, bundle: { [x: string]: any }) {
             for (const key of Object.keys(bundle)) {
                 if (/remixicon\.(eot|ttf|svg|woff)$/.test(key)) {
                     delete bundle[key];
@@ -37,7 +37,7 @@ function remixiconWoff2Only() {
 /**
  * @param {string | undefined} assetId
  */
-function getAssetLanguage(assetId) {
+function getAssetLanguage(assetId: string | undefined) {
     if (!assetId) return null;
 
     if (assetId.endsWith('.json')) {
@@ -48,12 +48,14 @@ function getAssetLanguage(assetId) {
 
     const language =
         // Font assets, e.g., noto-sans-jp-regular.woff2 mapped to language code.
-        /** @type {Record<string, string>} */ ({
-            jp: 'ja',
-            sc: 'zh-CN',
-            tc: 'zh-TW',
-            kr: 'ko'
-        })[assetId.split('noto-sans-')[1]?.split('-')[0]];
+        (
+            {
+                jp: 'ja',
+                sc: 'zh-CN',
+                tc: 'zh-TW',
+                kr: 'ko'
+            } as Record<string, string>
+        )[assetId.split('noto-sans-')[1]?.split('-')[0]];
 
     return language || null;
 }
@@ -61,7 +63,7 @@ function getAssetLanguage(assetId) {
 /**
  * @param {string} moduleId
  */
-function getManualChunk(moduleId) {
+function getManualChunk(moduleId: string) {
     const basename = moduleId.split('/').pop();
     const language = getAssetLanguage(basename);
     if (!language) return;
@@ -74,14 +76,14 @@ const defaultAssetName = '[name][extname]';
 /**
  * @param {string} name
  */
-function isFont(name) {
+function isFont(name: string) {
     return /\.(woff2?|ttf|otf|eot)$/.test(name);
 }
 
 /**
  * @param {import('rolldown').PreRenderedAsset} assetInfo
  */
-function getAssetFilename({ name }) {
+function getAssetFilename({ name }: import('rolldown').PreRenderedAsset) {
     const language = getAssetLanguage(name);
     if (!name || !language) return `assets/${defaultAssetName}`;
 

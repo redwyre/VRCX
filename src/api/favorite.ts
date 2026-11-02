@@ -37,7 +37,7 @@ const favoriteReq = {
     getFavoriteLimits(): Promise<{ json: Json<FavoriteLimits> }> {
         return request('auth/user/favoritelimits', {
             method: 'GET'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json
             };
@@ -49,7 +49,7 @@ const favoriteReq = {
         return request('favorites', {
             method: 'GET',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -61,12 +61,12 @@ const favoriteReq = {
     addFavorite(params: {
         type: string;
         favoriteId: string;
-        tags: string;
+        tags?: string;
     }): Promise<{ json: Json<Favorite>; params: { type: string; favoriteId: string; tags: string } }> {
         return request('favorites', {
             method: 'POST',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -77,10 +77,10 @@ const favoriteReq = {
         });
     },
 
-    deleteFavorite(params: { objectId: string }): Promise<{ json: Json<Success>; params }> {
+    deleteFavorite(params: { objectId: string }): Promise<{ json: Json<Success>; params: any }> {
         return request(`favorites/${params.objectId}`, {
             method: 'DELETE'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -97,7 +97,7 @@ const favoriteReq = {
         return request('favorite/groups', {
             method: 'GET',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -113,7 +113,7 @@ const favoriteReq = {
         return request(`favorite/group/${params.type}/${params.group}/${getCurrentUserId()}`, {
             method: 'PUT',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -123,11 +123,11 @@ const favoriteReq = {
         });
     },
 
-    clearFavoriteGroup(params: { type: string; group: string }): Promise<{ json: Json<Success>; params }> {
+    clearFavoriteGroup(params: { type: string; group: string }): Promise<{ json: Json<Success>; params: any }> {
         return request(`favorite/group/${params.type}/${params.group}/${getCurrentUserId()}`, {
             method: 'DELETE',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -144,7 +144,7 @@ const favoriteReq = {
         return request('worlds/favorites', {
             method: 'GET',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -159,7 +159,7 @@ const favoriteReq = {
         return request('avatars/favorites', {
             method: 'GET',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params

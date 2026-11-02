@@ -2,7 +2,7 @@
  * @param {string} resource
  * @returns {string}
  */
-function getFaviconUrl(resource) {
+function getFaviconUrl(resource: string) {
     if (!resource) {
         return '';
     }
@@ -19,7 +19,7 @@ function getFaviconUrl(resource) {
  * @param {string} url
  * @returns {string}
  */
-function replaceVrcPackageUrl(url) {
+function replaceVrcPackageUrl(url: string) {
     if (!url) {
         return '';
     }

@@ -3,7 +3,7 @@
  * @param {any} item
  * @returns {boolean}
  */
-function removeFromArray(array, item) {
+function removeFromArray(array: Array<any>, item: any) {
     const { length } = array;
     for (let i = 0; i < length; ++i) {
         if (array[i] === item) {
@@ -19,7 +19,7 @@ function removeFromArray(array, item) {
  * @param {Array} b
  * @returns {boolean}
  */
-function arraysMatch(a, b) {
+function arraysMatch(a: Array<any>, b: Array<any>) {
     if (!Array.isArray(a) || !Array.isArray(b)) {
         return false;
     }
@@ -32,7 +32,7 @@ function arraysMatch(a, b) {
  * @param {number} toIndex
  * @returns {void}
  */
-function moveArrayItem(array, fromIndex, toIndex) {
+function moveArrayItem(array: Array<any>, fromIndex: number, toIndex: number) {
     if (!Array.isArray(array) || fromIndex === toIndex) {
         return;
     }
@@ -47,7 +47,7 @@ function moveArrayItem(array, fromIndex, toIndex) {
     array.splice(toIndex, 0, item);
 }
 
-function replaceReactiveObject(target, source) {
+function replaceReactiveObject(target: { [x: string]: any; a?: number; b?: number; }, source: { [x: string]: any; c?: number; a?: number; b?: number; }) {
     for (const key in target) {
         if (Object.prototype.hasOwnProperty.call(target, key)) {
             delete target[key];

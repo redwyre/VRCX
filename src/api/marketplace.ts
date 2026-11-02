@@ -27,7 +27,7 @@ const marketplaceReq = {
         return request('avatars', {
             method: 'GET',
             params: query
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -42,7 +42,7 @@ const marketplaceReq = {
         return request('economy/store/shelves', {
             method: 'GET',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -57,7 +57,7 @@ const marketplaceReq = {
         return request('economy/purchases', {
             method: 'GET',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             useUserStore().setCachedPurchases(json);
             const args = {
                 json,
@@ -73,7 +73,7 @@ const marketplaceReq = {
         return request(`listing/${params.listingId}`, {
             method: 'GET',
             params: { hydrate: true }
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -86,7 +86,7 @@ const marketplaceReq = {
         return request('economy/purchase/listing', {
             method: 'POST',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -99,7 +99,7 @@ const marketplaceReq = {
         return request('economy/subscriptions', {
             method: 'GET',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -114,7 +114,7 @@ const marketplaceReq = {
         return request(`user/${useUserStore().currentUser.id}/economy/transactions`, {
             method: 'GET',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -126,7 +126,7 @@ const marketplaceReq = {
     getVRChatCredits(): Promise<{ json: Json<Balance> }> {
         return request(`user/${useUserStore().currentUser.id}/economy/balance`, {
             method: 'GET'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json
             };

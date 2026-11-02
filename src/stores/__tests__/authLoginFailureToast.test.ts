@@ -88,19 +88,19 @@ vi.mock('vue-sonner', () => ({
 }));
 
 vi.mock('noty', () => ({
-    default: vi.fn().mockImplementation(function NotyMock() {
-        this.show = (...args) => mocks.notyShow(...args);
+    default: vi.fn().mockImplementation(function NotyMock(this: any) {
+        this.show = (...args: any[]) => mocks.notyShow(...args);
     })
 }));
 
 vi.mock('vue-i18n', () => ({
     useI18n: () => ({
-        t: (key) => key
+        t: (key: any) => key
     })
 }));
 
 vi.mock('../../services/request', () => ({
-    request: (...args) => mocks.request(...args)
+    request: (...args: any[]) => mocks.request(...args)
 }));
 
 vi.mock('../../api', () => ({
@@ -108,16 +108,16 @@ vi.mock('../../api', () => ({
 }));
 
 vi.mock('../../coordinators/authCoordinator', () => ({
-    runLoginSuccessFlow: (...args) => mocks.runLoginSuccessFlow(...args),
-    runLogoutFlow: (...args) => mocks.runLogoutFlow(...args)
+    runLoginSuccessFlow: (...args: any[]) => mocks.runLoginSuccessFlow(...args),
+    runLogoutFlow: (...args: any[]) => mocks.runLogoutFlow(...args)
 }));
 
 vi.mock('../../coordinators/authAutoLoginCoordinator', () => ({
-    runHandleAutoLoginFlow: (...args) => mocks.runHandleAutoLoginFlow(...args)
+    runHandleAutoLoginFlow: (...args: any[]) => mocks.runHandleAutoLoginFlow(...args)
 }));
 
 vi.mock('../../coordinators/userCoordinator', () => ({
-    getCurrentUser: (...args) => mocks.getCurrentUser(...args)
+    getCurrentUser: (...args: any[]) => mocks.getCurrentUser(...args)
 }));
 
 vi.mock('../../services/appConfig', () => ({
@@ -127,7 +127,7 @@ vi.mock('../../services/appConfig', () => ({
 }));
 
 vi.mock('../../shared/utils', () => ({
-    escapeTag: (value) => value
+    escapeTag: (value: any) => value
 }));
 
 vi.mock('../../services/database', () => ({
@@ -159,7 +159,7 @@ vi.mock('../../services/config', () => ({
 }));
 
 vi.mock('../../services/websocket', () => ({
-    initWebsocket: (...args) => mocks.initWebsocket(...args),
+    initWebsocket: (...args: any[]) => mocks.initWebsocket(...args),
     closeWebSocket: vi.fn()
 }));
 
@@ -195,10 +195,10 @@ function flushPromises() {
     return Promise.resolve().then(() => Promise.resolve());
 }
 
-function makeAuthError(message, status = 401) {
+function makeAuthError(message: string | undefined, status = 401) {
     const err = new Error(message);
-    err.status = status;
-    err.endpoint = 'auth/user';
+    (err as any).status = status;
+    (err as any).endpoint = 'auth/user';
     return err;
 }
 
@@ -210,14 +210,14 @@ async function createAuthStore() {
     return store;
 }
 
-async function failManualLogin(store, error) {
+async function failManualLogin(store: any, error: any) {
     mocks.authRequest.getConfig.mockResolvedValueOnce({ json: {} });
     mocks.request.mockRejectedValueOnce(error);
     await store.login().catch(() => {});
     await flushPromises();
 }
 
-async function failSavedAccountLogin(store, error, overrides = {}) {
+async function failSavedAccountLogin(store: any, error: any, overrides = {}) {
     const savedUser = {
         user: { id: 'usr_saved', displayName: 'Saved User' },
         loginParams: {
@@ -234,7 +234,7 @@ async function failSavedAccountLogin(store, error, overrides = {}) {
     await flushPromises();
 }
 
-async function succeedManualLogin(store) {
+async function succeedManualLogin(store: any) {
     mocks.authRequest.getConfig.mockResolvedValueOnce({ json: {} });
     mocks.request.mockResolvedValueOnce({
         id: 'usr_me',
@@ -285,12 +285,12 @@ describe('useAuthStore login failure toast policy', () => {
         };
         mocks.vrcxStore.waitForDatabaseInit.mockResolvedValue(true);
 
-        globalThis.AppApi = {
-            CheckGameRunning: vi.fn(),
-            FlashWindow: vi.fn(),
-            IPCAnnounceStart: vi.fn(),
-            OpenLink: vi.fn()
-        };
+        (globalThis as any).AppApi = {
+    CheckGameRunning: vi.fn(),
+    FlashWindow: vi.fn(),
+    IPCAnnounceStart: vi.fn(),
+    OpenLink: vi.fn()
+};
     });
 
     afterEach(() => {
@@ -324,7 +324,7 @@ describe('useAuthStore login failure toast policy', () => {
             })
         );
         mocks.toast.warning.mock.calls[0][1].action.onClick();
-        expect(globalThis.AppApi.OpenLink).toHaveBeenCalledWith(links.troubleshootingAuthUserConnectionIssues);
+        expect((globalThis as any).AppApi.OpenLink).toHaveBeenCalledWith(links.troubleshootingAuthUserConnectionIssues);
     });
 
     test('does not count explicit password errors toward the warning threshold', async () => {

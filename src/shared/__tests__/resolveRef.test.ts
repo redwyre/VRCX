@@ -1,3 +1,8 @@
+// TODO(ts-migrate): Check that this import is the one meant; TypeScript offered the name from
+// several modules.
+// describe was taken from vitest, over node:test. beforeEach was taken from vitest, over
+// node:test. test was taken from vitest, over node:test and node:test.
+import { describe, vi, beforeEach, test, expect } from 'vitest';
 import { resolveRef } from '../utils/resolveRef';
 
 describe('resolveRef', () => {
@@ -28,14 +33,14 @@ describe('resolveRef', () => {
                 ref: { name: 'MyWorld', extra: true }
             })
         });
-        expect(result.id).toBe('wrld_123');
-        expect(result.name).toBe('MyWorld');
+        expect((result as any).id).toBe('wrld_123');
+        expect((result as any).name).toBe('MyWorld');
     });
 
     test('uses idAlias when id is missing', async () => {
         const result = await resolveRef({ worldId: 'wrld_456', name: 'World' }, opts);
-        expect(result.id).toBe('wrld_456');
-        expect(result.name).toBe('World');
+        expect((result as any).id).toBe('wrld_456');
+        expect((result as any).name).toBe('World');
         expect(opts.fetchFn).not.toHaveBeenCalled();
     });
 
@@ -45,22 +50,22 @@ describe('resolveRef', () => {
         });
         const result = await resolveRef({ id: 'wrld_789', name: '' }, opts);
         expect(opts.fetchFn).toHaveBeenCalledWith('wrld_789');
-        expect(result.id).toBe('wrld_789');
-        expect(result.name).toBe('Fetched');
-        expect(result.data).toBe(42);
+        expect((result as any).id).toBe('wrld_789');
+        expect((result as any).name).toBe('Fetched');
+        expect((result as any).data).toBe(42);
     });
 
     test('returns input with id when fetch fails', async () => {
         opts.fetchFn.mockRejectedValue(new Error('network'));
         const result = await resolveRef({ id: 'wrld_111', name: '' }, opts);
-        expect(result.id).toBe('wrld_111');
-        expect(result.name).toBe('');
+        expect((result as any).id).toBe('wrld_111');
+        expect((result as any).name).toBe('');
     });
 
     test('does not fetch when name is already present', async () => {
         const result = await resolveRef({ id: 'wrld_222', name: 'Known' }, opts);
         expect(opts.fetchFn).not.toHaveBeenCalled();
-        expect(result.name).toBe('Known');
+        expect((result as any).name).toBe('Known');
     });
 
     test('works with user-style config (displayName)', async () => {
@@ -73,8 +78,8 @@ describe('resolveRef', () => {
             })
         };
         const result = await resolveRef('usr_1', userOpts);
-        expect(result.id).toBe('usr_1');
-        expect(result.displayName).toBe('Alice');
-        expect(result.status).toBe('online');
+        expect((result as any).id).toBe('usr_1');
+        expect((result as any).displayName).toBe('Alice');
+        expect((result as any).status).toBe('online');
     });
 });

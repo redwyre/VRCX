@@ -1,4 +1,9 @@
-import { LogWatcherService } from '../gameLog.js';
+// TODO(ts-migrate): Check that this import is the one meant; TypeScript offered the name from
+// several modules.
+// describe was taken from vitest, over node:test. test was taken from vitest, over node:test
+// and node:test.
+import { describe, test, expect } from 'vitest';
+import { LogWatcherService } from '../gameLog';
 
 const svc = new LogWatcherService();
 

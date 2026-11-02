@@ -44,8 +44,12 @@ const mocks = vi.hoisted(() => ({
 vi.mock('pinia', async (importOriginal) => {
     const actual = await importOriginal();
     return {
+
+
+
+
         ...actual,
-        storeToRefs: (store) => store
+        storeToRefs: (store: any) => store
     };
 });
 
@@ -60,11 +64,11 @@ vi.mock('../../../../stores', () => ({
 }));
 
 vi.mock('../../../../coordinators/userCoordinator', () => ({
-    showUserDialog: (...args) => mocks.showUserDialog(...args)
+    showUserDialog: (...args: any[]) => mocks.showUserDialog(...args)
 }));
 
 vi.mock('../../../../coordinators/groupCoordinator', () => ({
-    showGroupDialog: (...args) => mocks.showGroupDialog(...args)
+    showGroupDialog: (...args: any[]) => mocks.showGroupDialog(...args)
 }));
 
 vi.mock('../../../../shared/utils', () => ({
@@ -81,7 +85,7 @@ vi.mock('../../../../composables/useUserDisplay', () => ({
 
 vi.mock('vue-i18n', () => ({
     useI18n: () => ({
-        t: (key) => key,
+        t: (key: any) => key,
         te: () => false,
         locale: require('vue').ref('en')
     })
@@ -138,7 +142,7 @@ vi.mock('../../../../components/Location.vue', () => ({
 }));
 
 vi.mock('lucide-vue-next', () => {
-    function icon(name) {
+    function icon(name: string) {
         return { template: `<span data-icon="${name}" />` };
     }
     return {

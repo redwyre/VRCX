@@ -6,11 +6,11 @@ import { mount } from '@vue/test-utils';
 
 vi.mock('vue-i18n', () => ({
     useI18n: () => ({
-        t: (key, params) => (params ? `${key}:${JSON.stringify(params)}` : key),
+        t: (key: any, params: any) => (params ? `${key}:${JSON.stringify(params)}` : key),
         locale: require('vue').ref('en')
     }),
     createI18n: () => ({
-        global: { t: (key) => key, locale: require('vue').ref('en') },
+        global: { t: (key: any) => key, locale: require('vue').ref('en') },
         install: vi.fn()
     })
 }));
@@ -32,6 +32,10 @@ vi.mock('vue-router', async (importOriginal) => {
     const actual = await importOriginal();
     const { ref } = require('vue');
     return {
+
+
+
+
         ...actual,
         useRouter: vi.fn(() => ({
             push: vi.fn(),
@@ -87,6 +91,10 @@ vi.mock('../../../../services/request', () => ({
 import * as userCoordinatorModule from '../../../../coordinators/userCoordinator';
 vi.mock('../../../../coordinators/userCoordinator', async (importOriginal) => {
     const actual = await importOriginal();
+
+
+
+
     return { ...actual, showUserDialog: vi.fn() };
 });
 
@@ -126,21 +134,25 @@ function mountComponent(overrides = {}) {
     });
 
     const userStore = useUserStore(pinia);
+
+
+
+
     userStore.$patch({
-        userDialog: {
-            id: 'usr_target',
-            ref: { id: 'usr_target' },
-            mutualFriends: [...MOCK_MUTUAL_FRIENDS],
-            mutualFriendSorting: userDialogMutualFriendSortingOptions.alphabetical,
-            isMutualFriendsLoading: false,
-            ...overrides
-        },
-        currentUser: {
-            id: 'usr_me',
-            hasSharedConnectionsOptOut: false,
-            ...overrides.currentUser
-        }
-    });
+    userDialog: {
+        id: 'usr_target',
+        ref: { id: 'usr_target' },
+        mutualFriends: [...MOCK_MUTUAL_FRIENDS],
+        mutualFriendSorting: userDialogMutualFriendSortingOptions.alphabetical,
+        isMutualFriendsLoading: false,
+        ...overrides
+    },
+    currentUser: {
+        id: 'usr_me',
+        hasSharedConnectionsOptOut: false,
+        ...(overrides as any).currentUser
+    }
+});
 
     return mount(UserDialogMutualFriendsTab, {
         global: {
@@ -216,6 +228,10 @@ describe('UserDialogMutualFriendsTab.vue', () => {
         test('calls showUserDialog when a friend is clicked', async () => {
             const pinia = createTestingPinia({ stubActions: false });
             const userStore = useUserStore(pinia);
+
+
+
+
             userStore.$patch({
                 userDialog: {
                     id: 'usr_target',

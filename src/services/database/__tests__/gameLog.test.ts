@@ -17,7 +17,7 @@ vi.mock('../index.js', () => ({
     }
 }));
 
-import { gameLog } from '../gameLog.js';
+import { gameLog } from '../gameLog';
 
 describe('gameLog.getMyTopWorlds', () => {
     beforeEach(() => {

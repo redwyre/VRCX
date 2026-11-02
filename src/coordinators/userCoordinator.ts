@@ -62,7 +62,11 @@ const getRobotUrl = () => `${AppDebug.endpointDomain}/file/file_0e8c4e32-7444-44
  * @param {import('@/types/vrcx').Json<import('vrchat').PublicProfile> & { $lastFetch?: number }} json
  * @returns {import('@/types/vrcx').Json<import('vrchat').PublicProfile> & { $lastFetch?: number }}
  */
-export function applyPublicProfile(json) {
+
+
+
+
+export function applyPublicProfile(json: import('@/types/vrcx').Json<import('vrchat').PublicProfile> & { $lastFetch?: number; }) {
     const { cachedProfiles } = useUserStore();
     let ref = cachedProfiles.get(json.id);
     if (typeof ref === 'undefined') {
@@ -79,7 +83,7 @@ export function applyPublicProfile(json) {
     if (
         ref.hasVrcPlus &&
         ref.badges &&
-        ref.badges.every((x) => x.badgeId !== 'bdg_754f9935-0f97-49d8-b857-95afb9b673fa')
+        ref.badges.every((x: { badgeId: string; }) => x.badgeId !== 'bdg_754f9935-0f97-49d8-b857-95afb9b673fa')
     ) {
         ref.badges.unshift({
             badgeId: 'bdg_754f9935-0f97-49d8-b857-95afb9b673fa',
@@ -96,7 +100,7 @@ export function applyPublicProfile(json) {
     return ref;
 }
 
-async function updateUserProfile(ref) {
+async function updateUserProfile(ref: { id: any; bio: any; bioLinks: any[]; displayName: any; }) {
     if (!ref.id || typeof ref.bio !== 'string') {
         return;
     }
@@ -105,19 +109,19 @@ async function updateUserProfile(ref) {
         database.setUserProfile(ref);
         return;
     }
-    if (existing.bio === ref.bio && arraysMatch(existing.bioLinks, ref.bioLinks)) {
+    if ((existing as any).bio === ref.bio && arraysMatch((existing as any).bioLinks, ref.bioLinks)) {
         return;
     }
     const feed = {
-        created_at: new Date().toJSON(),
-        type: 'Bio',
-        userId: ref.id,
-        displayName: ref.displayName,
-        bio: ref.bio,
-        previousBio: existing.bio,
-        bioLinks: ref.bioLinks,
-        previousBioLinks: existing.bioLinks
-    };
+    created_at: new Date().toJSON(),
+    type: 'Bio',
+    userId: ref.id,
+    displayName: ref.displayName,
+    bio: ref.bio,
+    previousBio: (existing as any).bio,
+    bioLinks: ref.bioLinks,
+    previousBioLinks: (existing as any).bioLinks
+};
     useNotificationStore().queueFeedNoty(feed);
     useSharedFeedStore().addEntry(feed);
     const persistedFeed = await database.addBioToDatabase(feed);
@@ -130,14 +134,14 @@ async function updateUserProfile(ref) {
 const PROFILE_REFRESH_INTERVAL = 7 * 24 * 60 * 60 * 1000;
 const pendingProfileRefresh = new Set();
 
-async function refreshStaleUserProfile(userId) {
+async function refreshStaleUserProfile(userId: any) {
     if (pendingProfileRefresh.has(userId)) {
         return;
     }
     pendingProfileRefresh.add(userId);
     try {
         const existing = await database.getUserProfile(userId);
-        if (existing && Date.now() - Date.parse(existing.updatedAt) < PROFILE_REFRESH_INTERVAL) {
+        if (existing && Date.now() - Date.parse((existing as any).updatedAt) < PROFILE_REFRESH_INTERVAL) {
             return;
         }
         await userRequest.getPublicProfile({ userId });
@@ -152,7 +156,11 @@ async function refreshStaleUserProfile(userId) {
  * @param {import('@/types/vrcx').Json<import('vrchat').User>} json
  * @returns {import('@/types/vrcx').VrcxUser}
  */
-export function applyUser(json) {
+
+
+
+
+export function applyUser(json: import('@/types/vrcx').Json<import('vrchat').User>) {
     const userStore = useUserStore();
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const friendStore = useFriendStore();
@@ -307,26 +315,26 @@ export function applyUser(json) {
         D.note = String(ref.note || '');
         D.incomingRequest = false;
         D.outgoingRequest = false;
-        if (D.ref.friendRequestStatus === 'incoming') {
+        if ((D.ref as any).friendRequestStatus === 'incoming') {
             D.incomingRequest = true;
-        } else if (D.ref.friendRequestStatus === 'outgoing') {
+        } else if ((D.ref as any).friendRequestStatus === 'outgoing') {
             D.outgoingRequest = true;
         }
     }
     if (hasPropChanged) {
-        if (changedProps.location && changedProps.location[0] !== 'traveling') {
+        if ((changedProps as any).location && (changedProps as any).location[0] !== 'traveling') {
             if (playerListRef) {
                 ref.$location_at = playerListRef.joinTime;
             } else {
                 const ts = Date.now();
-                changedProps.location.push(ts - ref.$location_at);
+                (changedProps as any).location.push(ts - ref.$location_at);
                 ref.$location_at = ts;
             }
         }
         handleUserUpdate(ref, changedProps);
         if (AppDebug.debugUserDiff) {
-            delete changedProps.last_login;
-            delete changedProps.last_activity;
+            delete (changedProps as any).last_login;
+            delete (changedProps as any).last_activity;
             if (Object.keys(changedProps).length !== 0) {
                 console.log('>', ref.displayName, changedProps);
             }
@@ -339,7 +347,7 @@ export function applyUser(json) {
 /**
  * @param {string} userId
  */
-export function showUserDialog(userId) {
+export function showUserDialog(userId: string) {
     if (!userId || typeof userId !== 'string' || userId === 'usr_00000000-0000-0000-0000-000000000000') {
         return;
     }
@@ -361,7 +369,7 @@ export function showUserDialog(userId) {
     const D = userDialog;
     D.visible = true;
     if (isMainDialogOpen && D.id === userId) {
-        uiStore.setDialogCrumbLabel('user', D.id, D.ref?.displayName || D.id);
+        uiStore.setDialogCrumbLabel('user', D.id, (D.ref as any)?.displayName || D.id);
         userStore.applyUserDialogLocation(true);
         return;
     }
@@ -371,8 +379,8 @@ export function showUserDialog(userId) {
     D.memo = '';
     D.note = '';
     getUserMemo(userId).then((memo) => {
-        if (memo.userId === userId) {
-            D.memo = memo.memo;
+        if ((memo as any).userId === userId) {
+            D.memo = (memo as any).memo;
         }
     });
 
@@ -430,13 +438,17 @@ export function showUserDialog(userId) {
         });
     }
     updateUserDialogProfile();
-    AppApi.SendIpc('ShowUserDialog', userId);
+    (AppApi as any).SendIpc('ShowUserDialog', userId);
     queryRequest
         .fetch('user', {
             userId
         })
         .catch((err) => {
             D.loading = false;
+
+
+
+
             D.id = null;
             D.visible = false;
             uiStore.jumpBackDialogCrumb();
@@ -444,14 +456,14 @@ export function showUserDialog(userId) {
             throw err;
         })
         .then((args) => {
-            if (args.ref.id === D.id) {
+            if ((args as any).ref.id === D.id) {
                 D.loading = false;
 
-                D.ref = args.ref;
-                uiStore.setDialogCrumbLabel('user', D.id, D.ref?.displayName || D.id);
+                D.ref = (args as any).ref;
+                uiStore.setDialogCrumbLabel('user', D.id, (D.ref as any)?.displayName || D.id);
                 D.friend = friendStore.friends.get(D.id);
                 D.isFriend = Boolean(D.friend);
-                D.note = String(D.ref.note || '');
+                D.note = String((D.ref as any).note || '');
                 D.incomingRequest = false;
                 D.outgoingRequest = false;
                 D.isBlock = false;
@@ -473,13 +485,13 @@ export function showUserDialog(userId) {
                 }
                 D.isFavorite =
                     favoriteStore.getCachedFavoritesByObjectId(D.id) || favoriteStore.isInAnyLocalFriendGroup(D.id);
-                if (D.ref.friendRequestStatus === 'incoming') {
+                if ((D.ref as any).friendRequestStatus === 'incoming') {
                     D.incomingRequest = true;
-                } else if (D.ref.friendRequestStatus === 'outgoing') {
+                } else if ((D.ref as any).friendRequestStatus === 'outgoing') {
                     D.outgoingRequest = true;
                 }
                 let inCurrentWorld = false;
-                if (locationStore.lastLocation.playerList.has(D.ref.id)) {
+                if (locationStore.lastLocation.playerList.has((D.ref as any).id)) {
                     inCurrentWorld = true;
                 }
                 if (userId !== currentUser.id && watchState.isFriendsLoaded) {
@@ -501,7 +513,7 @@ export function showUserDialog(userId) {
                                 continue;
                             }
                             if (notification.type === 'DisplayName') {
-                                displayNameMap.set(notification.previousDisplayName, notification.created_at);
+                                displayNameMap.set((notification as any).previousDisplayName, notification.created_at);
                             }
                             if (
                                 notification.type === 'Friend' ||
@@ -510,6 +522,10 @@ export function showUserDialog(userId) {
                                 dateFriendedInfo.unshift(notification);
                             }
                         }
+
+
+
+
                         D.dateFriendedInfo = dateFriendedInfo;
                         if (dateFriendedInfo.length > 0) {
                             const latestFriendedInfo = dateFriendedInfo[0];
@@ -517,26 +533,31 @@ export function showUserDialog(userId) {
                             D.dateFriended = latestFriendedInfo.created_at;
                         }
                         displayNameMap.forEach((updated_at, displayName) => {
+
+
+
+
                             D.previousDisplayNames.push({
                                 displayName,
                                 updated_at
                             });
                         });
                     });
-                    AppApi.GetVRChatUserModeration(currentUser.id, userId).then((result) => {
-                        D.avatarModeration = result;
-                        if (result === 4) {
-                            D.isHideAvatar = true;
-                        } else if (result === 5) {
-                            D.isShowAvatar = true;
-                        }
-                    });
+                    (AppApi as any).GetVRChatUserModeration(currentUser.id, userId).then((result: number) => {
+    D.avatarModeration = result;
+    if (result === 4) {
+        D.isHideAvatar = true;
+    }
+    else if (result === 5) {
+        D.isShowAvatar = true;
+    }
+});
                     if (!currentUser.hasSharedConnectionsOptOut) {
                         try {
                             queryRequest.fetch('mutualCounts', { userId }).then((args) => {
-                                if (args.params.userId === D.id) {
-                                    D.mutualFriendCount = args.json.friends;
-                                    D.mutualGroupCount = args.json.groups;
+                                if ((args as any).params.userId === D.id) {
+                                    D.mutualFriendCount = (args as any).json.friends;
+                                    D.mutualGroupCount = (args as any).json.groups;
                                 }
                             });
                         } catch (error) {
@@ -579,16 +600,28 @@ export function updateUserDialogProfile() {
             if (appearanceSettingsStore.displayVRCProfileThemes) {
                 D.theme = {
                     iconColor: getReadableProfileThemeColor(
+
+
+
+
                         args1.json.themeIconColor,
                         'var(--muted-foreground)',
                         appearanceSettingsStore.isDarkMode
                     ),
                     buttonColor: getReadableProfileThemeColor(
+
+
+
+
                         args1.json.themeButtonColor,
                         'var(--primary)',
                         appearanceSettingsStore.isDarkMode
                     ),
                     subtextColor: getReadableProfileThemeColor(
+
+
+
+
                         args1.json.themeSubtextColor,
                         'var(--muted-foreground)',
                         appearanceSettingsStore.isDarkMode
@@ -605,7 +638,7 @@ export function updateUserDialogProfile() {
 /**
  * @param {object} ref
  */
-function onPlayerTraveling(ref) {
+function onPlayerTraveling(ref: object) {
     const userStore = useUserStore();
     const gameStore = useGameStore();
     const locationStore = useLocationStore();
@@ -613,20 +646,20 @@ function onPlayerTraveling(ref) {
 
     if (
         !gameStore.isGameRunning ||
-        !locationStore.lastLocation.location ||
-        locationStore.lastLocation.location !== ref.travelingToLocation ||
-        ref.id === userStore.currentUser.id ||
-        locationStore.lastLocation.playerList.has(ref.id)
+    !locationStore.lastLocation.location ||
+    locationStore.lastLocation.location !== (ref as any).travelingToLocation ||
+    (ref as any).id === userStore.currentUser.id ||
+    locationStore.lastLocation.playerList.has((ref as any).id)
     ) {
         return;
     }
 
     const onPlayerJoining = {
-        created_at: new Date(ref.created_at).toJSON(),
-        userId: ref.id,
-        displayName: ref.displayName,
-        type: 'OnPlayerJoining'
-    };
+    created_at: new Date((ref as any).created_at).toJSON(),
+    userId: (ref as any).id,
+    displayName: (ref as any).displayName,
+    type: 'OnPlayerJoining'
+};
     notificationStore.queueFeedNoty(onPlayerJoining);
 }
 
@@ -634,15 +667,15 @@ function onPlayerTraveling(ref) {
  * @param {object} ref
  * @param {object} props
  */
-async function handleUserUpdate(ref, props) {
-    refreshStaleUserProfile(ref.id);
+async function handleUserUpdate(ref: object, props: object) {
+    refreshStaleUserProfile((ref as any).id);
     await runHandleUserUpdateFlow(ref, props);
 }
 
 /**
  * @param fileId
  */
-export async function refreshUserDialogAvatars(fileId) {
+export async function refreshUserDialogAvatars(fileId: string) {
     const userStore = useUserStore();
     const avatarStore = useAvatarStore();
 
@@ -675,7 +708,7 @@ export async function refreshUserDialogAvatars(fileId) {
             fn: avatarRequest.getAvatars,
             N: -1,
             params,
-            handle: (args) => {
+            handle: (args: { json: any; }) => {
                 for (const json of args.json) {
                     const ref = applyAvatar(json);
                     map.set(ref.id, ref);
@@ -686,13 +719,13 @@ export async function refreshUserDialogAvatars(fileId) {
             fn: avatarRequest.getLicensedAvatars,
             N: -1,
             params: { n: 100, offset: 0 },
-            handle: (args) => {
+            handle: (args: { json: any; }) => {
                 for (const json of args.json) {
                     const ref = applyAvatar(json);
                     licensedMap.set(ref.id, ref);
                 }
             },
-            done: (success) => {
+            done: (success: any) => {
                 if (success && userId === D.id) {
                     userStore.sortUserDialogLicensedAvatars(Array.from(licensedMap.values()));
                 }
@@ -719,7 +752,7 @@ export async function refreshUserDialogAvatars(fileId) {
 /**
  * @param ref
  */
-export async function lookupUser(ref) {
+export async function lookupUser(ref: { userId: string; displayName: string; }) {
     const userStore = useUserStore();
     const searchStore = useSearchStore();
 
@@ -739,10 +772,10 @@ export async function lookupUser(ref) {
     searchStore.setSearchText(ref.displayName);
     await searchStore.searchUserByDisplayName(ref.displayName);
     for (ctx of searchStore.searchUserResults) {
-        if (ctx.displayName === ref.displayName) {
+        if ((ctx as any).displayName === ref.displayName) {
             searchStore.setSearchText('');
             searchStore.clearSearch();
-            showUserDialog(ctx.id);
+            showUserDialog((ctx as any).id);
             return;
         }
     }
@@ -751,20 +784,20 @@ export async function lookupUser(ref) {
 /**
  * @param {object} args
  */
-export function handleConfig(args) {
+export function handleConfig(args: object) {
     const authStore = useAuthStore();
     const userStore = useUserStore();
 
     const ref = {
-        ...args.json
-    };
-    args.ref = ref;
+    ...(args as any).json
+};
+    (args as any).ref = ref;
     authStore.setCachedConfig(ref);
-    if (typeof args.ref?.whiteListedAssetUrls !== 'object') {
+    if (typeof (args as any).ref?.whiteListedAssetUrls !== 'object') {
         console.error('Invalid config whiteListedAssetUrls');
     }
-    AppApi.PopulateImageHosts(JSON.stringify(args.ref.whiteListedAssetUrls));
-    const languages = args.ref?.constants?.LANGUAGE?.SPOKEN_LANGUAGE_OPTIONS;
+    (AppApi as any).PopulateImageHosts(JSON.stringify((args as any).ref.whiteListedAssetUrls));
+    const languages = (args as any).ref?.constants?.LANGUAGE?.SPOKEN_LANGUAGE_OPTIONS;
     if (!languages) {
         return;
     }
@@ -775,7 +808,11 @@ export function handleConfig(args) {
  * @param {import('@/types/vrcx').Json<import('vrchat').CurrentUser>} json
  * @returns {import('@/types/vrcx').VrcxCurrentUser}
  */
-export function applyCurrentUser(json) {
+
+
+
+
+export function applyCurrentUser(json: import('@/types/vrcx').Json<import('vrchat').CurrentUser>) {
     const userStore = useUserStore();
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const authStore = useAuthStore();
@@ -783,7 +820,11 @@ export function applyCurrentUser(json) {
     const locationStore = useLocationStore();
 
     authStore.setAttemptingAutoLogin(false);
-    let ref = /** @type {import('@/types/vrcx').VrcxCurrentUser} */ (userStore.currentUser);
+
+
+
+
+    let ref = (userStore.currentUser as import('@/types/vrcx').VrcxCurrentUser);
     runAvatarSwapFlow({
         json,
         ref,
@@ -796,7 +837,7 @@ export function applyCurrentUser(json) {
             }
         }
     } else {
-        ref = /** @type {import('@/types/vrcx').VrcxCurrentUser} */ ({
+        ref = ({
             acceptedPrivacyVersion: 0,
             acceptedTOSVersion: 0,
             accountDeletionDate: null,
@@ -934,7 +975,7 @@ export function applyCurrentUser(json) {
             $locationTag: '',
             $travelingToLocation: '',
             ...json
-        });
+        } as import('@/types/vrcx').VrcxCurrentUser);
         runFirstLoginFlow(ref);
     }
 
@@ -1023,7 +1064,7 @@ export function getCurrentUser() {
     const authStore = useAuthStore();
     return request('auth/user', {
         method: 'GET'
-    }).then((json) => {
+    }).then((json: any) => {
         const args = {
             json
         };
@@ -1035,7 +1076,7 @@ export function getCurrentUser() {
 /**
  * @param data
  */
-export function addCustomTag(data) {
+export function addCustomTag(data: { Tag: any; UserId: any; TagColour: any; }) {
     const userStore = useUserStore();
     const sharedFeedStore = useSharedFeedStore();
 
@@ -1051,7 +1092,7 @@ export function addCustomTag(data) {
         userId: data.UserId,
         colour: data.TagColour
     };
-    AppApi.ExecuteVrOverlayFunction('updateHudFeedTag', JSON.stringify(feedUpdate));
+    (AppApi as any).ExecuteVrOverlayFunction('updateHudFeedTag', JSON.stringify(feedUpdate));
     const ref = userStore.cachedUsers.get(data.UserId);
     if (typeof ref !== 'undefined') {
         ref.$customTag = data.Tag;
@@ -1090,6 +1131,10 @@ export function updateAutoStateChange() {
     }
     if (
         generalSettingsStore.autoStateChangeInstanceTypes.length > 0 &&
+
+
+
+
         !generalSettingsStore.autoStateChangeInstanceTypes.includes(instanceType)
     ) {
         return;
@@ -1101,14 +1146,18 @@ export function updateAutoStateChange() {
         if (selectedGroups.length > 0) {
             const groupFriendIds = new Set();
             for (const ref of favoriteStore.cachedFavorites.values()) {
+
+
+
+
                 if (ref.type === 'friend' && selectedGroups.includes(ref.$groupKey)) {
                     groupFriendIds.add(ref.favoriteId);
                 }
             }
             for (const selectedKey of selectedGroups) {
-                if (selectedKey.startsWith('local:')) {
-                    const groupName = selectedKey.slice(6);
-                    const userIds = favoriteStore.localFriendFavorites[groupName];
+                if ((selectedKey as any).startsWith('local:')) {
+                    const groupName = (selectedKey as any).slice(6);
+                    const userIds = (favoriteStore.localFriendFavorites as any)[groupName];
                     if (userIds) {
                         for (let i = 0; i < userIds.length; ++i) {
                             groupFriendIds.add(userIds[i]);
@@ -1129,10 +1178,10 @@ export function updateAutoStateChange() {
     }
 
     const currentStatus = userStore.currentUser.status;
-    const newStatus = /** @type {import('vrchat').UserStatus} */ (
-        withCompany
+    const newStatus = (
+        (withCompany
             ? generalSettingsStore.autoStateChangeCompanyStatus
-            : generalSettingsStore.autoStateChangeAloneStatus
+            : generalSettingsStore.autoStateChangeAloneStatus) as import('vrchat').UserStatus
     );
 
     if (currentStatus === newStatus) {
@@ -1141,9 +1190,9 @@ export function updateAutoStateChange() {
 
     const params = { status: newStatus };
     if (withCompany && generalSettingsStore.autoStateChangeCompanyDescEnabled) {
-        params.statusDescription = generalSettingsStore.autoStateChangeCompanyDesc;
+        (params as any).statusDescription = generalSettingsStore.autoStateChangeCompanyDesc;
     } else if (!withCompany && generalSettingsStore.autoStateChangeAloneDescEnabled) {
-        params.statusDescription = generalSettingsStore.autoStateChangeAloneDesc;
+        (params as any).statusDescription = generalSettingsStore.autoStateChangeAloneDesc;
     }
 
     userRequest.saveCurrentUser(params).then(() => {
@@ -1151,6 +1200,10 @@ export function updateAutoStateChange() {
         if (AppDebug.errorNoty) {
             toast.dismiss(AppDebug.errorNoty);
         }
+
+
+
+
         AppDebug.errorNoty = toast.info(text);
         console.log(text);
     });

@@ -1,3 +1,7 @@
+// TODO(ts-migrate): Check that this import is the one meant; TypeScript offered the name from
+// several modules.
+// describe was taken from vitest, over node:test. it was taken from vitest, over node:test.
+import { describe, it, expect } from 'vitest';
 import {
     sanitizeUserJson,
     computeTrustLevel,
@@ -150,14 +154,14 @@ describe('computeUserPlatform', () => {
 });
 
 describe('diffObjectProps', () => {
-    const arraysMatch = (a, b) => a.length === b.length && a.every((v, i) => v === b[i]);
+    const arraysMatch = (a: any, b: any) => a.length === b.length && a.every((v: any, i: any) => v === b[i]);
 
     it('detects changed primitive props', () => {
         const ref = { name: 'old', id: '1' };
         const json = { name: 'new', id: '1' };
         const result = diffObjectProps(ref, json, arraysMatch);
         expect(result.hasPropChanged).toBe(true);
-        expect(result.changedProps.name).toEqual(['new', 'old']);
+        expect((result.changedProps as any).name).toEqual(['new', 'old']);
     });
 
     it('detects unchanged props', () => {
@@ -172,7 +176,7 @@ describe('diffObjectProps', () => {
         const json = { tags: ['a', 'c'] };
         const result = diffObjectProps(ref, json, arraysMatch);
         expect(result.hasPropChanged).toBe(true);
-        expect(result.changedProps.tags).toBeDefined();
+        expect((result.changedProps as any).tags).toBeDefined();
     });
 
     it('ignores props only in json (not in ref)', () => {

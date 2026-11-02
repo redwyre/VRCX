@@ -1,6 +1,8 @@
+import { LocaleMessage, RemoveIndexSignature } from '@intlify/core-base';
+import { ComposerTranslation, VueMessageType, LocaleMessageValue } from 'vue-i18n';
 import { DASHBOARD_NAV_KEY_PREFIX } from '../../shared/constants';
 
-export function createBaseDefaultNavLayout(t) {
+export function createBaseDefaultNavLayout(t: ComposerTranslation<{ [x: string]: LocaleMessage<VueMessageType>; }, string, RemoveIndexSignature<{ [x: string]: LocaleMessageValue<VueMessageType>; }>, never, never, never>) {
     return [
         { type: 'item', key: 'feed' },
         { type: 'item', key: 'friends-locations' },
@@ -38,9 +40,9 @@ export function createBaseDefaultNavLayout(t) {
     ];
 }
 
-export function insertDashboardEntries(layout, dashboardDefinitions) {
+export function insertDashboardEntries(layout: ({ type: string; key: string; id?: undefined; nameKey?: undefined; name?: undefined; icon?: undefined; items?: undefined; } | { type: string; id: string; nameKey: string; name: any; icon: string; items: string[]; key?: undefined; })[], dashboardDefinitions: { key: string; icon: any; tooltip: any; labelKey: any; routeName: string; routeParams: { id: any; }; isDashboard: boolean; }[]) {
     const nextLayout = Array.isArray(layout) ? [...layout] : [];
-    const dashboardEntries = (dashboardDefinitions || []).map((def) => ({
+    const dashboardEntries = (dashboardDefinitions || []).map((def: { key: any; }) => ({
         type: 'item',
         key: def.key
     }));
@@ -60,6 +62,6 @@ export function insertDashboardEntries(layout, dashboardDefinitions) {
     return nextLayout;
 }
 
-export function isDashboardNavKey(key) {
+export function isDashboardNavKey(key: any) {
     return String(key || '').startsWith(DASHBOARD_NAV_KEY_PREFIX);
 }

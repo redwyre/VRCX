@@ -6,11 +6,11 @@ import { mount } from '@vue/test-utils';
 
 vi.mock('vue-i18n', () => ({
     useI18n: () => ({
-        t: (key, params) => (params ? `${key}:${JSON.stringify(params)}` : key),
+        t: (key: any, params: any) => (params ? `${key}:${JSON.stringify(params)}` : key),
         locale: require('vue').ref('en')
     }),
     createI18n: () => ({
-        global: { t: (key) => key, locale: require('vue').ref('en') },
+        global: { t: (key: any) => key, locale: require('vue').ref('en') },
         install: vi.fn()
     })
 }));
@@ -32,6 +32,10 @@ vi.mock('vue-router', async (importOriginal) => {
     const actual = await importOriginal();
     const { ref } = require('vue');
     return {
+
+
+
+
         ...actual,
         useRouter: vi.fn(() => ({
             push: vi.fn(),
@@ -139,7 +143,7 @@ const MOCK_GALLERY_IMAGES = {
 /**
  * @param {object} overrides
  */
-function mountComponent(overrides = {}) {
+function mountComponent(overrides: object = {}) {
     const pinia = createTestingPinia({
         stubActions: false
     });

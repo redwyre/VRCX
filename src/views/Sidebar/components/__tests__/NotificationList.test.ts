@@ -2,7 +2,7 @@ import { describe, expect, test, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 
 vi.mock('@tanstack/vue-virtual', () => ({
-    useVirtualizer: (optionsRef) => ({
+    useVirtualizer: (optionsRef: any) => ({
         value: {
             getVirtualItems: () => {
                 const options = optionsRef.value;
@@ -21,7 +21,7 @@ vi.mock('@tanstack/vue-virtual', () => ({
 
 vi.mock('vue-i18n', () => ({
     useI18n: () => ({
-        t: (key) => key,
+        t: (key: any) => key,
         locale: require('vue').ref('en')
     })
 }));
@@ -52,7 +52,7 @@ vi.mock('../NotificationItem.vue', () => ({
 
 import NotificationList from '../NotificationList.vue';
 
-function makeNoty(id, createdAt) {
+function makeNoty(id: string, createdAt: string) {
     return {
         id,
         created_at: createdAt,

@@ -13,7 +13,7 @@ import { computed } from 'vue';
  *   selected by key. Receives the full option object.
  * @returns {{ selectedKey: import('vue').ComputedRef<string>; selectByKey: (key: string) => void }}
  */
-export function useOptionKeySelect(optionsMap, getCurrentValue, onSelect) {
+export function useOptionKeySelect(optionsMap: object, getCurrentValue: () => any, onSelect: (option: any) => void) {
     const selectedKey = computed(() => {
         const current = getCurrentValue();
         const found = Object.entries(optionsMap).find(([, option]) => {
@@ -28,8 +28,8 @@ export function useOptionKeySelect(optionsMap, getCurrentValue, onSelect) {
     /**
      * @param {string} key
      */
-    function selectByKey(key) {
-        const option = optionsMap[key];
+    function selectByKey(key: string) {
+        const option = (optionsMap as any)[key];
         if (!option) {
             return;
         }

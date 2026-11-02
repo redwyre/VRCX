@@ -16,7 +16,7 @@ const loginReq = {
         return request('auth/twofactorauth/otp/verify', {
             method: 'POST',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -29,7 +29,7 @@ const loginReq = {
         return request('auth/twofactorauth/totp/verify', {
             method: 'POST',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -44,7 +44,7 @@ const loginReq = {
         return request('auth/twofactorauth/emailotp/verify', {
             method: 'POST',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -56,7 +56,7 @@ const loginReq = {
     getConfig(): Promise<{ json: Json<ApiConfig> }> {
         return request('config', {
             method: 'GET'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json
             };
@@ -70,7 +70,7 @@ const loginReq = {
     }> {
         return request('auth/device/code', {
             method: 'POST'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json
             };
@@ -84,7 +84,7 @@ const loginReq = {
         return request('auth/device/status', {
             method: 'POST',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -97,7 +97,7 @@ const loginReq = {
         return request('auth/password', {
             method: 'PUT',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -110,7 +110,7 @@ const loginReq = {
         return request('auth/permissions', {
             method: 'GET',
             params: { condensed: true }
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json
             };

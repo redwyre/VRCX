@@ -10,11 +10,15 @@ const mocks = vi.hoisted(() => ({
     centerOpen: { value: false }
 }));
 
-vi.mock('pinia', async (i) => ({ ...(await i()), storeToRefs: (s) => s }));
-vi.mock('vue-i18n', () => ({ useI18n: () => ({ t: (k) => k }) }));
+vi.mock('pinia', async (i) => ({ ...(await i()), storeToRefs: (s: any) => s }));
+vi.mock('vue-i18n', () => ({ useI18n: () => ({ t: (k: any) => k }) }));
 vi.mock('@vueuse/core', async (importOriginal) => {
     const actual = await importOriginal();
     return {
+
+
+
+
         ...actual,
         useMagicKeys: () => ({}),
         whenever: vi.fn()
@@ -30,7 +34,7 @@ vi.mock('../../../stores', () => ({
     useNotificationStore: () => ({
         isNotificationCenterOpen: mocks.centerOpen,
         hasUnseenNotifications: mocks.hasUnseen,
-        markAllAsSeen: (...a) => mocks.markAllAsSeen(...a)
+        markAllAsSeen: (...a: any[]) => mocks.markAllAsSeen(...a)
     }),
     useAppearanceSettingsStore: () => ({
         sidebarSortMethod1: ref(''),
@@ -56,14 +60,14 @@ vi.mock('../../../stores', () => ({
     })
 }));
 vi.mock('../../../stores/quickSearch', () => ({
-    useQuickSearchStore: () => ({ open: (...a) => mocks.openSearch(...a) })
+    useQuickSearchStore: () => ({ open: (...a: any[]) => mocks.openSearch(...a) })
 }));
 vi.mock('../../../coordinators/friendSyncCoordinator', () => ({
-    runRefreshFriendsListFlow: (...a) => mocks.refreshFriends(...a)
+    runRefreshFriendsListFlow: (...a: any[]) => mocks.refreshFriends(...a)
 }));
 vi.mock('../sidebarSettingsUtils', () => ({
-    normalizeFavoriteGroupsChange: (v) => v,
-    resolveFavoriteGroups: (v) => v
+    normalizeFavoriteGroupsChange: (v: any) => v,
+    resolveFavoriteGroups: (v: any) => v
 }));
 vi.mock('@/components/ui/button', () => ({
     Button: {

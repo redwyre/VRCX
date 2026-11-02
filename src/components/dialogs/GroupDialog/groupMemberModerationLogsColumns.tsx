@@ -1,12 +1,24 @@
 import Location from '@/components/Location.vue';
+
+
+
+
 import { i18n } from '@/plugins';
+
+
+
+
 import { formatDateFilter } from '@/shared/utils';
 import { ArrowUpDown } from 'lucide-vue-next';
+
+
+
+
 import { Button } from '@/components/ui/button';
 
 const { t } = i18n.global;
 
-const sortButton = ({ column, label, descFirst = false }) => (
+const sortButton = ({ column, label, descFirst = false }: any) => (
     <Button
         variant="ghost"
         size="sm"
@@ -25,66 +37,98 @@ const sortButton = ({ column, label, descFirst = false }) => (
     </Button>
 );
 
-export const createColumns = ({ onShowUser }) => [
+export const createColumns = ({ onShowUser }: any) => [
     {
         accessorKey: 'created_at',
-        header: ({ column }) =>
+        header: ({ column }: any) =>
             sortButton({
                 column,
                 label: t('dialog.group_member_moderation.created_at')
             }),
         size: 170,
-        cell: ({ row }) => <span>{formatDateFilter(row.original?.created_at, 'long')}</span>
+
+
+
+
+        cell: ({ row }: any) => <span>{formatDateFilter(row.original?.created_at, 'long')}</span>
     },
     {
         accessorKey: 'eventType',
-        header: ({ column }) =>
+        header: ({ column }: any) =>
             sortButton({
                 column,
                 label: t('dialog.group_member_moderation.type')
             }),
         size: 190,
-        cell: ({ row }) => <span>{row.original?.eventType}</span>
+
+
+
+
+        cell: ({ row }: any) => <span>{row.original?.eventType}</span>
     },
     {
         accessorKey: 'actorDisplayName',
-        header: ({ column }) =>
+        header: ({ column }: any) =>
             sortButton({
                 column,
                 label: t('dialog.group_member_moderation.display_name')
             }),
         size: 160,
-        cell: ({ row }) => {
+        cell: ({ row }: any) => {
             const original = row.original;
             return (
+
+
+
+
                 <span
                     style="cursor: pointer"
-                    onClick={(e) => {
+                    onClick={(e: { stopPropagation: () => void; }) => {
                         e.stopPropagation();
                         onShowUser?.(original?.actorId);
                     }}
                 >
+
+
+
+
                     <span>{original?.actorDisplayName}</span>
+
+
+
+
                 </span>
             );
         }
     },
     {
         id: 'description',
-        accessorFn: (row) => row?.description ?? '',
+        accessorFn: (row: { description: any; }) => row?.description ?? '',
         header: () => t('dialog.group_member_moderation.description'),
         meta: {
             stretch: true
         },
-        cell: ({ row }) => {
+        cell: ({ row }: any) => {
             const original = row.original;
             const targetId = original?.targetId ?? '';
             return (
+
+
+
+
                 <span>
                     {typeof targetId === 'string' && targetId.startsWith('wrld_') ? (
                         <Location location={targetId} />
                     ) : null}
+
+
+
+
                     <span>{original?.description}</span>
+
+
+
+
                 </span>
             );
         }
@@ -93,10 +137,14 @@ export const createColumns = ({ onShowUser }) => [
         id: 'data',
         header: () => t('dialog.group_member_moderation.data'),
         enableSorting: false,
-        cell: ({ row }) => {
+        cell: ({ row }: any) => {
             const original = row.original;
             const data = original?.data;
             const hasData = data && typeof data === 'object' && Object.keys(data).length;
+
+
+
+
             return <span>{hasData ? JSON.stringify(data) : ''}</span>;
         }
     }

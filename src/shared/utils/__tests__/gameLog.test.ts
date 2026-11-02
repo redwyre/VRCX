@@ -1,3 +1,8 @@
+// TODO(ts-migrate): Check that this import is the one meant; TypeScript offered the name from
+// several modules.
+// describe was taken from vitest, over node:test. test was taken from vitest, over node:test
+// and node:test.
+import { describe, test, expect } from 'vitest';
 import {
     compareGameLogRows,
     createJoinLeaveEntry,
@@ -132,7 +137,15 @@ describe('getGameLogCreatedAtTs', () => {
     });
 
     test('returns 0 for null/undefined row', () => {
+
+
+
+
         expect(getGameLogCreatedAtTs(null)).toBe(0);
+
+
+
+
         expect(getGameLogCreatedAtTs(undefined)).toBe(0);
     });
 

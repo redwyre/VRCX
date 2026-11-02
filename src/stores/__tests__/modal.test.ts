@@ -21,6 +21,10 @@ vi.mock('../../plugins/router', () => ({
 vi.mock('vue-router', async (importOriginal) => {
     const actual = await importOriginal();
     return {
+
+
+
+
         ...actual,
         useRouter: vi.fn(() => ({
             push: vi.fn(),
@@ -65,15 +69,19 @@ vi.mock('../../services/watchState', () => ({
 }));
 vi.mock('vue-i18n', async (importOriginal) => {
     const actual = await importOriginal();
-    const i18n = actual.createI18n({
-        locale: 'en',
-        fallbackLocale: 'en',
-        legacy: false,
-        missingWarn: false,
-        fallbackWarn: false,
-        messages: { en }
-    });
+    const i18n = (actual as any).createI18n({
+    locale: 'en',
+    fallbackLocale: 'en',
+    legacy: false,
+    missingWarn: false,
+    fallbackWarn: false,
+    messages: { en }
+});
     return {
+
+
+
+
         ...actual,
         useI18n: () => i18n.global
     };
@@ -82,7 +90,7 @@ vi.mock('vue-i18n', async (importOriginal) => {
 import { useModalStore } from '../modal';
 
 describe('useModalStore', () => {
-    let store;
+    let store: any;
 
     beforeEach(() => {
         setActivePinia(createPinia());

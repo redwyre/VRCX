@@ -7,7 +7,7 @@ describe('loadEcharts', () => {
             __esModule: true,
             marker: 'mock-echarts'
         }));
-        const { loadEcharts } = await import('../chart.js');
+        const { loadEcharts } = await import('../chart');
 
         const module = await loadEcharts();
 
@@ -20,7 +20,7 @@ describe('loadEcharts', () => {
             __esModule: true,
             marker: 'mock-echarts'
         }));
-        const { loadEcharts } = await import('../chart.js');
+        const { loadEcharts } = await import('../chart');
 
         const first = await loadEcharts();
         const second = await loadEcharts();
@@ -33,7 +33,7 @@ describe('loadEcharts', () => {
         vi.doMock('echarts', () => {
             throw new Error('import failed');
         });
-        const { loadEcharts } = await import('../chart.js');
+        const { loadEcharts } = await import('../chart');
 
         await expect(loadEcharts()).rejects.toThrow();
     });

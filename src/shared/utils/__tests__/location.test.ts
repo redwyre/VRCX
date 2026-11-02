@@ -1,4 +1,8 @@
-import { vi } from 'vitest';
+// TODO(ts-migrate): Check that this import is the one meant; TypeScript offered the name from
+// several modules.
+// describe was taken from vitest, over node:test. test was taken from vitest, over node:test
+// and node:test.
+import { describe, expect, test, vi } from 'vitest';
 
 // Mock transitive deps from location.js → stores → columns.jsx → i18n
 vi.mock('../../../views/Feed/Feed.vue', () => ({
@@ -147,11 +151,23 @@ describe('Location Utils', () => {
         });
 
         test('handles empty and null inputs', () => {
+
+
+
+
             expect(parseLocation(null).tag).toBe('');
+
+
+
+
             expect(parseLocation(undefined).tag).toBe('');
             expect(parseLocation('').tag).toBe('');
 
             [null, undefined, ''].forEach((input) => {
+
+
+
+
                 const result = parseLocation(input);
                 expect(result.isOffline).toBe(false);
                 expect(result.isPrivate).toBe(false);
@@ -238,6 +254,10 @@ describe('Location Utils', () => {
 
         test('handles empty or missing world name', () => {
             expect(displayLocation('wrld_12345:instance', '')).toBe(' public');
+
+
+
+
             expect(displayLocation('wrld_12345:instance', undefined)).toBe('undefined public');
         });
 
@@ -254,6 +274,10 @@ describe('Location Utils', () => {
         test('handles malformed location strings', () => {
             expect(displayLocation('invalid-location', 'Test World')).toBe('Test World');
             expect(displayLocation('', 'Test World')).toBe('Test World');
+
+
+
+
             expect(displayLocation(null, 'Test World')).toBe('Test World');
         });
     });
@@ -397,7 +421,7 @@ describe('Location Utils', () => {
 
     describe('translateAccessType', () => {
         // Simple mock translation: returns the key itself
-        const t = (key) => key;
+        const t = (key: any) => key;
 
         test('returns raw name when not in keyMap', () => {
             expect(translateAccessType('unknown', t, accessTypeLocaleKeyMap)).toBe('unknown');
@@ -431,7 +455,7 @@ describe('Location Utils', () => {
     });
 
     describe('getLocationText', () => {
-        const t = (key) => key;
+        const t = (key: any) => key;
         const opts = (overrides = {}) => ({
             hint: '',
             worldName: undefined,

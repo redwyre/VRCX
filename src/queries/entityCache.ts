@@ -19,7 +19,7 @@ const RECENCY_FIELDS = [
 /**
  * @param data
  */
-function getComparableEntity(data) {
+function getComparableEntity(data: { ref: any; json: any; }) {
     if (!data || typeof data !== 'object') {
         return null;
     }
@@ -35,7 +35,7 @@ function getComparableEntity(data) {
 /**
  * @param value
  */
-function parseTimestamp(value) {
+function parseTimestamp(value: unknown) {
     if (typeof value === 'number' && Number.isFinite(value)) {
         return value;
     }
@@ -51,7 +51,7 @@ function parseTimestamp(value) {
 /**
  * @param data
  */
-function getRecencyTimestamp(data) {
+function getRecencyTimestamp(data: any) {
     const comparable = getComparableEntity(data);
     if (!comparable) {
         return null;
@@ -71,7 +71,7 @@ function getRecencyTimestamp(data) {
  * @param currentData
  * @param nextData
  */
-function shouldReplaceCurrent(currentData, nextData) {
+function shouldReplaceCurrent(currentData: unknown, nextData: any) {
     if (typeof currentData === 'undefined') {
         return true;
     }
@@ -93,7 +93,7 @@ function shouldReplaceCurrent(currentData, nextData) {
 /**
  * @param data
  */
-function hasCompleteEntityData(data) {
+function hasCompleteEntityData(data: any) {
     if (!data || typeof data !== 'object') {
         return false;
     }
@@ -121,7 +121,7 @@ function hasCompleteEntityData(data) {
 /**
  * @param {{ queryKey: unknown[]; nextData: any }} options
  */
-export function patchQueryDataWithRecency({ queryKey, nextData }) {
+export function patchQueryDataWithRecency({ queryKey, nextData }: { queryKey: unknown[]; nextData: any; }) {
     queryClient.setQueryData(queryKey, (currentData) => {
         if (!shouldReplaceCurrent(currentData, nextData)) {
             return currentData;
@@ -139,11 +139,15 @@ export function patchQueryDataWithRecency({ queryKey, nextData }) {
  * }} options
  * @returns {Promise<{ data: any; cache: boolean }>}
  */
-export async function fetchWithEntityPolicy({ queryKey, policy, queryFn, label }) {
+export async function fetchWithEntityPolicy({ queryKey, policy, queryFn, label }: { queryKey: unknown[]; policy: { staleTime: number; gcTime: number; retry: number; refetchOnWindowFocus: boolean; }; queryFn: () => Promise<any>; label?: string; }) {
     const queryState = queryClient.getQueryState(queryKey);
     const isFresh =
         Boolean(queryState?.dataUpdatedAt) &&
         policy.staleTime > 0 &&
+
+
+
+
         Date.now() - queryState.dataUpdatedAt < policy.staleTime;
 
     const data = await queryClient.fetchQuery({
@@ -168,7 +172,7 @@ export async function fetchWithEntityPolicy({ queryKey, policy, queryFn, label }
  * @param {unknown[]} queryKey
  * @returns {Promise<void>}
  */
-export async function refetchActiveEntityQuery(queryKey) {
+export async function refetchActiveEntityQuery(queryKey: unknown[]) {
     await queryClient.invalidateQueries({
         queryKey,
         exact: true,
@@ -180,7 +184,7 @@ export async function refetchActiveEntityQuery(queryKey) {
  * @param {{ queryKey: unknown[]; nextData: any }} options
  * @returns {Promise<void>}
  */
-export async function patchAndRefetchActiveQuery({ queryKey, nextData }) {
+export async function patchAndRefetchActiveQuery({ queryKey, nextData }: { queryKey: unknown[]; nextData: any; }) {
     patchQueryDataWithRecency({ queryKey, nextData });
     await refetchActiveEntityQuery(queryKey);
 }
@@ -188,74 +192,74 @@ export async function patchAndRefetchActiveQuery({ queryKey, nextData }) {
 /**
  * @param {object} ref
  */
-export function patchUserFromEvent(ref) {
-    if (!ref?.id) return;
-    const queryKey = queryKeys.user(ref.id);
+export function patchUserFromEvent(ref: object) {
+    if (!(ref as any)?.id) return;
+    const queryKey = queryKeys.user((ref as any).id);
     const existing = queryClient.getQueryData(queryKey);
     if (!hasCompleteEntityData(existing)) return;
     patchQueryDataWithRecency({
-        queryKey,
-        nextData: {
-            cache: false,
-            json: ref,
-            params: { userId: ref.id },
-            ref
-        }
-    });
-}
-
-/**
- * @param {object} ref
- */
-export function patchAvatarFromEvent(ref) {
-    if (!ref?.id) return;
-    const queryKey = queryKeys.avatar(ref.id);
-    const existing = queryClient.getQueryData(queryKey);
-    if (!hasCompleteEntityData(existing)) return;
-    patchQueryDataWithRecency({
-        queryKey,
-        nextData: {
-            cache: false,
-            json: ref,
-            params: { avatarId: ref.id },
-            ref
-        }
-    });
-}
-
-/**
- * @param {object} ref
- */
-export function patchWorldFromEvent(ref) {
-    if (!ref?.id) return;
-    const queryKey = queryKeys.world(ref.id);
-    const existing = queryClient.getQueryData(queryKey);
-    if (!hasCompleteEntityData(existing)) return;
-    patchQueryDataWithRecency({
-        queryKey,
-        nextData: {
-            cache: false,
-            json: ref,
-            params: { worldId: ref.id },
-            ref
-        }
-    });
-}
-
-/**
- * @param {object} ref
- */
-export function patchGroupFromEvent(ref) {
-    if (!ref?.id) return;
-
-    const nextData = {
+    queryKey,
+    nextData: {
         cache: false,
         json: ref,
-        params: { groupId: ref.id },
+        params: { userId: (ref as any).id },
         ref
-    };
+    }
+});
+}
 
-    const keyFalse = queryKeys.group(ref.id, false);
+/**
+ * @param {object} ref
+ */
+export function patchAvatarFromEvent(ref: object) {
+    if (!(ref as any)?.id) return;
+    const queryKey = queryKeys.avatar((ref as any).id);
+    const existing = queryClient.getQueryData(queryKey);
+    if (!hasCompleteEntityData(existing)) return;
+    patchQueryDataWithRecency({
+    queryKey,
+    nextData: {
+        cache: false,
+        json: ref,
+        params: { avatarId: (ref as any).id },
+        ref
+    }
+});
+}
+
+/**
+ * @param {object} ref
+ */
+export function patchWorldFromEvent(ref: object) {
+    if (!(ref as any)?.id) return;
+    const queryKey = queryKeys.world((ref as any).id);
+    const existing = queryClient.getQueryData(queryKey);
+    if (!hasCompleteEntityData(existing)) return;
+    patchQueryDataWithRecency({
+    queryKey,
+    nextData: {
+        cache: false,
+        json: ref,
+        params: { worldId: (ref as any).id },
+        ref
+    }
+});
+}
+
+/**
+ * @param {object} ref
+ */
+export function patchGroupFromEvent(ref: object) {
+    if (!(ref as any)?.id) return;
+
+    const nextData = {
+    cache: false,
+    json: ref,
+    params: { groupId: (ref as any).id },
+    ref
+};
+
+    const keyFalse = queryKeys.group((ref as any).id, false);
     const existingFalse = queryClient.getQueryData(keyFalse);
     if (hasCompleteEntityData(existingFalse)) {
         patchQueryDataWithRecency({
@@ -264,7 +268,7 @@ export function patchGroupFromEvent(ref) {
         });
     }
 
-    const keyTrue = queryKeys.group(ref.id, true);
+    const keyTrue = queryKeys.group((ref as any).id, true);
     const existingTrue = queryClient.getQueryData(keyTrue);
     if (hasCompleteEntityData(existingTrue)) {
         patchQueryDataWithRecency({

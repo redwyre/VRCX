@@ -5,23 +5,27 @@ import { i18n } from '../../../plugins';
 
 const { t } = i18n.global;
 
-export const createColumns = ({ onShowAvatar, onShowUser, onDelete, onShowFullscreenImage }) => [
+export const createColumns = ({ onShowAvatar, onShowUser, onDelete, onShowFullscreenImage }: any) => [
     {
         id: 'image',
         header: () => t('table.import.image'),
         enableSorting: false,
         size: 70,
-        cell: ({ row }) => {
+        cell: ({ row }: any) => {
             const original = row.original;
             const thumb = original?.thumbnailImageUrl;
             const full = original?.imageUrl;
 
             return (
+
+
+
+
                 <img
                     src={thumb}
                     class="friends-list-avatar"
                     loading="lazy"
-                    onClick={(e) => {
+                    onClick={(e: { stopPropagation: () => void; }) => {
                         e.stopPropagation();
                         if (full) {
                             onShowFullscreenImage?.(full);
@@ -38,18 +42,26 @@ export const createColumns = ({ onShowAvatar, onShowUser, onDelete, onShowFullsc
         meta: {
             stretch: true
         },
-        cell: ({ row }) => {
+        cell: ({ row }: any) => {
             const original = row.original;
             return (
+
+
+
+
                 <span
                     class=" cursor-pointer"
                     title={original?.name}
-                    onClick={(e) => {
+                    onClick={(e: { stopPropagation: () => void; }) => {
                         e.stopPropagation();
                         onShowAvatar?.(original?.id);
                     }}
                 >
                     {original?.name}
+
+
+
+
                 </span>
             );
         }
@@ -59,18 +71,26 @@ export const createColumns = ({ onShowAvatar, onShowUser, onDelete, onShowFullsc
         header: () => t('table.import.author'),
         size: 120,
         enableSorting: false,
-        cell: ({ row }) => {
+        cell: ({ row }: any) => {
             const original = row.original;
             return (
+
+
+
+
                 <span
                     class=" cursor-pointer"
                     title={original?.authorName}
-                    onClick={(e) => {
+                    onClick={(e: { stopPropagation: () => void; }) => {
                         e.stopPropagation();
                         onShowUser?.(original?.authorId);
                     }}
                 >
                     {original?.authorName}
+
+
+
+
                 </span>
             );
         }
@@ -80,11 +100,15 @@ export const createColumns = ({ onShowAvatar, onShowUser, onDelete, onShowFullsc
         header: () => t('table.import.status'),
         size: 70,
         enableSorting: false,
-        cell: ({ row }) => {
+        cell: ({ row }: any) => {
             const status = String(row.original?.releaseStatus ?? '');
             const label = status ? status.charAt(0).toUpperCase() + status.slice(1) : '';
             const colorClass =
                 status === 'public' ? 'text-status-online' : status === 'private' ? 'text-destructive' : '';
+
+
+
+
             return <span class={colorClass}>{label}</span>;
         }
     },
@@ -96,13 +120,13 @@ export const createColumns = ({ onShowAvatar, onShowUser, onDelete, onShowFullsc
         meta: {
             tdClass: 'text-right'
         },
-        cell: ({ row }) => {
+        cell: ({ row }: any) => {
             const original = row.original;
             return (
                 <Button
                     size="icon-sm"
                     variant="ghost"
-                    onClick={(e) => {
+                    onClick={(e: { stopPropagation: () => void; }) => {
                         e.stopPropagation();
                         onDelete?.(original);
                     }}

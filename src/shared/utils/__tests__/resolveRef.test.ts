@@ -1,3 +1,8 @@
+// TODO(ts-migrate): Check that this import is the one meant; TypeScript offered the name from
+// several modules.
+// describe was taken from vitest, over node:test. beforeEach was taken from vitest, over
+// node:test. test was taken from vitest, over node:test and node:test.
+import { describe, vi, beforeEach, test, expect } from 'vitest';
 import { resolveRef } from '../resolveRef';
 
 describe('resolveRef', () => {
@@ -42,8 +47,8 @@ describe('resolveRef', () => {
             fetchFn: mockFetchFn
         });
         expect(mockFetchFn).toHaveBeenCalledWith('usr_123');
-        expect(result.id).toBe('usr_123');
-        expect(result.displayName).toBe('Alice');
+        expect((result as any).id).toBe('usr_123');
+        expect((result as any).displayName).toBe('Alice');
     });
 
     test('returns object with name when name is already present', async () => {
@@ -55,7 +60,7 @@ describe('resolveRef', () => {
             fetchFn: mockFetchFn
         });
         expect(mockFetchFn).not.toHaveBeenCalled();
-        expect(result.displayName).toBe('Bob');
+        expect((result as any).displayName).toBe('Bob');
     });
 
     test('fetches name when object has id but no name', async () => {
@@ -64,7 +69,7 @@ describe('resolveRef', () => {
         });
         const result = await resolveRef({ id: 'usr_789' }, { emptyDefault, idAlias, nameKey, fetchFn: mockFetchFn });
         expect(mockFetchFn).toHaveBeenCalledWith('usr_789');
-        expect(result.displayName).toBe('Charlie');
+        expect((result as any).displayName).toBe('Charlie');
     });
 
     test('uses idAlias as fallback for id', async () => {
@@ -76,7 +81,7 @@ describe('resolveRef', () => {
             { emptyDefault, idAlias, nameKey, fetchFn: mockFetchFn }
         );
         expect(mockFetchFn).toHaveBeenCalledWith('usr_alt');
-        expect(result.displayName).toBe('AltUser');
+        expect((result as any).displayName).toBe('AltUser');
     });
 
     test('handles fetch failure gracefully', async () => {
@@ -87,8 +92,8 @@ describe('resolveRef', () => {
             nameKey,
             fetchFn: mockFetchFn
         });
-        expect(result.id).toBe('usr_err');
-        expect(result.displayName).toBe('');
+        expect((result as any).id).toBe('usr_err');
+        expect((result as any).displayName).toBe('');
     });
 
     test('returns input properties when no id and no name', async () => {
@@ -100,6 +105,6 @@ describe('resolveRef', () => {
             fetchFn: mockFetchFn
         });
         expect(mockFetchFn).not.toHaveBeenCalled();
-        expect(result.someField).toBe('value');
+        expect((result as any).someField).toBe('value');
     });
 });

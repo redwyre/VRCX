@@ -14,7 +14,14 @@ import { database } from '../../../services/database';
  * @param {string} [deps.sdkUnityVersion]
  * @returns {object} Info composable API
  */
-export function useWorldDialogInfo(worldDialog, { t, toast, sdkUnityVersion }) {
+export function useWorldDialogInfo(worldDialog: import('vue').Ref, { t, toast, sdkUnityVersion }: {
+    t: Function;
+    toast: {
+        success: Function;
+        error: Function;
+    };
+    sdkUnityVersion?: string;
+}) {
     const { memo, onWorldMemoChange } = useWorldMemo(worldDialog);
 
     const isTimeInLabVisible = computed(() => {
@@ -46,14 +53,14 @@ export function useWorldDialogInfo(worldDialog, { t, toast, sdkUnityVersion }) {
 
     const worldTags = computed(() => {
         return worldDialog.value.ref?.tags
-            ?.filter((tag) => tag.startsWith('author_tag'))
-            .map((tag) => tag.replace('author_tag_', ''))
+            ?.filter((tag: string) => tag.startsWith('author_tag'))
+            .map((tag: string) => tag.replace('author_tag_', ''))
             .join(', ');
     });
 
     const worldDialogPlatform = computed(() => {
         const { ref } = worldDialog.value;
-        const platforms = [];
+        const platforms: string[] = [];
         if (ref.unityPackages) {
             for (const unityPackage of ref.unityPackages) {
                 if (!compareUnityVersion(unityPackage.unitySortNumber, sdkUnityVersion)) {
@@ -89,8 +96,8 @@ export function useWorldDialogInfo(worldDialog, { t, toast, sdkUnityVersion }) {
             }
             const platform = unityPackage.platform;
             const createdAt = unityPackage.created_at;
-            if (!newest[platform] || new Date(createdAt) > new Date(newest[platform])) {
-                newest[platform] = createdAt;
+            if (!(newest as any)[platform] || new Date(createdAt) > new Date((newest as any)[platform])) {
+                (newest as any)[platform] = createdAt;
             }
         }
         return newest;
@@ -153,7 +160,7 @@ export function useWorldDialogInfo(worldDialog, { t, toast, sdkUnityVersion }) {
  * @param {import('vue').Ref} worldDialog - Reactive ref to the world dialog state
  * @returns {object} Memo composable API
  */
-export function useWorldMemo(worldDialog) {
+export function useWorldMemo(worldDialog: import('vue').Ref) {
     const memo = computed({
         get() {
             return worldDialog.value.memo;

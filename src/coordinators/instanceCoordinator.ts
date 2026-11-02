@@ -4,7 +4,11 @@ import { parseLocation } from '../shared/utils/locationParser';
 /**
  * @param {object} instance
  */
-function refreshInstancePlayerCount(instance) {
+function refreshInstancePlayerCount(instance: object) {
+
+
+
+
     const L = parseLocation(instance);
     if (L.isRealInstance) {
         instanceRequest.getInstance({

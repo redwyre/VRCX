@@ -14,8 +14,8 @@ const mocks = vi.hoisted(() => ({
     setString: vi.fn()
 }));
 
-vi.mock('pinia', async (i) => ({ ...(await i()), storeToRefs: (s) => s }));
-vi.mock('vue-i18n', () => ({ useI18n: () => ({ t: (k) => k }) }));
+vi.mock('pinia', async (i) => ({ ...(await i()), storeToRefs: (s: any) => s }));
+vi.mock('vue-i18n', () => ({ useI18n: () => ({ t: (k: any) => k }) }));
 
 vi.mock('../../../../stores', () => ({
     usePhotonStore: () => ({
@@ -25,13 +25,13 @@ vi.mock('../../../../stores', () => ({
         sharedFeedFilters: mocks.sharedFeedFilters
     }),
     useSharedFeedStore: () => ({
-        loadSharedFeed: (...a) => mocks.loadSharedFeed(...a)
+        loadSharedFeed: (...a: any[]) => mocks.loadSharedFeed(...a)
     })
 }));
 
 vi.mock('../../../../services/config', () => ({
     default: {
-        setString: (...a) => mocks.setString(...a)
+        setString: (...a: any[]) => mocks.setString(...a)
     }
 }));
 

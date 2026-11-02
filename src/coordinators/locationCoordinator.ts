@@ -63,7 +63,7 @@ export function runUpdateCurrentUserLocationFlow() {
     }
 }
 
-export async function runSetCurrentUserLocationFlow(location, travelingToLocation) {
+export async function runSetCurrentUserLocationFlow(location: string, travelingToLocation: string) {
     const userStore = useUserStore();
     const instanceStore = useInstanceStore();
     const notificationStore = useNotificationStore();
@@ -80,7 +80,7 @@ export async function runSetCurrentUserLocationFlow(location, travelingToLocatio
         return;
     }
     const lastLocationArray = await database.lookupGameLogDatabase(['Location'], [], 1);
-    const lastLocationTemp = lastLocationArray.length > 0 ? lastLocationArray[0].location : '';
+    const lastLocationTemp = lastLocationArray.length > 0 ? (lastLocationArray[0] as any).location : '';
     if (lastLocationTemp === location) {
         return;
     }
@@ -103,6 +103,10 @@ export async function runSetCurrentUserLocationFlow(location, travelingToLocatio
             location,
             worldId: L.worldId,
             worldName: await getWorldName(L.worldId),
+
+
+
+
             groupName: await getGroupName(L.groupId),
             time: 0
         };
@@ -125,7 +129,7 @@ export async function runSetCurrentUserLocationFlow(location, travelingToLocatio
     }
 }
 
-export async function runLastLocationResetFlow(gameLogDate) {
+export async function runLastLocationResetFlow(gameLogDate?: any) {
     const photonStore = usePhotonStore();
     const instanceStore = useInstanceStore();
     const gameLogStore = useGameLogStore();

@@ -5,7 +5,7 @@ vi.mock('vue-sonner', () => ({
 }));
 
 vi.mock('vue-i18n', () => ({
-    useI18n: () => ({ t: (key) => key, locale: require('vue').ref('en') })
+    useI18n: () => ({ t: (key: any) => key, locale: require('vue').ref('en') })
 }));
 
 import { applyTransforms, cropImage, useImageCropper } from '../useImageCropper';
@@ -16,7 +16,7 @@ import { applyTransforms, cropImage, useImageCropper } from '../useImageCropper'
  * @param width
  * @param height
  */
-function makeImage(width, height) {
+function makeImage(width: number, height: number) {
     return { width, height };
 }
 
@@ -56,8 +56,8 @@ function makeCropperResult({
     };
 }
 
-let mockCtx;
-let canvasInstances;
+let mockCtx: any;
+let canvasInstances: any;
 
 function setupCanvasMocks() {
     canvasInstances = [];
@@ -71,7 +71,12 @@ function setupCanvasMocks() {
     };
 
     const origCreateElement = document.createElement.bind(document);
+
+
+
+
     vi.spyOn(document, 'createElement').mockImplementation((tag) => {
+
         if (tag === 'canvas') {
             const canvas = {
                 width: 0,
@@ -122,6 +127,10 @@ describe('useImageCropper', () => {
 
     test('getCroppedBlob returns null when getResult returns no coordinates', async () => {
         const { getCroppedBlob, cropperRef } = useImageCropper();
+
+
+
+
         cropperRef.value = { getResult: () => ({}) };
         const result = await getCroppedBlob();
         expect(result).toBeNull();
@@ -140,16 +149,28 @@ describe('cropImage', () => {
     });
 
     test('returns null when no cropperResult', async () => {
+
+
+
+
         const result = await cropImage(makeImage(100, 75), 1, null);
         expect(result).toBeNull();
     });
 
     test('returns null when cropperResult has no coordinates', async () => {
+
+
+
+
         const result = await cropImage(makeImage(100, 75), 1, { image: {} });
         expect(result).toBeNull();
     });
 
     test('returns null when no originalImage', async () => {
+
+
+
+
         const result = await cropImage(null, 1, makeCropperResult());
         expect(result).toBeNull();
     });
@@ -165,6 +186,10 @@ describe('cropImage', () => {
             imgW: 200,
             imgH: 150
         });
+
+
+
+
 
         const result = await cropImage(img, 1, cropResult, file);
         expect(result).toBe(file);
@@ -182,6 +207,10 @@ describe('cropImage', () => {
             imgH: 150
         });
 
+
+
+
+
         const result = await cropImage(img, 1, cropResult, file);
         expect(result).toBe(file);
     });
@@ -197,6 +226,10 @@ describe('cropImage', () => {
             imgW: 200,
             imgH: 150
         });
+
+
+
+
 
         const result = await cropImage(img, 1, cropResult, file);
         expect(result).not.toBe(file);
@@ -216,6 +249,10 @@ describe('cropImage', () => {
             rotate: 90
         });
 
+
+
+
+
         const result = await cropImage(img, 1, cropResult, file);
         expect(result).not.toBe(file);
         expect(result).toBeInstanceOf(Blob);
@@ -231,6 +268,10 @@ describe('cropImage', () => {
             imgW: 400,
             imgH: 300
         });
+
+
+
+
 
         await cropImage(img, 0.25, cropResult);
 
@@ -251,6 +292,10 @@ describe('cropImage', () => {
             imgH: 150
         });
 
+
+
+
+
         await cropImage(img, 1, cropResult);
 
         expect(mockCtx.drawImage).toHaveBeenCalledWith(img, -10, -20);
@@ -266,6 +311,10 @@ describe('cropImage', () => {
             imgW: 200,
             imgH: 150
         });
+
+
+
+
 
         const result = await cropImage(img, 1, cropResult);
 
@@ -284,6 +333,10 @@ describe('cropImage', () => {
             imgW: 200,
             imgH: 150
         });
+
+
+
+
 
         const result = await cropImage(img, 1, cropResult);
         // No file passed, so it should crop even if covering full image
@@ -314,6 +367,10 @@ describe('cropImage with transforms', () => {
             rotate: 90
         });
 
+
+
+
+
         await cropImage(img, 1, cropResult);
 
         // Two canvases: one for transform, one for crop
@@ -337,6 +394,10 @@ describe('cropImage with transforms', () => {
             rotate: 90
         });
 
+
+
+
+
         await cropImage(img, 1, cropResult);
 
         expect(mockCtx.translate).toHaveBeenCalled();
@@ -355,6 +416,10 @@ describe('cropImage with transforms', () => {
             flipH: true
         });
 
+
+
+
+
         await cropImage(img, 1, cropResult);
 
         expect(mockCtx.scale).toHaveBeenCalledWith(-1, 1);
@@ -371,6 +436,10 @@ describe('cropImage with transforms', () => {
             imgH: 150,
             flipV: true
         });
+
+
+
+
 
         await cropImage(img, 1, cropResult);
 
@@ -390,6 +459,10 @@ describe('cropImage with transforms', () => {
             flipV: true
         });
 
+
+
+
+
         await cropImage(img, 1, cropResult);
 
         expect(mockCtx.scale).toHaveBeenCalledWith(-1, 1);
@@ -406,6 +479,10 @@ describe('cropImage with transforms', () => {
             imgW: 200,
             imgH: 150
         });
+
+
+
+
 
         await cropImage(img, 1, cropResult);
 
@@ -429,6 +506,10 @@ describe('applyTransforms', () => {
 
     test('returns canvas with swapped dimensions for 90° rotation', () => {
         const img = makeImage(200, 150);
+
+
+
+
         const result = applyTransforms(img, 90, false, false);
         expect(result.width).toBe(150);
         expect(result.height).toBe(200);
@@ -436,6 +517,10 @@ describe('applyTransforms', () => {
 
     test('returns canvas with same dimensions for 180° rotation', () => {
         const img = makeImage(200, 150);
+
+
+
+
         const result = applyTransforms(img, 180, false, false);
         expect(result.width).toBe(200);
         expect(result.height).toBe(150);
@@ -443,6 +528,10 @@ describe('applyTransforms', () => {
 
     test('returns canvas with swapped dimensions for 270° rotation', () => {
         const img = makeImage(200, 150);
+
+
+
+
         const result = applyTransforms(img, 270, false, false);
         expect(result.width).toBe(150);
         expect(result.height).toBe(200);
@@ -450,6 +539,10 @@ describe('applyTransforms', () => {
 
     test('returns canvas with same dimensions for 0° rotation', () => {
         const img = makeImage(200, 150);
+
+
+
+
         const result = applyTransforms(img, 0, false, false);
         expect(result.width).toBe(200);
         expect(result.height).toBe(150);
@@ -457,6 +550,10 @@ describe('applyTransforms', () => {
 
     test('calls translate to center of canvas', () => {
         const img = makeImage(200, 150);
+
+
+
+
         applyTransforms(img, 90, false, false);
         // For 90°: rotW=150, rotH=200
         expect(mockCtx.translate).toHaveBeenCalledWith(75, 100);
@@ -464,30 +561,50 @@ describe('applyTransforms', () => {
 
     test('calls scale for horizontal flip', () => {
         const img = makeImage(200, 150);
+
+
+
+
         applyTransforms(img, 0, true, false);
         expect(mockCtx.scale).toHaveBeenCalledWith(-1, 1);
     });
 
     test('calls scale for vertical flip', () => {
         const img = makeImage(200, 150);
+
+
+
+
         applyTransforms(img, 0, false, true);
         expect(mockCtx.scale).toHaveBeenCalledWith(1, -1);
     });
 
     test('does not call scale when no flips', () => {
         const img = makeImage(200, 150);
+
+
+
+
         applyTransforms(img, 90, false, false);
         expect(mockCtx.scale).not.toHaveBeenCalled();
     });
 
     test('draws image centered at origin', () => {
         const img = makeImage(200, 150);
+
+
+
+
         applyTransforms(img, 0, false, false);
         expect(mockCtx.drawImage).toHaveBeenCalledWith(img, -100, -75);
     });
 
     test('handles square image correctly', () => {
         const img = makeImage(100, 100);
+
+
+
+
         const result = applyTransforms(img, 90, false, false);
         expect(result.width).toBe(100);
         expect(result.height).toBe(100);

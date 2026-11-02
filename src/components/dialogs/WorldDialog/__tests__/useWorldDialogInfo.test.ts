@@ -60,7 +60,7 @@ function createWorldDialog(overrides = {}) {
  * @param {Object} overrides
  * @returns {{ t: Function; toast: { success: Function; error: Function }; sdkUnityVersion?: string }}
  */
-function createDeps(overrides = {}) {
+function createDeps(overrides: object = {}) {
     return {
         t: vi.fn((key) => key),
         toast: {
@@ -75,7 +75,7 @@ function createDeps(overrides = {}) {
 describe('useWorldDialogInfo', () => {
     beforeEach(() => {
         vi.clearAllMocks();
-        compareUnityVersion.mockReturnValue(true);
+        (compareUnityVersion as any).mockReturnValue(true);
     });
 
     describe('memo computed', () => {
@@ -168,7 +168,7 @@ describe('useWorldDialogInfo', () => {
         });
 
         test('skips packages filtered by compareUnityVersion', () => {
-            compareUnityVersion.mockReturnValue(false);
+            (compareUnityVersion as any).mockReturnValue(false);
             const worldDialog = createWorldDialog();
             const { worldDialogPlatform } = useWorldDialogInfo(worldDialog, createDeps());
 
@@ -178,6 +178,10 @@ describe('useWorldDialogInfo', () => {
         test('uses platform name directly for unknown platforms', () => {
             const worldDialog = createWorldDialog();
             worldDialog.value.ref.unityPackages = [
+
+
+
+
                 {
                     platform: 'ios',
                     unityVersion: '2022.3.6f1',
@@ -203,6 +207,10 @@ describe('useWorldDialogInfo', () => {
 
         test('returns null when no unityPackages', () => {
             const worldDialog = createWorldDialog();
+
+
+
+
             worldDialog.value.ref.unityPackages = undefined;
             const { worldDialogPlatformCreatedAt } = useWorldDialogInfo(worldDialog, createDeps());
 
@@ -212,6 +220,10 @@ describe('useWorldDialogInfo', () => {
         test('skips non-standard variants', () => {
             const worldDialog = createWorldDialog();
             worldDialog.value.ref.unityPackages = [
+
+
+
+
                 {
                     platform: 'standalonewindows',
                     variant: 'custom',

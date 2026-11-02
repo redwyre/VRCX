@@ -15,8 +15,8 @@ import configRepository from '../services/config';
 export async function initUi() {
     try {
         const language = await configRepository.getString('VRCX_appLanguage', 'en');
-        // @ts-ignore
-        i18n.locale = language;
+
+        (i18n as any).locale = language;
         await loadLocalizedStrings(language);
         changeHtmlLangAttribute(language);
 
@@ -39,8 +39,8 @@ export async function initUiForVrOverlay() {
             configRepository.getString('VRCX_cjkFontPack', APP_CJK_FONT_PACK_DEFAULT_KEY)
         ]);
 
-        // @ts-ignore
-        i18n.locale = language;
+
+        (i18n as any).locale = language;
         await loadLocalizedStrings(language);
         changeHtmlLangAttribute(language);
         applyAppFontFamily(fontFamily, customFontFamily);

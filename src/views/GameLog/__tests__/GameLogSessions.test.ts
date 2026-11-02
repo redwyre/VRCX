@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
-import { mount } from '@vue/test-utils';
+import { mount, VueWrapper } from '@vue/test-utils';
 const mocks = vi.hoisted(() => ({
-    makeRef: (value) => ({ value, __v_isRef: true }),
+    makeRef: (value: any) => ({ value, __v_isRef: true }),
     handleSessionsEventFilterChange: vi.fn(),
     toggleSessionsVipFilter: vi.fn(),
     setSessionsSearch: vi.fn(),
@@ -23,12 +23,12 @@ const sessionsDateRangeMaxDays = mocks.makeRef(7);
 const weekStartsOn = mocks.makeRef(0);
 
 vi.mock('pinia', () => ({
-    storeToRefs: (store) => store
+    storeToRefs: (store: any) => store
 }));
 
 vi.mock('vue-i18n', () => ({
     useI18n: () => ({
-        t: (key) => key,
+        t: (key: any) => key,
         locale: 'en-US'
     })
 }));
@@ -36,8 +36,8 @@ vi.mock('vue-i18n', () => ({
 vi.mock('@internationalized/date', () => ({
     getLocalTimeZone: () => 'UTC',
     today: () => ({}),
-    fromDate: (date) => date,
-    toDate: (date) => date
+    fromDate: (date: any) => date,
+    toDate: (date: any) => date
 }));
 
 vi.mock('../../../stores', () => ({
@@ -52,12 +52,12 @@ vi.mock('../../../stores', () => ({
         sessionsEventFilterSelection,
         sessionsEventFilterTypes,
         sessionsDateRangeMaxDays,
-        toggleSessionsVipFilter: (...args) => mocks.toggleSessionsVipFilter(...args),
-        handleSessionsEventFilterChange: (...args) => mocks.handleSessionsEventFilterChange(...args),
-        setSessionsSearch: (...args) => mocks.setSessionsSearch(...args),
-        setSessionsDateRange: (...args) => mocks.setSessionsDateRange(...args),
-        clearSessionsDateRange: (...args) => mocks.clearSessionsDateRange(...args),
-        loadMoreSessionsSegments: (...args) => mocks.loadMoreSessionsSegments(...args)
+        toggleSessionsVipFilter: (...args: any[]) => mocks.toggleSessionsVipFilter(...args),
+        handleSessionsEventFilterChange: (...args: any[]) => mocks.handleSessionsEventFilterChange(...args),
+        setSessionsSearch: (...args: any[]) => mocks.setSessionsSearch(...args),
+        setSessionsDateRange: (...args: any[]) => mocks.setSessionsDateRange(...args),
+        clearSessionsDateRange: (...args: any[]) => mocks.clearSessionsDateRange(...args),
+        loadMoreSessionsSegments: (...args: any[]) => mocks.loadMoreSessionsSegments(...args)
     }),
     useAppearanceSettingsStore: () => ({
         weekStartsOn
@@ -153,8 +153,8 @@ vi.mock('lucide-vue-next', () => ({
 
 import GameLogSessions from '../components/GameLogSessions.vue';
 
-function clickButtonByText(wrapper, text) {
-    const button = wrapper.findAll('button').find((node) => node.text().includes(text));
+function clickButtonByText(wrapper: VueWrapper<any, any>, text: string) {
+    const button = wrapper.findAll('button').find((node: { text: () => string | any[]; }) => node.text().includes(text));
     if (!button) {
         throw new Error(`Cannot find button with text: ${text}`);
     }
@@ -173,6 +173,10 @@ describe('GameLogSessions.vue', () => {
         mocks.setSessionsDateRange.mockReset();
         mocks.clearSessionsDateRange.mockReset();
         mocks.loadMoreSessionsSegments.mockReset();
+
+
+
+
         global.IntersectionObserver = class {
             disconnect() {}
             observe() {}

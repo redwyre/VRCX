@@ -8,7 +8,7 @@ import { i18n } from '../../plugins/i18n';
  * @param {string} fileName
  * @param {any} data
  */
-function downloadAndSaveJson(fileName, data) {
+function downloadAndSaveJson(fileName: string, data: any) {
     if (!fileName || !data) {
         return;
     }
@@ -31,7 +31,7 @@ function downloadAndSaveJson(fileName, data) {
  * @param {string} text
  * @param {string} message
  */
-function copyToClipboard(text, message = 'Copied successfully!') {
+function copyToClipboard(text: string, message: string = 'Copied successfully!') {
     navigator.clipboard
         .writeText(text)
         .then(() => {
@@ -46,7 +46,7 @@ function copyToClipboard(text, message = 'Copied successfully!') {
 /**
  * @param {string} link
  */
-function openExternalLink(link) {
+function openExternalLink(link: string) {
     const searchStore = useSearchStore();
     if (searchStore.directAccessParse(link)) {
         return;
@@ -56,21 +56,21 @@ function openExternalLink(link) {
     externalLinkStore.showExternalLinkDialog(link);
 }
 
-function openDiscordProfile(discordId) {
+function openDiscordProfile(discordId: string) {
     if (!discordId) {
         toast.error('No Discord ID provided!');
         return;
     }
-    AppApi.OpenDiscordProfile(discordId).catch((err) => {
-        console.error('Failed to open Discord profile:', err);
-        toast.error('Failed to open Discord profile!');
-    });
+    (AppApi as any).OpenDiscordProfile(discordId).catch((err: any) => {
+    console.error('Failed to open Discord profile:', err);
+    toast.error('Failed to open Discord profile!');
+});
 }
 
 // #region | App: Random unsorted app methods, data structs, API functions, and an API feedback/file analysis event
 
-function openFolderGeneric(path) {
-    AppApi.OpenFolderAndSelectItem(path, true);
+function openFolderGeneric(path: string) {
+    (AppApi as any).OpenFolderAndSelectItem(path, true);
 }
 
 export { downloadAndSaveJson, copyToClipboard, openExternalLink, openDiscordProfile, openFolderGeneric };

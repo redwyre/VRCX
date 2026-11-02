@@ -3,7 +3,7 @@ import { mount } from '@vue/test-utils';
 
 vi.mock('vue-i18n', () => ({
     useI18n: () => ({
-        t: (key) => key
+        t: (key: any) => key
     })
 }));
 
@@ -85,24 +85,24 @@ import MyAvatarCard from '../MyAvatarCard.vue';
 
 function mountCard(props = {}) {
     return mount(MyAvatarCard, {
-        props: {
-            avatar: {
-                id: 'avtr_1',
-                name: 'Avatar One',
-                thumbnailImageUrl: 'https://example.com/a.jpg',
-                releaseStatus: 'public',
-                unityPackages: [],
-                $tags: [{ tag: 'fun' }],
-                updated_at: '2025-01-01T00:00:00.000Z',
-                created_at: '2024-01-01T00:00:00.000Z',
-                version: 1,
-                ...props.avatar
-            },
-            currentAvatarId: '',
-            cardScale: 0.6,
-            ...props
-        }
-    });
+    props: {
+        avatar: {
+            id: 'avtr_1',
+            name: 'Avatar One',
+            thumbnailImageUrl: 'https://example.com/a.jpg',
+            releaseStatus: 'public',
+            unityPackages: [],
+            $tags: [{ tag: 'fun' }],
+            updated_at: '2025-01-01T00:00:00.000Z',
+            created_at: '2024-01-01T00:00:00.000Z',
+            version: 1,
+            ...(props as any).avatar
+        },
+        currentAvatarId: '',
+        cardScale: 0.6,
+        ...props
+    }
+});
 }
 
 describe('MyAvatarCard.vue', () => {
@@ -129,9 +129,17 @@ describe('MyAvatarCard.vue', () => {
             .find((node) => node.text().includes('dialog.avatar.actions.view_details'));
 
         expect(detailsItem).toBeTruthy();
+
+
+
+
         await detailsItem.trigger('click');
 
         expect(wrapper.emitted('context-action')).toBeTruthy();
+
+
+
+
         expect(wrapper.emitted('context-action')[0]).toEqual(['details', expect.objectContaining({ id: 'avtr_1' })]);
     });
 
@@ -140,6 +148,10 @@ describe('MyAvatarCard.vue', () => {
         const wearItem = wrapper
             .findAll('[data-testid="ctx-item"]')
             .find((node) => node.text().includes('view.favorite.select_avatar_tooltip'));
+
+
+
+
 
         expect(wearItem.attributes('disabled')).toBeDefined();
     });

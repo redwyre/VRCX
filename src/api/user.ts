@@ -34,7 +34,7 @@ const userReq = {
     getUser(params: { userId: string }): Promise<{ json: Json<User>; ref: VrcxUser; params: { userId: string } }> {
         return request(`users/${params.userId}`, {
             method: 'GET'
-        }).then((json) => {
+        }).then((json: { $lastFetch: number; }) => {
             if (!json) {
                 throw new Error(`getUser missing user data for: ${params.userId}`);
             }
@@ -52,7 +52,7 @@ const userReq = {
         return request('users', {
             method: 'GET',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -65,7 +65,7 @@ const userReq = {
         return request(`users/${getCurrentUserId()}/addTags`, {
             method: 'POST',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -79,7 +79,7 @@ const userReq = {
         return request(`users/${getCurrentUserId()}/removeTags`, {
             method: 'POST',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -95,7 +95,7 @@ const userReq = {
             params: {
                 n: 100
             }
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -110,7 +110,7 @@ const userReq = {
         return request(`users/${getCurrentUserId()}`, {
             method: 'PUT',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params,
@@ -130,7 +130,7 @@ const userReq = {
         return request(`userNotes`, {
             method: 'GET',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -142,7 +142,7 @@ const userReq = {
     getMutualCounts(params: { userId: string }): Promise<{ json: Json<Mutuals>; params: { userId: string } }> {
         return request(`users/${params.userId}/mutuals`, {
             method: 'GET'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -157,7 +157,7 @@ const userReq = {
         return request(`users/${params.userId}/mutuals/friends`, {
             method: 'GET',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -172,7 +172,7 @@ const userReq = {
         return request(`users/${params.userId}/mutuals/groups`, {
             method: 'GET',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -188,7 +188,7 @@ const userReq = {
     }> {
         return request(`profile/${params.userId}`, {
             method: 'GET'
-        }).then((json) => {
+        }).then((json: { $lastFetch: number; }) => {
             json.$lastFetch = Date.now();
             const args = {
                 json,
@@ -202,7 +202,7 @@ const userReq = {
     getPrivateProfile(params: { userId: string }): Promise<{ json: Json<PrivateProfile>; params: { userId: string } }> {
         return request(`profile/${params.userId}/private`, {
             method: 'GET'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -214,7 +214,7 @@ const userReq = {
     getClientConfig(): Promise<{ json: Json<UserClientConfig> }> {
         return request(`users/${getCurrentUserId()}/clientConfig`, {
             method: 'GET'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json
             };
@@ -228,7 +228,7 @@ const userReq = {
         return request(`users/${getCurrentUserId()}/clientConfig`, {
             method: 'PUT',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -240,7 +240,7 @@ const userReq = {
     getAccountStanding(): Promise<{ json: AccountStanding }> {
         return request('auth/user/accountStanding', {
             method: 'GET'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json
             };
@@ -254,7 +254,7 @@ const userReq = {
             params: {
                 asSelf: true
             }
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params: {}
@@ -267,7 +267,7 @@ const userReq = {
         return request(`profile/${getCurrentUserId()}`, {
             method: 'PUT',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -286,7 +286,7 @@ const userReq = {
         return request(`profile/theme/${params.themeId}`, {
             method: 'PUT',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -299,7 +299,7 @@ const userReq = {
         return request(`profile/theme`, {
             method: 'POST',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -311,7 +311,7 @@ const userReq = {
     deleteProfileTheme(params: { id: string }) {
         return request(`profile/theme/${params.id}`, {
             method: 'DELETE'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params

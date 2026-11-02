@@ -4,7 +4,7 @@ import { nextTick } from 'vue';
 
 vi.mock('vue-i18n', () => ({
     useI18n: () => ({
-        t: (key) => key
+        t: (key: any) => key
     })
 }));
 
@@ -108,14 +108,26 @@ describe('ManageTagsDialog.vue', () => {
             .find((node) => node.text().includes('prompt.rename_avatar.ok'));
 
         expect(okButton).toBeTruthy();
+
+
+
+
         await okButton.trigger('click');
 
         expect(wrapper.emitted('save')).toBeTruthy();
+
+
+
+
         expect(wrapper.emitted('save')[0][0]).toEqual({
             avatarId: 'avtr_1',
             tags: [{ tag: 'cute', color: null }]
         });
         expect(wrapper.emitted('update:open')).toBeTruthy();
+
+
+
+
         expect(wrapper.emitted('update:open').at(-1)).toEqual([false]);
     });
 
@@ -127,10 +139,18 @@ describe('ManageTagsDialog.vue', () => {
             .find((node) => node.text().includes('prompt.rename_avatar.cancel'));
 
         expect(cancelButton).toBeTruthy();
+
+
+
+
         await cancelButton.trigger('click');
 
         expect(wrapper.emitted('save')).toBeFalsy();
         expect(wrapper.emitted('update:open')).toBeTruthy();
+
+
+
+
         expect(wrapper.emitted('update:open').at(-1)).toEqual([false]);
     });
 });

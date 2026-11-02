@@ -1,9 +1,17 @@
+// TODO(ts-migrate): Check that this import is the one meant; TypeScript offered the name from
+// several modules.
+// describe was taken from vitest, over node:test. it was taken from vitest, over node:test.
+import { describe, it, expect } from 'vitest';
 import { computeDisabledContentSettings, createDefaultInstanceRef } from '../instanceTransforms';
 
 describe('computeDisabledContentSettings', () => {
     const settingsList = ['gore', 'nudity', 'violence'];
 
     it('returns empty for null contentSettings', () => {
+
+
+
+
         expect(computeDisabledContentSettings(null, settingsList)).toEqual([]);
     });
 

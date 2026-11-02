@@ -1,3 +1,8 @@
+// TODO(ts-migrate): Check that this import is the one meant; TypeScript offered the name from
+// several modules.
+// describe was taken from vitest, over node:test. test was taken from vitest, over node:test
+// and node:test.
+import { describe, test, expect } from 'vitest';
 import { createRateLimiter } from '../throttle';
 
 describe('createRateLimiter', () => {
@@ -6,6 +11,10 @@ describe('createRateLimiter', () => {
             limitPerInterval: 10,
             intervalMs: 1000
         });
+
+
+
+
         const result = await limiter.schedule(() => 42);
         expect(result).toBe(42);
     });
@@ -15,6 +24,10 @@ describe('createRateLimiter', () => {
             limitPerInterval: 10,
             intervalMs: 1000
         });
+
+
+
+
         const result = await limiter.schedule(() => new Promise((r) => setTimeout(() => r('async'), 10)));
         expect(result).toBe('async');
     });
@@ -26,6 +39,10 @@ describe('createRateLimiter', () => {
         });
         const results = [];
         for (let i = 0; i < 3; i++) {
+
+
+
+
             results.push(await limiter.schedule(() => i));
         }
         expect(results).toEqual([0, 1, 2]);
@@ -37,9 +54,17 @@ describe('createRateLimiter', () => {
             intervalMs: 50
         });
 
+
+
+
+
         await limiter.schedule(() => 'first');
         limiter.clear();
         // After clear, should be able to schedule immediately
+
+
+
+
         const result = await limiter.schedule(() => 'second');
         expect(result).toBe('second');
     });

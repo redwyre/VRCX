@@ -6,7 +6,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock('pinia', () => ({
-    storeToRefs: (store) => store
+    storeToRefs: (store: any) => store
 }));
 
 vi.mock('../../../../stores', () => ({
@@ -19,7 +19,7 @@ vi.mock('../../../../stores', () => ({
 }));
 
 vi.mock('../../../../coordinators/avatarCoordinator', () => ({
-    lookupAvatars: (...args) => mocks.lookupAvatars(...args)
+    lookupAvatars: (...args: any[]) => mocks.lookupAvatars(...args)
 }));
 
 import { useSearchAvatar } from '../useSearchAvatar';
@@ -43,8 +43,8 @@ describe('useSearchAvatar', () => {
         await api.searchAvatar();
 
         expect(mocks.lookupAvatars).toHaveBeenCalledWith('search', 'alice');
-        expect(api.searchAvatarResults.value.map((x) => x.id)).toEqual(['avtr_1', 'avtr_2']);
-        expect(api.searchAvatarPage.value.map((x) => x.id)).toEqual(['avtr_1', 'avtr_2']);
+        expect(api.searchAvatarResults.value.map((x) => (x as any).id)).toEqual(['avtr_1', 'avtr_2']);
+        expect(api.searchAvatarPage.value.map((x) => (x as any).id)).toEqual(['avtr_1', 'avtr_2']);
         expect(api.searchAvatarPageNum.value).toBe(0);
     });
 
@@ -60,6 +60,10 @@ describe('useSearchAvatar', () => {
 
     it('paginates results by 10 items', () => {
         const api = useSearchAvatar();
+
+
+
+
         api.searchAvatarResults.value = Array.from({ length: 25 }, (_, i) => ({
             id: `avtr_${i}`
         }));
@@ -67,12 +71,10 @@ describe('useSearchAvatar', () => {
 
         api.moreSearchAvatar(1);
         expect(api.searchAvatarPageNum.value).toBe(1);
-        expect(api.searchAvatarPage.value.map((x) => x.id)).toEqual(
-            Array.from({ length: 10 }, (_, i) => `avtr_${i + 10}`)
-        );
+        expect(api.searchAvatarPage.value.map((x) => (x as any).id)).toEqual(Array.from({ length: 10 }, (_, i) => `avtr_${i + 10}`));
 
         api.moreSearchAvatar(-1);
         expect(api.searchAvatarPageNum.value).toBe(0);
-        expect(api.searchAvatarPage.value.map((x) => x.id)).toEqual(Array.from({ length: 10 }, (_, i) => `avtr_${i}`));
+        expect(api.searchAvatarPage.value.map((x) => (x as any).id)).toEqual(Array.from({ length: 10 }, (_, i) => `avtr_${i}`));
     });
 });

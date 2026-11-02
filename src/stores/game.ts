@@ -1,7 +1,7 @@
 import { reactive, ref } from 'vue';
 import { defineStore } from 'pinia';
 
-import configRepository from '../services/config.js';
+import configRepository from '../services/config';
 
 export const useGameStore = defineStore('Game', () => {
     const state = reactive({
@@ -29,7 +29,15 @@ export const useGameStore = defineStore('Game', () => {
     async function init() {
         isGameNoVR.value = await configRepository.getBool('isGameNoVR');
         const [savedMs, savedAt] = await Promise.all([
+
+
+
+
             configRepository.getString('VRCX_lastGameSessionMs', null),
+
+
+
+
             configRepository.getString('VRCX_lastGameOfflineAt', null)
         ]);
         if (savedMs) lastSessionDurationMs.value = Number(savedMs) || 0;
@@ -41,28 +49,28 @@ export const useGameStore = defineStore('Game', () => {
     /**
      * @param {boolean} value Game running flag.
      */
-    function setIsGameRunning(value) {
+    function setIsGameRunning(value: boolean) {
         isGameRunning.value = value;
     }
 
     /**
      * @param {boolean} value Whether game was launched in non-VR mode.
      */
-    function setIsGameNoVR(value) {
+    function setIsGameNoVR(value: boolean) {
         isGameNoVR.value = value;
     }
 
     /**
      * @param {boolean} value SteamVR running flag.
      */
-    function setIsSteamVRRunning(value) {
+    function setIsSteamVRRunning(value: boolean) {
         isSteamVRRunning.value = value;
     }
 
     /**
      * @param {boolean} value HMD AFK flag.
      */
-    function setIsHmdAfk(value) {
+    function setIsHmdAfk(value: boolean) {
         isHmdAfk.value = value;
     }
 
@@ -70,7 +78,7 @@ export const useGameStore = defineStore('Game', () => {
      * @param {number} durationMs Session duration in milliseconds.
      * @param {number} offlineTimestamp Timestamp when game stopped.
      */
-    function setLastSession(durationMs, offlineTimestamp) {
+    function setLastSession(durationMs: number, offlineTimestamp: number) {
         lastSessionDurationMs.value = durationMs;
         lastOfflineAt.value = offlineTimestamp;
     }
@@ -78,7 +86,11 @@ export const useGameStore = defineStore('Game', () => {
     /**
      * @param {Date | null} value Last crashed time.
      */
-    function setLastCrashedTime(value) {
+    function setLastCrashedTime(value: Date | null) {
+
+
+
+
         state.lastCrashedTime = value;
     }
 
@@ -89,7 +101,7 @@ export const useGameStore = defineStore('Game', () => {
         VRChatCacheSizeLoading.value = true;
         const totalCacheSize = 30;
         VRChatTotalCacheSize.value = totalCacheSize;
-        const usedCacheSize = await AssetBundleManager.GetCacheSize();
+        const usedCacheSize = await (AssetBundleManager as any).GetCacheSize();
         VRChatUsedCacheSize.value = (usedCacheSize / 1073741824).toFixed(2);
         VRChatCacheSizeLoading.value = false;
     }
@@ -98,11 +110,11 @@ export const useGameStore = defineStore('Game', () => {
      * @param {string} key VRChat registry key.
      * @returns {Promise<unknown>} Registry key value.
      */
-    async function getVRChatRegistryKey(key) {
+    async function getVRChatRegistryKey(key: string) {
         if (LINUX) {
-            return AppApi.GetVRChatRegistryKeyString(key);
+            return (AppApi as any).GetVRChatRegistryKeyString(key);
         }
-        return AppApi.GetVRChatRegistryKey(key);
+        return (AppApi as any).GetVRChatRegistryKey(key);
     }
 
     return {

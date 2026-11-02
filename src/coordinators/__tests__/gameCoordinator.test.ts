@@ -74,7 +74,7 @@ vi.mock('../../stores/avatar', () => ({
 }));
 
 vi.mock('../avatarCoordinator', () => ({
-    addAvatarWearTime: (...args) => mocks.addAvatarWearTime(...args)
+    addAvatarWearTime: (...args: any[]) => mocks.addAvatarWearTime(...args)
 }));
 
 vi.mock('../../stores/gameLog', () => ({
@@ -100,7 +100,7 @@ vi.mock('../../stores/location', () => ({
 }));
 
 vi.mock('../locationCoordinator', () => ({
-    runLastLocationResetFlow: (...args) => mocks.runLastLocationResetFlow(...args)
+    runLastLocationResetFlow: (...args: any[]) => mocks.runLastLocationResetFlow(...args)
 }));
 
 vi.mock('../../stores/modal', () => ({

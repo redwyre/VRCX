@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 
 const mocks = vi.hoisted(() => ({
-    makeRef: (value) => ({ value, __v_isRef: true }),
+    makeRef: (value: any) => ({ value, __v_isRef: true }),
     hideUnfriends: null,
     friendLogTable: null,
     pagination: null,
@@ -16,24 +16,36 @@ const mocks = vi.hoisted(() => ({
     })
 }));
 
+
+
+
+
 mocks.hideUnfriends = mocks.makeRef(false);
+
+
+
+
 mocks.friendLogTable = mocks.makeRef({
     loading: false,
     data: [],
     filters: [{ value: [] }, { value: '' }, { value: false }]
 });
+
+
+
+
 mocks.pagination = mocks.makeRef({
     pageIndex: 3,
     pageSize: 10
 });
 
 vi.mock('pinia', () => ({
-    storeToRefs: (store) => store
+    storeToRefs: (store: any) => store
 }));
 
 vi.mock('vue-i18n', () => ({
     useI18n: () => ({
-        t: (key) => key,
+        t: (key: any) => key,
         locale: require('vue').ref('en')
     })
 }));
@@ -56,7 +68,7 @@ vi.mock('../../../stores', () => ({
 }));
 
 vi.mock('../../../lib/table/useVrcxVueTable', () => ({
-    useVrcxVueTable: (options) => ({
+    useVrcxVueTable: (options: { data: any; }) => ({
         table: {
             getFilteredRowModel: () => ({ rows: options.data })
         },
@@ -103,30 +115,46 @@ vi.mock('../../../components/ui/input-group', () => ({
 
 vi.mock('../../../services/config', () => ({
     default: {
-        setString: (...args) => mocks.configSetString(...args)
+        setString: (...args: any[]) => mocks.configSetString(...args)
     }
 }));
 
 vi.mock('../../../services/database', () => ({
     database: {
-        deleteFriendLogHistory: (...args) => mocks.deleteFriendLogHistory(...args)
+        deleteFriendLogHistory: (...args: any[]) => mocks.deleteFriendLogHistory(...args)
     }
 }));
 
 vi.mock('../../../shared/utils', () => ({
-    removeFromArray: (...args) => mocks.removeFromArray(...args)
+
+
+
+
+    removeFromArray: (...args: any[]) => mocks.removeFromArray(...args)
 }));
 
 import FriendLog from '../FriendLog.vue';
 
 describe('FriendLog.vue', () => {
     beforeEach(() => {
+
+
+
+
         mocks.hideUnfriends.value = false;
+
+
+
+
         mocks.friendLogTable.value = {
             loading: false,
             data: [],
             filters: [{ value: [] }, { value: '' }, { value: false }]
         };
+
+
+
+
         mocks.pagination.value = {
             pageIndex: 3,
             pageSize: 10
@@ -137,13 +165,25 @@ describe('FriendLog.vue', () => {
     });
 
     test('syncs hideUnfriends setting to table filter via watcher', () => {
+
+
+
+
         mocks.hideUnfriends.value = true;
         mount(FriendLog);
+
+
+
+
 
         expect(mocks.friendLogTable.value.filters[2].value).toBe(true);
     });
 
     test('filters and sorts friend log data', () => {
+
+
+
+
         mocks.friendLogTable.value.data = [
             {
                 rowId: 1,
@@ -164,6 +204,10 @@ describe('FriendLog.vue', () => {
                 created_at: '2026-03-10T00:00:00.000Z'
             }
         ];
+
+
+
+
         mocks.friendLogTable.value.filters = [{ value: ['Friend'] }, { value: 'ali' }, { value: true }];
         const wrapper = mount(FriendLog);
 
@@ -182,16 +226,28 @@ describe('FriendLog.vue', () => {
 
         await wrapper.get('[data-testid="set-type-filter"]').trigger('click');
 
+
+
+
+
         expect(mocks.friendLogTable.value.filters[0].value).toEqual(['Friend']);
         expect(mocks.configSetString).toHaveBeenCalledWith('VRCX_friendLogTableFilters', JSON.stringify(['Friend']));
     });
 
     test('deletes friend log row and writes to database', () => {
         const row = { rowId: 55 };
+
+
+
+
         mocks.friendLogTable.value.data = [row];
         const wrapper = mount(FriendLog);
 
         wrapper.vm.deleteFriendLog(row);
+
+
+
+
 
         expect(mocks.removeFromArray).toHaveBeenCalledWith(mocks.friendLogTable.value.data, row);
         expect(mocks.deleteFriendLogHistory).toHaveBeenCalledWith(row);
@@ -201,6 +257,10 @@ describe('FriendLog.vue', () => {
         const wrapper = mount(FriendLog);
 
         await wrapper.get('[data-testid="page-size-50"]').trigger('click');
+
+
+
+
 
         expect(mocks.pagination.value).toEqual({
             pageIndex: 0,

@@ -19,7 +19,7 @@ const avatarReq = {
     getAvatar(params: { avatarId: string }): Promise<{ json: Json<Avatar>; params: { avatarId: string } }> {
         return request(`avatars/${params.avatarId}`, {
             method: 'GET'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -32,7 +32,7 @@ const avatarReq = {
         return request('avatars', {
             method: 'GET',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -46,7 +46,7 @@ const avatarReq = {
         return request(`avatars/${params.id}`, {
             method: 'PUT',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -61,11 +61,11 @@ const avatarReq = {
         });
     },
 
-    selectAvatar(params: { avatarId: string }): Promise<{ json: Json<CurrentUser>; params }> {
+    selectAvatar(params: { avatarId: string }): Promise<{ json: Json<CurrentUser>; params: any }> {
         return request(`avatars/${params.avatarId}/select`, {
             method: 'PUT',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -85,11 +85,11 @@ const avatarReq = {
         });
     },
 
-    selectFallbackAvatar(params: { avatarId: string }): Promise<{ json: Json<CurrentUser>; params }> {
+    selectFallbackAvatar(params: { avatarId: string }): Promise<{ json: Json<CurrentUser>; params: any }> {
         return request(`avatars/${params.avatarId}/selectfallback`, {
             method: 'PUT',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -109,10 +109,10 @@ const avatarReq = {
         });
     },
 
-    deleteAvatar(params: { avatarId: string }): Promise<{ json: Json<Avatar>; params }> {
+    deleteAvatar(params: { avatarId: string }): Promise<{ json: Json<Avatar>; params: any }> {
         return request(`avatars/${params.avatarId}`, {
             method: 'DELETE'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -121,10 +121,10 @@ const avatarReq = {
         });
     },
 
-    createImposter(params: { avatarId: string }): Promise<{ json: Json<ServiceStatus>; params }> {
+    createImposter(params: { avatarId: string }): Promise<{ json: Json<ServiceStatus>; params: any }> {
         return request(`avatars/${params.avatarId}/impostor/enqueue`, {
             method: 'POST'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -133,10 +133,10 @@ const avatarReq = {
         });
     },
 
-    deleteImposter(params: { avatarId: string }): Promise<{ json: unknown; params }> {
+    deleteImposter(params: { avatarId: string }): Promise<{ json: unknown; params: any }> {
         return request(`avatars/${params.avatarId}/impostor`, {
             method: 'DELETE'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -148,7 +148,7 @@ const avatarReq = {
     getAvailableAvatarStyles(): Promise<{ json: Json<AvatarStyle[]> }> {
         return request('avatarStyles', {
             method: 'GET'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json
             };
@@ -168,7 +168,7 @@ const avatarReq = {
         return request(`files`, {
             params,
             method: 'GET'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -186,7 +186,7 @@ const avatarReq = {
             matchingDimensions: false,
             postData: JSON.stringify(params),
             imageData
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -205,7 +205,7 @@ const avatarReq = {
             matchingDimensions: false,
             postData: JSON.stringify(params),
             imageData
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -225,7 +225,7 @@ const avatarReq = {
         return request('files/order', {
             method: 'PUT',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -240,7 +240,7 @@ const avatarReq = {
         return request('avatars/licensed', {
             method: 'GET',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params

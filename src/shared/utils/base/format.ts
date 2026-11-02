@@ -21,8 +21,8 @@ const TIME_UNIT_KEYS = {
     secs: 'common.time_units.secs'
 };
 
-function getTimeUnitLabel(unit) {
-    const key = TIME_UNIT_KEYS[unit];
+function getTimeUnitLabel(unit: string) {
+    const key = TIME_UNIT_KEYS[unit as keyof typeof TIME_UNIT_KEYS];
     if (!key) {
         return unit;
     }
@@ -30,7 +30,7 @@ function getTimeUnitLabel(unit) {
     return typeof t === 'function' ? t(key) : unit;
 }
 
-function formatTimeUnit(value, unit) {
+function formatTimeUnit(value: number, unit: string) {
     return `${value} ${getTimeUnitLabel(value === 1 ? unit : `${unit}s`)}`;
 }
 
@@ -39,7 +39,7 @@ function formatTimeUnit(value, unit) {
  * @param {boolean} isNeedSeconds
  * @returns {string}
  */
-function timeToText(sec, isNeedSeconds = false) {
+function timeToText(sec: number, isNeedSeconds: boolean = false) {
     let n = Number(sec);
     if (isNaN(n)) {
         return escapeTag(String(sec));
@@ -73,7 +73,7 @@ function timeToText(sec, isNeedSeconds = false) {
     return arr.join(' ');
 }
 
-function timeAgo(datetime) {
+function timeAgo(datetime: any) {
     if (!datetime) {
         return '—';
     }
@@ -144,8 +144,8 @@ function timeAgo(datetime) {
  * @param {number} duration
  * @returns {string}
  */
-function formatSeconds(duration) {
-    const pad = function (num, size) {
+function formatSeconds(duration: number) {
+    const pad = function (num: number, size: number) {
             return `000${num}`.slice(size * -1);
         },
         time = Number(Number(duration).toFixed(3)),
@@ -163,7 +163,7 @@ function formatSeconds(duration) {
  * @param {number} bytes
  * @returns {string}
  */
-function formatFileSize(bytes) {
+function formatFileSize(bytes: number) {
     const units = ['KB', 'MB', 'GB'];
     let value = bytes / 1024;
     let unitIndex = 0;
@@ -180,28 +180,76 @@ function formatFileSize(bytes) {
  * @param {string} duration
  * @returns {number}
  */
-function convertYoutubeTime(duration) {
+function convertYoutubeTime(duration: string) {
     let a = duration.match(/\d+/g);
     if (duration.indexOf('M') >= 0 && duration.indexOf('H') === -1 && duration.indexOf('S') === -1) {
+
+
+
+
         a = ['0', a[0], '0'];
     }
     if (duration.indexOf('H') >= 0 && duration.indexOf('M') === -1) {
+
+
+
+
         a = [a[0], '0', a[1]];
     }
     if (duration.indexOf('H') >= 0 && duration.indexOf('M') === -1 && duration.indexOf('S') === -1) {
+
+
+
+
         a = [a[0], '0', '0'];
     }
     let length = 0;
+
+
+
+
     if (a.length === 3) {
+
+
+
+
         length += parseInt(a[0], 10) * 3600;
+
+
+
+
         length += parseInt(a[1], 10) * 60;
+
+
+
+
         length += parseInt(a[2], 10);
     }
+
+
+
+
     if (a.length === 2) {
+
+
+
+
         length += parseInt(a[0], 10) * 60;
+
+
+
+
         length += parseInt(a[1], 10);
     }
+
+
+
+
     if (a.length === 1) {
+
+
+
+
         length += parseInt(a[0], 10);
     }
     return length;

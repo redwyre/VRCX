@@ -1,13 +1,33 @@
+
+
+
+
 import { Checkbox } from '@/components/ui/checkbox';
+
+
+
+
 import { i18n } from '@/plugins';
+
+
+
+
 import { formatDateFilter } from '@/shared/utils';
+
+
+
+
 import { Button } from '@/components/ui/button';
 import { ArrowUpDown } from 'lucide-vue-next';
+
+
+
+
 import { TooltipWrapper } from '@/components/ui/tooltip';
 
 const { t } = i18n.global;
 
-const sortButton = ({ column, label, descFirst = false }) => (
+const sortButton = ({ column, label, descFirst = false }: any) => (
     <Button
         variant="ghost"
         size="sm"
@@ -34,23 +54,31 @@ export const createColumns = ({
     onShowFullscreenImage,
     onShowUser,
     onSelectionChange
-}) => [
+}: any) => [
     {
         id: 'selected',
         header: () => null,
         size: 55,
         enableSorting: false,
-        cell: ({ row }) => {
+        cell: ({ row }: any) => {
             const original = row.original;
             return (
-                <div class="flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
+
+
+
+
+                <div class="flex items-center justify-center" onClick={(e: { stopPropagation: () => any; }) => e.stopPropagation()}>
                     <Checkbox
                         modelValue={!!original?.$selected}
-                        onUpdate:modelValue={(value) => {
+                        onUpdate:modelValue={(value: any) => {
                             original.$selected = value;
                             onSelectionChange?.(original);
                         }}
                     />
+
+
+
+
                 </div>
             );
         }
@@ -60,17 +88,21 @@ export const createColumns = ({
         header: () => t('dialog.group_member_moderation.avatar'),
         size: 70,
         enableSorting: false,
-        cell: ({ row }) => {
+        cell: ({ row }: any) => {
             const original = row.original;
             const thumb = userImage?.(original?.user);
             const full = userImageFull?.(original?.user);
 
             return (
+
+
+
+
                 <img
                     src={thumb}
                     class="friends-list-avatar"
                     loading="lazy"
-                    onClick={(e) => {
+                    onClick={(e: { stopPropagation: () => void; }) => {
                         e.stopPropagation();
                         if (full) {
                             onShowFullscreenImage?.(full);
@@ -82,57 +114,81 @@ export const createColumns = ({
     },
     {
         id: 'displayName',
-        accessorFn: (row) => row?.user?.displayName ?? row?.$displayName ?? '',
-        header: ({ column }) =>
+        accessorFn: (row: { user: { displayName: any; }; $displayName: any; }) => row?.user?.displayName ?? row?.$displayName ?? '',
+        header: ({ column }: any) =>
             sortButton({
                 column,
                 label: t('dialog.group_member_moderation.display_name')
             }),
         size: 160,
-        cell: ({ row }) => {
+        cell: ({ row }: any) => {
             const original = row.original;
             const useColors = !!(randomUserColours?.value ?? randomUserColours);
             const colorStyle = useColors ? { color: original?.user?.$userColour } : null;
 
             return (
+
+
+
+
                 <span
                     style="cursor: pointer"
-                    onClick={(e) => {
+                    onClick={(e: { stopPropagation: () => void; }) => {
                         e.stopPropagation();
                         onShowUser?.(original?.userId);
                     }}
                 >
+
+
+
+
                     <span style={colorStyle}>{original?.user?.displayName}</span>
+
+
+
+
                 </span>
             );
         }
     },
     {
         id: 'roles',
-        accessorFn: (row) => rolesText?.(row?.roleIds) ?? '',
-        header: ({ column }) =>
+        accessorFn: (row: { roleIds: any; }) => rolesText?.(row?.roleIds) ?? '',
+        header: ({ column }: any) =>
             sortButton({
                 column,
                 label: t('dialog.group_member_moderation.roles')
             }),
-        cell: ({ row }) => {
+        cell: ({ row }: any) => {
             const original = row.original;
+
+
+
+
             return <span>{rolesText?.(original?.roleIds) ?? ''}</span>;
         }
     },
     {
         accessorKey: 'managerNotes',
-        header: ({ column }) =>
+        header: ({ column }: any) =>
             sortButton({
                 column,
                 label: t('dialog.group_member_moderation.notes')
             }),
-        cell: ({ row }) => {
+        cell: ({ row }: any) => {
             const managerNotes = row.original?.managerNotes ?? '';
             return (
                 <TooltipWrapper content={managerNotes} disabled={!managerNotes}>
-                    <span class="inline-block max-w-full truncate align-middle" onClick={(e) => e.stopPropagation()}>
+
+
+
+
+                    <span class="inline-block max-w-full truncate align-middle" onClick={(e: { stopPropagation: () => any; }) => e.stopPropagation()}>
                         {managerNotes}
+
+
+
+
                     </span>
                 </TooltipWrapper>
             );
@@ -140,22 +196,30 @@ export const createColumns = ({
     },
     {
         accessorKey: 'joinedAt',
-        header: ({ column }) =>
+        header: ({ column }: any) =>
             sortButton({
                 column,
                 label: t('dialog.group_member_moderation.joined_at')
             }),
         size: 170,
-        cell: ({ row }) => <span>{formatDateFilter(row.original?.joinedAt, 'long')}</span>
+
+
+
+
+        cell: ({ row }: any) => <span>{formatDateFilter(row.original?.joinedAt, 'long')}</span>
     },
     {
         accessorKey: 'bannedAt',
-        header: ({ column }) =>
+        header: ({ column }: any) =>
             sortButton({
                 column,
                 label: t('dialog.group_member_moderation.banned_at')
             }),
         size: 170,
-        cell: ({ row }) => <span>{formatDateFilter(row.original?.bannedAt, 'long')}</span>
+
+
+
+
+        cell: ({ row }: any) => <span>{formatDateFilter(row.original?.bannedAt, 'long')}</span>
     }
 ];

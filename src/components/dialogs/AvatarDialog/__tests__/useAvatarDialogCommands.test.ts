@@ -99,8 +99,8 @@ function createMockDeps(overrides = {}) {
 }
 
 describe('useAvatarDialogCommands', () => {
-    let avatarDialog;
-    let deps;
+    let avatarDialog: any;
+    let deps: any;
 
     beforeEach(() => {
         vi.clearAllMocks();
@@ -154,6 +154,10 @@ describe('useAvatarDialogCommands', () => {
                 return;
             }
             const mockBtn = { click: vi.fn() };
+
+
+
+
             vi.spyOn(document, 'getElementById').mockReturnValue(mockBtn);
             const { avatarDialogCommand } = useAvatarDialogCommands(avatarDialog, deps);
             avatarDialogCommand('Change Image');
@@ -202,7 +206,7 @@ describe('useAvatarDialogCommands', () => {
         });
 
         it('Select Fallback Avatar: should confirm then select', async () => {
-            avatarRequest.selectFallbackAvatar.mockResolvedValue({ json: {} });
+            (avatarRequest.selectFallbackAvatar as any).mockResolvedValue({ json: {} });
             const { avatarDialogCommand } = useAvatarDialogCommands(avatarDialog, deps);
             avatarDialogCommand('Select Fallback Avatar');
             await vi.waitFor(() => {
@@ -211,9 +215,9 @@ describe('useAvatarDialogCommands', () => {
         });
 
         it('Block Avatar: should confirm then send moderation', async () => {
-            avatarModerationRequest.sendAvatarModeration.mockResolvedValue({
-                json: { targetAvatarId: 'avtr_test123' }
-            });
+            (avatarModerationRequest.sendAvatarModeration as any).mockResolvedValue({
+    json: { targetAvatarId: 'avtr_test123' }
+});
             const { avatarDialogCommand } = useAvatarDialogCommands(avatarDialog, deps);
             avatarDialogCommand('Block Avatar');
             await vi.waitFor(() => {
@@ -225,12 +229,12 @@ describe('useAvatarDialogCommands', () => {
         });
 
         it('Unblock Avatar: should confirm then delete moderation', async () => {
-            avatarModerationRequest.deleteAvatarModeration.mockResolvedValue({
-                params: {
-                    targetAvatarId: 'avtr_test123',
-                    avatarModerationType: 'block'
-                }
-            });
+            (avatarModerationRequest.deleteAvatarModeration as any).mockResolvedValue({
+    params: {
+        targetAvatarId: 'avtr_test123',
+        avatarModerationType: 'block'
+    }
+});
             const { avatarDialogCommand } = useAvatarDialogCommands(avatarDialog, deps);
             avatarDialogCommand('Unblock Avatar');
             await vi.waitFor(() => {
@@ -242,9 +246,9 @@ describe('useAvatarDialogCommands', () => {
         });
 
         it('Make Public: should save avatar with public status', async () => {
-            avatarRequest.saveAvatar.mockResolvedValue({
-                json: { releaseStatus: 'public' }
-            });
+            (avatarRequest.saveAvatar as any).mockResolvedValue({
+    json: { releaseStatus: 'public' }
+});
             const { avatarDialogCommand } = useAvatarDialogCommands(avatarDialog, deps);
             avatarDialogCommand('Make Public');
             await vi.waitFor(() => {
@@ -256,9 +260,9 @@ describe('useAvatarDialogCommands', () => {
         });
 
         it('Make Private: should save avatar with private status', async () => {
-            avatarRequest.saveAvatar.mockResolvedValue({
-                json: { releaseStatus: 'private' }
-            });
+            (avatarRequest.saveAvatar as any).mockResolvedValue({
+    json: { releaseStatus: 'private' }
+});
             const { avatarDialogCommand } = useAvatarDialogCommands(avatarDialog, deps);
             avatarDialogCommand('Make Private');
             await vi.waitFor(() => {
@@ -270,9 +274,9 @@ describe('useAvatarDialogCommands', () => {
         });
 
         it('Delete: should delete avatar and update cache', async () => {
-            avatarRequest.deleteAvatar.mockResolvedValue({
-                json: { _id: 'avtr_test123', authorId: 'usr_author' }
-            });
+            (avatarRequest.deleteAvatar as any).mockResolvedValue({
+    json: { _id: 'avtr_test123', authorId: 'usr_author' }
+});
             const { avatarDialogCommand } = useAvatarDialogCommands(avatarDialog, deps);
             avatarDialogCommand('Delete');
             await vi.waitFor(() => {
@@ -283,7 +287,7 @@ describe('useAvatarDialogCommands', () => {
         });
 
         it('Create Imposter: should create imposter', async () => {
-            avatarRequest.createImposter.mockResolvedValue({ json: {} });
+            (avatarRequest.createImposter as any).mockResolvedValue({ json: {} });
             const { avatarDialogCommand } = useAvatarDialogCommands(avatarDialog, deps);
             avatarDialogCommand('Create Imposter');
             await vi.waitFor(() => {
@@ -294,7 +298,7 @@ describe('useAvatarDialogCommands', () => {
         });
 
         it('Delete Imposter: should delete imposter and refresh', async () => {
-            avatarRequest.deleteImposter.mockResolvedValue({ json: {} });
+            (avatarRequest.deleteImposter as any).mockResolvedValue({ json: {} });
             const { avatarDialogCommand } = useAvatarDialogCommands(avatarDialog, deps);
             avatarDialogCommand('Delete Imposter');
             await vi.waitFor(() => {

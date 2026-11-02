@@ -23,11 +23,11 @@ const TRACKED_ACTIONS = new Set([
  * @param {string} userId
  * @param {string} actionType
  */
-export function recordRecentAction(userId, actionType) {
+export function recordRecentAction(userId: string, actionType: string) {
     if (!TRACKED_ACTIONS.has(actionType)) {
         return;
     }
-    recentActions.value[`${userId}:${actionType}`] = Date.now();
+    (recentActions.value as any)[`${userId}:${actionType}`] = Date.now();
 }
 
 /**
@@ -35,13 +35,13 @@ export function recordRecentAction(userId, actionType) {
  * @param {string} actionType
  * @returns {boolean}
  */
-export function isActionRecent(userId, actionType) {
+export function isActionRecent(userId: string, actionType: string) {
     const generalSettings = useGeneralSettingsStore();
     if (!generalSettings.recentActionCooldownEnabled) {
         return false;
     }
     const key = `${userId}:${actionType}`;
-    const ts = recentActions.value[key];
+    const ts = (recentActions.value as any)[key];
     if (!ts) {
         return false;
     }
@@ -50,7 +50,7 @@ export function isActionRecent(userId, actionType) {
         return true;
     }
     // Expired, clean up
-    delete recentActions.value[key];
+delete (recentActions.value as any)[key];
     return false;
 }
 

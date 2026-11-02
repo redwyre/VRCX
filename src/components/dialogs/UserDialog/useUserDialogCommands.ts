@@ -46,35 +46,34 @@ import { recordRecentAction } from '../../../composables/useRecentActions';
  * @returns {object} Command composable API
  */
 export function useUserDialogCommands(
-    userDialog,
-    {
-        t,
-        toast,
-        modalStore,
-        currentUser,
-        cachedUsers,
-        friendLogTable,
-        lastLocation,
-        lastLocationDestination,
-        inviteGroupDialog,
-        showUserDialog,
-        showFavoriteDialog,
-        showAvatarDialog,
-        showAvatarAuthorDialog,
-        showModerateGroupDialog,
-        showSendBoopDialog,
-        showModerationReportDialog,
-        showGalleryPage,
-        getFriendRequest,
-        handleFriendDelete,
-        applyPlayerModeration,
-        handlePlayerModerationDelete,
-        refreshInviteMessageTableData,
-        clearInviteImageUpload,
-        instanceStore,
-        useNotificationStore,
-        showEditProfileDialog
-    }
+    userDialog: import('vue').Ref, { t, toast, modalStore, currentUser, cachedUsers, friendLogTable, lastLocation, lastLocationDestination, inviteGroupDialog, showUserDialog, showFavoriteDialog, showAvatarDialog, showAvatarAuthorDialog, showModerateGroupDialog, showSendBoopDialog, showModerationReportDialog, showGalleryPage, getFriendRequest, handleFriendDelete, applyPlayerModeration, handlePlayerModerationDelete, refreshInviteMessageTableData, clearInviteImageUpload, instanceStore, useNotificationStore, showEditProfileDialog }: {
+    t: any;
+    toast: any;
+    modalStore: any;
+    currentUser: any;
+    cachedUsers: any;
+    friendLogTable: any;
+    lastLocation: any;
+    lastLocationDestination: any;
+    inviteGroupDialog: any;
+    showUserDialog: any;
+    showFavoriteDialog: any;
+    showAvatarDialog: any;
+    showAvatarAuthorDialog: any;
+    showModerateGroupDialog: any;
+    showSendBoopDialog: any;
+    showModerationReportDialog: any;
+    showGalleryPage: any;
+    getFriendRequest: any;
+    handleFriendDelete: any;
+    applyPlayerModeration: any;
+    handlePlayerModerationDelete: any;
+    refreshInviteMessageTableData: any;
+    clearInviteImageUpload: any;
+    instanceStore: any;
+    useNotificationStore: any;
+    showEditProfileDialog: any;
+}
 ) {
     // --- Invite dialog state ---
     const sendInviteDialogVisible = ref(false);
@@ -90,8 +89,8 @@ export function useUserDialogCommands(
     /**
      * @param {object} args
      */
-    function handleSendFriendRequest(args) {
-        const ref = cachedUsers.get(args.params.userId);
+    function handleSendFriendRequest(args: object) {
+        const ref = cachedUsers.get((args as any).params.userId);
         if (typeof ref === 'undefined') {
             return;
         }
@@ -105,10 +104,10 @@ export function useUserDialogCommands(
         database.addFriendLogHistory(friendLogHistory);
 
         const D = userDialog.value;
-        if (D.visible === false || D.id !== args.params.userId) {
+        if (D.visible === false || D.id !== (args as any).params.userId) {
             return;
         }
-        if (args.json.success) {
+        if ((args as any).json.success) {
             D.isFriend = true;
         } else {
             D.outgoingRequest = true;
@@ -118,8 +117,8 @@ export function useUserDialogCommands(
     /**
      * @param {object} args
      */
-    function handleCancelFriendRequest(args) {
-        const ref = cachedUsers.get(args.params.userId);
+    function handleCancelFriendRequest(args: object) {
+        const ref = cachedUsers.get((args as any).params.userId);
         if (typeof ref === 'undefined') {
             return;
         }
@@ -132,7 +131,7 @@ export function useUserDialogCommands(
         friendLogTable.value.data.push(friendLogHistory);
         database.addFriendLogHistory(friendLogHistory);
         const D = userDialog.value;
-        if (D.visible === false || D.id !== args.params.userId) {
+        if (D.visible === false || D.id !== (args as any).params.userId) {
             return;
         }
         D.outgoingRequest = false;
@@ -141,8 +140,8 @@ export function useUserDialogCommands(
     /**
      * @param {object} args
      */
-    function handleSendPlayerModeration(args) {
-        const ref = applyPlayerModeration(args.json);
+    function handleSendPlayerModeration(args: object) {
+        const ref = applyPlayerModeration((args as any).json);
         const D = userDialog.value;
         if (D.visible === false || (ref.targetUserId !== D.id && ref.sourceUserId !== currentUser.value.id)) {
             return;
@@ -163,31 +162,34 @@ export function useUserDialogCommands(
      * @param {string} userId
      * @param {number} type
      */
-    function setPlayerModeration(userId, type) {
+    function setPlayerModeration(userId: string, type: number) {
         const D = userDialog.value;
-        AppApi.SetVRChatUserModeration(currentUser.value.id, userId, type).then((result) => {
-            if (result) {
-                if (type === 4) {
-                    D.isShowAvatar = false;
-                    D.isHideAvatar = true;
-                } else if (type === 5) {
-                    D.isShowAvatar = true;
-                    D.isHideAvatar = false;
-                } else {
-                    D.isShowAvatar = false;
-                    D.isHideAvatar = false;
-                }
-            } else {
-                toast.error(t('message.avatar.change_moderation_failed'));
-            }
-        });
+        (AppApi as any).SetVRChatUserModeration(currentUser.value.id, userId, type).then((result: any) => {
+    if (result) {
+        if (type === 4) {
+            D.isShowAvatar = false;
+            D.isHideAvatar = true;
+        }
+        else if (type === 5) {
+            D.isShowAvatar = true;
+            D.isHideAvatar = false;
+        }
+        else {
+            D.isShowAvatar = false;
+            D.isHideAvatar = false;
+        }
+    }
+    else {
+        toast.error(t('message.avatar.change_moderation_failed'));
+    }
+});
     }
 
     /**
      * @param {object} params
      * @param {string} userId
      */
-    function showSendInviteDialogFn(params, userId) {
+    function showSendInviteDialogFn(params: object, userId: string) {
         sendInviteDialog.value = {
             params,
             userId,
@@ -202,7 +204,7 @@ export function useUserDialogCommands(
      * @param {object} params
      * @param {string} userId
      */
-    function showSendInviteRequestDialogFn(params, userId) {
+    function showSendInviteRequestDialogFn(params: object, userId: string) {
         sendInviteDialog.value = {
             params,
             userId,
@@ -263,14 +265,11 @@ export function useUserDialogCommands(
                         worldId: L.worldId
                     })
                     .then((args) => {
-                        showSendInviteDialogFn(
-                            {
-                                instanceId: lastLocation.value.location,
-                                worldId: lastLocation.value.location,
-                                worldName: args.ref.name
-                            },
-                            D().id
-                        );
+                        showSendInviteDialogFn({
+    instanceId: lastLocation.value.location,
+    worldId: lastLocation.value.location,
+    worldName: (args as any).ref.name
+}, D().id);
                     });
             },
             'Request Invite Message': () => {
@@ -293,19 +292,16 @@ export function useUserDialogCommands(
                     })
                     .then((args) => {
                         notificationRequest
-                            .sendInvite(
-                                {
-                                    instanceId: L.tag,
-                                    worldId: L.tag,
-                                    worldName: args.ref.name
-                                },
-                                D().id
-                            )
-                            .then((_args) => {
-                                toast(t('message.invite.sent'));
-                                recordRecentAction(D().id, 'Invite');
-                                return _args;
-                            });
+    .sendInvite({
+    instanceId: L.tag,
+    worldId: L.tag,
+    worldName: (args as any).ref.name
+}, D().id)
+    .then((_args) => {
+    toast(t('message.invite.sent'));
+    recordRecentAction(D().id, 'Invite');
+    return _args;
+});
                     });
             },
             'Show Avatar Author': () => {
@@ -369,7 +365,7 @@ export function useUserDialogCommands(
                         command: t('dialog.user.actions.delete_favorite')
                     })
                 }),
-                handler: (userId) => {
+                handler: (userId: any) => {
                     favoriteRequest.deleteFavorite({
                         objectId: userId
                     });
@@ -382,7 +378,7 @@ export function useUserDialogCommands(
                         command: t('dialog.user.actions.accept_friend_request')
                     })
                 }),
-                handler: async (userId) => {
+                handler: async (userId: any) => {
                     const key = getFriendRequest(userId);
                     if (key === '') {
                         const args = await friendRequest.sendFriendRequest({
@@ -412,7 +408,7 @@ export function useUserDialogCommands(
                         command: t('dialog.user.actions.decline_friend_request')
                     })
                 }),
-                handler: async (userId) => {
+                handler: async (userId: any) => {
                     const key = getFriendRequest(userId);
                     if (key === '') {
                         const args = await friendRequest.cancelFriendRequest({
@@ -437,7 +433,7 @@ export function useUserDialogCommands(
                         command: t('dialog.user.actions.cancel_friend_request')
                     })
                 }),
-                handler: async (userId) => {
+                handler: async (userId: any) => {
                     const args = await friendRequest.cancelFriendRequest({
                         userId
                     });
@@ -451,7 +447,7 @@ export function useUserDialogCommands(
                         command: t('dialog.user.actions.send_friend_request')
                     })
                 }),
-                handler: async (userId) => {
+                handler: async (userId: string) => {
                     const args = await friendRequest.sendFriendRequest({
                         userId
                     });
@@ -466,7 +462,7 @@ export function useUserDialogCommands(
                         command: t('dialog.user.actions.moderation_unblock')
                     })
                 }),
-                handler: async (userId) => {
+                handler: async (userId: any) => {
                     const args = await playerModerationRequest.deletePlayerModeration({
                         moderated: userId,
                         type: 'block'
@@ -482,7 +478,7 @@ export function useUserDialogCommands(
                     }),
                     destructive: true
                 }),
-                handler: async (userId) => {
+                handler: async (userId: any) => {
                     const args = await playerModerationRequest.sendPlayerModeration({
                         moderated: userId,
                         type: 'block'
@@ -497,7 +493,7 @@ export function useUserDialogCommands(
                         command: t('dialog.user.actions.moderation_unmute')
                     })
                 }),
-                handler: async (userId) => {
+                handler: async (userId: any) => {
                     const args = await playerModerationRequest.deletePlayerModeration({
                         moderated: userId,
                         type: 'mute'
@@ -513,7 +509,7 @@ export function useUserDialogCommands(
                     }),
                     destructive: true
                 }),
-                handler: async (userId) => {
+                handler: async (userId: any) => {
                     const args = await playerModerationRequest.sendPlayerModeration({
                         moderated: userId,
                         type: 'mute'
@@ -528,7 +524,7 @@ export function useUserDialogCommands(
                         command: t('dialog.user.actions.moderation_enable_avatar_interaction')
                     })
                 }),
-                handler: async (userId) => {
+                handler: async (userId: any) => {
                     const args = await playerModerationRequest.deletePlayerModeration({
                         moderated: userId,
                         type: 'interactOff'
@@ -544,7 +540,7 @@ export function useUserDialogCommands(
                     }),
                     destructive: true
                 }),
-                handler: async (userId) => {
+                handler: async (userId: any) => {
                     const args = await playerModerationRequest.sendPlayerModeration({
                         moderated: userId,
                         type: 'interactOff'
@@ -559,7 +555,7 @@ export function useUserDialogCommands(
                         command: t('dialog.user.actions.moderation_enable_chatbox')
                     })
                 }),
-                handler: async (userId) => {
+                handler: async (userId: any) => {
                     const args = await playerModerationRequest.deletePlayerModeration({
                         moderated: userId,
                         type: 'muteChat'
@@ -575,7 +571,7 @@ export function useUserDialogCommands(
                     }),
                     destructive: true
                 }),
-                handler: async (userId) => {
+                handler: async (userId: any) => {
                     const args = await playerModerationRequest.sendPlayerModeration({
                         moderated: userId,
                         type: 'muteChat'
@@ -591,7 +587,7 @@ export function useUserDialogCommands(
                     }),
                     destructive: true
                 }),
-                handler: async (userId) => {
+                handler: async (userId: any) => {
                     const args = await friendRequest.deleteFriend(
                         {
                             userId
@@ -615,7 +611,7 @@ export function useUserDialogCommands(
      *
      * @param {object} callbacks
      */
-    function registerCallbacks(callbacks) {
+    function registerCallbacks(callbacks: object) {
         componentCallbacks = callbacks;
     }
 
@@ -624,13 +620,13 @@ export function useUserDialogCommands(
      *
      * @param {string} command
      */
-    function userDialogCommand(command) {
+    function userDialogCommand(command: string) {
         const D = userDialog.value;
         if (D.visible === false) {
             return;
         }
 
-        const entry = commandMap[command];
+        const entry = (commandMap as any)[command];
 
         if (!entry) {
             return;
@@ -638,7 +634,7 @@ export function useUserDialogCommands(
 
         // String entry => delegate to component callback
         if (typeof entry === 'string') {
-            const cb = componentCallbacks[entry];
+            const cb = (componentCallbacks as any)[entry];
             if (cb) {
                 cb();
             }
@@ -655,7 +651,7 @@ export function useUserDialogCommands(
         if (entry.confirm) {
             modalStore
                 .confirm(entry.confirm())
-                .then(({ ok }) => {
+                .then(({ ok }: any) => {
                     if (ok) {
                         entry.handler(D.id);
                     }

@@ -1,6 +1,6 @@
-import { isRealInstance } from './instance.js';
+import { isRealInstance } from './instance';
 
-export { parseLocation, displayLocation, resolveRegion, translateAccessType } from './locationParser.js';
+export { parseLocation, displayLocation, resolveRegion, translateAccessType } from './locationParser';
 
 /**
  * @param {Array} friendsArr
@@ -8,7 +8,10 @@ export { parseLocation, displayLocation, resolveRegion, translateAccessType } fr
  * @param {Map<string, any>} lastLocation.friendList
  * @param {string} lastLocation.location
  */
-function getFriendsLocations(friendsArr, lastLocation) {
+function getFriendsLocations(friendsArr: Array<any>, lastLocation: {
+    friendList: Map<string, any>;
+    location: string;
+}) {
     // prevent the instance title display as "Traveling".
     if (!friendsArr?.length) {
         return '';
@@ -47,22 +50,27 @@ export { getFriendsLocations };
  * @param {Function} options.t - I18n translate function
  * @returns {string} Display text for the location
  */
-function getLocationText(L, { hint, worldName, accessTypeLabel, t }) {
-    if (L.isOffline) {
+function getLocationText(L: object, { hint, worldName, accessTypeLabel, t }: {
+    hint?: string;
+    worldName?: string | undefined;
+    accessTypeLabel: string;
+    t: Function;
+}) {
+    if ((L as any).isOffline) {
         return t('location.offline');
     }
-    if (L.isPrivate) {
+    if ((L as any).isPrivate) {
         return t('location.private');
     }
-    if (L.isTraveling) {
+    if ((L as any).isTraveling) {
         return t('location.traveling');
     }
     if (typeof hint === 'string' && hint !== '') {
-        return L.instanceId ? `${hint} · ${accessTypeLabel}` : hint;
+        return (L as any).instanceId ? `${hint} · ${accessTypeLabel}` : hint;
     }
-    if (L.worldId) {
-        const name = worldName || L.worldId;
-        return L.instanceId ? `${name} · ${accessTypeLabel}` : name;
+    if ((L as any).worldId) {
+        const name = worldName || (L as any).worldId;
+        return (L as any).instanceId ? `${name} · ${accessTypeLabel}` : name;
     }
     return '';
 }

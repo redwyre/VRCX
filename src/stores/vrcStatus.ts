@@ -59,6 +59,10 @@ export const useVrcStatusStore = defineStore('VrcStatus', () => {
             return;
         }
         const data = JSON.parse(response.data);
+
+
+
+
         lastStatusTime.value = new Date(data.page.updated_at);
         if (data.status.description === 'All Systems Operational') {
             lastStatus.value = '';

@@ -11,7 +11,7 @@ import { showUserDialog } from '../../coordinators/userCoordinator';
 
 const { t } = i18n.global;
 
-export const createColumns = ({ onDelete, onDeletePrompt }) => {
+export const createColumns = ({ onDelete, onDeletePrompt }: any) => {
     const { shiftHeld } = storeToRefs(useUiStore());
 
     return [
@@ -28,13 +28,13 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
             accessorKey: 'created_at',
             size: 120,
             meta: { label: () => t('table.friendLog.date') },
-            header: ({ column }) => (
+            header: ({ column }: any) => (
                 <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
                     {t('table.friendLog.date')}
                     <ArrowUpDown class="ml-1 h-4 w-4" />
                 </Button>
             ),
-            cell: ({ row }) => {
+            cell: ({ row }: any) => {
                 const createdAt = row.getValue('created_at');
                 const shortText = formatDateFilter(createdAt, 'short');
                 const longText = formatDateFilter(createdAt, 'long');
@@ -42,9 +42,17 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
                 return (
                     <Tooltip>
                         <TooltipTrigger asChild>
+
+
+
+
                             <span>{shortText}</span>
                         </TooltipTrigger>
                         <TooltipContent side="right">
+
+
+
+
                             <span>{longText}</span>
                         </TooltipContent>
                     </Tooltip>
@@ -57,7 +65,7 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
             size: 160,
             header: () => t('table.friendLog.type'),
             meta: { label: () => t('table.friendLog.type') },
-            cell: ({ row }) => {
+            cell: ({ row }: any) => {
                 const type = row.getValue('type');
                 return (
                     <Badge variant="outline" class="text-muted-foreground">
@@ -75,27 +83,59 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
                 stretch: true,
                 label: () => t('table.friendLog.user')
             },
-            cell: ({ row }) => {
+            cell: ({ row }: any) => {
                 const original = row.original;
                 const displayName = original.displayName || original.userId || '';
                 return (
+
+
+
+
                     <span class="block w-full whitespace-normal wrap-break-word cursor-pointer">
                         {original.type === 'DisplayName' ? (
+
+
+
+
                             <span class="mr-1">
                                 {original.previousDisplayName}
                                 <ArrowRight class="mx-1 inline h-3 w-3" />
+
+
+
+
                             </span>
                         ) : null}
+
+
+
+
                         <span class="cursor-pointer pr-2.5" onClick={() => showUserDialog(original.userId)}>
                             {displayName}
+
+
+
+
                         </span>
                         {original.type === 'TrustLevel' ? (
+
+
+
+
                             <span class="text-muted-foreground">
                                 ({original.previousTrustLevel}
                                 <ArrowRight class="mx-1 inline h-3 w-3" />
                                 {original.trustLevel})
+
+
+
+
                             </span>
                         ) : null}
+
+
+
+
                     </span>
                 );
             }
@@ -110,17 +150,33 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
             maxSize: 80,
             header: () => t('table.friendLog.action'),
             enableSorting: false,
-            cell: ({ row }) => {
+            cell: ({ row }: any) => {
                 const original = row.original;
                 return (
+
+
+
+
                     <div class="flex justify-end">
+
+
+
+
                         <button
                             type="button"
                             class="inline-flex h-6 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
                             onClick={() => (shiftHeld.value ? onDelete(original) : onDeletePrompt(original))}
                         >
                             {shiftHeld.value ? <X class="h-4 w-4 text-red-600" /> : <Trash2 class="h-4 w-4" />}
+
+
+
+
                         </button>
+
+
+
+
                     </div>
                 );
             }

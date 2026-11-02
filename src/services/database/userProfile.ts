@@ -1,8 +1,8 @@
 import { dbVars } from '../database';
 
-import sqliteService from '../sqlite.js';
+import sqliteService from '../sqlite';
 
-function parseBioLinks(value) {
+function parseBioLinks(value: string) {
     try {
         const links = JSON.parse(value);
         return Array.isArray(links) ? links : [];
@@ -11,7 +11,7 @@ function parseBioLinks(value) {
     }
 }
 
-function parseRow(dbRow) {
+function parseRow(dbRow: any) {
     return {
         userId: dbRow[0],
         bio: dbRow[1],
@@ -21,13 +21,17 @@ function parseRow(dbRow) {
 }
 
 const userProfile = {
-    async getUserProfile(userId) {
+    async getUserProfile(userId: any) {
         let row = null;
         await sqliteService.execute(
-            (dbRow) => {
+            (dbRow: any) => {
                 row = parseRow(dbRow);
             },
             `SELECT user_id, bio, bio_links, updated_at FROM ${dbVars.userPrefix}_user_profile WHERE user_id = @user_id`,
+
+
+
+
             {
                 '@user_id': userId
             }
@@ -36,16 +40,20 @@ const userProfile = {
     },
 
     async getAllUserProfiles() {
-        const data = [];
-        await sqliteService.execute((dbRow) => {
+        const data: { userId: any; bio: any; bioLinks: any[]; updatedAt: any; }[] = [];
+        await sqliteService.execute((dbRow: any) => {
             data.push(parseRow(dbRow));
         }, `SELECT user_id, bio, bio_links, updated_at FROM ${dbVars.userPrefix}_user_profile`);
         return data;
     },
 
-    setUserProfile(profile) {
+    setUserProfile(profile: { id: any; bio: any; bioLinks: any; displayName?: any; }) {
         sqliteService.executeNonQuery(
             `INSERT OR REPLACE INTO ${dbVars.userPrefix}_user_profile (user_id, bio, bio_links, updated_at) VALUES (@user_id, @bio, @bio_links, @updated_at)`,
+
+
+
+
             {
                 '@user_id': profile.id,
                 '@bio': profile.bio,
@@ -55,7 +63,11 @@ const userProfile = {
         );
     },
 
-    deleteUserProfile(userId) {
+    deleteUserProfile(userId: any) {
+
+
+
+
         sqliteService.executeNonQuery(`DELETE FROM ${dbVars.userPrefix}_user_profile WHERE user_id = @user_id`, {
             '@user_id': userId
         });

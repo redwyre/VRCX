@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 vi.mock('../../../plugins/i18n', () => ({
     i18n: {
         global: {
-            t: (key) => key
+            t: (key: any) => key
         }
     }
 }));
@@ -19,9 +19,9 @@ vi.mock('../../../coordinators/userCoordinator', () => ({
 }));
 
 vi.mock('../../../shared/utils', () => ({
-    formatDateFilter: (value) => value,
-    statusClass: (value) => value,
-    timeToText: (value) => value
+    formatDateFilter: (value: any) => value,
+    statusClass: (value: any) => value,
+    timeToText: (value: any) => value
 }));
 
 vi.mock('../../../components/AvatarInfo.vue', () => ({
@@ -54,9 +54,9 @@ vi.mock('lucide-vue-next', () => ({
     ChevronRight: 'ChevronRight'
 }));
 
-import { columns } from '../columns.jsx';
+import { columns } from '../columns';
 
-function createElement(type, props, ...children) {
+function createElement(type: any, props: any, ...children: any[]) {
     return {
         type,
         props: props ?? {},
@@ -64,7 +64,7 @@ function createElement(type, props, ...children) {
     };
 }
 
-function findNode(node, predicate) {
+function findNode(node: { children: any; }, predicate: { (n: any): boolean; (arg0: any): any; }): any {
     if (!node) return null;
     if (Array.isArray(node)) {
         for (const item of node) {
@@ -93,6 +93,10 @@ describe('views/Feed/columns.jsx', () => {
             }
         };
 
+
+
+
+
         const vnode = detailCol.cell({ row });
 
         expect(vnode.type).toBe('span');
@@ -102,6 +106,10 @@ describe('views/Feed/columns.jsx', () => {
 
     test('keeps multiline bio diff in expanded row', () => {
         const expanderCol = columns.find((c) => c.id === 'expander');
+
+
+
+
         const expanded = expanderCol.meta.expandedRow({
             row: {
                 original: {
@@ -111,7 +119,7 @@ describe('views/Feed/columns.jsx', () => {
                 }
             }
         });
-        const preNode = findNode(expanded, (n) => n.type === 'pre');
+        const preNode = findNode(expanded, (n: { type: string; }) => n.type === 'pre');
 
         expect(preNode).toBeTruthy();
         expect(preNode.props.innerHTML).toContain('x-text-added');

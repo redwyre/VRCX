@@ -241,7 +241,7 @@ describe('useWorldDialogCommands', () => {
         });
 
         test('Make Home calls saveCurrentUser with homeLocation', async () => {
-            userRequest.saveCurrentUser.mockResolvedValue({ ok: true });
+            (userRequest.saveCurrentUser as any).mockResolvedValue({ ok: true });
             const worldDialog = createWorldDialog();
             const deps = createDeps();
             const { worldDialogCommand } = useWorldDialogCommands(worldDialog, deps);
@@ -255,7 +255,7 @@ describe('useWorldDialogCommands', () => {
         });
 
         test('Reset Home calls saveCurrentUser with empty homeLocation', async () => {
-            userRequest.saveCurrentUser.mockResolvedValue({ ok: true });
+            (userRequest.saveCurrentUser as any).mockResolvedValue({ ok: true });
             const worldDialog = createWorldDialog();
             const deps = createDeps();
             const { worldDialogCommand } = useWorldDialogCommands(worldDialog, deps);
@@ -269,7 +269,7 @@ describe('useWorldDialogCommands', () => {
         });
 
         test('Publish calls publishWorld', async () => {
-            worldRequest.publishWorld.mockResolvedValue({ ok: true });
+            (worldRequest.publishWorld as any).mockResolvedValue({ ok: true });
             const worldDialog = createWorldDialog();
             const deps = createDeps();
             const { worldDialogCommand } = useWorldDialogCommands(worldDialog, deps);
@@ -283,7 +283,7 @@ describe('useWorldDialogCommands', () => {
         });
 
         test('Unpublish calls unpublishWorld', async () => {
-            worldRequest.unpublishWorld.mockResolvedValue({ ok: true });
+            (worldRequest.unpublishWorld as any).mockResolvedValue({ ok: true });
             const worldDialog = createWorldDialog();
             const deps = createDeps();
             const { worldDialogCommand } = useWorldDialogCommands(worldDialog, deps);
@@ -297,9 +297,9 @@ describe('useWorldDialogCommands', () => {
         });
 
         test('Delete Persistent Data calls deleteWorldPersistData', async () => {
-            miscRequest.deleteWorldPersistData.mockResolvedValue({
-                params: { worldId: 'wrld_123' }
-            });
+            (miscRequest.deleteWorldPersistData as any).mockResolvedValue({
+    params: { worldId: 'wrld_123' }
+});
             const worldDialog = createWorldDialog();
             const deps = createDeps();
             const { worldDialogCommand } = useWorldDialogCommands(worldDialog, deps);
@@ -326,7 +326,7 @@ describe('useWorldDialogCommands', () => {
 
     describe('prompt commands', () => {
         test('Rename calls prompt then saveWorld', async () => {
-            worldRequest.saveWorld.mockResolvedValue({ ok: true });
+            (worldRequest.saveWorld as any).mockResolvedValue({ ok: true });
             const worldDialog = createWorldDialog();
             const deps = createDeps();
             deps.modalStore.prompt.mockResolvedValue({
@@ -345,7 +345,7 @@ describe('useWorldDialogCommands', () => {
         });
 
         test('Change Description calls prompt then saveWorld', async () => {
-            worldRequest.saveWorld.mockResolvedValue({ ok: true });
+            (worldRequest.saveWorld as any).mockResolvedValue({ ok: true });
             const worldDialog = createWorldDialog();
             const deps = createDeps();
             deps.modalStore.prompt.mockResolvedValue({
@@ -364,7 +364,7 @@ describe('useWorldDialogCommands', () => {
         });
 
         test('Change Capacity calls prompt then saveWorld with number', async () => {
-            worldRequest.saveWorld.mockResolvedValue({ ok: true });
+            (worldRequest.saveWorld as any).mockResolvedValue({ ok: true });
             const worldDialog = createWorldDialog();
             const deps = createDeps();
             deps.modalStore.prompt.mockResolvedValue({ ok: true, value: '30' });
@@ -380,7 +380,7 @@ describe('useWorldDialogCommands', () => {
         });
 
         test('Change Recommended Capacity calls prompt then saveWorld', async () => {
-            worldRequest.saveWorld.mockResolvedValue({ ok: true });
+            (worldRequest.saveWorld as any).mockResolvedValue({ ok: true });
             const worldDialog = createWorldDialog();
             const deps = createDeps();
             deps.modalStore.prompt.mockResolvedValue({ ok: true, value: '15' });
@@ -411,7 +411,7 @@ describe('useWorldDialogCommands', () => {
 
     describe('promptChangeWorldYouTubePreview', () => {
         test('parses YouTube URL with v parameter', async () => {
-            worldRequest.saveWorld.mockResolvedValue({ ok: true });
+            (worldRequest.saveWorld as any).mockResolvedValue({ ok: true });
             const worldDialog = createWorldDialog();
             const deps = createDeps();
             deps.modalStore.prompt.mockResolvedValue({
@@ -430,7 +430,7 @@ describe('useWorldDialogCommands', () => {
         });
 
         test('uses short id directly', async () => {
-            worldRequest.saveWorld.mockResolvedValue({ ok: true });
+            (worldRequest.saveWorld as any).mockResolvedValue({ ok: true });
             const worldDialog = createWorldDialog();
             const deps = createDeps();
             deps.modalStore.prompt.mockResolvedValue({

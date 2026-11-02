@@ -23,7 +23,7 @@ import { watchState } from './watchState';
 
 import * as workerTimers from 'worker-timers';
 
-let webSocket = null;
+let webSocket: WebSocket | null = null;
 let lastWebSocketMessage = '';
 let webSocketClosedGracefully = true;
 
@@ -47,7 +47,7 @@ export function initWebsocket() {
     return request('auth', {
         method: 'GET'
     })
-        .then((json) => {
+        .then((json: any) => {
             const args = {
                 json
             };
@@ -55,7 +55,7 @@ export function initWebsocket() {
                 connectWebSocket(args.json.token);
             }
         })
-        .catch((err) => {
+        .catch((err: any) => {
             console.error('WebSocket init error:', err);
         });
 }
@@ -64,7 +64,7 @@ export function initWebsocket() {
  * @param {string} token
  * @returns {void}
  */
-function connectWebSocket(token) {
+function connectWebSocket(token: string) {
     const userStore = useUserStore();
     const notificationStore = useNotificationStore();
     const friendStore = useFriendStore();
@@ -109,7 +109,15 @@ function connectWebSocket(token) {
         if (AppDebug.errorNoty) {
             toast.dismiss(AppDebug.errorNoty);
         }
+
+
+
+
         AppDebug.errorNoty = toast.error('WebSocket Error');
+
+
+
+
         socket.onclose(
             new CloseEvent('close', {
                 code: 1006, // Abnormal Closure
@@ -183,7 +191,7 @@ export function reconnectWebSocket() {
 /**
  * @param {object} args
  */
-function handlePipeline(args) {
+function handlePipeline(args: object) {
     const userStore = useUserStore();
 
     const galleryStore = useGalleryStore();
@@ -192,12 +200,16 @@ function handlePipeline(args) {
 
     const uiStore = useUiStore();
     const instanceStore = useInstanceStore();
-    const { type, content, err } = args.json;
+    const { type, content, err } = (args as any).json;
     if (typeof err !== 'undefined') {
         console.error('PIPELINE: error', args);
         if (AppDebug.errorNoty) {
             toast.dismiss(AppDebug.errorNoty);
         }
+
+
+
+
         AppDebug.errorNoty = toast.error(`WebSocket Error: ${err}`);
         return;
     }
@@ -348,7 +360,7 @@ function handlePipeline(args) {
                 travelingToWorld: 'offline',
                 travelingToInstance: 'offline'
             };
-            // @ts-ignore
+
             applyUser(offlineJson);
             break;
 
@@ -370,7 +382,7 @@ function handlePipeline(args) {
                     travelingToWorld: $travelingToLocation1.worldId,
                     travelingToInstance: $travelingToLocation1.instanceId
                 };
-                // @ts-ignore
+
                 applyUser(jankLocationJson);
                 break;
             }
@@ -542,6 +554,6 @@ function handlePipeline(args) {
             break;
 
         default:
-            console.log('Unknown pipeline type', args.json);
+            console.log('Unknown pipeline type', (args as any).json);
     }
 }

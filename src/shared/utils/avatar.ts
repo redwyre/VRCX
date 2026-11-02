@@ -5,17 +5,21 @@ import { replaceBioSymbols } from './base/string';
  * @param {Map} cachedAvatarNames
  * @returns
  */
-function storeAvatarImage(args, cachedAvatarNames) {
-    const refCreatedAt = args.json.versions[0];
+
+
+
+
+function storeAvatarImage(args: object, cachedAvatarNames: Map) {
+    const refCreatedAt = (args as any).json.versions[0];
     const fileCreatedAt = refCreatedAt.created_at;
-    const fileId = args.params.fileId;
+    const fileId = (args as any).params.fileId;
     let avatarName = '';
-    const imageName = args.json.name;
+    const imageName = (args as any).json.name;
     const avatarNameRegex = /Avatar - (.*) - Image -/gi.exec(imageName);
     if (avatarNameRegex) {
         avatarName = replaceBioSymbols(avatarNameRegex[1]);
     }
-    const ownerId = args.json.ownerId;
+    const ownerId = (args as any).json.ownerId;
     const avatarInfo = {
         ownerId,
         avatarName,
@@ -29,7 +33,7 @@ function storeAvatarImage(args, cachedAvatarNames) {
  * @param {string} avatar
  * @returns {string | null}
  */
-function parseAvatarUrl(avatar) {
+function parseAvatarUrl(avatar: string) {
     const url = new URL(avatar);
     const urlPath = url.pathname;
     if (urlPath.substring(5, 13) === '/avatar/') {
@@ -43,27 +47,31 @@ function parseAvatarUrl(avatar) {
  * @param {object} unityPackages
  * @returns
  */
-function getPlatformInfo(unityPackages) {
+function getPlatformInfo(unityPackages: object) {
     let pc = {};
     let android = {};
     let ios = {};
     if (typeof unityPackages === 'object') {
+
+
+
+
         for (const unityPackage of unityPackages) {
             if (unityPackage.variant && unityPackage.variant !== 'standard' && unityPackage.variant !== 'security') {
                 continue;
             }
             if (unityPackage.platform === 'standalonewindows') {
-                if (unityPackage.performanceRating === 'None' && pc.performanceRating) {
+                if (unityPackage.performanceRating === 'None' && (pc as any).performanceRating) {
                     continue;
                 }
                 pc = unityPackage;
             } else if (unityPackage.platform === 'android') {
-                if (unityPackage.performanceRating === 'None' && android.performanceRating) {
+                if (unityPackage.performanceRating === 'None' && (android as any).performanceRating) {
                     continue;
                 }
                 android = unityPackage;
             } else if (unityPackage.platform === 'ios') {
-                if (unityPackage.performanceRating === 'None' && ios.performanceRating) {
+                if (unityPackage.performanceRating === 'None' && (ios as any).performanceRating) {
                     continue;
                 }
                 ios = unityPackage;
@@ -78,7 +86,7 @@ function getPlatformInfo(unityPackages) {
  * @param {string} [sdkUnityVersion]
  * @returns {boolean}
  */
-function compareUnityVersion(unitySortNumber, sdkUnityVersion) {
+function compareUnityVersion(unitySortNumber: string, sdkUnityVersion?: string) {
     if (!sdkUnityVersion) {
         console.error('No sdkUnityVersion provided');
         return false;

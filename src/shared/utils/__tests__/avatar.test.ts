@@ -19,7 +19,7 @@ vi.mock('../../../plugins/router', () => ({
 }));
 
 describe('storeAvatarImage', () => {
-    function makeArgs(name, ownerId, createdAt = '2024-01-01T00:00:00Z') {
+    function makeArgs(name: string, ownerId: string, createdAt = '2024-01-01T00:00:00Z') {
         return {
             params: { fileId: 'file_abc123' },
             json: {
@@ -91,9 +91,9 @@ describe('getPlatformInfo', () => {
             { platform: 'ios', performanceRating: 'Poor', variant: 'standard' }
         ];
         const result = getPlatformInfo(packages);
-        expect(result.pc.platform).toBe('standalonewindows');
-        expect(result.android.platform).toBe('android');
-        expect(result.ios.platform).toBe('ios');
+        expect((result.pc as any).platform).toBe('standalonewindows');
+        expect((result.android as any).platform).toBe('android');
+        expect((result.ios as any).platform).toBe('ios');
     });
 
     test('skips non-standard/non-security variants', () => {
@@ -117,7 +117,7 @@ describe('getPlatformInfo', () => {
             }
         ];
         const result = getPlatformInfo(packages);
-        expect(result.pc.platform).toBe('standalonewindows');
+        expect((result.pc as any).platform).toBe('standalonewindows');
     });
 
     test('skips None performanceRating if platform already has a rating', () => {
@@ -134,7 +134,7 @@ describe('getPlatformInfo', () => {
             }
         ];
         const result = getPlatformInfo(packages);
-        expect(result.pc.performanceRating).toBe('Good');
+        expect((result.pc as any).performanceRating).toBe('Good');
     });
 
     test('accepts None performanceRating when no prior entry exists', () => {
@@ -146,10 +146,14 @@ describe('getPlatformInfo', () => {
             }
         ];
         const result = getPlatformInfo(packages);
-        expect(result.android.performanceRating).toBe('None');
+        expect((result.android as any).performanceRating).toBe('None');
     });
 
     test('returns empty objects when input is undefined', () => {
+
+
+
+
         const result = getPlatformInfo(undefined);
         expect(result.pc).toEqual({});
         expect(result.android).toEqual({});
@@ -166,6 +170,6 @@ describe('getPlatformInfo', () => {
     test('allows packages without variant (undefined)', () => {
         const packages = [{ platform: 'standalonewindows', performanceRating: 'Good' }];
         const result = getPlatformInfo(packages);
-        expect(result.pc.platform).toBe('standalonewindows');
+        expect((result.pc as any).platform).toBe('standalonewindows');
     });
 });

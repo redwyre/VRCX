@@ -1,5 +1,5 @@
-export function createRateLimiter({ limitPerInterval, intervalMs }) {
-    const stamps = [];
+export function createRateLimiter({ limitPerInterval, intervalMs }: any) {
+    const stamps: number[] = [];
 
     async function throttle() {
         const now = Date.now();
@@ -14,7 +14,7 @@ export function createRateLimiter({ limitPerInterval, intervalMs }) {
     }
 
     return {
-        async schedule(fn) {
+        async schedule(fn: { (): number; (): Promise<unknown>; (): number; (): string; (): string; (): any; }) {
             await throttle();
             return fn();
         },

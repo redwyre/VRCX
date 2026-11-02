@@ -24,13 +24,18 @@ import { syncWorldSearchIndex, removeWorldSearchIndex } from './searchIndexCoord
 import { useUiStore } from '../stores/ui';
 import { useUserStore } from '../stores/user';
 import { useWorldStore } from '../stores/world';
+import { SortOption, UserId, OrderOption, Tag, ReleaseStatus, Platform } from 'vrchat';
 
 /**
  * @param {string} tag
  * @param {string} shortName
  * @param options
  */
-export function showWorldDialog(tag, shortName = null, options = {}) {
+
+
+
+
+export function showWorldDialog(tag: string, shortName: string = null, options = {}) {
     const worldStore = useWorldStore();
     const uiStore = useUiStore();
     const instanceStore = useInstanceStore();
@@ -39,7 +44,7 @@ export function showWorldDialog(tag, shortName = null, options = {}) {
     const t = i18n.global.t;
 
     const D = worldStore.worldDialog;
-    const forceRefresh = Boolean(options?.forceRefresh);
+    const forceRefresh = Boolean((options as any)?.forceRefresh);
     const L = parseLocation(tag);
     if (L.worldId === '') {
         return;
@@ -52,7 +57,7 @@ export function showWorldDialog(tag, shortName = null, options = {}) {
     });
     D.visible = true;
     if (isMainDialogOpen && D.id === L.worldId && !forceRefresh) {
-        uiStore.setDialogCrumbLabel('world', D.id, D.ref?.name || D.id);
+        uiStore.setDialogCrumbLabel('world', D.id, (D.ref as any)?.name || D.id);
         instanceStore.applyWorldDialogInstances();
         nextTick(() => (D.loading = false));
         return;
@@ -91,8 +96,8 @@ export function showWorldDialog(tag, shortName = null, options = {}) {
         currentWorldMatch = true;
     }
     getWorldMemo(D.id).then((memo) => {
-        if (memo.worldId === D.id) {
-            D.memo = memo.memo;
+        if ((memo as any).worldId === D.id) {
+            D.memo = (memo as any).memo;
         }
     });
     database.getLastVisit(D.id, currentWorldMatch).then((ref) => {
@@ -116,6 +121,10 @@ export function showWorldDialog(tag, shortName = null, options = {}) {
     loadWorldRequest
         .catch((err) => {
             nextTick(() => (D.loading = false));
+
+
+
+
             D.id = null;
             D.visible = false;
             uiStore.jumpBackDialogCrumb();
@@ -125,7 +134,7 @@ export function showWorldDialog(tag, shortName = null, options = {}) {
         .then((args) => {
             if (D.id === args.ref.id) {
                 D.ref = args.ref;
-                uiStore.setDialogCrumbLabel('world', D.id, D.ref?.name || D.id);
+                uiStore.setDialogCrumbLabel('world', D.id, (D.ref as any)?.name || D.id);
                 if (args.ref.slimInstances) {
                     for (const instance of args.ref.slimInstances) {
                         const { instanceId } = instance;
@@ -156,8 +165,8 @@ export function showWorldDialog(tag, shortName = null, options = {}) {
                         worldId: D.id
                     })
                     .then((args) => {
-                        if (args.params.worldId === worldStore.worldDialog.id && worldStore.worldDialog.visible) {
-                            worldStore.worldDialog.hasPersistData = args.json !== false;
+                        if ((args as any).params.worldId === worldStore.worldDialog.id && worldStore.worldDialog.visible) {
+                            worldStore.worldDialog.hasPersistData = (args as any).json !== false;
                         }
                     });
             }
@@ -168,14 +177,14 @@ export function showWorldDialog(tag, shortName = null, options = {}) {
  * @param {object} json
  * @returns {object} Ref
  */
-export function applyWorld(json) {
+export function applyWorld(json: object) {
     const worldStore = useWorldStore();
     const favoriteStore = useFavoriteStore();
     const instanceStore = useInstanceStore();
     const userStore = useUserStore();
 
     sanitizeEntityJson(json, ['name', 'description']);
-    let ref = worldStore.cachedWorlds.get(json.id);
+    let ref = worldStore.cachedWorlds.get((json as any).id);
     if (typeof ref === 'undefined') {
         ref = createDefaultWorldRef(json);
         evictMapCache(worldStore.cachedWorlds, 10000, () => false, {
@@ -188,7 +197,7 @@ export function applyWorld(json) {
     ref.$isLabs = ref.tags.includes('system_labs');
     applyFavorite('world', ref.id);
     const userDialog = userStore.userDialog;
-    if (userDialog.visible && userDialog.$location.worldId === ref.id) {
+    if (userDialog.visible && (userDialog.$location as any).worldId === ref.id) {
         userStore.applyUserDialogLocation();
     }
     const worldDialog = worldStore.worldDialog;
@@ -198,11 +207,11 @@ export function applyWorld(json) {
         worldDialog.focusViewDisabled = ref.tags?.includes('feature_focus_view_disabled');
         instanceStore.applyWorldDialogInstances();
         for (const room of worldDialog.rooms) {
-            if (isRealInstance(room.tag)) {
+            if (isRealInstance((room as any).tag)) {
                 instanceRequest.getInstance({
-                    worldId: worldDialog.id,
-                    instanceId: room.id
-                });
+    worldId: worldDialog.id,
+    instanceId: (room as any).id
+});
             }
         }
         if (Object.keys(worldDialog.fileAnalysis).length === 0) {
@@ -231,10 +240,10 @@ export async function preloadOwnWorlds() {
         user: 'me'
     };
     await processBulk({
-        fn: (p) => worldRequest.getWorlds(p),
+        fn: (p: { featured?: boolean; sort?: SortOption; user?: "friends" | "me"; userId?: UserId; n?: number; order?: OrderOption; offset?: number; search?: string; tag?: Tag; notag?: Tag; releaseStatus?: ReleaseStatus; maxUnityVersion?: string; minUnityVersion?: string; platform?: Platform; noplatform?: string; fuzzy?: boolean; avatarSpecific?: boolean; } | undefined) => worldRequest.getWorlds(p),
         N: -1,
         params,
-        handle: (args) => {
+        handle: (args: { json: any; }) => {
             for (const json of args.json) {
                 applyWorld(json);
             }
@@ -245,7 +254,7 @@ export async function preloadOwnWorlds() {
 /**
  * @param {string} id
  */
-export function removeWorldFromCache(id) {
+export function removeWorldFromCache(id: string) {
     const worldStore = useWorldStore();
     worldStore.cachedWorlds.delete(id);
     removeWorldSearchIndex(id);

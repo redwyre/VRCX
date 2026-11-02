@@ -1,6 +1,6 @@
 import ActivityWorker from './activityWorker.js?worker&inline';
 
-let worker = null;
+let worker: Worker | null = null;
 let workerSeq = 0;
 const pendingWorkerCallbacks = new Map();
 
@@ -24,7 +24,7 @@ function getWorker() {
     return worker;
 }
 
-export function runActivityWorkerTask(type, payload) {
+export function runActivityWorkerTask(type: any, payload: any) {
     return new Promise((resolve, reject) => {
         const seq = ++workerSeq;
         pendingWorkerCallbacks.set(seq, { resolve, reject });

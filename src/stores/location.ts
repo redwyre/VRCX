@@ -21,28 +21,32 @@ export const useLocationStore = defineStore('Location', () => {
      *     friendList: Map<any, any>;
      * }} value
      */
-    function setLastLocation(value) {
+    function setLastLocation(value: { date: number | null; location: string; name: string; playerList: Map<any, any>; friendList: Map<any, any>; }) {
+
+
+
+
         lastLocation.value = value;
     }
 
     /**
      * @param {string} value
      */
-    function setLastLocationLocation(value) {
+    function setLastLocationLocation(value: string) {
         lastLocation.value.location = value;
     }
 
     /**
      * @param {string} value
      */
-    function setLastLocationDestination(value) {
+    function setLastLocationDestination(value: string) {
         lastLocationDestination.value = value;
     }
 
     /**
      * @param {number} value
      */
-    function setLastLocationDestinationTime(value) {
+    function setLastLocationDestinationTime(value: number) {
         lastLocationDestinationTime.value = value;
     }
 

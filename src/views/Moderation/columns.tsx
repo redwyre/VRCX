@@ -11,7 +11,7 @@ import { showUserDialog } from '../../coordinators/userCoordinator';
 
 const { t, te } = i18n.global;
 
-export const createColumns = ({ onDelete, onDeletePrompt }) => {
+export const createColumns = ({ onDelete, onDeletePrompt }: any) => {
     const { shiftHeld } = storeToRefs(useUiStore());
     const { currentUser } = storeToRefs(useUserStore());
 
@@ -29,13 +29,13 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
             accessorKey: 'created',
             size: 120,
             meta: { label: () => t('table.moderation.date') },
-            header: ({ column }) => (
+            header: ({ column }: any) => (
                 <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
                     {t('table.moderation.date')}
                     <ArrowUpDown class="ml-1 h-4 w-4" />
                 </Button>
             ),
-            cell: ({ row }) => {
+            cell: ({ row }: any) => {
                 const createdAt = row.getValue('created');
                 const shortText = formatDateFilter(createdAt, 'short');
                 const longText = formatDateFilter(createdAt, 'long');
@@ -43,9 +43,17 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
                 return (
                     <Tooltip>
                         <TooltipTrigger asChild>
+
+
+
+
                             <span>{shortText}</span>
                         </TooltipTrigger>
                         <TooltipContent side="right">
+
+
+
+
                             <span>{longText}</span>
                         </TooltipContent>
                     </Tooltip>
@@ -57,7 +65,7 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
             size: 140,
             header: () => t('table.moderation.type'),
             meta: { label: () => t('table.moderation.type') },
-            cell: ({ row }) => {
+            cell: ({ row }: any) => {
                 const type = row.getValue('type');
                 const typeKey = `view.moderation.filters.${type}`;
                 const label = te(typeKey) ? t(typeKey) : type;
@@ -77,14 +85,22 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
             },
             size: 120,
             header: () => t('table.moderation.source'),
-            cell: ({ row }) => {
+            cell: ({ row }: any) => {
                 const original = row.original;
                 return (
+
+
+
+
                     <span
                         class="cursor-pointer block w-full min-w-0 truncate pr-2.5 cursor-pointer"
                         onClick={() => showUserDialog(original.sourceUserId)}
                     >
                         {original.sourceDisplayName}
+
+
+
+
                     </span>
                 );
             }
@@ -98,14 +114,22 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
                 label: () => t('table.moderation.target')
             },
             header: () => t('table.moderation.target'),
-            cell: ({ row }) => {
+            cell: ({ row }: any) => {
                 const original = row.original;
                 return (
+
+
+
+
                     <span
                         class="cursor-pointer block w-full whitespace-normal wrap-break-word pr-2.5 cursor-pointer"
                         onClick={() => showUserDialog(original.targetUserId)}
                     >
                         {original.targetDisplayName}
+
+
+
+
                     </span>
                 );
             }
@@ -121,21 +145,37 @@ export const createColumns = ({ onDelete, onDeletePrompt }) => {
             maxSize: 80,
             enableSorting: false,
             header: () => t('table.moderation.action'),
-            cell: ({ row }) => {
+            cell: ({ row }: any) => {
                 const original = row.original;
                 if (original.sourceUserId !== currentUser.value?.id) {
                     return null;
                 }
 
                 return (
+
+
+
+
                     <div class="flex justify-end">
+
+
+
+
                         <button
                             type="button"
                             class="inline-flex h-6 items-center justify-center text-muted-foreground hover:text-foreground"
                             onClick={() => (shiftHeld.value ? onDelete(original) : onDeletePrompt(original))}
                         >
                             {shiftHeld.value ? <X class="h-4 w-4 text-red-600" /> : <Trash2 class="h-4 w-4" />}
+
+
+
+
                         </button>
+
+
+
+
                     </div>
                 );
             }

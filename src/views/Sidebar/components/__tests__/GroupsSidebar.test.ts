@@ -21,7 +21,7 @@ const mocks = vi.hoisted(() => ({
             }
         ]
     },
-    sortGroupInstancesByInGame: (a, b) => a[0].group.name.localeCompare(b[0].group.name),
+    sortGroupInstancesByInGame: (a: { group: { name: string; }; }[], b: { group: { name: any; }; }[]) => a[0].group.name.localeCompare(b[0].group.name),
     showLaunchDialog: vi.fn(),
     checkCanInviteSelf: vi.fn(() => true),
     selfInvite: vi.fn().mockResolvedValue({}),
@@ -29,11 +29,11 @@ const mocks = vi.hoisted(() => ({
     toastSuccess: vi.fn()
 }));
 
-vi.mock('pinia', async (i) => ({ ...(await i()), storeToRefs: (s) => s }));
-vi.mock('vue-i18n', () => ({ useI18n: () => ({ t: (k) => k }) }));
+vi.mock('pinia', async (i) => ({ ...(await i()), storeToRefs: (s: any) => s }));
+vi.mock('vue-i18n', () => ({ useI18n: () => ({ t: (k: any) => k }) }));
 
 vi.mock('@tanstack/vue-virtual', () => ({
-    useVirtualizer: (optionsRef) => ({
+    useVirtualizer: (optionsRef: { value: { count: number; getItemKey: (arg0: number) => any; }; }) => ({
         value: {
             getVirtualItems: () =>
                 Array.from({ length: optionsRef.value.count }, (_, index) => ({
@@ -57,19 +57,23 @@ vi.mock('../../../../stores', () => ({
         groupInstances: mocks.groupInstances
     }),
     useLaunchStore: () => ({
-        showLaunchDialog: (...a) => mocks.showLaunchDialog(...a)
+        showLaunchDialog: (...a: any[]) => mocks.showLaunchDialog(...a)
     })
 }));
 
 vi.mock('../../../../composables/useInviteChecks', () => ({
     useInviteChecks: () => ({
-        checkCanInviteSelf: (...a) => mocks.checkCanInviteSelf(...a)
+
+
+
+
+        checkCanInviteSelf: (...a: any[]) => mocks.checkCanInviteSelf(...a)
     })
 }));
 
 vi.mock('../../../../shared/utils', () => ({
-    convertFileUrlToImageUrl: (url) => `${url}?small`,
-    parseLocation: (location) => ({
+    convertFileUrlToImageUrl: (url: any) => `${url}?small`,
+    parseLocation: (location: string) => ({
         isRealInstance: !!location,
         worldId: location.split(':')[0],
         instanceId: location.split(':')[1]
@@ -77,18 +81,18 @@ vi.mock('../../../../shared/utils', () => ({
 }));
 
 vi.mock('../../../../coordinators/groupCoordinator', () => ({
-    showGroupDialog: (...a) => mocks.showGroupDialog(...a)
+    showGroupDialog: (...a: any[]) => mocks.showGroupDialog(...a)
 }));
 
 vi.mock('../../../../api', () => ({
     instanceRequest: {
-        selfInvite: (...a) => mocks.selfInvite(...a)
+        selfInvite: (...a: any[]) => mocks.selfInvite(...a)
     }
 }));
 
 vi.mock('vue-sonner', () => ({
     toast: {
-        success: (...a) => mocks.toastSuccess(...a)
+        success: (...a: any[]) => mocks.toastSuccess(...a)
     }
 }));
 

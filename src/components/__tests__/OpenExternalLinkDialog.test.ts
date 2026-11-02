@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { createPinia } from 'pinia';
-import { mount } from '@vue/test-utils';
+import { mount, VueWrapper } from '@vue/test-utils';
 import { nextTick } from 'vue';
 
 const mocks = vi.hoisted(() => ({
@@ -9,18 +9,22 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock('@/stores', async () => {
+
+
+
+
     const { useExternalLinkStore } = await import('@/stores/externalLink');
     return { useExternalLinkStore };
 });
 
 vi.mock('@/shared/utils/appActions', () => ({
-    copyToClipboard: (...args) => mocks.copyToClipboard(...args)
+    copyToClipboard: (...args: any[]) => mocks.copyToClipboard(...args)
 }));
 
 import OpenExternalLinkDialog from '../dialogs/OpenExternalLinkDialog.vue';
 import { useExternalLinkStore } from '../../stores/externalLink';
 
-let wrapper;
+let wrapper: VueWrapper<any, any> | undefined;
 
 async function showDialog(link = 'https://example.com') {
     const pinia = createPinia();
@@ -35,14 +39,14 @@ async function showDialog(link = 'https://example.com') {
     return store;
 }
 
-function findButton(label) {
+function findButton(label: string) {
     return [...document.body.querySelectorAll('button')].find((button) => button.textContent === label);
 }
 
 describe('OpenExternalLinkDialog.vue', () => {
     beforeEach(() => {
         vi.clearAllMocks();
-        globalThis.AppApi = { OpenLink: mocks.openLink };
+        (globalThis as any).AppApi = { OpenLink: mocks.openLink };
     });
 
     afterEach(() => {
@@ -61,6 +65,10 @@ describe('OpenExternalLinkDialog.vue', () => {
     test('Escape dismisses without copying or opening', async () => {
         const store = await showDialog();
 
+
+
+
+
         findButton('Open').dispatchEvent(
             new KeyboardEvent('keydown', {
                 key: 'Escape',
@@ -78,6 +86,10 @@ describe('OpenExternalLinkDialog.vue', () => {
     test('Copy copies the link and closes the dialog', async () => {
         const store = await showDialog();
 
+
+
+
+
         findButton('Copy').click();
         await nextTick();
 
@@ -89,6 +101,10 @@ describe('OpenExternalLinkDialog.vue', () => {
     test('Ctrl+C uses the same copy action', async () => {
         const store = await showDialog();
         const openButton = findButton('Open');
+
+
+
+
 
         openButton.dispatchEvent(
             new KeyboardEvent('keydown', {
@@ -107,7 +123,15 @@ describe('OpenExternalLinkDialog.vue', () => {
                 bubbles: true,
                 cancelable: true
             });
+
+
+
+
         openButton.dispatchEvent(shortcutEvent());
+
+
+
+
         openButton.dispatchEvent(shortcutEvent());
         await nextTick();
 
@@ -118,6 +142,10 @@ describe('OpenExternalLinkDialog.vue', () => {
 
     test('Open opens the link and closes the dialog', async () => {
         const store = await showDialog();
+
+
+
+
 
         findButton('Open').click();
         await nextTick();

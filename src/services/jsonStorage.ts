@@ -1,15 +1,15 @@
-let VRCXStorage = {};
+let VRCXStorage: { GetArray?: (key: any) => Promise<any[]>; SetArray?: (key: any, value: any) => void; GetObject?: (key: any) => Promise<any>; SetObject?: (key: any, value: any) => void } = {};
 
 export default class {
-    constructor(_VRCXStorage) {
+    constructor(_VRCXStorage: any) {
         VRCXStorage = _VRCXStorage;
         this.init();
     }
 
     init() {
-        VRCXStorage.GetArray = async function (key) {
+        VRCXStorage.GetArray = async function (key: any) {
             try {
-                var array = JSON.parse(await this.Get(key));
+                var array = JSON.parse(await (this as any).Get(key));
                 if (Array.isArray(array)) {
                     return array;
                 }
@@ -19,13 +19,13 @@ export default class {
             return [];
         };
 
-        VRCXStorage.SetArray = function (key, value) {
-            this.Set(key, JSON.stringify(value));
+        VRCXStorage.SetArray = function (key: any, value: any) {
+            (this as any).Set(key, JSON.stringify(value));
         };
 
-        VRCXStorage.GetObject = async function (key) {
+        VRCXStorage.GetObject = async function (key: any) {
             try {
-                var object = JSON.parse(await this.Get(key));
+                var object = JSON.parse(await (this as any).Get(key));
                 if (object === Object(object)) {
                     return object;
                 }
@@ -35,8 +35,8 @@ export default class {
             return {};
         };
 
-        VRCXStorage.SetObject = function (key, value) {
-            this.Set(key, JSON.stringify(value));
+        VRCXStorage.SetObject = function (key: any, value: any) {
+            (this as any).Set(key, JSON.stringify(value));
         };
     }
 }

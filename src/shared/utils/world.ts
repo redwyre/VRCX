@@ -6,7 +6,7 @@ import { rpcWorlds } from '../constants';
  * @param {string} location
  * @returns {Promise<string>}
  */
-async function getWorldName(location) {
+async function getWorldName(location: string) {
     let worldName = '';
 
     const L = parseLocation(location);
@@ -15,7 +15,7 @@ async function getWorldName(location) {
             const args = await queryRequest.fetch('world.dialog', {
                 worldId: L.worldId
             });
-            worldName = args.ref.name;
+            worldName = (args as any).ref.name;
         } catch (e) {
             console.error('getWorldName failed location', location, e);
         }
@@ -28,7 +28,7 @@ async function getWorldName(location) {
  * @param {string} location
  * @returns
  */
-function isRpcWorld(location) {
+function isRpcWorld(location: string) {
     const L = parseLocation(location);
     if (rpcWorlds.includes(L.worldId)) {
         return true;

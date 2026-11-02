@@ -6,7 +6,7 @@ import { formatDateFilter } from '../../../shared/utils';
 
 const { t } = i18n.global;
 
-const sortButton = ({ column, label, descFirst = false }) => (
+const sortButton = ({ column, label, descFirst = false }: any) => (
     <Button
         variant="ghost"
         size="sm"
@@ -25,27 +25,31 @@ const sortButton = ({ column, label, descFirst = false }) => (
     </Button>
 );
 
-export const createColumns = ({ onLookupUser }) => [
+export const createColumns = ({ onLookupUser }: any) => [
     {
         id: 'created_at',
-        accessorFn: (row) => (row?.created_at ? Date.parse(row.created_at) : 0),
+        accessorFn: (row: { created_at: string; }) => (row?.created_at ? Date.parse(row.created_at) : 0),
         size: 170,
-        header: ({ column }) =>
+        header: ({ column }: any) =>
             sortButton({
                 column,
                 label: t('table.previous_instances.date'),
                 descFirst: true
             }),
-        cell: ({ row }) => {
+        cell: ({ row }: any) => {
             const createdAt = row.original?.created_at;
             const shortText = formatDateFilter(createdAt, 'short');
             const longText = formatDateFilter(createdAt, 'long');
+
+
+
+
             return <span title={longText}>{shortText}</span>;
         }
     },
     {
         id: 'friend',
-        accessorFn: (row) => (row?.isFavorite ? 2 : row?.isFriend ? 1 : 0),
+        accessorFn: (row: { isFavorite: any; isFriend: any; }) => (row?.isFavorite ? 2 : row?.isFriend ? 1 : 0),
         size: 70,
         enableSorting: false,
         header: () => t('table.gameLog.icon'),
@@ -53,12 +57,20 @@ export const createColumns = ({ onLookupUser }) => [
             thClass: 'text-center',
             tdClass: 'text-center'
         },
-        cell: ({ row }) => {
+        cell: ({ row }: any) => {
             const original = row.original;
             if (original?.isFavorite) {
+
+
+
+
                 return <span title="Favorite">⭐</span>;
             }
             if (original?.isFriend) {
+
+
+
+
                 return <span title="Friend">💚</span>;
             }
             return null;
@@ -66,8 +78,8 @@ export const createColumns = ({ onLookupUser }) => [
     },
     {
         id: 'displayName',
-        accessorFn: (row) => row?.displayName ?? '',
-        header: ({ column }) =>
+        accessorFn: (row: { displayName: any; }) => row?.displayName ?? '',
+        header: ({ column }: any) =>
             sortButton({
                 column,
                 label: t('table.previous_instances.display_name')
@@ -75,33 +87,49 @@ export const createColumns = ({ onLookupUser }) => [
         meta: {
             stretch: true
         },
-        cell: ({ row }) => {
+        cell: ({ row }: any) => {
             const original = row.original;
             return (
+
+
+
+
                 <span
                     class=" cursor-pointer"
-                    onClick={(event) => {
+                    onClick={(event: { stopPropagation: () => void; }) => {
                         event.stopPropagation();
                         onLookupUser?.(original);
                     }}
                 >
                     {original?.displayName ?? ''}
+
+
+
+
                 </span>
             );
         }
     },
     {
         id: 'time',
-        accessorFn: (row) => row?.time ?? 0,
+        accessorFn: (row: { time: any; }) => row?.time ?? 0,
         size: 100,
-        header: ({ column }) => sortButton({ column, label: t('table.previous_instances.time') }),
-        cell: ({ row }) => <span>{row.original?.timer ?? ''}</span>
+        header: ({ column }: any) => sortButton({ column, label: t('table.previous_instances.time') }),
+
+
+
+
+        cell: ({ row }: any) => <span>{row.original?.timer ?? ''}</span>
     },
     {
         id: 'count',
-        accessorFn: (row) => row?.count ?? 0,
+        accessorFn: (row: { count: any; }) => row?.count ?? 0,
         size: 100,
-        header: ({ column }) => sortButton({ column, label: t('table.previous_instances.count') }),
-        cell: ({ row }) => <span>{row.original?.count ?? ''}</span>
+        header: ({ column }: any) => sortButton({ column, label: t('table.previous_instances.count') }),
+
+
+
+
+        cell: ({ row }: any) => <span>{row.original?.count ?? ''}</span>
     }
 ];

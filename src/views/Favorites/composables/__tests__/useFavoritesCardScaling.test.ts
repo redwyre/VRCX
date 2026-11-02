@@ -9,8 +9,12 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock('../../../../services/config.js', () => ({
     default: {
-        getString: (...args) => mocks.getString(...args),
-        setString: (...args) => mocks.setString(...args)
+
+
+
+
+        getString: (...args: any[]) => mocks.getString(...args),
+        setString: (...args: any[]) => mocks.setString(...args)
     }
 }));
 
@@ -39,8 +43,20 @@ describe('useFavoritesCardScaling', () => {
 
     it('builds grid style css vars from scale/spacing', async () => {
         const api = mountComposable();
+
+
+
+
         api.cardScale.value = 0.8;
+
+
+
+
         api.cardSpacing.value = 1.2;
+
+
+
+
 
         const style = api.gridStyle.value(3, { preferredColumns: 2 });
 

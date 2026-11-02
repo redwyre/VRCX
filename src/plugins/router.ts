@@ -22,6 +22,7 @@ import ScreenshotMetadata from './../views/Tools/ScreenshotMetadata.vue';
 import Search from './../views/Search/Search.vue';
 import Settings from './../views/Settings/Settings.vue';
 import Tools from './../views/Tools/Tools.vue';
+import { App } from 'vue';
 
 const routes = [
     {
@@ -137,11 +138,11 @@ const routes = [
 
 export const router = createRouter({
     history: createWebHashHistory(),
-    // @ts-ignore
+
     routes
 });
 
-export function initRouter(app) {
+export function initRouter(app: App<Element>) {
     app.use(router);
 }
 

@@ -13,7 +13,14 @@
  * @param {string} [opts.logLabel] - Label for console.log output
  * @returns {{ deletedCount: number }}
  */
-export function evictMapCache(cache, maxSize, isRetainedFn, opts = {}) {
+
+
+
+
+export function evictMapCache(cache: Map, maxSize: number, isRetainedFn: (value: any, key: string) => boolean, opts: {
+    sortFn?: (a: { key: string; value: any; }, b: { key: string; value: any; }) => number;
+    logLabel?: string;
+} = {}) {
     if (cache.size <= maxSize) {
         return { deletedCount: 0 };
     }

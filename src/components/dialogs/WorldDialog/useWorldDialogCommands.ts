@@ -28,19 +28,22 @@ import { removeWorldFromCache } from '../../../coordinators/worldCoordinator';
  * @returns {object} Commands composable API
  */
 export function useWorldDialogCommands(
-    worldDialog,
-    {
-        t,
-        toast,
-        modalStore,
-        userDialog,
-        cachedWorlds,
-        showWorldDialog,
-        showFavoriteDialog,
-        newInstanceSelfInvite,
-        showPreviousInstancesListDialog: openPreviousInstancesListDialog,
-        showFullscreenImageDialog
-    }
+    worldDialog: import('vue').Ref, { t, toast, modalStore, userDialog, cachedWorlds, showWorldDialog, showFavoriteDialog, newInstanceSelfInvite, showPreviousInstancesListDialog: openPreviousInstancesListDialog, showFullscreenImageDialog }: {
+    t: Function;
+    toast: { success: Function; error: Function; };
+    modalStore: object;
+    userDialog: import('vue').Ref;
+
+
+
+
+    cachedWorlds: Map;
+    showWorldDialog: Function;
+    showFavoriteDialog: Function;
+    newInstanceSelfInvite: Function;
+    showPreviousInstancesListDialog: Function;
+    showFullscreenImageDialog: Function;
+}
 ) {
     const worldAllowedDomainsDialog = ref({
         visible: false,
@@ -56,7 +59,7 @@ export function useWorldDialogCommands(
     /**
      * @param e
      */
-    function onFileChangeWorldImage(e) {
+    function onFileChangeWorldImage(e: any) {
         const { file, clearInput } = handleImageUploadInput(e, {
             inputSelector: '#WorldImageUploadButton',
             tooLargeMessage: () => t('message.file.too_large'),
@@ -77,12 +80,16 @@ export function useWorldDialogCommands(
     /**
      * @param blob
      */
-    async function onCropConfirmWorld(blob) {
+    async function onCropConfirmWorld(blob: Blob | File) {
         changeWorldImageLoading.value = true;
         try {
             await withUploadTimeout(
                 (async () => {
                     const base64Body = await readFileAsBase64(blob);
+
+
+
+
                     const base64File = await resizeImageToFitLimits(base64Body);
                     await uploadImageLegacy('world', {
                         entityId: worldDialog.value.id,
@@ -105,7 +112,7 @@ export function useWorldDialogCommands(
     /**
      * @param tag
      */
-    function showNewInstanceDialog(tag) {
+    function showNewInstanceDialog(tag: string) {
         // trigger watcher
         newInstanceDialogLocationTag.value = '';
         nextTick(() => (newInstanceDialogLocationTag.value = tag));
@@ -157,178 +164,179 @@ export function useWorldDialogCommands(
     /**
      * @param worldRef
      */
-    function showPreviousInstancesListDialog(worldRef) {
+    function showPreviousInstancesListDialog(worldRef: any) {
         openPreviousInstancesListDialog('world', worldRef);
     }
 
     /**
      * @param world
      */
-    function promptRenameWorld(world) {
-        modalStore
-            .prompt({
-                title: t('prompt.rename_world.header'),
-                description: t('prompt.rename_world.description'),
-                confirmText: t('prompt.rename_world.ok'),
-                cancelText: t('prompt.rename_world.cancel'),
-                inputValue: world.ref.name,
-                errorMessage: t('prompt.rename_world.input_error')
-            })
-            .then(({ ok, value }) => {
-                if (!ok) return;
-                if (value && value !== world.ref.name) {
-                    worldRequest
-                        .saveWorld({
-                            id: world.id,
-                            name: value
-                        })
-                        .then((args) => {
-                            toast.success(t('prompt.rename_world.message.success'));
-                            return args;
-                        });
-                }
-            })
-            .catch(() => {});
+    function promptRenameWorld(world: { ref: { name: any; }; id: any; }) {
+        (modalStore as any).prompt({
+    title: t('prompt.rename_world.header'),
+    description: t('prompt.rename_world.description'),
+    confirmText: t('prompt.rename_world.ok'),
+    cancelText: t('prompt.rename_world.cancel'),
+    inputValue: world.ref.name,
+    errorMessage: t('prompt.rename_world.input_error')
+})
+    .then(({ ok, value }: any) => {
+    if (!ok)
+        return;
+    if (value && value !== world.ref.name) {
+        worldRequest
+            .saveWorld({
+            id: world.id,
+            name: value
+        })
+            .then((args) => {
+            toast.success(t('prompt.rename_world.message.success'));
+            return args;
+        });
+    }
+})
+    .catch(() => { });
     }
     /**
      * @param world
      */
-    function promptChangeWorldDescription(world) {
-        modalStore
-            .prompt({
-                title: t('prompt.change_world_description.header'),
-                description: t('prompt.change_world_description.description'),
-                confirmText: t('prompt.change_world_description.ok'),
-                cancelText: t('prompt.change_world_description.cancel'),
-                inputValue: world.ref.description,
-                errorMessage: t('prompt.change_world_description.input_error')
-            })
-            .then(({ ok, value }) => {
-                if (!ok) return;
-                if (value && value !== world.ref.description) {
-                    worldRequest
-                        .saveWorld({
-                            id: world.id,
-                            description: value
-                        })
-                        .then((args) => {
-                            toast.success(t('prompt.change_world_description.message.success'));
-                            return args;
-                        });
-                }
-            })
-            .catch(() => {});
+    function promptChangeWorldDescription(world: { ref: { description: any; }; id: any; }) {
+        (modalStore as any).prompt({
+    title: t('prompt.change_world_description.header'),
+    description: t('prompt.change_world_description.description'),
+    confirmText: t('prompt.change_world_description.ok'),
+    cancelText: t('prompt.change_world_description.cancel'),
+    inputValue: world.ref.description,
+    errorMessage: t('prompt.change_world_description.input_error')
+})
+    .then(({ ok, value }: any) => {
+    if (!ok)
+        return;
+    if (value && value !== world.ref.description) {
+        worldRequest
+            .saveWorld({
+            id: world.id,
+            description: value
+        })
+            .then((args) => {
+            toast.success(t('prompt.change_world_description.message.success'));
+            return args;
+        });
     }
-
-    /**
-     * @param world
-     */
-    function promptChangeWorldCapacity(world) {
-        modalStore
-            .prompt({
-                title: t('prompt.change_world_capacity.header'),
-                description: t('prompt.change_world_capacity.description'),
-                confirmText: t('prompt.change_world_capacity.ok'),
-                cancelText: t('prompt.change_world_capacity.cancel'),
-                inputValue: world.ref.capacity,
-                pattern: /\d+$/,
-                errorMessage: t('prompt.change_world_capacity.input_error')
-            })
-            .then(({ ok, value }) => {
-                if (!ok) return;
-                if (value && value !== world.ref.capacity) {
-                    worldRequest
-                        .saveWorld({
-                            id: world.id,
-                            capacity: Number(value)
-                        })
-                        .then((args) => {
-                            toast.success(t('prompt.change_world_capacity.message.success'));
-                            return args;
-                        });
-                }
-            })
-            .catch(() => {});
+})
+    .catch(() => { });
     }
 
     /**
      * @param world
      */
-    function promptChangeWorldRecommendedCapacity(world) {
-        modalStore
-            .prompt({
-                title: t('prompt.change_world_recommended_capacity.header'),
-                description: t('prompt.change_world_recommended_capacity.description'),
-                confirmText: t('prompt.change_world_capacity.ok'),
-                cancelText: t('prompt.change_world_capacity.cancel'),
-                inputValue: world.ref.recommendedCapacity,
-                pattern: /\d+$/,
-                errorMessage: t('prompt.change_world_recommended_capacity.input_error')
-            })
-            .then(({ ok, value }) => {
-                if (!ok) return;
-                if (value && value !== world.ref.recommendedCapacity) {
-                    worldRequest
-                        .saveWorld({
-                            id: world.id,
-                            recommendedCapacity: Number(value)
-                        })
-                        .then((args) => {
-                            toast.success(t('prompt.change_world_recommended_capacity.message.success'));
-                            return args;
-                        });
-                }
-            })
-            .catch(() => {});
+    function promptChangeWorldCapacity(world: { ref: { capacity: any; }; id: any; }) {
+        (modalStore as any).prompt({
+    title: t('prompt.change_world_capacity.header'),
+    description: t('prompt.change_world_capacity.description'),
+    confirmText: t('prompt.change_world_capacity.ok'),
+    cancelText: t('prompt.change_world_capacity.cancel'),
+    inputValue: world.ref.capacity,
+    pattern: /\d+$/,
+    errorMessage: t('prompt.change_world_capacity.input_error')
+})
+    .then(({ ok, value }: any) => {
+    if (!ok)
+        return;
+    if (value && value !== world.ref.capacity) {
+        worldRequest
+            .saveWorld({
+            id: world.id,
+            capacity: Number(value)
+        })
+            .then((args) => {
+            toast.success(t('prompt.change_world_capacity.message.success'));
+            return args;
+        });
+    }
+})
+    .catch(() => { });
     }
 
     /**
      * @param world
      */
-    function promptChangeWorldYouTubePreview(world) {
-        modalStore
-            .prompt({
-                title: t('prompt.change_world_preview.header'),
-                description: t('prompt.change_world_preview.description'),
-                confirmText: t('prompt.change_world_preview.ok'),
-                cancelText: t('prompt.change_world_preview.cancel'),
-                inputValue: world.ref.previewYoutubeId,
-                errorMessage: t('prompt.change_world_preview.input_error')
-            })
-            .then(({ ok, value }) => {
-                if (!ok) return;
-                if (value && value !== world.ref.previewYoutubeId) {
-                    let processedValue = value;
-                    if (value.length > 11) {
-                        try {
-                            const url = new URL(value);
-                            const id1 = url.pathname;
-                            const id2 = url.searchParams.get('v');
-                            if (id1 && id1.length === 12) {
-                                processedValue = id1.substring(1, 12);
-                            }
-                            if (id2 && id2.length === 11) {
-                                processedValue = id2;
-                            }
-                        } catch {
-                            toast.error(t('prompt.change_world_preview.message.error'));
-                            return;
-                        }
-                    }
-                    if (processedValue !== world.ref.previewYoutubeId) {
-                        worldRequest
-                            .saveWorld({
-                                id: world.id,
-                                previewYoutubeId: processedValue
-                            })
-                            .then((args) => {
-                                toast.success(t('prompt.change_world_preview.message.success'));
-                                return args;
-                            });
-                    }
+    function promptChangeWorldRecommendedCapacity(world: { ref: { recommendedCapacity: any; }; id: any; }) {
+        (modalStore as any).prompt({
+    title: t('prompt.change_world_recommended_capacity.header'),
+    description: t('prompt.change_world_recommended_capacity.description'),
+    confirmText: t('prompt.change_world_capacity.ok'),
+    cancelText: t('prompt.change_world_capacity.cancel'),
+    inputValue: world.ref.recommendedCapacity,
+    pattern: /\d+$/,
+    errorMessage: t('prompt.change_world_recommended_capacity.input_error')
+})
+    .then(({ ok, value }: any) => {
+    if (!ok)
+        return;
+    if (value && value !== world.ref.recommendedCapacity) {
+        worldRequest
+            .saveWorld({
+            id: world.id,
+            recommendedCapacity: Number(value)
+        })
+            .then((args) => {
+            toast.success(t('prompt.change_world_recommended_capacity.message.success'));
+            return args;
+        });
+    }
+})
+    .catch(() => { });
+    }
+
+    /**
+     * @param world
+     */
+    function promptChangeWorldYouTubePreview(world: { ref: { previewYoutubeId: any; }; id: any; }) {
+        (modalStore as any).prompt({
+    title: t('prompt.change_world_preview.header'),
+    description: t('prompt.change_world_preview.description'),
+    confirmText: t('prompt.change_world_preview.ok'),
+    cancelText: t('prompt.change_world_preview.cancel'),
+    inputValue: world.ref.previewYoutubeId,
+    errorMessage: t('prompt.change_world_preview.input_error')
+})
+    .then(({ ok, value }: any) => {
+    if (!ok)
+        return;
+    if (value && value !== world.ref.previewYoutubeId) {
+        let processedValue = value;
+        if (value.length > 11) {
+            try {
+                const url = new URL(value);
+                const id1 = url.pathname;
+                const id2 = url.searchParams.get('v');
+                if (id1 && id1.length === 12) {
+                    processedValue = id1.substring(1, 12);
                 }
+                if (id2 && id2.length === 11) {
+                    processedValue = id2;
+                }
+            }
+            catch {
+                toast.error(t('prompt.change_world_preview.message.error'));
+                return;
+            }
+        }
+        if (processedValue !== world.ref.previewYoutubeId) {
+            worldRequest
+                .saveWorld({
+                id: world.id,
+                previewYoutubeId: processedValue
             })
-            .catch(() => {});
+                .then((args) => {
+                toast.success(t('prompt.change_world_preview.message.success'));
+                return args;
+            });
+        }
+    }
+})
+    .catch(() => { });
     }
 
     // --- Command map ---
@@ -398,7 +406,7 @@ export function useWorldDialogCommands(
                         command: t('dialog.world.actions.favorites_tooltip')
                     })
                 }),
-                handler: (id) => {
+                handler: (id: any) => {
                     favoriteRequest.deleteFavorite({ objectId: id });
                 }
             },
@@ -409,7 +417,7 @@ export function useWorldDialogCommands(
                         command: t('dialog.world.actions.make_home')
                     })
                 }),
-                handler: (id) => {
+                handler: (id: any) => {
                     userRequest.saveCurrentUser({ homeLocation: id }).then((args) => {
                         toast.success(t('message.world.home_updated'));
                         return args;
@@ -437,7 +445,7 @@ export function useWorldDialogCommands(
                         command: t('dialog.world.actions.publish_to_labs')
                     })
                 }),
-                handler: (id) => {
+                handler: (id: any) => {
                     worldRequest.publishWorld({ worldId: id }).then((args) => {
                         toast.success(t('message.world.published'));
                         return args;
@@ -451,7 +459,7 @@ export function useWorldDialogCommands(
                         command: t('dialog.world.actions.unpublish')
                     })
                 }),
-                handler: (id) => {
+                handler: (id: any) => {
                     worldRequest.unpublishWorld({ worldId: id }).then((args) => {
                         toast.success(t('message.world.unpublished'));
                         return args;
@@ -465,7 +473,7 @@ export function useWorldDialogCommands(
                         command: t('dialog.world.actions.delete_persistent_data')
                     })
                 }),
-                handler: (id) => {
+                handler: (id: any) => {
                     miscRequest.deleteWorldPersistData({ worldId: id }).then((args) => {
                         if (args.params.worldId === worldDialog.value.id && worldDialog.value.visible) {
                             worldDialog.value.hasPersistData = false;
@@ -483,7 +491,7 @@ export function useWorldDialogCommands(
                     }),
                     destructive: true
                 }),
-                handler: (id) => {
+                handler: (id: any) => {
                     worldRequest.deleteWorld({ worldId: id }).then((args) => {
                         const { json } = args;
                         removeWorldFromCache(json.id);
@@ -516,7 +524,7 @@ export function useWorldDialogCommands(
      *
      * @param {object} callbacks
      */
-    function registerCallbacks(callbacks) {
+    function registerCallbacks(callbacks: object) {
         componentCallbacks = callbacks;
     }
 
@@ -525,13 +533,13 @@ export function useWorldDialogCommands(
      *
      * @param {string} command
      */
-    function worldDialogCommand(command) {
+    function worldDialogCommand(command: string) {
         const D = worldDialog.value;
         if (D.visible === false) {
             return;
         }
 
-        const entry = commandMap[command];
+        const entry = (commandMap as any)[command];
 
         if (!entry) {
             return;
@@ -539,7 +547,7 @@ export function useWorldDialogCommands(
 
         // String entry => delegate to component callback
         if (typeof entry === 'string') {
-            const cb = componentCallbacks[entry];
+            const cb = (componentCallbacks as any)[entry];
             if (cb) {
                 cb();
             }
@@ -554,11 +562,11 @@ export function useWorldDialogCommands(
 
         // Confirmed command
         if (entry.confirm) {
-            modalStore.confirm(entry.confirm()).then(({ ok }) => {
-                if (ok) {
-                    entry.handler(D.id);
-                }
-            });
+            (modalStore as any).confirm(entry.confirm()).then(({ ok }: any) => {
+    if (ok) {
+        entry.handler(D.id);
+    }
+});
         }
     }
 

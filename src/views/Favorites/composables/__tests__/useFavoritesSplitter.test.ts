@@ -10,8 +10,12 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock('../../../../services/config.js', () => ({
     default: {
-        getString: (...args) => mocks.getString(...args),
-        setString: (...args) => mocks.setString(...args)
+
+
+
+
+        getString: (...args: any[]) => mocks.getString(...args),
+        setString: (...args: any[]) => mocks.setString(...args)
     }
 }));
 
@@ -41,12 +45,28 @@ describe('useFavoritesSplitter', () => {
 
     it('persists layout size while dragging', () => {
         const api = mountComposable();
+
+
+
+
         api.splitterGroupRef.value = {
             getBoundingClientRect: () => ({ width: 1200 })
         };
 
+
+
+
+
         api.setDragging(true);
+
+
+
+
         api.handleLayout([25, 75]);
+
+
+
+
         api.setDragging(false);
 
         expect(mocks.setString).toHaveBeenCalledWith('split-key', '300');
@@ -54,9 +74,17 @@ describe('useFavoritesSplitter', () => {
 
     it('ignores layout updates when not dragging', () => {
         const api = mountComposable();
+
+
+
+
         api.splitterGroupRef.value = {
             getBoundingClientRect: () => ({ width: 1200 })
         };
+
+
+
+
 
         api.handleLayout([20, 80]);
 

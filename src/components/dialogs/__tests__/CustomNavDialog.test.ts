@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 
-vi.mock('vue-i18n', () => ({ useI18n: () => ({ t: (k) => k }) }));
+vi.mock('vue-i18n', () => ({ useI18n: () => ({ t: (k: any) => k }) }));
 vi.mock('@/shared/utils/common', () => ({ openExternalLink: vi.fn() }));
 vi.mock('../../../stores', () => ({
     useDashboardStore: () => ({
@@ -91,12 +91,24 @@ describe('CustomNavDialog.vue', () => {
         const resetButton = buttons.find((button) => button.text().includes('nav_menu.custom_nav.restore_default'));
         const saveButton = buttons.find((button) => button.text().includes('common.actions.confirm'));
 
+
+
+
+
         await resetButton.trigger('click');
+
+
+
+
         await saveButton.trigger('click');
 
         const emitted = wrapper.emitted('save');
         expect(emitted).toBeTruthy();
+
+
+
+
         expect(emitted[0][0]).toEqual(defaultLayout);
-        expect(emitted[0][0][0].nameKey).toBe('nav_tooltip.social');
+        expect((emitted as any)[0][0][0].nameKey).toBe('nav_tooltip.social');
     });
 });

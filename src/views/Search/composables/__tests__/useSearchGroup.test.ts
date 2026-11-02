@@ -6,7 +6,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock('pinia', () => ({
-    storeToRefs: (store) => store
+    storeToRefs: (store: any) => store
 }));
 
 vi.mock('../../../../stores', () => ({
@@ -16,12 +16,16 @@ vi.mock('../../../../stores', () => ({
 }));
 
 vi.mock('../../../../shared/utils', () => ({
-    replaceBioSymbols: (...args) => mocks.replaceBioSymbols(...args)
+
+
+
+
+    replaceBioSymbols: (...args: any[]) => mocks.replaceBioSymbols(...args)
 }));
 
 vi.mock('../../../../api', () => ({
     groupRequest: {
-        groupSearch: (...args) => mocks.groupSearch(...args)
+        groupSearch: (...args: any[]) => mocks.groupSearch(...args)
     }
 }));
 

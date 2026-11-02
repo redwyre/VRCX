@@ -4,7 +4,12 @@ vi.mock('../../plugins/router.js', () => ({
     initRouter: vi.fn()
 }));
 
-import { transformKey } from '../config.js';
+// TODO(ts-migrate): Check that this import is the one meant; TypeScript offered the name from
+// several modules.
+// describe was taken from vitest, over node:test. test was taken from vitest, over node:test
+// and node:test.
+import { vi, describe, test, expect } from 'vitest';
+import { transformKey } from '../config';
 
 describe('transformKey', () => {
     test('lowercases and prefixes with config:', () => {

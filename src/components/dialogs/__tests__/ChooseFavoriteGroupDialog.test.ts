@@ -17,10 +17,10 @@ const mocks = vi.hoisted(() => ({
     }
 }));
 
-vi.mock('pinia', async (i) => ({ ...(await i()), storeToRefs: (s) => s }));
-vi.mock('vue-i18n', () => ({ useI18n: () => ({ t: (k) => k }) }));
+vi.mock('pinia', async (i) => ({ ...(await i()), storeToRefs: (s: any) => s }));
+vi.mock('vue-i18n', () => ({ useI18n: () => ({ t: (k: any) => k }) }));
 vi.mock('vue-sonner', () => ({
-    toast: { success: (...a) => mocks.toastSuccess(...a) }
+    toast: { success: (...a: any[]) => mocks.toastSuccess(...a) }
 }));
 vi.mock('../../../stores', () => ({
     useFavoriteStore: () => ({
@@ -44,14 +44,18 @@ vi.mock('../../../stores', () => ({
         hasLocalWorldFavorite: vi.fn(() => false),
         hasLocalAvatarFavorite: vi.fn(() => false),
         localAvatarFavGroupLength: vi.fn(() => 0),
-        deleteFavoriteNoConfirm: (...a) => mocks.deleteFavoriteNoConfirm(...a),
+        deleteFavoriteNoConfirm: (...a: any[]) => mocks.deleteFavoriteNoConfirm(...a),
         localFriendFavGroupLength: vi.fn(() => 0),
         hasLocalFriendFavorite: vi.fn(() => false)
     }),
     useUserStore: () => ({ isLocalUserVrcPlusSupporter: ref(true) })
 }));
 vi.mock('../../../api', () => ({
-    favoriteRequest: { addFavorite: (...a) => mocks.addFavorite(...a) }
+
+
+
+
+    favoriteRequest: { addFavorite: (...a: any[]) => mocks.addFavorite(...a) }
 }));
 vi.mock('@/components/ui/dialog', () => ({
     Dialog: { template: '<div><slot /></div>' },
@@ -86,6 +90,10 @@ describe('ChooseFavoriteGroupDialog.vue', () => {
             visible: true,
             type: 'friend',
             objectId: 'usr_1',
+
+
+
+
             currentGroup: {
                 key: 'group_1',
                 displayName: 'G1',

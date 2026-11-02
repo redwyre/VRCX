@@ -10,17 +10,17 @@ import { removeEmojis, replaceBioSymbols } from './base/string';
  * @param {string} robotUrl - The robot/default avatar URL to strip
  * @returns {object} The mutated json (same reference)
  */
-export function sanitizeUserJson(json, robotUrl) {
-    if (json.statusDescription) {
-        json.statusDescription = replaceBioSymbols(json.statusDescription);
-        json.statusDescription = removeEmojis(json.statusDescription);
+export function sanitizeUserJson(json: object, robotUrl: string) {
+    if ((json as any).statusDescription) {
+        (json as any).statusDescription = replaceBioSymbols((json as any).statusDescription);
+        (json as any).statusDescription = removeEmojis((json as any).statusDescription);
     }
-    if (json.note) {
-        json.note = replaceBioSymbols(json.note);
+    if ((json as any).note) {
+        (json as any).note = replaceBioSymbols((json as any).note);
     }
-    if (robotUrl && json.currentAvatarImageUrl === robotUrl) {
-        delete json.currentAvatarImageUrl;
-        delete json.currentAvatarThumbnailImageUrl;
+    if (robotUrl && (json as any).currentAvatarImageUrl === robotUrl) {
+        delete (json as any).currentAvatarImageUrl;
+        delete (json as any).currentAvatarThumbnailImageUrl;
     }
     return json;
 }
@@ -41,7 +41,7 @@ export function sanitizeUserJson(json, robotUrl) {
  *     trustColorKey: string;
  * }}
  */
-export function computeTrustLevel(tags, developerType) {
+export function computeTrustLevel(tags: string[], developerType: string) {
     let isModerator = Boolean(developerType) && developerType !== 'none';
     let isTroll = false;
     let isProbableTroll = false;
@@ -109,7 +109,7 @@ export function computeTrustLevel(tags, developerType) {
  * @param {string} lastPlatform - Last known platform
  * @returns {string} Resolved platform
  */
-export function computeUserPlatform(platform, lastPlatform) {
+export function computeUserPlatform(platform: string, lastPlatform: string) {
     if (platform && platform !== 'offline' && platform !== 'web') {
         return platform;
     }
@@ -125,43 +125,43 @@ export function computeUserPlatform(platform, lastPlatform) {
  * @param {(a: any[], b: any[]) => boolean} arraysMatchFn - Function to compare arrays
  * @returns {{ hasPropChanged: boolean; changedProps: object }}
  */
-export function diffObjectProps(ref, json, arraysMatchFn) {
+export function diffObjectProps(ref: object, json: object, arraysMatchFn: (a: any[], b: any[]) => boolean) {
     const changedProps = {};
     let hasPropChanged = false;
 
     // Only compare primitive values
     for (const prop in ref) {
-        if (typeof json[prop] === 'undefined') {
+        if (typeof (json as any)[prop] === 'undefined') {
             continue;
         }
-        if (ref[prop] === null || typeof ref[prop] !== 'object') {
-            changedProps[prop] = true;
+        if ((ref as any)[prop] === null || typeof (ref as any)[prop] !== 'object') {
+            (changedProps as any)[prop] = true;
         }
     }
 
     // Check json props against ref (including array comparison)
     for (const prop in json) {
-        if (typeof ref[prop] === 'undefined') {
+        if (typeof (ref as any)[prop] === 'undefined') {
             continue;
         }
-        if (Array.isArray(json[prop]) && Array.isArray(ref[prop])) {
-            if (!arraysMatchFn(json[prop], ref[prop])) {
-                changedProps[prop] = true;
+        if (Array.isArray((json as any)[prop]) && Array.isArray((ref as any)[prop])) {
+            if (!arraysMatchFn((json as any)[prop], (ref as any)[prop])) {
+                (changedProps as any)[prop] = true;
             }
-        } else if (json[prop] === null || typeof json[prop] !== 'object') {
-            changedProps[prop] = true;
+        } else if ((json as any)[prop] === null || typeof (json as any)[prop] !== 'object') {
+            (changedProps as any)[prop] = true;
         }
     }
 
     // Resolve actual changes
     for (const prop in changedProps) {
-        const asIs = ref[prop];
-        const toBe = json[prop];
+        const asIs = (ref as any)[prop];
+        const toBe = (json as any)[prop];
         if (asIs === toBe) {
-            delete changedProps[prop];
+            delete (changedProps as any)[prop];
         } else {
             hasPropChanged = true;
-            changedProps[prop] = [toBe, asIs];
+            (changedProps as any)[prop] = [toBe, asIs];
         }
     }
 
@@ -175,8 +175,12 @@ export function diffObjectProps(ref, json, arraysMatchFn) {
  * @param {Partial<import('@/types/vrcx').VrcxUser>} json - API response to merge
  * @returns {import('@/types/vrcx').VrcxUser} Default user object with json spread on top
  */
-export function createDefaultUserRef(json) {
-    return /** @type {import('@/types/vrcx').VrcxUser} */ ({
+
+
+
+
+export function createDefaultUserRef(json: Partial<import('@/types/vrcx').VrcxUser>) {
+    return ({
         acceptedPrivacyVersion: 0,
         acceptedTOSVersion: 0,
         accountDeletionDate: null,
@@ -260,5 +264,5 @@ export function createDefaultUserRef(json) {
         $moderations: {},
         //
         ...json
-    });
+    } as import('@/types/vrcx').VrcxUser);
 }

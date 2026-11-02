@@ -51,6 +51,10 @@ async function registerSentryPiniaPlugin() {
     const Sentry = await getSentry();
 
     pinia.use(
+
+
+
+
         Sentry.createSentryPiniaPlugin({
             stateTransformer: (state) => ({
                 ...state,
@@ -59,23 +63,39 @@ async function registerSentryPiniaPlugin() {
                 Favorite: null,
                 Friend: null,
                 User: {
-                    // @ts-ignore
+
+
+
+
+
                     ...state.User,
                     currentUser: null,
                     subsetOfLanguages: null
                 },
                 GameLog: {
-                    // @ts-ignore
+
+
+
+
+
                     ...state.GameLog,
                     gameLogTable: null
                 },
                 Notification: {
-                    // @ts-ignore
+
+
+
+
+
                     ...state.Notification,
                     notificationTable: null
                 },
                 Moderation: {
-                    // @ts-ignore
+
+
+
+
+
                     ...state.Moderation,
                     playerModerationTable: null,
                     cachedPlayerModerations: null,
@@ -83,23 +103,39 @@ async function registerSentryPiniaPlugin() {
                 },
                 Photon: null,
                 SharedFeed: {
-                    // @ts-ignore
+
+
+
+
+
                     ...state.SharedFeed,
                     sharedFeedData: null
                 },
                 Group: {
-                    // @ts-ignore
+
+
+
+
+
                     ...state.Group,
                     groupInstances: null,
                     inGameGroupOrder: null
                 },
                 Avatar: {
-                    // @ts-ignore
+
+
+
+
+
                     ...state.Avatar,
                     avatarHistory: null
                 },
                 Gallery: {
-                    // @ts-ignore
+
+
+
+
+
                     ...state.Gallery,
                     emojiTable: null,
                     galleryTable: null,

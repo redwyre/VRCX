@@ -5,6 +5,7 @@ import { toast } from 'vue-sonner';
 import { i18n } from '../plugins/i18n';
 import { request } from '../services/request';
 import { useInstanceStore } from '../stores';
+import { Component } from 'vue';
 
 const instanceReq = {
     getInstance(params: {
@@ -14,7 +15,7 @@ const instanceReq = {
         const instanceStore = useInstanceStore();
         return request(`instances/${params.worldId}:${params.instanceId}`, {
             method: 'GET'
-        }).then((json) => {
+        }).then((json: object) => {
             return {
                 json,
                 params,
@@ -28,7 +29,7 @@ const instanceReq = {
         return request('instances', {
             method: 'POST',
             params
-        }).then((json) => {
+        }).then((json: object) => {
             const args = {
                 json,
                 params,
@@ -50,7 +51,7 @@ const instanceReq = {
         return request(`instances/${instance.worldId}:${instance.instanceId}/shortName`, {
             method: 'GET',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 instance,
@@ -60,11 +61,11 @@ const instanceReq = {
         });
     },
 
-    getInstanceFromShortName(params: { shortName: string }): Promise<{ json: Json<Instance>; params }> {
+    getInstanceFromShortName(params: { shortName: string }): Promise<{ json: Json<Instance>; params: any }> {
         const instanceStore = useInstanceStore();
         return request(`instances/s/${params.shortName}`, {
             method: 'GET'
-        }).then((json) => {
+        }).then((json: object) => {
             const args = {
                 json,
                 params,
@@ -78,7 +79,7 @@ const instanceReq = {
         worldId: string;
         instanceId: string;
         shortName?: string;
-    }): Promise<{ instance; json: Json<SentNotification>; params }> {
+    }): Promise<{ instance: any; json: Json<SentNotification>; params: any }> {
         const params: { shortName?: string } = {};
         if (instance.shortName) {
             params.shortName = instance.shortName;
@@ -87,14 +88,14 @@ const instanceReq = {
             method: 'POST',
             params
         })
-            .then((json) => {
+            .then((json: any) => {
                 return {
                     json,
                     instance,
                     params
                 };
             })
-            .catch((err) => {
+            .catch((err: { error: { message: string | (() => string | Component) | Component; }; }) => {
                 if (err?.error?.message) {
                     toast.error(err.error.message);
                     throw err;
@@ -107,20 +108,20 @@ const instanceReq = {
     getInstanceCount(): Promise<{ json: InstanceCount }> {
         return request('instances/count', {
             method: 'GET'
-        }).then((json) => {
+        }).then((json: any) => {
             return {
                 json
             };
         });
     },
 
-    updateInstance(params: VrcxUpdateInstanceRequest): Promise<{ json: Json<Instance>; params; ref: any }> {
+    updateInstance(params: VrcxUpdateInstanceRequest): Promise<{ json: Json<Instance>; params: any; ref: any }> {
         const instanceStore = useInstanceStore();
         const { location, ...body } = params;
         return request(`instances/${location}`, {
             method: 'PUT',
             params: body
-        }).then((json) => {
+        }).then((json: object) => {
             return {
                 json,
                 params,
@@ -142,7 +143,7 @@ const instanceReq = {
         return request(`instances/${params.location}/announce`, {
             method: 'POST',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             return {
                 json,
                 params

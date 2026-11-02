@@ -16,8 +16,8 @@ const mocks = vi.hoisted(() => ({
     hasResults: { value: false }
 }));
 
-vi.mock('pinia', async (i) => ({ ...(await i()), storeToRefs: (s) => s }));
-vi.mock('vue-i18n', () => ({ useI18n: () => ({ t: (k) => k }) }));
+vi.mock('pinia', async (i) => ({ ...(await i()), storeToRefs: (s: any) => s }));
+vi.mock('vue-i18n', () => ({ useI18n: () => ({ t: (k: any) => k }) }));
 vi.mock('../../stores/quickSearch', () => ({
     useQuickSearchStore: () => ({
         isOpen: mocks.isOpen,
@@ -30,11 +30,15 @@ vi.mock('../../stores/quickSearch', () => ({
         ownGroupResults: mocks.ownGroupResults,
         joinedGroupResults: mocks.joinedGroupResults,
         hasResults: mocks.hasResults,
-        selectResult: (...args) => mocks.selectResult(...args)
+        selectResult: (...args: any[]) => mocks.selectResult(...args)
     })
 }));
 vi.mock('../../composables/useUserDisplay', () => ({
-    useUserDisplay: () => ({ userImage: (...a) => mocks.userImage(...a) })
+
+
+
+
+    useUserDisplay: () => ({ userImage: (...a: any[]) => mocks.userImage(...a) })
 }));
 vi.mock('../QuickSearchSync.vue', () => ({
     default: { template: '<div data-testid="sync" />' }

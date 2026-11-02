@@ -4,7 +4,7 @@ import { computed, ref } from 'vue';
 import configRepository from '../services/config';
 import { DASHBOARD_NAV_KEY_PREFIX, DASHBOARD_STORAGE_KEY, DEFAULT_DASHBOARD_ICON } from '../shared/constants/dashboard';
 
-function clonePanel(panel) {
+function clonePanel(panel: { key: any; config: any; }) {
     if (typeof panel === 'string' && panel) {
         return panel;
     }
@@ -17,7 +17,7 @@ function clonePanel(panel) {
     return null;
 }
 
-function cloneRows(rows) {
+function cloneRows(rows: any) {
     if (!Array.isArray(rows)) {
         return [];
     }
@@ -33,7 +33,7 @@ function cloneRows(rows) {
         .filter(Boolean);
 }
 
-function sanitizeDashboard(dashboard) {
+function sanitizeDashboard(dashboard: { id: any; name: string; icon: string; rows: any; }) {
     if (!dashboard || typeof dashboard !== 'object') {
         return null;
     }
@@ -61,12 +61,14 @@ export const useDashboardStore = defineStore('dashboard', () => {
     const loaded = ref(false);
     const editingDashboardId = ref(null);
 
-    const dashboardNavKeys = computed(
-        () => new Set(dashboards.value.map((dashboard) => `${DASHBOARD_NAV_KEY_PREFIX}${dashboard.id}`))
-    );
+    const dashboardNavKeys = computed(() => new Set(dashboards.value.map((dashboard) => `${DASHBOARD_NAV_KEY_PREFIX}${(dashboard as any).id}`)));
 
     async function loadDashboards() {
         try {
+
+
+
+
             const stored = await configRepository.getString(DASHBOARD_STORAGE_KEY, null);
             if (!stored) {
                 dashboards.value = [];
@@ -94,10 +96,12 @@ export const useDashboardStore = defineStore('dashboard', () => {
         }
     }
 
-    function getDashboard(id, panel = null) {
-        const dashboard = dashboards.value.find((dashboard) => dashboard.id === id) || null;
+    function getDashboard(id: any, panel = null) {
+        const dashboard = dashboards.value.find((dashboard) => (dashboard as any).id === id) || null;
         if (panel) {
-            return dashboard?.rows.find((row) => row.panels.includes(panel));
+            return (dashboard as any)?.rows.find((row: {
+    panels: string | any[];
+}) => row.panels.includes(panel));
         }
         return dashboard;
     }
@@ -110,7 +114,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
     }
 
     function generateNextDashboardName(baseName = 'Dashboard') {
-        const existingNames = new Set(dashboards.value.map((d) => d.name));
+        const existingNames = new Set(dashboards.value.map((d) => (d as any).name));
         if (!existingNames.has(baseName)) {
             return baseName;
         }
@@ -130,18 +134,26 @@ export const useDashboardStore = defineStore('dashboard', () => {
             icon: DEFAULT_DASHBOARD_ICON,
             rows: []
         };
+
+
+
+
         dashboards.value.push(dashboard);
         await saveDashboards();
         return dashboard;
     }
 
-    async function updateDashboard(id, updates) {
-        const index = dashboards.value.findIndex((dashboard) => dashboard.id === id);
+    async function updateDashboard(id: any, updates: any) {
+        const index = dashboards.value.findIndex((dashboard) => (dashboard as any).id === id);
         if (index < 0) {
             return;
         }
 
         const next = sanitizeDashboard({
+
+
+
+
             ...dashboards.value[index],
             ...updates,
             id
@@ -151,19 +163,23 @@ export const useDashboardStore = defineStore('dashboard', () => {
             return;
         }
 
+
+
+
+
         dashboards.value[index] = next;
         await saveDashboards();
     }
 
-    async function deleteDashboard(id) {
-        dashboards.value = dashboards.value.filter((dashboard) => dashboard.id !== id);
+    async function deleteDashboard(id: null) {
+        dashboards.value = dashboards.value.filter((dashboard) => (dashboard as any).id !== id);
         if (editingDashboardId.value === id) {
             editingDashboardId.value = null;
         }
         await saveDashboards();
     }
 
-    function setEditingDashboardId(id) {
+    function setEditingDashboardId(id: null) {
         editingDashboardId.value = id || null;
     }
 
@@ -173,14 +189,14 @@ export const useDashboardStore = defineStore('dashboard', () => {
 
     function getDashboardNavDefinitions() {
         return dashboards.value.map((dashboard) => ({
-            key: `${DASHBOARD_NAV_KEY_PREFIX}${dashboard.id}`,
-            icon: dashboard.icon || DEFAULT_DASHBOARD_ICON,
-            tooltip: dashboard.name,
-            labelKey: dashboard.name,
-            routeName: 'dashboard',
-            routeParams: { id: dashboard.id },
-            isDashboard: true
-        }));
+    key: `${DASHBOARD_NAV_KEY_PREFIX}${(dashboard as any).id}`,
+    icon: (dashboard as any).icon || DEFAULT_DASHBOARD_ICON,
+    tooltip: (dashboard as any).name,
+    labelKey: (dashboard as any).name,
+    routeName: 'dashboard',
+    routeParams: { id: (dashboard as any).id },
+    isDashboard: true
+}));
     }
 
     return {

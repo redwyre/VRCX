@@ -18,13 +18,13 @@ function createDefaultFetchState() {
 
 const EMPTY_USER_ID = 'usr_00000000-0000-0000-0000-000000000000';
 
-function normalizeIdentifier(value) {
+function normalizeIdentifier(value: null | undefined) {
     if (typeof value === 'string') return value;
     if (value === undefined || value === null) return '';
     return String(value);
 }
 
-function isValidMutualIdentifier(value) {
+function isValidMutualIdentifier(value: any) {
     const identifier = normalizeIdentifier(value);
     return Boolean(identifier && identifier !== EMPTY_USER_ID);
 }
@@ -51,8 +51,8 @@ export const useChartsStore = defineStore('Charts', () => {
     const currentUser = computed(() => userStore.currentUser);
     const isOptOut = computed(() => Boolean(currentUser.value?.hasSharedConnectionsOptOut));
 
-    function showInfoMessage(message, type) {
-        const toastFn = toast[type] ?? toast;
+    function showInfoMessage(message: string, type: string) {
+        const toastFn = (toast as any)[type] ?? toast;
         toastFn(message, { duration: 4000 });
     }
 
@@ -123,7 +123,10 @@ export const useChartsStore = defineStore('Charts', () => {
      * @param {() => boolean} [options.isCancelled]
      * @returns {Promise<Array>} Collected mutual friend entries
      */
-    async function fetchMutualFriendsForUser(userId, options = {}) {
+    async function fetchMutualFriendsForUser(userId: string, options: {
+    rateLimiter?: { wait(): Promise<void>; };
+    isCancelled?: () => boolean;
+} = {}) {
         const { rateLimiter, isCancelled = () => false } = options;
         const collected = [];
         let offset = 0;
@@ -145,7 +148,7 @@ export const useChartsStore = defineStore('Charts', () => {
                 {
                     maxRetries: 4,
                     baseDelay: 500,
-                    shouldRetry: (err) => err?.status === 429 || (err?.message || '').includes('429')
+                    shouldRetry: (err: { status: number; message: any; }) => err?.status === 429 || (err?.message || '').includes('429')
                 }
             ).catch((err) => {
                 if ((err?.message || '') === 'cancelled') return null;
@@ -154,7 +157,7 @@ export const useChartsStore = defineStore('Charts', () => {
 
             if (!args || isCancelled()) break;
 
-            collected.push(...args.json.filter((entry) => isValidMutualIdentifier(entry?.id)));
+            collected.push(...args.json.filter((entry: { id: any; }) => isValidMutualIdentifier(entry?.id)));
 
             if (args.json.length < 100) break;
             offset += args.json.length;
@@ -169,7 +172,7 @@ export const useChartsStore = defineStore('Charts', () => {
      * @param {string} friendId
      * @returns {Promise<{ success: boolean; mutuals: Array; optedOut: boolean }>}
      */
-    async function fetchSingleFriendMutuals(friendId) {
+    async function fetchSingleFriendMutuals(friendId: string) {
         if (!friendId || isOptOut.value) {
             return { success: false, mutuals: [], optedOut: false };
         }
@@ -185,7 +188,7 @@ export const useChartsStore = defineStore('Charts', () => {
 
             return { success: true, mutuals, optedOut: false };
         } catch (err) {
-            const status = err?.status;
+            const status = (err as any)?.status;
             if (status === 403 || status === 404) {
                 await database.upsertMutualGraphMeta(friendId, {
                     optedOut: true
@@ -247,11 +250,11 @@ export const useChartsStore = defineStore('Charts', () => {
                     mutualMap.set(friend.id, { friend, mutuals });
                     metaEntries.set(friend.id, { optedOut: false });
                 } catch (err) {
-                    if ((err?.message || '') === 'cancelled' || isCancelled()) {
+                    if (((err as any)?.message || '') === 'cancelled' || isCancelled()) {
                         cancelled = true;
                         break;
                     }
-                    const status = err?.status;
+                    const status = (err as any)?.status;
                     if (status === 403 || status === 404) {
                         metaEntries.set(friend.id, { optedOut: true });
                     }

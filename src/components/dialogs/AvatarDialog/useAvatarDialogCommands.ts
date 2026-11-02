@@ -31,21 +31,20 @@ import { readFileAsBase64, withUploadTimeout } from '../../../shared/utils/image
  * @returns {object} Command composable API
  */
 export function useAvatarDialogCommands(
-    avatarDialog,
-    {
-        t,
-        toast,
-        modalStore,
-        userDialog,
-        cachedAvatars,
-        cachedAvatarModerations,
-        showAvatarDialog,
-        showFavoriteDialog,
-        applyAvatarModeration,
-        applyAvatar,
-        sortUserDialogAvatars,
-        uiStore
-    }
+    avatarDialog: import('vue').Ref, { t, toast, modalStore, userDialog, cachedAvatars, cachedAvatarModerations, showAvatarDialog, showFavoriteDialog, applyAvatarModeration, applyAvatar, sortUserDialogAvatars, uiStore }: {
+    t: any;
+    toast: any;
+    modalStore: any;
+    userDialog: any;
+    cachedAvatars: any;
+    cachedAvatarModerations: any;
+    showAvatarDialog: any;
+    showFavoriteDialog: any;
+    applyAvatarModeration: any;
+    applyAvatar: any;
+    sortUserDialogAvatars: any;
+    uiStore: any;
+}
 ) {
     // --- Image crop dialog state ---
     const cropDialogOpen = ref(false);
@@ -55,13 +54,17 @@ export function useAvatarDialogCommands(
     // --- Image upload ---
 
     function showChangeAvatarImageDialog() {
+
+
+
+
         document.getElementById('AvatarImageUploadButton').click();
     }
 
     /**
      * @param {Event} e
      */
-    function onFileChangeAvatarImage(e) {
+    function onFileChangeAvatarImage(e: Event) {
         const { file, clearInput } = handleImageUploadInput(e, {
             inputSelector: '#AvatarImageUploadButton',
             tooLargeMessage: () => t('message.file.too_large'),
@@ -82,15 +85,23 @@ export function useAvatarDialogCommands(
     /**
      * @param {Blob} blob
      */
-    async function onCropConfirmAvatar(blob) {
+    async function onCropConfirmAvatar(blob: Blob) {
         changeAvatarImageLoading.value = true;
         try {
             await withUploadTimeout(
                 (async () => {
                     const base64Body = await readFileAsBase64(blob);
+
+
+
+
                     const base64File = await resizeImageToFitLimits(base64Body);
                     if (LINUX) {
                         const args = await avatarRequest.uploadAvatarImage(base64File);
+
+
+
+
                         const fileUrl = args.json.versions[args.json.versions.length - 1].file.url;
                         await avatarRequest.saveAvatar({
                             id: avatarDialog.value.id,
@@ -124,63 +135,65 @@ export function useAvatarDialogCommands(
     /**
      * @param {object} avatar
      */
-    function promptRenameAvatar(avatar) {
+    function promptRenameAvatar(avatar: object) {
         modalStore
-            .prompt({
-                title: t('prompt.rename_avatar.header'),
-                description: t('prompt.rename_avatar.description'),
-                confirmText: t('prompt.rename_avatar.ok'),
-                cancelText: t('prompt.rename_avatar.cancel'),
-                inputValue: avatar.ref.name,
-                errorMessage: t('prompt.rename_avatar.input_error')
-            })
-            .then(({ ok, value }) => {
-                if (!ok) return;
-                if (value && value !== avatar.ref.name) {
-                    avatarRequest
-                        .saveAvatar({
-                            id: avatar.id,
-                            name: value
-                        })
-                        .then((args) => {
-                            applyAvatar(args.json);
-                            toast.success(t('prompt.rename_avatar.message.success'));
-                            return args;
-                        });
-                }
-            })
-            .catch(() => {});
+    .prompt({
+    title: t('prompt.rename_avatar.header'),
+    description: t('prompt.rename_avatar.description'),
+    confirmText: t('prompt.rename_avatar.ok'),
+    cancelText: t('prompt.rename_avatar.cancel'),
+    inputValue: (avatar as any).ref.name,
+    errorMessage: t('prompt.rename_avatar.input_error')
+})
+    .then(({ ok, value }: any) => {
+    if (!ok)
+        return;
+    if (value && value !== (avatar as any).ref.name) {
+        avatarRequest
+            .saveAvatar({
+            id: (avatar as any).id,
+            name: value
+        })
+            .then((args) => {
+            applyAvatar(args.json);
+            toast.success(t('prompt.rename_avatar.message.success'));
+            return args;
+        });
+    }
+})
+    .catch(() => { });
     }
 
     /**
      * @param {object} avatar
      */
-    function promptChangeAvatarDescription(avatar) {
+    function promptChangeAvatarDescription(avatar: object) {
         modalStore
-            .prompt({
-                title: t('prompt.change_avatar_description.header'),
-                description: t('prompt.change_avatar_description.description'),
-                confirmText: t('prompt.change_avatar_description.ok'),
-                cancelText: t('prompt.change_avatar_description.cancel'),
-                inputValue: avatar.ref.description,
-                errorMessage: t('prompt.change_avatar_description.input_error')
-            })
-            .then(({ ok, value }) => {
-                if (!ok) return;
-                if (value && value !== avatar.ref.description) {
-                    avatarRequest
-                        .saveAvatar({
-                            id: avatar.id,
-                            description: value
-                        })
-                        .then((args) => {
-                            applyAvatar(args.json);
-                            toast.success(t('prompt.change_avatar_description.message.success'));
-                            return args;
-                        });
-                }
-            })
-            .catch(() => {});
+    .prompt({
+    title: t('prompt.change_avatar_description.header'),
+    description: t('prompt.change_avatar_description.description'),
+    confirmText: t('prompt.change_avatar_description.ok'),
+    cancelText: t('prompt.change_avatar_description.cancel'),
+    inputValue: (avatar as any).ref.description,
+    errorMessage: t('prompt.change_avatar_description.input_error')
+})
+    .then(({ ok, value }: any) => {
+    if (!ok)
+        return;
+    if (value && value !== (avatar as any).ref.description) {
+        avatarRequest
+            .saveAvatar({
+            id: (avatar as any).id,
+            description: value
+        })
+            .then((args) => {
+            applyAvatar(args.json);
+            toast.success(t('prompt.change_avatar_description.message.success'));
+            return args;
+        });
+    }
+})
+    .catch(() => { });
     }
 
     // --- Internal helper ---
@@ -188,7 +201,7 @@ export function useAvatarDialogCommands(
     /**
      * @param {string} id
      */
-    function copyAvatarUrl(id) {
+    function copyAvatarUrl(id: string) {
         copyToClipboard(`https://vrchat.com/home/avatar/${id}`);
     }
 
@@ -242,7 +255,7 @@ export function useAvatarDialogCommands(
                         command: t('dialog.avatar.actions.favorite_tooltip')
                     })
                 }),
-                handler: (id) => {
+                handler: (id: any) => {
                     favoriteRequest.deleteFavorite({ objectId: id });
                 }
             },
@@ -253,7 +266,7 @@ export function useAvatarDialogCommands(
                         command: t('dialog.avatar.actions.select_fallback')
                     })
                 }),
-                handler: (id) => {
+                handler: (id: any) => {
                     avatarRequest.selectFallbackAvatar({ avatarId: id }).then((args) => {
                         toast.success(t('message.avatar.fallback_changed'));
                         return args;
@@ -268,7 +281,7 @@ export function useAvatarDialogCommands(
                     }),
                     destructive: true
                 }),
-                handler: (id) => {
+                handler: (id: any) => {
                     avatarModerationRequest
                         .sendAvatarModeration({
                             avatarModerationType: 'block',
@@ -289,7 +302,7 @@ export function useAvatarDialogCommands(
                         command: t('dialog.avatar.actions.unblock')
                     })
                 }),
-                handler: (id) => {
+                handler: (id: any) => {
                     avatarModerationRequest
                         .deleteAvatarModeration({
                             avatarModerationType: 'block',
@@ -311,7 +324,7 @@ export function useAvatarDialogCommands(
                         command: t('dialog.avatar.actions.make_public')
                     })
                 }),
-                handler: (id) => {
+                handler: (id: any) => {
                     avatarRequest.saveAvatar({ id, releaseStatus: 'public' }).then((args) => {
                         applyAvatar(args.json);
                         toast.success(t('message.avatar.updated_public'));
@@ -326,7 +339,7 @@ export function useAvatarDialogCommands(
                         command: t('dialog.avatar.actions.make_private')
                     })
                 }),
-                handler: (id) => {
+                handler: (id: any) => {
                     avatarRequest.saveAvatar({ id, releaseStatus: 'private' }).then((args) => {
                         applyAvatar(args.json);
                         toast.success(t('message.avatar.updated_private'));
@@ -342,7 +355,7 @@ export function useAvatarDialogCommands(
                     }),
                     destructive: true
                 }),
-                handler: (id) => {
+                handler: (id: any) => {
                     avatarRequest.deleteAvatar({ avatarId: id }).then((args) => {
                         const { json } = args;
                         removeAvatarFromCache(json.id);
@@ -371,7 +384,7 @@ export function useAvatarDialogCommands(
                     }),
                     destructive: true
                 }),
-                handler: (id) => {
+                handler: (id: any) => {
                     avatarRequest.deleteImposter({ avatarId: id }).then((args) => {
                         toast.success(t('message.avatar.impostor_deleted'));
                         showAvatarDialog(id);
@@ -386,7 +399,7 @@ export function useAvatarDialogCommands(
                         command: t('dialog.avatar.actions.create_impostor')
                     })
                 }),
-                handler: (id) => {
+                handler: (id: any) => {
                     avatarRequest.createImposter({ avatarId: id }).then((args) => {
                         toast.success(t('message.avatar.impostor_queued'));
                         return args;
@@ -401,7 +414,7 @@ export function useAvatarDialogCommands(
                     }),
                     destructive: true
                 }),
-                handler: (id) => {
+                handler: (id: any) => {
                     avatarRequest
                         .deleteImposter({ avatarId: id })
                         .then((args) => {
@@ -429,7 +442,7 @@ export function useAvatarDialogCommands(
      *
      * @param {object} callbacks
      */
-    function registerCallbacks(callbacks) {
+    function registerCallbacks(callbacks: object) {
         componentCallbacks = callbacks;
     }
 
@@ -438,9 +451,9 @@ export function useAvatarDialogCommands(
      *
      * @param {string} command
      */
-    function avatarDialogCommand(command) {
+    function avatarDialogCommand(command: string) {
         const D = avatarDialog.value;
-        const entry = commandMap[command];
+        const entry = (commandMap as any)[command];
 
         if (!entry) {
             return;
@@ -448,7 +461,7 @@ export function useAvatarDialogCommands(
 
         // String entry => delegate to component callback
         if (typeof entry === 'string') {
-            const cb = componentCallbacks[entry];
+            const cb = (componentCallbacks as any)[entry];
             if (cb) {
                 cb();
             }
@@ -463,7 +476,7 @@ export function useAvatarDialogCommands(
 
         // Confirmed command
         if (entry.confirm) {
-            modalStore.confirm(entry.confirm()).then(({ ok }) => {
+            modalStore.confirm(entry.confirm()).then(({ ok }: any) => {
                 if (ok) {
                     entry.handler(D.id);
                 }

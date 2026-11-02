@@ -8,7 +8,7 @@ const worldReq = {
     getWorld(params: { worldId: string }): Promise<{ json: Json<World>; ref: any; params: { worldId: string } }> {
         return request(`worlds/${params.worldId}`, {
             method: 'GET'
-        }).then((json) => {
+        }).then((json: object) => {
             return {
                 json,
                 params,
@@ -28,7 +28,7 @@ const worldReq = {
         return request(endpoint, {
             method: 'GET',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params,
@@ -40,10 +40,10 @@ const worldReq = {
             return args;
         });
     },
-    deleteWorld(params: { worldId: string }): Promise<{ json: Json<World>; params }> {
+    deleteWorld(params: { worldId: string }): Promise<{ json: Json<World>; params: any }> {
         return request(`worlds/${params.worldId}`, {
             method: 'DELETE'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -58,7 +58,7 @@ const worldReq = {
         return request(`worlds/${params.id}`, {
             method: 'PUT',
             params
-        }).then((json) => {
+        }).then((json: object) => {
             const args = {
                 json,
                 params,
@@ -74,11 +74,11 @@ const worldReq = {
         });
     },
 
-    publishWorld(params: { worldId: string }): Promise<{ json: unknown; params }> {
+    publishWorld(params: { worldId: string }): Promise<{ json: unknown; params: any }> {
         return request(`worlds/${params.worldId}/publish`, {
             method: 'PUT',
             params
-        }).then((json) => {
+        }).then((json: object) => {
             const args = {
                 json,
                 params,
@@ -94,11 +94,11 @@ const worldReq = {
         });
     },
 
-    unpublishWorld(params: { worldId: string }): Promise<{ json: unknown; params }> {
+    unpublishWorld(params: { worldId: string }): Promise<{ json: unknown; params: any }> {
         return request(`worlds/${params.worldId}/publish`, {
             method: 'DELETE',
             params
-        }).then((json) => {
+        }).then((json: object) => {
             const args = {
                 json,
                 params,
@@ -123,7 +123,7 @@ const worldReq = {
             matchingDimensions: false,
             postData: JSON.stringify(params),
             imageData
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params

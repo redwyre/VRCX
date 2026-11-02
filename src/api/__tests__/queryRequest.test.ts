@@ -143,62 +143,62 @@ vi.mock('../../queries', () => ({
             refetchOnWindowFocus: false
         }
     },
-    fetchWithEntityPolicy: (...args) => mockFetchWithEntityPolicy(...args),
+    fetchWithEntityPolicy: (...args: any[]) => mockFetchWithEntityPolicy(...args),
     queryKeys: {
-        user: (userId) => ['user', userId],
-        avatars: (params) => ['avatar', 'list', params],
-        worldsByUser: (params) => ['worlds', 'user', params.userId, params],
-        groupCalendar: (groupId) => ['group', groupId, 'calendar'],
-        groupCalendars: (params) => ['group', 'calendar', params],
-        followingGroupCalendars: (params) => ['group', 'calendar', 'following', params],
-        featuredGroupCalendars: (params) => ['group', 'calendar', 'featured', params],
-        avatar: (avatarId) => ['avatar', avatarId],
-        world: (worldId) => ['world', worldId],
-        group: (groupId, includeRoles) => ['group', groupId, Boolean(includeRoles)],
-        groupPosts: (params) => ['group', params.groupId, 'posts', params],
-        groupMember: (params) => ['group', params.groupId, 'member', params.userId],
-        groupMembers: (params) => ['group', params.groupId, 'members', params],
-        groupGallery: (params) => ['group', params.groupId, 'gallery', params.galleryId, params],
-        groupCalendarEvent: (params) => ['group', params.groupId, 'calendarEvent', params.eventId],
-        avatarGallery: (avatarId) => ['avatar', avatarId, 'gallery'],
-        friends: (params) => ['friends', params],
+        user: (userId: any) => ['user', userId],
+        avatars: (params: any) => ['avatar', 'list', params],
+        worldsByUser: (params: { userId: any; }) => ['worlds', 'user', params.userId, params],
+        groupCalendar: (groupId: any) => ['group', groupId, 'calendar'],
+        groupCalendars: (params: any) => ['group', 'calendar', params],
+        followingGroupCalendars: (params: any) => ['group', 'calendar', 'following', params],
+        featuredGroupCalendars: (params: any) => ['group', 'calendar', 'featured', params],
+        avatar: (avatarId: any) => ['avatar', avatarId],
+        world: (worldId: any) => ['world', worldId],
+        group: (groupId: any, includeRoles: any) => ['group', groupId, Boolean(includeRoles)],
+        groupPosts: (params: { groupId: any; }) => ['group', params.groupId, 'posts', params],
+        groupMember: (params: { groupId: any; userId: any; }) => ['group', params.groupId, 'member', params.userId],
+        groupMembers: (params: { groupId: any; }) => ['group', params.groupId, 'members', params],
+        groupGallery: (params: { groupId: any; galleryId: any; }) => ['group', params.groupId, 'gallery', params.galleryId, params],
+        groupCalendarEvent: (params: { groupId: any; eventId: any; }) => ['group', params.groupId, 'calendarEvent', params.eventId],
+        avatarGallery: (avatarId: any) => ['avatar', avatarId, 'gallery'],
+        friends: (params: any) => ['friends', params],
         favoriteLimits: () => ['favorite', 'limits'],
-        favorites: (params) => ['favorite', 'items', params],
-        favoriteGroups: (params) => ['favorite', 'groups', params],
-        favoriteWorlds: (params) => ['favorite', 'worlds', params],
-        favoriteAvatars: (params) => ['favorite', 'avatars', params],
-        galleryFiles: (params) => ['gallery', 'files', params],
-        prints: (params) => ['gallery', 'prints', params],
-        print: (printId) => ['gallery', 'print', printId],
-        inventoryItem: (inventoryId) => ['inventory', 'item', inventoryId],
-        userInventoryItem: (params) => ['inventory', 'item', params.userId, params.inventoryId],
-        inventoryItems: (params) => ['inventory', 'items', params],
-        inventoryTemplate: (inventoryTemplateId) => ['inventory', 'template', inventoryTemplateId],
-        fileAnalysis: (params) => ['analysis', params.fileId, Number(params.version), String(params.variant || '')],
-        worldPersistData: (worldId) => ['world', worldId, 'persistData'],
-        mutualCounts: (userId) => ['user', userId, 'mutualCounts'],
+        favorites: (params: any) => ['favorite', 'items', params],
+        favoriteGroups: (params: any) => ['favorite', 'groups', params],
+        favoriteWorlds: (params: any) => ['favorite', 'worlds', params],
+        favoriteAvatars: (params: any) => ['favorite', 'avatars', params],
+        galleryFiles: (params: any) => ['gallery', 'files', params],
+        prints: (params: any) => ['gallery', 'prints', params],
+        print: (printId: any) => ['gallery', 'print', printId],
+        inventoryItem: (inventoryId: any) => ['inventory', 'item', inventoryId],
+        userInventoryItem: (params: { userId: any; inventoryId: any; }) => ['inventory', 'item', params.userId, params.inventoryId],
+        inventoryItems: (params: any) => ['inventory', 'items', params],
+        inventoryTemplate: (inventoryTemplateId: any) => ['inventory', 'template', inventoryTemplateId],
+        fileAnalysis: (params: { fileId: any; version: any; variant: any; }) => ['analysis', params.fileId, Number(params.version), String(params.variant || '')],
+        worldPersistData: (worldId: any) => ['world', worldId, 'persistData'],
+        mutualCounts: (userId: any) => ['user', userId, 'mutualCounts'],
         visits: () => ['visits'],
-        file: (fileId) => ['file', fileId]
+        file: (fileId: any) => ['file', fileId]
     }
 }));
 
 vi.mock('../user', () => ({
     default: {
-        getUser: (...args) => mockGetUser(...args),
+        getUser: (...args: any[]) => mockGetUser(...args),
         getMutualCounts: vi.fn()
     }
 }));
 
 vi.mock('../world', () => ({
     default: {
-        getWorlds: (...args) => mockGetWorlds(...args),
+        getWorlds: (...args: any[]) => mockGetWorlds(...args),
         getWorld: vi.fn()
     }
 }));
 
 vi.mock('../group', () => ({
     default: {
-        getGroupCalendar: (...args) => mockGetGroupCalendar(...args),
+        getGroupCalendar: (...args: any[]) => mockGetGroupCalendar(...args),
         getGroup: vi.fn(),
         getGroupPosts: vi.fn(),
         getGroupMember: vi.fn(),
@@ -272,7 +272,7 @@ describe('queryRequest', () => {
             })
         );
         expect(args.cache).toBe(true);
-        expect(args.json.id).toBe('usr_1');
+        expect((args as any).json.id).toBe('usr_1');
     });
 
     test('uses same queryKey for user and user.dialog callers', async () => {
@@ -377,14 +377,22 @@ describe('queryRequest', () => {
 
     test('throws on unknown resource', async () => {
         await expect(
-            // @ts-expect-error verifying runtime guard
+
+
+
+
+
             queryRequest.fetch('missing_resource', {})
         ).rejects.toThrow('Unknown query resource');
     });
 
     test('throws on unknown caller variant', async () => {
         await expect(
-            // @ts-expect-error verifying runtime guard
+
+
+
+
+
             queryRequest.fetch('user.unknown', { userId: 'usr_1' })
         ).rejects.toThrow('Unknown query resource: user.unknown');
     });

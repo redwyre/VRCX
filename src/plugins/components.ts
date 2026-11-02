@@ -6,8 +6,9 @@ import DisplayName from '../components/DisplayName.vue';
 import Location from '../components/Location.vue';
 import LocationWorld from '../components/LocationWorld.vue';
 import Timer from '../components/Timer.vue';
+import { App } from 'vue';
 
-export function initComponents(app) {
+export function initComponents(app: App<Element>) {
     app.component('Location', Location);
     app.component('Timer', Timer);
     app.component('CountdownTimer', CountdownTimer);

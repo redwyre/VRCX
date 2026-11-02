@@ -8,12 +8,16 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock('../../api', () => ({
     queryRequest: {
-        fetch: (...args) => mocks.fetch(...args)
+
+
+
+
+        fetch: (...args: any[]) => mocks.fetch(...args)
     }
 }));
 
 vi.mock('../../coordinators/userCoordinator', () => ({
-    showUserDialog: (...args) => mocks.showUserDialog(...args)
+    showUserDialog: (...args: any[]) => mocks.showUserDialog(...args)
 }));
 
 import DisplayName from '../DisplayName.vue';

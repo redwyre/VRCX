@@ -37,7 +37,11 @@ export const useLaunchStore = defineStore('Launch', () => {
      * @param {string} shortName
      * @returns {Promise<void>}
      */
-    async function showLaunchDialog(tag, shortName = null) {
+
+
+
+
+    async function showLaunchDialog(tag: string, shortName: string = null) {
         launchDialogData.value = {
             visible: true,
             // flag, use for trigger adjustDialogZ
@@ -53,9 +57,9 @@ export const useLaunchStore = defineStore('Launch', () => {
      * @param {string} shortName
      * @returns {Promise<string>} LaunchUrl
      */
-    async function getLaunchUrl(location, shortName) {
+    async function getLaunchUrl(location: string, shortName: string) {
         const L = parseLocation(location);
-        if (shortName && L.instanceType !== 'public' && L.groupAccessType !== 'public') {
+        if (shortName && (L as any).instanceType !== 'public' && L.groupAccessType !== 'public') {
             return `vrchat://launch?ref=vrcx.app&id=${location}&shortName=${shortName}`;
         }
 
@@ -85,7 +89,7 @@ export const useLaunchStore = defineStore('Launch', () => {
      * @param {string} shortName
      * @returns {Promise<void>}
      */
-    async function tryOpenInstanceInVrc(location, shortName) {
+    async function tryOpenInstanceInVrc(location: string, shortName: string) {
         if (isOpeningInstance.value) {
             return;
         }
@@ -94,7 +98,7 @@ export const useLaunchStore = defineStore('Launch', () => {
         let result = false;
         try {
             launchUrl = await getLaunchUrl(location, shortName);
-            result = await AppApi.TryOpenInstanceInVrc(launchUrl);
+            result = await (AppApi as any).TryOpenInstanceInVrc(launchUrl);
         } catch (e) {
             console.error(e);
         }
@@ -125,7 +129,7 @@ export const useLaunchStore = defineStore('Launch', () => {
      * @param {boolean} desktopMode
      * @returns {Promise<void>}
      */
-    async function launchGame(location, shortName, desktopMode) {
+    async function launchGame(location: string, shortName: string, desktopMode: boolean) {
         const launchUrl = await getLaunchUrl(location, shortName);
         const args = [launchUrl];
         const launchArguments = await configRepository.getString('launchArguments');
@@ -138,14 +142,14 @@ export const useLaunchStore = defineStore('Launch', () => {
         }
         try {
             if (vrcLaunchPathOverride && !LINUX) {
-                const result = await AppApi.StartGameFromPath(vrcLaunchPathOverride, args.join(' '));
+                const result = await (AppApi as any).StartGameFromPath(vrcLaunchPathOverride, args.join(' '));
                 if (!result) {
                     toast.error('Failed to launch VRChat, invalid custom path set');
                 } else {
                     toast.success('VRChat launched');
                 }
             } else {
-                const result = await AppApi.StartGame(args.join(' '));
+                const result = await (AppApi as any).StartGame(args.join(' '));
                 if (!result) {
                     toast.error('Failed to find VRChat, set a custom path in launch options');
                 } else {
@@ -154,7 +158,7 @@ export const useLaunchStore = defineStore('Launch', () => {
             }
         } catch (e) {
             console.error(e);
-            toast.error(`Failed to launch VRChat: ${e.message}`);
+            toast.error(`Failed to launch VRChat: ${(e as any).message}`);
         }
         console.log('Launch Game', args.join(' '), desktopMode);
     }

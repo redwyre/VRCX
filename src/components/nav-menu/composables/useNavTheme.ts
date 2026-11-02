@@ -1,23 +1,27 @@
 import { computed } from 'vue';
 
+
+
+
+
 import { useThemeColor } from '@/shared/utils/base/ui';
 
 import { THEME_CONFIG } from '../../../shared/constants';
 
-export function useNavTheme({ t, appearanceSettingsStore }) {
+export function useNavTheme({ t, appearanceSettingsStore }: any) {
     const themes = computed(() => Object.keys(THEME_CONFIG));
     const { themeColors, currentThemeColor, isApplyingThemeColor, applyThemeColor, initThemeColor } = useThemeColor();
 
-    const themeDisplayName = (themeKey) => {
+    const themeDisplayName = (themeKey: string | number) => {
         const i18nKey = `view.settings.appearance.appearance.theme_mode_${themeKey}`;
         const translated = t(i18nKey);
         if (translated !== i18nKey) {
             return translated;
         }
-        return THEME_CONFIG[themeKey]?.name ?? themeKey;
+        return (THEME_CONFIG as any)[themeKey]?.name ?? themeKey;
     };
 
-    const themeColorDisplayName = (theme) => {
+    const themeColorDisplayName = (theme: { key: any; label: any; }) => {
         if (!theme) {
             return '';
         }
@@ -29,7 +33,7 @@ export function useNavTheme({ t, appearanceSettingsStore }) {
         return theme.label || theme.key;
     };
 
-    const handleThemeSelect = (theme) => {
+    const handleThemeSelect = (theme: any) => {
         appearanceSettingsStore.setThemeMode(theme);
     };
 
@@ -37,11 +41,11 @@ export function useNavTheme({ t, appearanceSettingsStore }) {
         appearanceSettingsStore.toggleThemeMode();
     };
 
-    const handleTableDensitySelect = (density) => {
+    const handleTableDensitySelect = (density: any) => {
         appearanceSettingsStore.setTableDensity(density);
     };
 
-    const handleThemeColorSelect = async (theme) => {
+    const handleThemeColorSelect = async (theme: { key: any; }) => {
         if (!theme) {
             return;
         }

@@ -10,7 +10,7 @@ import removeConfusables, { removeWhitespace } from '../../services/confusables'
  * @param {Intl.Collator} comparer - Locale collator for comparison
  * @returns {boolean}
  */
-export function matchName(name, query, comparer) {
+export function matchName(name: string, query: string, comparer: Intl.Collator) {
     if (!name || !query) {
         return false;
     }
@@ -34,7 +34,7 @@ export function matchName(name, query, comparer) {
  * @param {Intl.Collator} comparer
  * @returns {boolean}
  */
-export function isPrefixMatch(name, query, comparer) {
+export function isPrefixMatch(name: string, query: string, comparer: Intl.Collator) {
     if (!name || !query) {
         return false;
     }
@@ -54,7 +54,11 @@ export function isPrefixMatch(name, query, comparer) {
  * @param {number} [limit]
  * @returns {{ id: string; name: string; type: string; imageUrl: string; ref: object }[]}
  */
-export function searchFriends(query, friends, comparer, limit = 10) {
+
+
+
+
+export function searchFriends(query: string, friends: Map, comparer: Intl.Collator, limit: number = 10) {
     if (!query || !friends) {
         return [];
     }
@@ -111,7 +115,11 @@ export function searchFriends(query, friends, comparer, limit = 10) {
  * @param {number} [limit]
  * @returns {{ id: string; name: string; type: string; imageUrl: string }[]}
  */
-export function searchAvatars(query, avatarMap, comparer, authorId = null, limit = 10) {
+
+
+
+
+export function searchAvatars(query: string, avatarMap: Map, comparer: Intl.Collator, authorId: string | null = null, limit: number = 10) {
     if (!query || !avatarMap) {
         return [];
     }
@@ -155,7 +163,11 @@ export function searchAvatars(query, avatarMap, comparer, authorId = null, limit
  * @param {number} [limit]
  * @returns {{ id: string; name: string; type: string; imageUrl: string }[]}
  */
-export function searchWorlds(query, worldMap, comparer, ownerId = null, limit = 10) {
+
+
+
+
+export function searchWorlds(query: string, worldMap: Map, comparer: Intl.Collator, ownerId: string | null = null, limit: number = 10) {
     if (!query || !worldMap) {
         return [];
     }
@@ -199,7 +211,11 @@ export function searchWorlds(query, worldMap, comparer, ownerId = null, limit = 
  * @param {number} [limit]
  * @returns {{ id: string; name: string; type: string; imageUrl: string }[]}
  */
-export function searchGroups(query, groupMap, comparer, ownerId = null, limit = 10) {
+
+
+
+
+export function searchGroups(query: string, groupMap: Map, comparer: Intl.Collator, ownerId: string | null = null, limit: number = 10) {
     if (!query || !groupMap) {
         return [];
     }
@@ -242,7 +258,7 @@ export function searchGroups(query, groupMap, comparer, ownerId = null, limit = 
  * @param {number} [limit]
  * @returns {{ id: string; name: string; type: string; imageUrl: string }[]}
  */
-export function searchFavoriteAvatars(query, favoriteAvatars, comparer, limit = 10) {
+export function searchFavoriteAvatars(query: string, favoriteAvatars: Array<any>, comparer: Intl.Collator, limit: number = 10) {
     if (!query || !favoriteAvatars) {
         return [];
     }
@@ -282,7 +298,7 @@ export function searchFavoriteAvatars(query, favoriteAvatars, comparer, limit = 
  * @param {number} [limit]
  * @returns {{ id: string; name: string; type: string; imageUrl: string }[]}
  */
-export function searchFavoriteWorlds(query, favoriteWorlds, comparer, limit = 10) {
+export function searchFavoriteWorlds(query: string, favoriteWorlds: Array<any>, comparer: Intl.Collator, limit: number = 10) {
     if (!query || !favoriteWorlds) {
         return [];
     }

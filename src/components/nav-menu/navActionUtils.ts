@@ -2,8 +2,8 @@
  * @param {object | null | undefined} entry
  * @returns {boolean}
  */
-export function isNavEntryActionable(entry) {
-    return Boolean(entry?.routeName || entry?.action || entry?.path);
+export function isNavEntryActionable(entry: object | null | undefined) {
+    return Boolean((entry as any)?.routeName || (entry as any)?.action || (entry as any)?.path);
 }
 
 /**
@@ -11,17 +11,17 @@ export function isNavEntryActionable(entry) {
  * @param {string} routeName
  * @param {object | undefined} routeParams
  */
-export function navigateToRoute(router, routeName, routeParams = undefined) {
+export function navigateToRoute(router: object, routeName: string, routeParams: object | undefined = undefined) {
     if (!routeName) {
         return;
     }
 
     if (routeParams) {
-        router.push({ name: routeName, params: routeParams });
+        (router as any).push({ name: routeName, params: routeParams });
         return;
     }
 
-    router.push({ name: routeName });
+    (router as any).push({ name: routeName });
 }
 
 /**
@@ -30,26 +30,29 @@ export function navigateToRoute(router, routeName, routeParams = undefined) {
  * @param {object} deps.router
  * @param {Function} deps.directAccessPaste
  */
-export function triggerNavEntryAction(entry, { router, directAccessPaste }) {
+export function triggerNavEntryAction(entry: object | null | undefined, { router, directAccessPaste }: {
+    router: object;
+    directAccessPaste: Function;
+}) {
     if (!entry) {
         return;
     }
 
-    if (entry.action === 'direct-access') {
+    if ((entry as any).action === 'direct-access') {
         directAccessPaste();
         return;
     }
 
-    if (entry.action && typeof entry.action === 'object') {
-        return entry.action;
+    if ((entry as any).action && typeof (entry as any).action === 'object') {
+        return (entry as any).action;
     }
 
-    if (entry.routeName) {
-        navigateToRoute(router, entry.routeName, entry.routeParams);
+    if ((entry as any).routeName) {
+        navigateToRoute(router, (entry as any).routeName, (entry as any).routeParams);
         return;
     }
 
-    if (entry.path) {
-        router.push(entry.path);
+    if ((entry as any).path) {
+        (router as any).push((entry as any).path);
     }
 }

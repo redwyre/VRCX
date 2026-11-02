@@ -1,3 +1,8 @@
+// TODO(ts-migrate): Check that this import is the one meant; TypeScript offered the name from
+// several modules.
+// describe was taken from vitest, over node:test. test was taken from vitest, over node:test
+// and node:test.
+import { describe, test, expect } from 'vitest';
 import { getFriendsSortFunction, isFriendOnline, sortStatus } from '../friend';
 
 describe('Friend Utils', () => {
@@ -37,6 +42,10 @@ describe('Friend Utils', () => {
         test('returns 0 for unknown statuses', () => {
             expect(sortStatus('unknown', 'active')).toBe(0);
             expect(sortStatus('active', 'unknown')).toBe(0);
+
+
+
+
             expect(sortStatus(null, 'active')).toBe(0);
         });
     });
@@ -66,6 +75,10 @@ describe('Friend Utils', () => {
         });
 
         test('returns false for undefined or missing ref', () => {
+
+
+
+
             expect(isFriendOnline(undefined)).toBe(false);
             expect(isFriendOnline({})).toBe(false);
             expect(isFriendOnline({ state: 'online' })).toBe(false);

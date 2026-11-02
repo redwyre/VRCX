@@ -1,6 +1,6 @@
 import { dbVars } from '../database';
 
-import sqliteService from '../sqlite.js';
+import sqliteService from '../sqlite';
 
 const ACTIVITY_VIEW_KIND = {
     ACTIVITY: 'activity',
@@ -19,7 +19,7 @@ function bucketCacheTable() {
     return `${dbVars.userPrefix}_activity_bucket_cache_v2`;
 }
 
-function parseJson(value, fallback) {
+function parseJson(value: string, fallback: any) {
     if (!value) {
         return fallback;
     }
@@ -37,7 +37,7 @@ function parseJson(value, fallback) {
 const activityV2 = {
     ACTIVITY_VIEW_KIND,
 
-    async getActivitySourceSliceV2({ userId, isSelf, fromDays, toDays = 0 }) {
+    async getActivitySourceSliceV2({ userId, isSelf, fromDays, toDays = 0 }: any) {
         const fromDateIso = new Date(Date.now() - fromDays * 86400000).toISOString();
         const toDateIso = toDays > 0 ? new Date(Date.now() - toDays * 86400000).toISOString() : '';
         return isSelf
@@ -45,16 +45,16 @@ const activityV2 = {
             : this.getFriendPresenceSliceV2(userId, fromDateIso, toDateIso);
     },
 
-    async getActivitySourceAfterV2({ userId, isSelf, afterCreatedAt, inclusive = false }) {
+    async getActivitySourceAfterV2({ userId, isSelf, afterCreatedAt, inclusive = false }: any) {
         return isSelf
             ? this.getCurrentUserLocationAfterV2(afterCreatedAt, inclusive)
             : this.getFriendPresenceAfterV2(userId, afterCreatedAt);
     },
 
-    async getFriendPresenceSliceV2(userId, fromDateIso, toDateIso = '') {
-        const rows = [];
+    async getFriendPresenceSliceV2(userId: any, fromDateIso: string, toDateIso = '') {
+        const rows: { created_at: any; type: any; }[] = [];
         await sqliteService.execute(
-            (dbRow) => {
+            (dbRow: any) => {
                 rows.push({ created_at: dbRow[0], type: dbRow[1] });
             },
             `
@@ -80,6 +80,10 @@ const activityV2 = {
                 )
                 ORDER BY created_at ASC, sort_group ASC
             `,
+
+
+
+
             {
                 '@userId': userId,
                 '@fromDateIso': fromDateIso,
@@ -89,7 +93,7 @@ const activityV2 = {
 
         if (toDateIso) {
             await sqliteService.execute(
-                (dbRow) => {
+                (dbRow: any) => {
                     rows.push({ created_at: dbRow[0], type: dbRow[1] });
                 },
                 `SELECT created_at, type
@@ -99,6 +103,10 @@ const activityV2 = {
                    AND created_at >= @toDateIso
                  ORDER BY created_at ASC
                  LIMIT 1`,
+
+
+
+
                 {
                     '@userId': userId,
                     '@toDateIso': toDateIso
@@ -109,10 +117,10 @@ const activityV2 = {
         return rows.sort((left, right) => left.created_at.localeCompare(right.created_at));
     },
 
-    async getFriendPresenceAfterV2(userId, afterCreatedAt) {
-        const rows = [];
+    async getFriendPresenceAfterV2(userId: any, afterCreatedAt: any) {
+        const rows: { created_at: any; type: any; }[] = [];
         await sqliteService.execute(
-            (dbRow) => {
+            (dbRow: any) => {
                 rows.push({ created_at: dbRow[0], type: dbRow[1] });
             },
             `SELECT created_at, type
@@ -121,6 +129,10 @@ const activityV2 = {
                AND (type = 'Online' OR type = 'Offline')
                AND created_at > @afterCreatedAt
              ORDER BY created_at`,
+
+
+
+
             {
                 '@userId': userId,
                 '@afterCreatedAt': afterCreatedAt
@@ -129,10 +141,10 @@ const activityV2 = {
         return rows;
     },
 
-    async getCurrentUserLocationSliceV2(fromDateIso, toDateIso = '') {
-        const rows = [];
+    async getCurrentUserLocationSliceV2(fromDateIso: string, toDateIso = '') {
+        const rows: { created_at: any; time: any; }[] = [];
         await sqliteService.execute(
-            (dbRow) => {
+            (dbRow: any) => {
                 rows.push({ created_at: dbRow[0], time: dbRow[1] || 0 });
             },
             `
@@ -167,6 +179,10 @@ const activityV2 = {
                 )
                 ORDER BY created_at ASC, sort_group ASC
             `,
+
+
+
+
             {
                 '@fromDateIso': fromDateIso,
                 '@toDateIso': toDateIso
@@ -175,26 +191,30 @@ const activityV2 = {
         return rows;
     },
 
-    async getCurrentUserLocationAfterV2(afterCreatedAt, inclusive = false) {
-        const rows = [];
+    async getCurrentUserLocationAfterV2(afterCreatedAt: any, inclusive = false) {
+        const rows: { created_at: any; time: any; }[] = [];
         const operator = inclusive ? '>=' : '>';
         await sqliteService.execute(
-            (dbRow) => {
+            (dbRow: any) => {
                 rows.push({ created_at: dbRow[0], time: dbRow[1] || 0 });
             },
             `SELECT created_at, time
              FROM gamelog_location
              WHERE created_at ${operator} @afterCreatedAt
              ORDER BY created_at`,
+
+
+
+
             { '@afterCreatedAt': afterCreatedAt }
         );
         return rows;
     },
 
-    async getActivitySyncStateV2(userId) {
+    async getActivitySyncStateV2(userId: any) {
         let row = null;
         await sqliteService.execute(
-            (dbRow) => {
+            (dbRow: any) => {
                 row = {
                     userId: dbRow[0],
                     updatedAt: dbRow[1] || '',
@@ -207,16 +227,24 @@ const activityV2 = {
             `SELECT user_id, updated_at, is_self, source_last_created_at, pending_session_start_at, cached_range_days
              FROM ${syncStateTable()}
              WHERE user_id = @userId`,
+
+
+
+
             { '@userId': userId }
         );
         return row;
     },
 
-    async upsertActivitySyncStateV2(entry) {
+    async upsertActivitySyncStateV2(entry: { userId: any; updatedAt: any; isSelf: any; sourceLastCreatedAt: any; pendingSessionStartAt: any; cachedRangeDays: any; }) {
         await sqliteService.executeNonQuery(
             `INSERT OR REPLACE INTO ${syncStateTable()}
              (user_id, updated_at, is_self, source_last_created_at, pending_session_start_at, cached_range_days)
              VALUES (@userId, @updatedAt, @isSelf, @sourceLastCreatedAt, @pendingSessionStartAt, @cachedRangeDays)`,
+
+
+
+
             {
                 '@userId': entry.userId,
                 '@updatedAt': entry.updatedAt || '',
@@ -228,10 +256,10 @@ const activityV2 = {
         );
     },
 
-    async getActivitySessionsV2(userId) {
-        const sessions = [];
+    async getActivitySessionsV2(userId: any) {
+        const sessions: { start: any; end: any; isOpenTail: boolean; sourceRevision: any; }[] = [];
         await sqliteService.execute(
-            (dbRow) => {
+            (dbRow: any) => {
                 sessions.push({
                     start: dbRow[0],
                     end: dbRow[1],
@@ -243,14 +271,22 @@ const activityV2 = {
              FROM ${sessionsTable()}
              WHERE user_id = @userId
              ORDER BY start_at`,
+
+
+
+
             { '@userId': userId }
         );
         return sessions;
     },
 
-    async replaceActivitySessionsV2(userId, sessions = []) {
+    async replaceActivitySessionsV2(userId: any, sessions = []) {
         await sqliteService.executeNonQuery('BEGIN');
         try {
+
+
+
+
             await sqliteService.executeNonQuery(`DELETE FROM ${sessionsTable()} WHERE user_id = @userId`, {
                 '@userId': userId
             });
@@ -262,13 +298,17 @@ const activityV2 = {
         }
     },
 
-    async appendActivitySessionsV2({ userId, sessions = [], replaceFromStartAt = null }) {
+    async appendActivitySessionsV2({ userId, sessions = [], replaceFromStartAt = null }: any) {
         await sqliteService.executeNonQuery('BEGIN');
         try {
             if (replaceFromStartAt !== null) {
                 await sqliteService.executeNonQuery(
                     `DELETE FROM ${sessionsTable()}
                      WHERE user_id = @userId AND start_at >= @replaceFromStartAt`,
+
+
+
+
                     {
                         '@userId': userId,
                         '@replaceFromStartAt': replaceFromStartAt
@@ -283,10 +323,10 @@ const activityV2 = {
         }
     },
 
-    async getActivityBucketCacheV2({ ownerUserId, targetUserId = '', rangeDays, viewKind, excludeKey = '' }) {
+    async getActivityBucketCacheV2({ ownerUserId, targetUserId = '', rangeDays, viewKind, excludeKey = '' }: any) {
         let row = null;
         await sqliteService.execute(
-            (dbRow) => {
+            (dbRow: any) => {
                 row = {
                     ownerUserId: dbRow[0],
                     targetUserId: dbRow[1],
@@ -304,6 +344,10 @@ const activityV2 = {
             `SELECT user_id, target_user_id, range_days, view_kind, exclude_key, bucket_version, built_from_cursor, raw_buckets_json, normalized_buckets_json, summary_json, built_at
              FROM ${bucketCacheTable()}
              WHERE user_id = @ownerUserId AND target_user_id = @targetUserId AND range_days = @rangeDays AND view_kind = @viewKind AND exclude_key = @excludeKey`,
+
+
+
+
             {
                 '@ownerUserId': ownerUserId,
                 '@targetUserId': targetUserId,
@@ -315,11 +359,15 @@ const activityV2 = {
         return row;
     },
 
-    async upsertActivityBucketCacheV2(entry) {
+    async upsertActivityBucketCacheV2(entry: { ownerUserId: any; rangeDays: any; viewKind: any; builtFromCursor: any; rawBuckets: any; normalizedBuckets: any; summary: any; builtAt: any; targetUserId?: any; excludeKey?: any; bucketVersion?: any; }) {
         await sqliteService.executeNonQuery(
             `INSERT OR REPLACE INTO ${bucketCacheTable()}
              (user_id, target_user_id, range_days, view_kind, exclude_key, bucket_version, built_from_cursor, raw_buckets_json, normalized_buckets_json, summary_json, built_at)
              VALUES (@ownerUserId, @targetUserId, @rangeDays, @viewKind, @excludeKey, @bucketVersion, @builtFromCursor, @rawBucketsJson, @normalizedBucketsJson, @summaryJson, @builtAt)`,
+
+
+
+
             {
                 '@ownerUserId': entry.ownerUserId,
                 '@targetUserId': entry.targetUserId || '',
@@ -337,7 +385,7 @@ const activityV2 = {
     }
 };
 
-async function insertSessions(userId, sessions = []) {
+async function insertSessions(userId: any, sessions = []) {
     if (sessions.length === 0) {
         return;
     }
@@ -348,11 +396,11 @@ async function insertSessions(userId, sessions = []) {
         const args = {};
         const values = chunk.map((session, index) => {
             const suffix = `${chunkStart + index}`;
-            args[`@userId_${suffix}`] = userId;
-            args[`@startAt_${suffix}`] = session.start;
-            args[`@endAt_${suffix}`] = session.end;
-            args[`@isOpenTail_${suffix}`] = session.isOpenTail ? 1 : 0;
-            args[`@sourceRevision_${suffix}`] = session.sourceRevision || '';
+            (args as any)[`@userId_${suffix}`] = userId;
+            (args as any)[`@startAt_${suffix}`] = (session as any).start;
+            (args as any)[`@endAt_${suffix}`] = (session as any).end;
+            (args as any)[`@isOpenTail_${suffix}`] = (session as any).isOpenTail ? 1 : 0;
+            (args as any)[`@sourceRevision_${suffix}`] = (session as any).sourceRevision || '';
             return `(@userId_${suffix}, @startAt_${suffix}, @endAt_${suffix}, @isOpenTail_${suffix}, @sourceRevision_${suffix})`;
         });
 
@@ -360,6 +408,10 @@ async function insertSessions(userId, sessions = []) {
             `INSERT OR REPLACE INTO ${sessionsTable()}
              (user_id, start_at, end_at, is_open_tail, source_revision)
              VALUES ${values.join(', ')}`,
+
+
+
+
             args
         );
     }

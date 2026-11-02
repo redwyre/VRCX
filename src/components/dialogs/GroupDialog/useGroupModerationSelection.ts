@@ -1,9 +1,9 @@
-export function useGroupModerationSelection(groupMemberModeration) {
+export function useGroupModerationSelection(groupMemberModeration: any) {
     /**
      * @param {string} userId
      * @param {object} user
      */
-    function setSelectedUsers(userId, user) {
+    function setSelectedUsers(userId: string, user: object) {
         if (!user) return;
         groupMemberModeration.selectedUsers[userId] = user;
         groupMemberModeration.selectedUsersArray = Object.values(groupMemberModeration.selectedUsers);
@@ -13,7 +13,7 @@ export function useGroupModerationSelection(groupMemberModeration) {
      * @param {string | null} userId
      * @param {boolean} isAll
      */
-    function deselectedUsers(userId, isAll = false) {
+    function deselectedUsers(userId: string | null, isAll: boolean = false) {
         if (isAll) {
             for (const id in groupMemberModeration.selectedUsers) {
                 if (Object.prototype.hasOwnProperty.call(groupMemberModeration.selectedUsers, id)) {
@@ -21,7 +21,15 @@ export function useGroupModerationSelection(groupMemberModeration) {
                 }
             }
         } else {
+
+
+
+
             if (Object.prototype.hasOwnProperty.call(groupMemberModeration.selectedUsers, userId)) {
+
+
+
+
                 delete groupMemberModeration.selectedUsers[userId];
             }
         }
@@ -31,11 +39,11 @@ export function useGroupModerationSelection(groupMemberModeration) {
     /**
      * @param {object} row
      */
-    function onSelectionChange(row) {
-        if (row.$selected && !groupMemberModeration.selectedUsers[row.userId]) {
-            setSelectedUsers(row.userId, row);
-        } else if (!row.$selected && groupMemberModeration.selectedUsers[row.userId]) {
-            deselectedUsers(row.userId);
+    function onSelectionChange(row: object) {
+        if ((row as any).$selected && !groupMemberModeration.selectedUsers[(row as any).userId]) {
+            setSelectedUsers((row as any).userId, row);
+        } else if (!(row as any).$selected && groupMemberModeration.selectedUsers[(row as any).userId]) {
+            deselectedUsers((row as any).userId);
         }
     }
 
@@ -44,7 +52,7 @@ export function useGroupModerationSelection(groupMemberModeration) {
      *
      * @param {string} [userId] - If omitted, deselects all rows in all tables
      */
-    function deselectInTables(userId) {
+    function deselectInTables(userId?: string) {
         const allTables = [
             groupMemberModeration.tables.members,
             groupMemberModeration.tables.bans,
@@ -55,12 +63,12 @@ export function useGroupModerationSelection(groupMemberModeration) {
         for (const table of allTables) {
             if (!table?.data) continue;
             if (userId) {
-                const row = table.data.find((item) => item.userId === userId);
+                const row = table.data.find((item: any) => item.userId === userId);
                 if (row) {
                     row.$selected = false;
                 }
             } else {
-                table.data.forEach((row) => {
+                table.data.forEach((row: any) => {
                     if (row.$selected) {
                         row.$selected = false;
                     }
@@ -72,9 +80,9 @@ export function useGroupModerationSelection(groupMemberModeration) {
     /**
      * @param {object} user
      */
-    function deleteSelectedUser(user) {
-        deselectedUsers(user.userId);
-        deselectInTables(user.userId);
+    function deleteSelectedUser(user: object) {
+        deselectedUsers((user as any).userId);
+        deselectInTables((user as any).userId);
     }
 
     function clearAllSelected() {
@@ -87,7 +95,7 @@ export function useGroupModerationSelection(groupMemberModeration) {
      *
      * @param {Array} tableData
      */
-    function selectAll(tableData) {
+    function selectAll(tableData: Array<any>) {
         tableData.forEach((row) => {
             row.$selected = true;
             setSelectedUsers(row.userId, row);

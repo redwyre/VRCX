@@ -106,8 +106,8 @@ export const useGameLogStore = defineStore('GameLog', () => {
     const sessionsDateRangeActive = computed(() => !!sessionsDateFrom.value || !!sessionsDateTo.value);
 
     const nowPlaying = ref(createEmptyNowPlaying());
-    let nowPlayingTimer = null;
-    let nowPlayingEntry = null;
+    let nowPlayingTimer: any = null;
+    let nowPlayingEntry: any = null;
 
     const lastVideoUrl = ref('');
 
@@ -135,6 +135,10 @@ export const useGameLogStore = defineStore('GameLog', () => {
         async ([value]) => {
             await initPromise;
             const isDashboardPanel =
+
+
+
+
                 value.name === 'dashboard' && dashboardStore.getDashboard(value.params.id, 'game-log');
             if (value.name === 'game-log' || isDashboardPanel) {
                 if (sessionsViewMode.value === 'sessions') {
@@ -187,26 +191,46 @@ export const useGameLogStore = defineStore('GameLog', () => {
     /**
      * @param entry
      */
-    function insertGameLogSorted(entry) {
+    function insertGameLogSorted(entry: any) {
         const arr = gameLogTableData.value;
         if (arr.length === 0) {
+
+
+
+
             gameLogTableData.value = [entry];
             return;
         }
         if (compareGameLogRows(entry, arr[0]) < 0) {
+
+
+
+
             gameLogTableData.value = [entry, ...arr];
             return;
         }
         if (compareGameLogRows(entry, arr[arr.length - 1]) > 0) {
+
+
+
+
             gameLogTableData.value = [...arr, entry];
             return;
         }
         for (let i = 1; i < arr.length; i++) {
             if (compareGameLogRows(entry, arr[i]) < 0) {
+
+
+
+
                 gameLogTableData.value = [...arr.slice(0, i), entry, ...arr.slice(i)];
                 return;
             }
         }
+
+
+
+
         gameLogTableData.value = [...arr, entry];
     }
 
@@ -222,7 +246,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
      *
      * @param {string} videoName
      */
-    async function updateNowPlayingVideoName(videoName) {
+    async function updateNowPlayingVideoName(videoName: string) {
         const entry = nowPlayingEntry;
         if (!entry || entry.videoName || !videoName) {
             return;
@@ -231,13 +255,29 @@ export const useGameLogStore = defineStore('GameLog', () => {
         nowPlayingEntry = updated;
         await database.updateGamelogVideoPlayName(entry.rowId, videoName);
 
+
+
+
+
         if (gameLogTableData.value.includes(entry)) {
+
+
+
+
             gameLogTableData.value = gameLogTableData.value.map((row) => (row === entry ? updated : row));
         }
-        const isSameEvent = (event) =>
+        const isSameEvent = (event: any) =>
             event.type === 'VideoPlay' && event.created_at === entry.created_at && event.videoUrl === entry.videoUrl;
         if (sessionsRawEvents.value.some(isSameEvent)) {
+
+
+
+
             sessionsRawEvents.value = sessionsRawEvents.value.map((event) =>
+
+
+
+
                 isSameEvent(event) ? { ...event, videoName } : event
             );
             rebuildSessionsDebounced();
@@ -252,7 +292,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
     /**
      * @param data
      */
-    async function setNowPlaying(data) {
+    async function setNowPlaying(data: any) {
         const ctx = structuredClone(data);
         if (nowPlaying.value.url !== ctx.videoUrl) {
             if (!ctx.userId && ctx.displayName) {
@@ -363,7 +403,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
     /**
      * @param row
      */
-    function gameLogIsFriend(row) {
+    function gameLogIsFriend(row: any) {
         if (typeof row.isFriend !== 'undefined') {
             return row.isFriend;
         }
@@ -376,7 +416,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
     /**
      * @param row
      */
-    function gameLogIsFavorite(row) {
+    function gameLogIsFavorite(row: any) {
         if (typeof row.isFavorite !== 'undefined') {
             return row.isFavorite;
         }
@@ -391,7 +431,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
         await configRepository.setBool('VRCX_gameLogTableVIPFilter', gameLogTable.value.vip);
         gameLogTable.value.loading = true;
         try {
-            let vipList = [];
+            let vipList: any = [];
             if (gameLogTable.value.vip) {
                 vipList = Array.from(friendStore.localFavoriteFriends.values());
             }
@@ -409,9 +449,13 @@ export const useGameLogStore = defineStore('GameLog', () => {
             }
 
             for (const row of rows) {
-                row.isFriend = gameLogIsFriend(row);
-                row.isFavorite = gameLogIsFavorite(row);
+                (row as any).isFriend = gameLogIsFriend(row);
+                (row as any).isFavorite = gameLogIsFavorite(row);
             }
+
+
+
+
             gameLogTableData.value = rows;
         } finally {
             gameLogTable.value.loading = false;
@@ -421,7 +465,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
     /**
      * @param entry
      */
-    function addGameLog(entry) {
+    function addGameLog(entry: any) {
         entry.isFriend = gameLogIsFriend(entry);
         entry.isFavorite = gameLogIsFavorite(entry);
 
@@ -450,6 +494,10 @@ export const useGameLogStore = defineStore('GameLog', () => {
             ) {
                 return;
             }
+
+
+
+
             if (gameLogTable.value.filter.length > 0 && !gameLogTable.value.filter.includes(entry.type)) {
                 return;
             }
@@ -468,7 +516,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
     /**
      * @param input
      */
-    async function addGamelogLocationToDatabase(input) {
+    async function addGamelogLocationToDatabase(input: any) {
         const groupName = await getGroupName(input.location);
         const entry = {
             ...input,
@@ -480,7 +528,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
     /**
      * @param row
      */
-    function gameLogSearch(row) {
+    function gameLogSearch(row: any) {
         return gameLogSearchFilter(row, gameLogTable.value.search);
     }
 
@@ -494,14 +542,14 @@ export const useGameLogStore = defineStore('GameLog', () => {
     /**
      * @param {string} value
      */
-    function setLastVideoUrl(value) {
+    function setLastVideoUrl(value: string) {
         lastVideoUrl.value = value;
     }
 
     /**
      * @param {string} value
      */
-    function setLastResourceloadUrl(value) {
+    function setLastResourceloadUrl(value: string) {
         lastResourceloadUrl.value = value;
     }
 
@@ -511,7 +559,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
      * @param {string} value
      * @returns {number}
      */
-    function toSessionsEpoch(value) {
+    function toSessionsEpoch(value: string) {
         if (!value) return 0;
         const ts = Date.parse(value);
         return Number.isNaN(ts) ? 0 : ts;
@@ -521,7 +569,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
      * @param {string} value
      * @returns {string}
      */
-    function normalizeSessionsSearch(value) {
+    function normalizeSessionsSearch(value: string) {
         return String(value ?? '')
             .trim()
             .toUpperCase();
@@ -538,12 +586,12 @@ export const useGameLogStore = defineStore('GameLog', () => {
      * @param {object} location
      * @returns {boolean}
      */
-    function isSessionsLocationInDateRange(location) {
+    function isSessionsLocationInDateRange(location: object) {
         if (!sessionsDateRangeActive.value) {
             return true;
         }
 
-        const createdAt = toSessionsEpoch(location?.created_at);
+        const createdAt = toSessionsEpoch((location as any)?.created_at);
         if (sessionsDateFrom.value) {
             const from = toSessionsEpoch(sessionsDateFrom.value);
             if (createdAt < from) {
@@ -564,7 +612,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
      * @param {string} to
      * @returns {[string, string]}
      */
-    function clampSessionsDateRange(from, to) {
+    function clampSessionsDateRange(from: string, to: string) {
         const start = String(from ?? '');
         const end = String(to ?? '');
         const startTs = toSessionsEpoch(start);
@@ -588,12 +636,12 @@ export const useGameLogStore = defineStore('GameLog', () => {
      * @param {string} value
      * @returns {boolean}
      */
-    function isSessionsMemberSearchMatch(event, value) {
+    function isSessionsMemberSearchMatch(event: object, value: string) {
         if (!event) {
             return false;
         }
 
-        return [event.displayName].map((item) => String(item ?? '').toUpperCase()).some((item) => item.includes(value));
+        return [(event as any).displayName].map((item) => String(item ?? '').toUpperCase()).some((item) => item.includes(value));
     }
 
     /**
@@ -601,21 +649,21 @@ export const useGameLogStore = defineStore('GameLog', () => {
      * @param {string} value
      * @returns {boolean}
      */
-    function isSessionsEventSearchMatch(event, value) {
+    function isSessionsEventSearchMatch(event: object, value: string) {
         if (!event) {
             return false;
         }
-        if (event.type === 'JoinGroup' || event.type === 'LeftGroup') {
-            return Array.isArray(event.members)
-                ? event.members.some((member) => isSessionsMemberSearchMatch(member, value))
-                : false;
+        if ((event as any).type === 'JoinGroup' || (event as any).type === 'LeftGroup') {
+            return Array.isArray((event as any).members)
+    ? (event as any).members.some((member: any) => isSessionsMemberSearchMatch(member, value))
+    : false;
         }
         if (gameLogSearchFilter(event, value)) {
             return true;
         }
-        return [event.displayName, event.videoName, event.videoUrl]
-            .map((item) => String(item ?? '').toUpperCase())
-            .some((item) => item.includes(value));
+        return [(event as any).displayName, (event as any).videoName, (event as any).videoUrl]
+    .map((item) => String(item ?? '').toUpperCase())
+    .some((item) => item.includes(value));
     }
 
     /**
@@ -623,23 +671,27 @@ export const useGameLogStore = defineStore('GameLog', () => {
      * @param {string} value
      * @returns {boolean}
      */
-    function isSessionsSegmentHeaderSearchMatch(segment, value) {
-        return [segment.worldName].map((item) => String(item ?? '').toUpperCase()).some((item) => item.includes(value));
+    function isSessionsSegmentHeaderSearchMatch(segment: object, value: string) {
+        return [(segment as any).worldName].map((item) => String(item ?? '').toUpperCase()).some((item) => item.includes(value));
     }
 
     /**
      * @param {object[]} events
      * @returns {object[]}
      */
-    function filterSessionsEventsByFilters(events) {
+    function filterSessionsEventsByFilters(events: object[]) {
         let result = events;
 
         if (sessionsVipFilter.value) {
-            result = result.filter((event) => event.type === 'VideoPlay' || event.isFavorite);
+            result = result.filter((event) => (event as any).type === 'VideoPlay' || (event as any).isFavorite);
         }
 
         if (sessionsEventFilters.value.length > 0) {
-            result = result.filter((event) => sessionsEventFilters.value.includes(event.type));
+
+
+
+
+            result = result.filter((event) => sessionsEventFilters.value.includes((event as any).type));
         }
 
         return result;
@@ -649,15 +701,15 @@ export const useGameLogStore = defineStore('GameLog', () => {
      * @param {object[]} segments
      * @returns {object[]}
      */
-    function dropEmptySessionsSegments(segments) {
-        return segments.filter((segment) => segment.events && segment.events.length > 0);
+    function dropEmptySessionsSegments(segments: object[]) {
+        return segments.filter((segment) => (segment as any).events && (segment as any).events.length > 0);
     }
 
     /**
      * @param {object[]} segments
      * @returns {object[]}
      */
-    function filterSessionsSegmentsByDateRange(segments) {
+    function filterSessionsSegmentsByDateRange(segments: object[]) {
         if (!sessionsDateRangeActive.value) {
             return segments;
         }
@@ -668,7 +720,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
      * @param {object[]} segments
      * @returns {object[]}
      */
-    function applySessionsSearchFilter(segments) {
+    function applySessionsSearchFilter(segments: object[]) {
         const value = normalizeSessionsSearch(sessionsSearch.value);
         if (!value) {
             return dropEmptySessionsSegments(segments);
@@ -681,25 +733,22 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 continue;
             }
 
-            const events = Array.isArray(segment.events)
-                ? segment.events.flatMap((event) => {
-                      if (event.type === 'JoinGroup' || event.type === 'LeftGroup') {
-                          if (!Array.isArray(event.members)) {
-                              return [];
-                          }
-                          const matchedMembers = event.members.filter((member) =>
-                              isSessionsMemberSearchMatch(member, value)
-                          );
-                          return matchedMembers.map((member) => ({
-                              ...member,
-                              type: event.type === 'JoinGroup' ? 'OnPlayerJoined' : 'OnPlayerLeft',
-                              location: segment.location
-                          }));
-                      }
-
-                      return isSessionsEventSearchMatch(event, value) ? [event] : [];
-                  })
-                : [];
+            const events = Array.isArray((segment as any).events)
+    ? (segment as any).events.flatMap((event: any) => {
+        if (event.type === 'JoinGroup' || event.type === 'LeftGroup') {
+            if (!Array.isArray(event.members)) {
+                return [];
+            }
+            const matchedMembers = event.members.filter((member: any) => isSessionsMemberSearchMatch(member, value));
+            return matchedMembers.map((member: any) => ({
+                ...member,
+                type: event.type === 'JoinGroup' ? 'OnPlayerJoined' : 'OnPlayerLeft',
+                location: (segment as any).location
+            }));
+        }
+        return isSessionsEventSearchMatch(event, value) ? [event] : [];
+    })
+    : [];
             if (events.length > 0) {
                 filtered.push({
                     ...segment,
@@ -718,7 +767,15 @@ export const useGameLogStore = defineStore('GameLog', () => {
             return;
         }
         const events = filterSessionsEventsByFilters(sessionsRawEvents.value);
+
+
+
+
         const result = buildGameLogSessions(sessionsRawLocations.value, events);
+
+
+
+
         sessionsSegments.value = applySessionsSearchFilter(filterSessionsSegmentsByDateRange(result.segments));
     }
 
@@ -726,7 +783,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
      * Debounced rebuild for real-time appends.
      * Waits for burst of events to settle before recalculating.
      */
-    let rebuildSessionsTimer = null;
+    let rebuildSessionsTimer: any = null;
     function rebuildSessionsDebounced() {
         if (rebuildSessionsTimer) clearTimeout(rebuildSessionsTimer);
         rebuildSessionsTimer = setTimeout(() => {
@@ -738,7 +795,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
     /**
      * @param {string[]} value
      */
-    async function handleSessionsEventFilterChange(value) {
+    async function handleSessionsEventFilterChange(value: string[]) {
         const selected = Array.isArray(value) ? value : [];
         const wasAll = sessionsEventFilters.value.length === 0;
         const hasAll = selected.includes(SESSIONS_EVENT_FILTER_ALL);
@@ -749,8 +806,16 @@ export const useGameLogStore = defineStore('GameLog', () => {
         if (hasAll && !wasAll) {
             sessionsEventFilters.value = [];
         } else if (wasAll && types.length > 0) {
+
+
+
+
             sessionsEventFilters.value = types;
         } else {
+
+
+
+
             sessionsEventFilters.value =
                 types.length === SESSIONS_EVENT_FILTER_TYPES.length ? [] : types.length > 0 ? types : [];
         }
@@ -764,7 +829,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
     /**
      * @param {string} value
      */
-    async function setSessionsSearch(value) {
+    async function setSessionsSearch(value: string) {
         sessionsSearch.value = String(value ?? '');
         if (isSessionsGlobalSearchMode()) {
             await loadSessionsSegments();
@@ -777,7 +842,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
      * @param {string} from
      * @param {string} to
      */
-    async function setSessionsDateRange(from, to) {
+    async function setSessionsDateRange(from: string, to: string) {
         const [normalizedFrom, normalizedTo] = clampSessionsDateRange(from, to);
         sessionsDateFrom.value = normalizedFrom;
         sessionsDateTo.value = normalizedTo;
@@ -798,7 +863,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
      * @param {number} fetchCount
      * @returns {Promise<{ beforeId: number | null; hasMore: boolean }>}
      */
-    async function loadSessionsSearchBatch(beforeId, fetchCount) {
+    async function loadSessionsSearchBatch(beforeId: number | null, fetchCount: number) {
         const locations = await database.getSessionsLocationSegments(beforeId, fetchCount);
         if (locations.length === 0) {
             return { beforeId, hasMore: false };
@@ -813,7 +878,15 @@ export const useGameLogStore = defineStore('GameLog', () => {
         }
 
         const events = await fetchEventsForLocations(locations);
+
+
+
+
         sessionsRawLocations.value = [...sessionsRawLocations.value, ...locations];
+
+
+
+
         sessionsRawEvents.value = [...sessionsRawEvents.value, ...events];
         rebuildSessions();
 
@@ -879,6 +952,10 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 sessionsRawEvents.value = [];
                 sessionsSegments.value = [];
                 while (hasMore && sessionsSegments.value.length === 0) {
+
+
+
+
                     const locations =
                         beforeId === null
                             ? await database.getSessionsLocationSegmentsByAnchor(
@@ -900,7 +977,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
                         break;
                     }
 
-                    const inRangeLocations = locations.filter((location) => isSessionsLocationInDateRange(location));
+                    const inRangeLocations = locations.filter((location: any) => isSessionsLocationInDateRange(location));
                     const oldestLocationEpoch = toSessionsEpoch(locations[locations.length - 1].created_at);
                     const newestLocationEpoch = toSessionsEpoch(locations[0].created_at);
                     const isEntireBatchAfterRange =
@@ -920,7 +997,15 @@ export const useGameLogStore = defineStore('GameLog', () => {
                     }
 
                     const events = await fetchEventsForLocations(inRangeLocations);
+
+
+
+
                     sessionsRawLocations.value = [...sessionsRawLocations.value, ...inRangeLocations];
+
+
+
+
                     sessionsRawEvents.value = [...sessionsRawEvents.value, ...events];
                     beforeId = locations[locations.length - 1].id;
                     rebuildSessions();
@@ -947,7 +1032,15 @@ export const useGameLogStore = defineStore('GameLog', () => {
             }
 
             const events = await fetchEventsForLocations(locations);
+
+
+
+
             sessionsRawLocations.value = locations;
+
+
+
+
             sessionsRawEvents.value = events;
             rebuildSessions();
 
@@ -971,7 +1064,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
             if (isSessionsGlobalSearchMode()) {
                 let beforeId = sessionsCursor.value;
                 /** @type {boolean} */
-                let hasMore = sessionsHasMore.value;
+                let hasMore: boolean = sessionsHasMore.value;
                 const previousCount = sessionsSegments.value.length;
                 let attempts = 0;
 
@@ -1006,7 +1099,15 @@ export const useGameLogStore = defineStore('GameLog', () => {
 
             const moreEvents = await fetchEventsForLocations(moreLocations);
 
+
+
+
+
             sessionsRawLocations.value = [...sessionsRawLocations.value, ...moreLocations];
+
+
+
+
             sessionsRawEvents.value = [...sessionsRawEvents.value, ...moreEvents];
             rebuildSessions();
 
@@ -1026,7 +1127,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
      *
      * @param {number} hours - How many hours back
      */
-    async function jumpToSessionsAnchor(hours) {
+    async function jumpToSessionsAnchor(hours: number) {
         if (sessionsLoading.value) return;
         sessionsLoading.value = true;
         try {
@@ -1050,7 +1151,15 @@ export const useGameLogStore = defineStore('GameLog', () => {
             }
 
             const events = await fetchEventsForLocations(locations);
+
+
+
+
             sessionsRawLocations.value = locations;
+
+
+
+
             sessionsRawEvents.value = events;
             rebuildSessions();
 
@@ -1067,15 +1176,15 @@ export const useGameLogStore = defineStore('GameLog', () => {
      * @param {object[]} locations
      * @returns {Promise<object[]>}
      */
-    async function fetchEventsForLocations(locations) {
-        const locationTags = [...new Set(locations.map((l) => l.location))];
-        const dates = locations.map((l) => new Date(l.created_at).getTime());
+    async function fetchEventsForLocations(locations: object[]) {
+        const locationTags = [...new Set(locations.map((l) => (l as any).location))];
+        const dates = locations.map((l) => new Date((l as any).created_at).getTime());
         const minDate = new Date(Math.min(...dates) - 86400000).toISOString();
         const maxDate = new Date(Math.max(...dates) + 86400000).toISOString();
         const events = await database.getSessionsEventsForSegments(locationTags, minDate, maxDate);
         for (const e of events) {
-            e.isFriend = gameLogIsFriend(e);
-            e.isFavorite = gameLogIsFavorite(e);
+            (e as any).isFriend = gameLogIsFriend(e);
+            (e as any).isFavorite = gameLogIsFavorite(e);
         }
         return events;
     }
@@ -1095,43 +1204,55 @@ export const useGameLogStore = defineStore('GameLog', () => {
      *
      * @param {object} entry
      */
-    function appendSessionsEntry(entry) {
-        const type = entry.type;
+    function appendSessionsEntry(entry: object) {
+        const type = (entry as any).type;
         if (type !== 'OnPlayerJoined' && type !== 'OnPlayerLeft' && type !== 'VideoPlay' && type !== 'Location') {
             return;
         }
 
         if (type === 'Location') {
             // Add a new location segment
-            sessionsRawLocations.value = [
-                {
-                    id: entry.rowId || Date.now(),
-                    created_at: entry.created_at,
-                    location: entry.location,
-                    worldId: entry.worldId,
-                    worldName: entry.worldName,
-                    time: entry.time,
-                    groupName: entry.groupName || ''
-                },
-                ...sessionsRawLocations.value
-            ];
+sessionsRawLocations.value = [
+
+
+
+
+    {
+        id: (entry as any).rowId || Date.now(),
+        created_at: (entry as any).created_at,
+        location: (entry as any).location,
+        worldId: (entry as any).worldId,
+        worldName: (entry as any).worldName,
+        time: (entry as any).time,
+        groupName: (entry as any).groupName || ''
+    },
+    ...sessionsRawLocations.value
+];
         } else {
             // Append event
-            sessionsRawEvents.value = [
-                ...sessionsRawEvents.value,
-                {
-                    type,
-                    created_at: entry.created_at,
-                    displayName: entry.displayName,
-                    userId: entry.userId,
-                    location: entry.location,
-                    videoUrl: entry.videoUrl,
-                    videoName: entry.videoName,
-                    videoId: entry.videoId,
-                    isFriend: entry.isFriend,
-                    isFavorite: entry.isFavorite
-                }
-            ];
+sessionsRawEvents.value = [
+
+
+
+
+    ...sessionsRawEvents.value,
+
+
+
+
+    {
+        type,
+        created_at: (entry as any).created_at,
+        displayName: (entry as any).displayName,
+        userId: (entry as any).userId,
+        location: (entry as any).location,
+        videoUrl: (entry as any).videoUrl,
+        videoName: (entry as any).videoName,
+        videoId: (entry as any).videoId,
+        isFriend: (entry as any).isFriend,
+        isFavorite: (entry as any).isFavorite
+    }
+];
         }
         rebuildSessionsDebounced();
     }
@@ -1141,7 +1262,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
      *
      * @param {'sessions' | 'table'} mode
      */
-    async function setSessionsViewMode(mode) {
+    async function setSessionsViewMode(mode: 'sessions' | 'table') {
         if (mode !== 'sessions' && mode !== 'table') {
             return;
         }

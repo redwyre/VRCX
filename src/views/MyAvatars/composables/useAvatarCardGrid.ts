@@ -1,14 +1,14 @@
 import { computed, nextTick, onBeforeMount, ref, watch } from 'vue';
 import { useResizeObserver } from '@vueuse/core';
 
-import configRepository from '../../../services/config.js';
+import configRepository from '../../../services/config';
 
 /**
  * @param value
  * @param min
  * @param max
  */
-function clamp(value, min, max) {
+function clamp(value: any, min: number, max: number) {
     if (Number.isNaN(value)) return min;
     return Math.min(max, Math.max(min, value));
 }
@@ -18,28 +18,28 @@ function clamp(value, min, max) {
  */
 export function useAvatarCardGrid(options = {}) {
     const scaleSlider = {
-        min: options.scaleMin ?? 0.3,
-        max: options.scaleMax ?? 0.9,
-        step: options.scaleStep ?? 0.01
-    };
+    min: (options as any).scaleMin ?? 0.3,
+    max: (options as any).scaleMax ?? 0.9,
+    step: (options as any).scaleStep ?? 0.01
+};
     const spacingSlider = {
-        min: options.spacingMin ?? 0.5,
-        max: options.spacingMax ?? 1.5,
-        step: options.spacingStep ?? 0.05
-    };
+    min: (options as any).spacingMin ?? 0.5,
+    max: (options as any).spacingMax ?? 1.5,
+    step: (options as any).spacingStep ?? 0.05
+};
 
-    const baseCardWidth = options.baseCardWidth ?? 200;
-    const baseGap = options.baseGap ?? 12;
-    const baseCardHeight = options.baseCardHeight ?? 200;
-    const scaleConfigKey = options.scaleConfigKey ?? 'VRCX_MyAvatarsCardScale';
-    const spacingConfigKey = options.spacingConfigKey ?? 'VRCX_MyAvatarsCardSpacing';
+    const baseCardWidth = (options as any).baseCardWidth ?? 200;
+    const baseGap = (options as any).baseGap ?? 12;
+    const baseCardHeight = (options as any).baseCardHeight ?? 200;
+    const scaleConfigKey = (options as any).scaleConfigKey ?? 'VRCX_MyAvatarsCardScale';
+    const spacingConfigKey = (options as any).spacingConfigKey ?? 'VRCX_MyAvatarsCardSpacing';
 
     const cardScaleBase = ref(0.6);
     const cardSpacingBase = ref(1);
     const gridContainerRef = ref(null);
     const containerWidth = ref(0);
 
-    const updateContainerWidth = (el) => {
+    const updateContainerWidth = (el: any) => {
         const element = el ?? gridContainerRef.value;
         if (!element) {
             containerWidth.value = 0;
@@ -134,7 +134,7 @@ export function useAvatarCardGrid(options = {}) {
      * @param items
      * @param keyPrefix
      */
-    const chunkIntoRows = (items, keyPrefix = 'row') => {
+    const chunkIntoRows = (items: string | any[], keyPrefix = 'row') => {
         if (!Array.isArray(items) || !items.length) return [];
         const { columns } = getGridMetrics(items.length);
         const safeColumns = Math.max(1, columns);
@@ -177,7 +177,7 @@ export function useAvatarCardGrid(options = {}) {
 
     useResizeObserver(gridContainerRef, (entries) => {
         const [entry] = entries;
-        containerWidth.value = Math.max(entry?.contentRect?.width ?? gridContainerRef.value?.clientWidth ?? 0, 0);
+        containerWidth.value = Math.max(entry?.contentRect?.width ?? (gridContainerRef.value as any)?.clientWidth ?? 0, 0);
     });
 
     onBeforeMount(async () => {

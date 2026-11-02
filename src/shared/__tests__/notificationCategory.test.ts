@@ -1,3 +1,8 @@
+// TODO(ts-migrate): Check that this import is the one meant; TypeScript offered the name from
+// several modules.
+// describe was taken from vitest, over node:test. test was taken from vitest, over node:test
+// and node:test.
+import { describe, test, expect } from 'vitest';
 import {
     FRIEND_TYPES,
     GROUP_EXACT_TYPES,
@@ -8,7 +13,15 @@ import {
 describe('getNotificationCategory', () => {
     test('returns "other" for falsy type', () => {
         expect(getNotificationCategory('')).toBe('other');
+
+
+
+
         expect(getNotificationCategory(null)).toBe('other');
+
+
+
+
         expect(getNotificationCategory(undefined)).toBe('other');
     });
 

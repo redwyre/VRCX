@@ -22,7 +22,7 @@ const { t } = i18n.global;
 
 const UNACTIONABLE_TYPES = new Set(['OnPlayerJoined', 'OnPlayerLeft', 'Location', 'PortalSpawn']);
 
-export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
+export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }: any) => {
     const { showPreviousInstancesInfoDialog } = useInstanceStore();
     const { shiftHeld } = storeToRefs(useUiStore());
 
@@ -37,11 +37,11 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
             cell: () => null
         },
         {
-            accessorFn: (row) => getCreatedAt(row),
+            accessorFn: (row: any) => getCreatedAt(row),
             id: 'created_at',
             size: 140,
             meta: { label: () => t('table.gameLog.date') },
-            header: ({ column }) => (
+            header: ({ column }: any) => (
                 <Button
                     variant="ghost"
                     class="pl-0!"
@@ -51,13 +51,17 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
                     <ArrowUpDown class="ml-1 h-4 w-4" />
                 </Button>
             ),
-            cell: ({ row }) => {
+            cell: ({ row }: any) => {
                 const createdAt = getCreatedAt(row.original);
                 const shortText = formatDateFilter(createdAt, 'short');
                 const longText = formatDateFilter(createdAt, 'long');
 
                 return (
                     <TooltipWrapper content={longText} side="right">
+
+
+
+
                         <span>{shortText}</span>
                     </TooltipWrapper>
                 );
@@ -68,18 +72,26 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
             size: 150,
             header: () => t('table.gameLog.type'),
             meta: { label: () => t('table.gameLog.type') },
-            cell: ({ row }) => {
+            cell: ({ row }: any) => {
                 const original = row.original;
                 const label = t(`view.game_log.filters.${original.type}`);
                 const isLink = Boolean(original.location) && original.type !== 'Location';
 
                 return (
                     <Badge variant="outline" class="text-muted-foreground">
+
+
+
+
                         <span
                             class={isLink ? 'cursor-pointer' : undefined}
                             onClick={() => isLink && showWorldDialog(original.location)}
                         >
                             {label}
+
+
+
+
                         </span>
                     </Badge>
                 );
@@ -90,18 +102,38 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
             size: 200,
             header: () => t('table.gameLog.user'),
             meta: { label: () => t('table.gameLog.user') },
-            cell: ({ row }) => {
+            cell: ({ row }: any) => {
                 const original = row.original;
                 const isFriend = original.isFriend;
                 const isFavorite = original.isFavorite;
                 return (
+
+
+
+
                     <span class="cursor-pointer">
                         {original.displayName ? (
+
+
+
+
                             <span class="cursor-pointer table-user mr-1" onClick={() => lookupUser(original)}>
                                 {original.displayName}
+
+
+
+
                             </span>
                         ) : null}
+
+
+
+
                         {isFriend ? <span>{isFavorite ? '⭐' : '💚'}</span> : null}
+
+
+
+
                     </span>
                 );
             }
@@ -115,10 +147,14 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
                 stretch: true,
                 label: () => t('table.gameLog.detail')
             },
-            cell: ({ row }) => {
+            cell: ({ row }: any) => {
                 const original = row.original;
                 if (original.type === 'Location') {
                     return (
+
+
+
+
                         <div class="w-full min-w-0 truncate">
                             <Location
                                 location={original.location}
@@ -126,12 +162,20 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
                                 grouphint={original.groupName}
                                 enableContextMenu
                             />
+
+
+
+
                         </div>
                     );
                 }
 
                 if (original.type === 'PortalSpawn') {
                     return (
+
+
+
+
                         <div class="w-full min-w-0 truncate">
                             <Location
                                 location={original.instanceId}
@@ -139,6 +183,10 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
                                 grouphint={original.groupName}
                                 enableContextMenu
                             />
+
+
+
+
                         </div>
                     );
                 }
@@ -148,6 +196,10 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
                         <ContextMenu>
                             <ContextMenuTrigger asChild>
                                 <TooltipWrapper content={original.data} side="bottom">
+
+
+
+
                                     <span class="block w-full min-w-0 truncate">{original.data}</span>
                                 </TooltipWrapper>
                             </ContextMenuTrigger>
@@ -164,6 +216,10 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
                 if (original.type === 'External') {
                     return (
                         <TooltipWrapper content={original.message} side="bottom">
+
+
+
+
                             <span class="block w-full min-w-0 truncate">{original.message}</span>
                         </TooltipWrapper>
                     );
@@ -177,18 +233,42 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
                         <ContextMenu>
                             <ContextMenuTrigger asChild>
                                 <TooltipWrapper content={tooltipText} side="bottom">
+
+
+
+
                                     <span class="block w-full min-w-0 truncate cursor-pointer">
+
+
+
+
                                         {original.videoId ? <span class="mr-1.5">{original.videoId}:</span> : null}
                                         {showLink ? (
+
+
+
+
                                             <span
                                                 class="cursor-pointer"
                                                 onClick={() => openExternalLink(original.videoUrl)}
                                             >
                                                 {label}
+
+
+
+
                                             </span>
                                         ) : (
+
+
+
+
                                             <span>{original.videoName}</span>
                                         )}
+
+
+
+
                                     </span>
                                 </TooltipWrapper>
                             </ContextMenuTrigger>
@@ -218,13 +298,29 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
                         <ContextMenu>
                             <ContextMenuTrigger asChild>
                                 <TooltipWrapper content={original.resourceUrl} side="bottom">
+
+
+
+
                                     <span class="block w-full min-w-0 truncate cursor-pointer">
+
+
+
+
                                         <span
                                             class="cursor-pointer"
                                             onClick={() => openExternalLink(original.resourceUrl)}
                                         >
                                             {original.resourceUrl}
+
+
+
+
                                         </span>
+
+
+
+
                                     </span>
                                 </TooltipWrapper>
                             </ContextMenuTrigger>
@@ -253,6 +349,10 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
 
                 return (
                     <TooltipWrapper content={original.data} side="bottom">
+
+
+
+
                         <span class="block w-full min-w-0 truncate">{original.data}</span>
                     </TooltipWrapper>
                 );
@@ -269,7 +369,7 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
             maxSize: 90,
             header: () => t('table.gameLog.action'),
             enableSorting: false,
-            cell: ({ row }) => {
+            cell: ({ row }: any) => {
                 const original = row.original;
                 const canDelete = !UNACTIONABLE_TYPES.has(original.type);
                 const canShowPrevious = original.type === 'Location';
@@ -279,27 +379,51 @@ export const createColumns = ({ getCreatedAt, onDelete, onDeletePrompt }) => {
                 }
 
                 return (
+
+
+
+
                     <div class="flex items-center justify-end gap-2">
                         {canDelete ? (
+
+
+
+
                             <button
                                 type="button"
                                 class="inline-flex h-6 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
                                 onClick={() => (shiftHeld.value ? onDelete(original) : onDeletePrompt(original))}
                             >
                                 {shiftHeld.value ? <X class="h-4 w-4 text-red-600" /> : <Trash2 class="h-4 w-4" />}
+
+
+
+
                             </button>
                         ) : null}
                         {canShowPrevious ? (
                             <TooltipWrapper content={t('dialog.previous_instances.info')} side="top">
+
+
+
+
                                 <button
                                     type="button"
                                     class="inline-flex h-6 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
                                     onClick={() => showPreviousInstancesInfoDialog(original.location)}
                                 >
                                     <FileText class="h-4 w-4" />
+
+
+
+
                                 </button>
                             </TooltipWrapper>
                         ) : null}
+
+
+
+
                     </div>
                 );
             }

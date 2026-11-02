@@ -1,6 +1,6 @@
 import { useEventListener } from '@vueuse/core';
 import { computed, ref } from 'vue';
-import { useI18n } from 'vue-i18n';
+import { ComposerTranslation, LocaleMessageValue, useI18n, VueMessageType } from 'vue-i18n';
 import { toast } from 'vue-sonner';
 
 import configRepository from '../services/config';
@@ -17,8 +17,9 @@ import {
 } from '../components/nav-menu/navConfigUtils';
 import { normalizeHiddenKeys, sanitizeLayout } from '../components/nav-menu/navMenuUtils';
 import { dispatchNavLayoutUpdated, NAV_LAYOUT_UPDATED_EVENT } from '../components/nav-menu/navLayoutEvents';
+import { LocaleMessage, RemoveIndexSignature } from '@intlify/core-base';
 
-function insertToolNavItem(layout, navKey, t, placement = 'top-level') {
+function insertToolNavItem(layout: any, navKey: string, t: ComposerTranslation<{ [x: string]: LocaleMessage<VueMessageType>; }, string, RemoveIndexSignature<{ [x: string]: LocaleMessageValue<VueMessageType>; }>, never, never, never>, placement = 'top-level') {
     const nextLayout = Array.isArray(layout) ? [...layout] : [];
     const alreadyExists = nextLayout.some((entry) => {
         if (entry.type === 'item') {
@@ -46,7 +47,7 @@ function insertToolNavItem(layout, navKey, t, placement = 'top-level') {
     }
 
     const folderWithTools = nextLayout.find(
-        (entry) => entry.type === 'folder' && (entry.items || []).some((key) => String(key).startsWith('tool-'))
+        (entry) => entry.type === 'folder' && (entry.items || []).some((key: any) => String(key).startsWith('tool-'))
     );
 
     if (folderWithTools) {
@@ -80,7 +81,7 @@ function insertToolNavItem(layout, navKey, t, placement = 'top-level') {
     return nextLayout;
 }
 
-function removeToolNavItem(layout, navKey) {
+function removeToolNavItem(layout: any, navKey: string) {
     if (!Array.isArray(layout)) {
         return [];
     }
@@ -92,7 +93,7 @@ function removeToolNavItem(layout, navKey) {
             }
 
             if (entry.type === 'folder') {
-                const nextItems = (entry.items || []).filter((key) => key !== navKey);
+                const nextItems = (entry.items || []).filter((key: any) => key !== navKey);
                 if (!nextItems.length) {
                     return null;
                 }
@@ -121,6 +122,10 @@ export function useToolNavPinning() {
 
     const buildSanitizeDefinitions = (layout = [], hiddenKeys = []) => {
         return buildNavDefinitionsForLayout(
+
+
+
+
             navDefinitions,
             dashboardStore.getDashboardNavDefinitions(),
             layout,
@@ -141,20 +146,28 @@ export function useToolNavPinning() {
         const nextPinned = new Set();
 
         layoutKeys.forEach((key) => {
-            if (key.startsWith('tool-')) {
-                nextPinned.add(key.replace(/^tool-/, ''));
+            if ((key as any).startsWith('tool-')) {
+                nextPinned.add((key as any).replace(/^tool-/, ''));
             }
         });
 
         pinnedToolKeysRef.value = nextPinned;
     };
 
-    const pinToolToNav = async (toolKey, options = {}) => {
+    const pinToolToNav = async (toolKey: any, options = {}) => {
         const navKey = `tool-${toolKey}`;
         const { layout, hiddenKeys } = await loadConfig();
-        const nextLayout = insertToolNavItem(layout, navKey, t, options.placement);
-        const nextHiddenKeys = hiddenKeys.filter((key) => key !== navKey);
+        const nextLayout = insertToolNavItem(layout, navKey, t, (options as any).placement);
+        const nextHiddenKeys = hiddenKeys.filter((key: string) => key !== navKey);
+
+
+
+
         const definitions = buildSanitizeDefinitions(nextLayout, nextHiddenKeys);
+
+
+
+
         const definitionMap = createNavDefinitionMap(buildDefinitions());
         const normalizedHiddenKeys = normalizeHiddenKeys(nextHiddenKeys, definitionMap);
         const sanitizedLayout = sanitizeLayout(
@@ -179,12 +192,20 @@ export function useToolNavPinning() {
         dispatchNavLayoutUpdated();
     };
 
-    const unpinToolFromNav = async (toolKey) => {
+    const unpinToolFromNav = async (toolKey: any) => {
         const navKey = `tool-${toolKey}`;
         const { layout, hiddenKeys } = await loadConfig();
         const nextLayout = removeToolNavItem(layout, navKey);
-        const nextHiddenKeys = hiddenKeys.filter((key) => key !== navKey);
+        const nextHiddenKeys = hiddenKeys.filter((key: string) => key !== navKey);
+
+
+
+
         const definitions = buildSanitizeDefinitions(nextLayout, nextHiddenKeys);
+
+
+
+
         const definitionMap = createNavDefinitionMap(buildDefinitions());
         const normalizedHiddenKeys = normalizeHiddenKeys(nextHiddenKeys, definitionMap);
         const sanitizedLayout = sanitizeLayout(

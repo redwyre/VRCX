@@ -30,18 +30,22 @@ export function useSearchStoreShelves() {
             return storeShelves.value;
         }
         return storeShelves.value
-            .map((shelf) => ({
-                ...shelf,
-                listings: shelf.listings.filter(
-                    (listing) =>
-                        listing.displayName.toLowerCase().includes(query) ||
-                        listing.subtitle?.toLowerCase().includes(query)
-                )
-            }))
-            .filter((shelf) => shelf.listings.length > 0);
+    .map((shelf) => ({
+
+
+
+
+    ...shelf,
+    listings: (shelf as any).listings.filter((listing: {
+        displayName: string;
+        subtitle: string;
+    }) => listing.displayName.toLowerCase().includes(query) ||
+        listing.subtitle?.toLowerCase().includes(query))
+}))
+    .filter((shelf) => shelf.listings.length > 0);
     });
 
-    function isListingOwned(listing) {
+    function isListingOwned(listing: { id: any; productIds: any[]; }) {
         if (ownedListingIds.value.has(listing.id)) {
             return true;
         }
@@ -49,14 +53,14 @@ export function useSearchStoreShelves() {
         return productIds.length > 0 && productIds.every((id) => ownedProductIds.value.has(id));
     }
 
-    function getListingPrice(listing) {
+    function getListingPrice(listing: { vrcPlusDiscountPrice: null; priceTokens: any; }) {
         if (isLocalUserVrcPlusSupporter.value && listing.vrcPlusDiscountPrice != null) {
             return listing.vrcPlusDiscountPrice;
         }
         return listing.priceTokens;
     }
 
-    function canPurchaseListing(listing) {
+    function canPurchaseListing(listing: any) {
         return (
             !purchasingListingId.value &&
             currentUserCredits.value !== null &&
@@ -88,6 +92,10 @@ export function useSearchStoreShelves() {
                 ),
                 userStore.getAllProductPurchases()
             ]);
+
+
+
+
             storeShelves.value = results
                 .flatMap((args) => args.json ?? [])
                 .map((shelf) => ({
@@ -107,9 +115,9 @@ export function useSearchStoreShelves() {
         }
     }
 
-    async function purchaseListing(listing) {
+    async function purchaseListing(listing: any) {
         const price = getListingPrice(listing);
-        const { ok } = await modalStore.confirm({
+        const { ok }: any = await modalStore.confirm({
             title: t('confirm.title'),
             description: t('dialog.avatar.info.purchase_confirm', {
                 name: listing.displayName,

@@ -24,8 +24,8 @@ const mocks = vi.hoisted(() => ({
     }
 }));
 
-vi.mock('pinia', async (i) => ({ ...(await i()), storeToRefs: (s) => s }));
-vi.mock('vue-i18n', () => ({ useI18n: () => ({ t: (k) => k }) }));
+vi.mock('pinia', async (i) => ({ ...(await i()), storeToRefs: (s: any) => s }));
+vi.mock('vue-i18n', () => ({ useI18n: () => ({ t: (k: any) => k }) }));
 vi.mock('vue-sonner', () => ({ toast: { error: vi.fn() } }));
 vi.mock('../../../shared/utils', () => ({ hasGroupPermission: () => true }));
 vi.mock('../../../composables/useUserDisplay', () => ({
@@ -41,21 +41,45 @@ vi.mock('../../../stores', () => ({
     useGroupStore: () => ({
         currentUserGroups: ref(new Map()),
         inviteGroupDialog: mocks.inviteDialog,
-        applyGroup: (...a) => mocks.applyGroup(...a)
+
+
+
+
+        applyGroup: (...a: any[]) => mocks.applyGroup(...a)
     }),
-    useModalStore: () => ({ confirm: (...a) => mocks.confirm(...a) })
+
+
+
+
+    useModalStore: () => ({ confirm: (...a: any[]) => mocks.confirm(...a) })
 }));
 vi.mock('../../../api', () => ({
     groupRequest: {
-        sendGroupInvite: (...a) => mocks.sendGroupInvite(...a),
-        getGroup: (...a) => mocks.getGroup(...a)
+
+
+
+
+        sendGroupInvite: (...a: any[]) => mocks.sendGroupInvite(...a),
+
+
+
+
+        getGroup: (...a: any[]) => mocks.getGroup(...a)
     },
-    queryRequest: { fetch: (...a) => mocks.fetch(...a) }
+
+
+
+
+    queryRequest: { fetch: (...a: any[]) => mocks.fetch(...a) }
 }));
 vi.mock('../../../services/config', () => ({
     default: {
-        getString: (...a) => mocks.getString(...a),
-        setString: (...a) => mocks.setString(...a)
+
+
+
+
+        getString: (...a: any[]) => mocks.getString(...a),
+        setString: (...a: any[]) => mocks.setString(...a)
     }
 }));
 vi.mock('@/components/ui/dialog', () => ({

@@ -69,6 +69,10 @@ describe('getAvailablePlatforms', () => {
     });
 
     it('returns all false for non-object input', () => {
+
+
+
+
         expect(getAvailablePlatforms('string')).toEqual({
             isPC: false,
             isQuest: false,
@@ -77,6 +81,10 @@ describe('getAvailablePlatforms', () => {
     });
 
     it('throws for null input (typeof null === "object" but not iterable)', () => {
+
+
+
+
         expect(() => getAvailablePlatforms(null)).toThrow();
     });
 });

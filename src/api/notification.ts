@@ -20,7 +20,7 @@ const notificationReq = {
         return request('auth/user/notifications', {
             method: 'GET',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -40,7 +40,7 @@ const notificationReq = {
                 hidden: true,
                 ...params
             }
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -57,7 +57,7 @@ const notificationReq = {
         return request('notifications', {
             method: 'GET',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -77,7 +77,7 @@ const notificationReq = {
         return request(`invite/${receiverUserId}`, {
             method: 'POST',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params,
@@ -98,7 +98,7 @@ const notificationReq = {
             uploadImageLegacy: true,
             postData: JSON.stringify(params),
             imageData: useGalleryStore().uploadImage
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params,
@@ -119,7 +119,7 @@ const notificationReq = {
         return request(`requestInvite/${receiverUserId}`, {
             method: 'POST',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params,
@@ -141,7 +141,7 @@ const notificationReq = {
             uploadImageLegacy: true,
             postData: JSON.stringify(params),
             imageData: useGalleryStore().uploadImage
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params,
@@ -158,7 +158,7 @@ const notificationReq = {
         return request(`invite/${inviteId}/response`, {
             method: 'POST',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params,
@@ -177,7 +177,7 @@ const notificationReq = {
             postData: JSON.stringify(params),
             imageData: useGalleryStore().uploadImage,
             inviteId
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params,
@@ -187,10 +187,10 @@ const notificationReq = {
         });
     },
 
-    acceptFriendRequestNotification(params: { notificationId: string }): Promise<{ json: Json<Success>; params }> {
+    acceptFriendRequestNotification(params: { notificationId: string }): Promise<{ json: Json<Success>; params: any }> {
         return request(`auth/user/notifications/${params.notificationId}/accept`, {
             method: 'PUT'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -199,10 +199,10 @@ const notificationReq = {
         });
     },
 
-    hideNotification(params: { notificationId: string }): Promise<{ json: Json<Success>; params }> {
+    hideNotification(params: { notificationId: string }): Promise<{ json: Json<Success>; params: any }> {
         return request(`auth/user/notifications/${params.notificationId}/hide`, {
             method: 'PUT'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -211,10 +211,10 @@ const notificationReq = {
         });
     },
 
-    seeNotification(params: { notificationId: string }): Promise<{ json: Json<Notification>; params }> {
+    seeNotification(params: { notificationId: string }): Promise<{ json: Json<Notification>; params: any }> {
         return request(`auth/user/notifications/${params.notificationId}/see`, {
             method: 'PUT'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -223,10 +223,10 @@ const notificationReq = {
         });
     },
 
-    seeNotificationV2(params: { notificationId: string }): Promise<{ json: Json<NotificationV2>; params }> {
+    seeNotificationV2(params: { notificationId: string }): Promise<{ json: Json<NotificationV2>; params: any }> {
         return request(`notifications/${params.notificationId}/see`, {
             method: 'POST'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -241,7 +241,7 @@ const notificationReq = {
         return request(`notifications/${params.notificationId}/respond`, {
             method: 'POST',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -253,7 +253,7 @@ const notificationReq = {
     hideNotificationV2(notificationId: string): Promise<{ json: Json<Success>; params: { notificationId: string } }> {
         return request(`notifications/${notificationId}`, {
             method: 'DELETE'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params: {

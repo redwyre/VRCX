@@ -20,13 +20,13 @@ import { storeToRefs } from 'pinia';
 /**
  * @param {object} args
  */
-export function handleFriendStatus(args) {
+export function handleFriendStatus(args: object) {
     const userStore = useUserStore();
     const D = userStore.userDialog;
-    if (D.visible === false || D.id !== args.params.userId) {
+    if (D.visible === false || D.id !== (args as any).params.userId) {
         return;
     }
-    const { json } = args;
+    const { json }: any = args;
     D.isFriend = json.isFriend;
     D.incomingRequest = json.incomingRequest;
     D.outgoingRequest = json.outgoingRequest;
@@ -35,27 +35,27 @@ export function handleFriendStatus(args) {
 /**
  * @param {object} args
  */
-export function handleFriendDelete(args) {
+export function handleFriendDelete(args: object) {
     const userStore = useUserStore();
     const friendStore = useFriendStore();
     const D = userStore.userDialog;
-    if (D.visible === false || D.id !== args.params.userId) {
+    if (D.visible === false || D.id !== (args as any).params.userId) {
         return;
     }
     D.isFriend = false;
-    runDeleteFriendshipFlow(args.params.userId);
-    friendStore.deleteFriend(args.params.userId);
-    removeFriendSearchIndex(args.params.userId);
+    runDeleteFriendshipFlow((args as any).params.userId);
+    friendStore.deleteFriend((args as any).params.userId);
+    removeFriendSearchIndex((args as any).params.userId);
 }
 
 /**
  * @param {object} args
  */
-export function handleFriendAdd(args) {
+export function handleFriendAdd(args: object) {
     const friendStore = useFriendStore();
-    addFriendship(args.params.userId);
-    friendStore.addFriend(args.params.userId);
-    const ctx = friendStore.friends.get(args.params.userId);
+    addFriendship((args as any).params.userId);
+    friendStore.addFriend((args as any).params.userId);
+    const ctx = friendStore.friends.get((args as any).params.userId);
     if (ctx) {
         syncFriendSearchIndex(ctx);
     }
@@ -65,12 +65,12 @@ export function handleFriendAdd(args) {
  * @param {string} userId
  * @returns {string}
  */
-export function getFriendRequest(userId) {
+export function getFriendRequest(userId: string) {
     const notificationStore = useNotificationStore();
     const array = notificationStore.notificationTable.data;
     for (let i = array.length - 1; i >= 0; i--) {
-        if (array[i].type === 'friendRequest' && array[i].senderUserId === userId) {
-            return array[i].id;
+        if ((array[i] as any).type === 'friendRequest' && (array[i] as any).senderUserId === userId) {
+            return (array[i] as any).id;
         }
     }
     return '';
@@ -79,11 +79,11 @@ export function getFriendRequest(userId) {
 /**
  * @param {string} userId
  */
-function deleteFriendRequest(userId) {
+function deleteFriendRequest(userId: string) {
     const notificationStore = useNotificationStore();
     const array = notificationStore.notificationTable.data;
     for (let i = array.length - 1; i >= 0; i--) {
-        if (array[i].type === 'friendRequest' && array[i].senderUserId === userId) {
+        if ((array[i] as any).type === 'friendRequest' && (array[i] as any).senderUserId === userId) {
             array.splice(i, 1);
             return;
         }
@@ -93,7 +93,7 @@ function deleteFriendRequest(userId) {
 /**
  * @param {string} id
  */
-export function addFriendship(id) {
+export function addFriendship(id: string) {
     const friendStore = useFriendStore();
     const userStore = useUserStore();
     const notificationStore = useNotificationStore();
@@ -140,6 +140,10 @@ export function addFriendship(id) {
                     displayName: ref.displayName,
                     friendNumber: ref.$friendNumber
                 };
+
+
+
+
                 friendLogTable.value.data.push(friendLogHistory);
                 database.addFriendLogHistory(friendLogHistory);
                 notificationStore.queueFriendLogNoty(friendLogHistory);
@@ -170,7 +174,7 @@ export function addFriendship(id) {
 /**
  * @param {object} ref
  */
-export function updateFriendship(ref) {
+export function updateFriendship(ref: object) {
     const friendStore = useFriendStore();
     const notificationStore = useNotificationStore();
     const sharedFeedStore = useSharedFeedStore();
@@ -179,88 +183,97 @@ export function updateFriendship(ref) {
     const { friendLogTable } = storeToRefs(friendStore);
     const { friendLog } = friendStore;
 
-    const ctx = friendLog.get(ref.id);
+    const ctx = friendLog.get((ref as any).id);
     if (!watchState.isFriendsLoaded || typeof ctx === 'undefined') {
         return;
     }
     if (ctx.friendNumber) {
-        ref.$friendNumber = ctx.friendNumber;
+        (ref as any).$friendNumber = ctx.friendNumber;
     }
-    if (!ref.$friendNumber) {
-        ref.$friendNumber = 0; // no null
+    if (!(ref as any).$friendNumber) {
+        (ref as any).$friendNumber = 0; // no null
+ // no null
     }
-    if (ctx.displayName !== ref.displayName) {
+    if (ctx.displayName !== (ref as any).displayName) {
         if (ctx.displayName) {
             const friendLogHistoryDisplayName = {
-                created_at: new Date().toJSON(),
-                type: 'DisplayName',
-                userId: ref.id,
-                displayName: ref.displayName,
-                previousDisplayName: ctx.displayName,
-                friendNumber: ref.$friendNumber
-            };
+    created_at: new Date().toJSON(),
+    type: 'DisplayName',
+    userId: (ref as any).id,
+    displayName: (ref as any).displayName,
+    previousDisplayName: ctx.displayName,
+    friendNumber: (ref as any).$friendNumber
+};
             // Sentry: VRCX-WEB-2A7
+
+
+
+
             friendLogTable.value?.data.push(friendLogHistoryDisplayName);
             database.addFriendLogHistory(friendLogHistoryDisplayName);
             notificationStore.queueFriendLogNoty(friendLogHistoryDisplayName);
             sharedFeedStore.addEntry(friendLogHistoryDisplayName);
             const friendLogCurrent = {
-                userId: ref.id,
-                displayName: ref.displayName,
-                trustLevel: ref.$trustLevel,
-                friendNumber: ref.$friendNumber
-            };
-            friendLog.set(ref.id, friendLogCurrent);
+    userId: (ref as any).id,
+    displayName: (ref as any).displayName,
+    trustLevel: (ref as any).$trustLevel,
+    friendNumber: (ref as any).$friendNumber
+};
+            friendLog.set((ref as any).id, friendLogCurrent);
             database.setFriendLogCurrent(friendLogCurrent);
-            ctx.displayName = ref.displayName;
+            ctx.displayName = (ref as any).displayName;
             uiStore.notifyMenu('friend-log');
         }
     }
-    if (ref.$trustLevel && ctx.trustLevel && ctx.trustLevel !== ref.$trustLevel) {
+    if ((ref as any).$trustLevel && ctx.trustLevel && ctx.trustLevel !== (ref as any).$trustLevel) {
         if (
-            (ctx.trustLevel === 'Trusted User' && ref.$trustLevel === 'Veteran User') ||
-            (ctx.trustLevel === 'Veteran User' && ref.$trustLevel === 'Trusted User')
+            (ctx.trustLevel === 'Trusted User' && (ref as any).$trustLevel === 'Veteran User') ||
+    (ctx.trustLevel === 'Veteran User' && (ref as any).$trustLevel === 'Trusted User')
         ) {
             const friendLogCurrent3 = {
-                userId: ref.id,
-                displayName: ref.displayName,
-                trustLevel: ref.$trustLevel,
-                friendNumber: ref.$friendNumber
-            };
-            friendLog.set(ref.id, friendLogCurrent3);
+    userId: (ref as any).id,
+    displayName: (ref as any).displayName,
+    trustLevel: (ref as any).$trustLevel,
+    friendNumber: (ref as any).$friendNumber
+};
+            friendLog.set((ref as any).id, friendLogCurrent3);
             database.setFriendLogCurrent(friendLogCurrent3);
             return;
         }
         const friendLogHistoryTrustLevel = {
-            created_at: new Date().toJSON(),
-            type: 'TrustLevel',
-            userId: ref.id,
-            displayName: ref.displayName,
-            trustLevel: ref.$trustLevel,
-            previousTrustLevel: ctx.trustLevel,
-            friendNumber: ref.$friendNumber
-        };
+    created_at: new Date().toJSON(),
+    type: 'TrustLevel',
+    userId: (ref as any).id,
+    displayName: (ref as any).displayName,
+    trustLevel: (ref as any).$trustLevel,
+    previousTrustLevel: ctx.trustLevel,
+    friendNumber: (ref as any).$friendNumber
+};
+
+
+
+
         friendLogTable.value.data.push(friendLogHistoryTrustLevel);
         database.addFriendLogHistory(friendLogHistoryTrustLevel);
         notificationStore.queueFriendLogNoty(friendLogHistoryTrustLevel);
         sharedFeedStore.addEntry(friendLogHistoryTrustLevel);
         const friendLogCurrent2 = {
-            userId: ref.id,
-            displayName: ref.displayName,
-            trustLevel: ref.$trustLevel,
-            friendNumber: ref.$friendNumber
-        };
-        friendLog.set(ref.id, friendLogCurrent2);
+    userId: (ref as any).id,
+    displayName: (ref as any).displayName,
+    trustLevel: (ref as any).$trustLevel,
+    friendNumber: (ref as any).$friendNumber
+};
+        friendLog.set((ref as any).id, friendLogCurrent2);
         database.setFriendLogCurrent(friendLogCurrent2);
         uiStore.notifyMenu('friend-log');
     }
-    ctx.trustLevel = ref.$trustLevel;
+    ctx.trustLevel = (ref as any).$trustLevel;
 }
 
 /**
  * @param {string} id
  */
-export function confirmDeleteFriend(id) {
+export function confirmDeleteFriend(id: string) {
     const t = i18n.global.t;
     const modalStore = useModalStore();
     modalStore
@@ -281,25 +294,25 @@ export function confirmDeleteFriend(id) {
 /**
  * @param {object} ref
  */
-export function userOnFriend(ref) {
+export function userOnFriend(ref: object) {
     const friendStore = useFriendStore();
     const userStore = useUserStore();
 
     updateFriendship(ref);
     if (
         watchState.isFriendsLoaded &&
-        ref.isFriend &&
-        !friendStore.friendLog.has(ref.id) &&
-        ref.id !== userStore.currentUser.id
+    (ref as any).isFriend &&
+    !friendStore.friendLog.has((ref as any).id) &&
+    (ref as any).id !== userStore.currentUser.id
     ) {
-        addFriendship(ref.id);
+        addFriendship((ref as any).id);
     }
 }
 
 /**
  * @param {object} ref
  */
-export function updateUserCurrentStatus(ref) {
+export function updateUserCurrentStatus(ref: object) {
     const friendStore = useFriendStore();
     const userStore = useUserStore();
     const appearanceSettingsStore = useAppearanceSettingsStore();
@@ -332,7 +345,13 @@ export function updateUserCurrentStatus(ref) {
  * @param {object} [options] Test seams.
  * @param {function} [options.nowIso] ISO timestamp provider.
  */
-export function runDeleteFriendshipFlow(id, { nowIso = () => new Date().toJSON() } = {}) {
+export function runDeleteFriendshipFlow(id: string, { nowIso = () => new Date().toJSON() }: {
+
+
+
+
+    nowIso?: function;
+} = {}) {
     const friendStore = useFriendStore();
     const userStore = useUserStore();
     const notificationStore = useNotificationStore();
@@ -365,6 +384,10 @@ export function runDeleteFriendshipFlow(id, { nowIso = () => new Date().toJSON()
                     userId: id,
                     displayName: ctx.displayName || id
                 };
+
+
+
+
                 friendLogTable.value.data.push(friendLogHistory);
                 database.addFriendLogHistory(friendLogHistory);
                 notificationStore.queueFriendLogNoty(friendLogHistory);
@@ -388,14 +411,20 @@ export function runDeleteFriendshipFlow(id, { nowIso = () => new Date().toJSON()
  * @param {object} [options] Test seams.
  * @param {function} [options.nowIso] ISO timestamp provider.
  */
-export function runUpdateFriendshipsFlow(ref, { nowIso = () => new Date().toJSON() } = {}) {
+export function runUpdateFriendshipsFlow(ref: object, { nowIso = () => new Date().toJSON() }: {
+
+
+
+
+    nowIso?: function;
+} = {}) {
     const friendStore = useFriendStore();
     const userStore = useUserStore();
     const { friendLog } = friendStore;
 
     let id;
     const set = new Set();
-    for (id of ref.friends) {
+    for (id of (ref as any).friends) {
         set.add(id);
         addFriendship(id);
     }

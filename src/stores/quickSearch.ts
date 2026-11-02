@@ -1,4 +1,4 @@
-import { computed, effectScope, ref, watch } from 'vue';
+import { computed, EffectScope, effectScope, ref, watch } from 'vue';
 import { defineStore } from 'pinia';
 import { useFriendStore } from './friend';
 import { useSearchIndexStore } from './searchIndex';
@@ -19,9 +19,9 @@ export const useQuickSearchStore = defineStore('QuickSearch', () => {
     const query = ref('');
 
     // Worker instance (lazy)
-    let worker = null;
-    let indexUpdateTimer = null;
-    let indexWatchScope = null;
+    let worker: Worker | null = null;
+    let indexUpdateTimer: string | number | NodeJS.Timeout | null | undefined = null;
+    let indexWatchScope: EffectScope | null = null;
 
     function getWorker() {
         if (!worker) {
@@ -147,14 +147,14 @@ export const useQuickSearchStore = defineStore('QuickSearch', () => {
         disposeWorker();
     });
 
-    function handleWorkerMessage(event) {
+    function handleWorkerMessage(event: { data: { type: any; payload: any; }; }) {
         const { type, payload } = event.data;
         if (type === 'searchResult') {
             if (payload.seq !== searchSeq) return;
 
             // Enrich friend results with reactive ref from store
             // (Worker can't serialize Vue reactive objects)
-            friendResults.value = payload.friends.map((item) => {
+            friendResults.value = payload.friends.map((item: { id: any; }) => {
                 const friendEntry = friendStore.friends.get(item.id);
                 return { ...item, ref: friendEntry?.ref };
             });
@@ -188,14 +188,14 @@ export const useQuickSearchStore = defineStore('QuickSearch', () => {
     /**
      * @param {string} value
      */
-    function setQuery(value) {
+    function setQuery(value: string) {
         query.value = value;
     }
 
     /**
      * @param {{ id: string; type: string }} item
      */
-    function selectResult(item) {
+    function selectResult(item: { id: string; type: string; }) {
         if (!item) return;
 
         close();

@@ -16,7 +16,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock('pinia', () => ({
-    storeToRefs: (store) => store
+    storeToRefs: (store: any) => store
 }));
 
 vi.mock('vue-router', () => ({
@@ -25,7 +25,7 @@ vi.mock('vue-router', () => ({
 
 vi.mock('vue-i18n', () => ({
     useI18n: () => ({
-        t: (key) => key,
+        t: (key: any) => key,
         locale: require('vue').ref('en')
     })
 }));
@@ -106,6 +106,10 @@ describe('NotificationCenterSheet.vue', () => {
         mocks.inviteStore.refreshInviteMessageTableData.mockReset();
         mocks.galleryStore.clearInviteImageUpload.mockReset();
 
+
+
+
+
         mocks.notificationStore = {
             isNotificationCenterOpen: ref(false),
             unseenFriendNotifications: ref([]),
@@ -118,8 +122,16 @@ describe('NotificationCenterSheet.vue', () => {
     });
 
     test('selects group tab when opening and only group unseen notifications exist', async () => {
+
+
+
+
         mocks.notificationStore.unseenGroupNotifications.value = [{ id: 'g1' }];
         const wrapper = mount(NotificationCenterSheet);
+
+
+
+
 
         mocks.notificationStore.isNotificationCenterOpen.value = true;
         await wrapper.vm.$nextTick();
@@ -128,10 +140,18 @@ describe('NotificationCenterSheet.vue', () => {
     });
 
     test('navigate-to-table closes center and routes to notification page', async () => {
+
+
+
+
         mocks.notificationStore.isNotificationCenterOpen.value = true;
         const wrapper = mount(NotificationCenterSheet);
 
         await wrapper.get('[data-testid="emit-navigate"]').trigger('click');
+
+
+
+
 
         expect(mocks.notificationStore.isNotificationCenterOpen.value).toBe(false);
         expect(mocks.router.push).toHaveBeenCalledWith({

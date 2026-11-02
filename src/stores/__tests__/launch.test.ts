@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
-import { createPinia, setActivePinia } from 'pinia';
-import { ref } from 'vue';
+import { createPinia, setActivePinia, Store } from 'pinia';
+import { Ref, ref } from 'vue';
 
 import en from '../../localization/en.json';
 
@@ -21,6 +21,10 @@ vi.mock('../../plugins/router', () => ({
 vi.mock('vue-router', async (importOriginal) => {
     const actual = await importOriginal();
     return {
+
+
+
+
         ...actual,
         useRouter: vi.fn(() => ({
             push: vi.fn(),
@@ -65,15 +69,19 @@ vi.mock('../../services/watchState', () => ({
 }));
 vi.mock('vue-i18n', async (importOriginal) => {
     const actual = await importOriginal();
-    const i18n = actual.createI18n({
-        locale: 'en',
-        fallbackLocale: 'en',
-        legacy: false,
-        missingWarn: false,
-        fallbackWarn: false,
-        messages: { en }
-    });
+    const i18n = (actual as any).createI18n({
+    locale: 'en',
+    fallbackLocale: 'en',
+    legacy: false,
+    missingWarn: false,
+    fallbackWarn: false,
+    messages: { en }
+});
     return {
+
+
+
+
         ...actual,
         useI18n: () => i18n.global
     };
@@ -82,7 +90,7 @@ vi.mock('vue-i18n', async (importOriginal) => {
 const mockGetInstanceShortName = vi.fn();
 vi.mock('../../api', () => ({
     instanceRequest: {
-        getInstanceShortName: (...args) => mockGetInstanceShortName(...args),
+        getInstanceShortName: (...args: any[]) => mockGetInstanceShortName(...args),
         selfInvite: vi.fn().mockResolvedValue({})
     },
     miscRequest: {}
@@ -98,7 +106,7 @@ vi.mock('vue-sonner', () => ({
 import { useLaunchStore } from '../launch';
 
 describe('useLaunchStore', () => {
-    let store;
+    let store: Store<"Launch", Pick<{ isLaunchOptionsDialogVisible: Ref<boolean, boolean>; isOpeningInstance: Ref<boolean, boolean>; launchDialogData: Ref<{ visible: boolean; loading: boolean; tag: string; shortName: string; }, { visible: boolean; loading: boolean; tag: string; shortName: string; } | { visible: boolean; loading: boolean; tag: string; shortName: string; }>; showLaunchOptions: () => void; showLaunchDialog: (tag: string, shortName?: string) => Promise<void>; getLaunchUrl: (location: string, shortName: string) => Promise<string>; launchGame: (location: string, shortName: string, desktopMode: boolean) => Promise<void>; tryOpenInstanceInVrc: (location: string, shortName: string) => Promise<void>; }, "isLaunchOptionsDialogVisible" | "isOpeningInstance" | "launchDialogData">, Pick<{ isLaunchOptionsDialogVisible: Ref<boolean, boolean>; isOpeningInstance: Ref<boolean, boolean>; launchDialogData: Ref<{ visible: boolean; loading: boolean; tag: string; shortName: string; }, { visible: boolean; loading: boolean; tag: string; shortName: string; } | { visible: boolean; loading: boolean; tag: string; shortName: string; }>; showLaunchOptions: () => void; showLaunchDialog: (tag: string, shortName?: string) => Promise<void>; getLaunchUrl: (location: string, shortName: string) => Promise<string>; launchGame: (location: string, shortName: string, desktopMode: boolean) => Promise<void>; tryOpenInstanceInVrc: (location: string, shortName: string) => Promise<void>; }, never>, Pick<{ isLaunchOptionsDialogVisible: Ref<boolean, boolean>; isOpeningInstance: Ref<boolean, boolean>; launchDialogData: Ref<{ visible: boolean; loading: boolean; tag: string; shortName: string; }, { visible: boolean; loading: boolean; tag: string; shortName: string; } | { visible: boolean; loading: boolean; tag: string; shortName: string; }>; showLaunchOptions: () => void; showLaunchDialog: (tag: string, shortName?: string) => Promise<void>; getLaunchUrl: (location: string, shortName: string) => Promise<string>; launchGame: (location: string, shortName: string, desktopMode: boolean) => Promise<void>; tryOpenInstanceInVrc: (location: string, shortName: string) => Promise<void>; }, "showLaunchDialog" | "showLaunchOptions" | "getLaunchUrl" | "launchGame" | "tryOpenInstanceInVrc">>;
 
     beforeEach(() => {
         setActivePinia(createPinia());

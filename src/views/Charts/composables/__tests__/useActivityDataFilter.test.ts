@@ -20,6 +20,10 @@ function setup({
 describe('useActivityDataFilter', () => {
     it('returns empty array when isDetailVisible is false', () => {
         const { filteredActivityDetailData } = setup({
+
+
+
+
             detailData: [[{ isFriend: true }]],
             isDetailVisible: false
         });
@@ -28,6 +32,10 @@ describe('useActivityDataFilter', () => {
 
     it('returns all data when all filters are enabled', () => {
         const data = [[{ isFriend: true }], [{ isFriend: false }], [{ isFriend: true }, { isFriend: false }]];
+
+
+
+
         const { filteredActivityDetailData } = setup({ detailData: data });
         expect(filteredActivityDetailData.value).toHaveLength(3);
     });
@@ -38,6 +46,10 @@ describe('useActivityDataFilter', () => {
             [{ isFriend: true }, { isFriend: false }] // not solo — kept
         ];
         const { filteredActivityDetailData } = setup({
+
+
+
+
             detailData: data,
             isSoloInstanceVisible: false
         });
@@ -51,6 +63,10 @@ describe('useActivityDataFilter', () => {
             [{ isFriend: true }, { isFriend: false }] // has friend — kept
         ];
         const { filteredActivityDetailData } = setup({
+
+
+
+
             detailData: data,
             isNoFriendInstanceVisible: false
         });
@@ -62,6 +78,10 @@ describe('useActivityDataFilter', () => {
             [{ isFriend: false }] // solo — special case, kept
         ];
         const { filteredActivityDetailData } = setup({
+
+
+
+
             detailData: data,
             isNoFriendInstanceVisible: false
         });
@@ -75,6 +95,10 @@ describe('useActivityDataFilter', () => {
             [{ isFriend: true }, { isFriend: false }] // kept
         ];
         const { filteredActivityDetailData } = setup({
+
+
+
+
             detailData: data,
             isSoloInstanceVisible: false,
             isNoFriendInstanceVisible: false

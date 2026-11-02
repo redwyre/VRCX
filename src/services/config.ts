@@ -1,9 +1,9 @@
-import sqliteService from './sqlite.js';
+import sqliteService from './sqlite';
 
 /**
  * @param key
  */
-function transformKey(key) {
+function transformKey(key: string | number | null) {
     return `config:${String(key).toLowerCase()}`;
 }
 
@@ -14,8 +14,12 @@ class ConfigRepository {
         );
     }
 
-    async remove(key) {
+    async remove(key: string) {
         const _key = transformKey(key);
+
+
+
+
         await sqliteService.executeNonQuery(`DELETE FROM configs WHERE key = @key`, {
             '@key': _key
         });
@@ -26,14 +30,22 @@ class ConfigRepository {
      * @param {string} defaultValue
      * @returns {Promise<string | null>}
      */
-    async getString(key, defaultValue = null) {
+
+
+
+
+    async getString(key: string, defaultValue: string = null) {
         const _key = transformKey(key);
         let value = undefined;
         await sqliteService.execute(
-            (row) => {
+            (row: any) => {
                 value = row[0];
             },
             `SELECT value FROM configs WHERE key = @key`,
+
+
+
+
             {
                 '@key': _key
             }
@@ -50,9 +62,13 @@ class ConfigRepository {
      * @param {string} value
      * @returns {Promise<void>}
      */
-    async setString(key, value) {
+    async setString(key: string, value: string) {
         const _key = transformKey(key);
         const _value = String(value);
+
+
+
+
         await sqliteService.executeNonQuery(`INSERT OR REPLACE INTO configs (key, value) VALUES (@key, @value)`, {
             '@key': _key,
             '@value': _value
@@ -64,7 +80,15 @@ class ConfigRepository {
      * @param {boolean} defaultValue
      * @returns {Promise<boolean | null>}
      */
-    async getBool(key, defaultValue = null) {
+
+
+
+
+    async getBool(key: string, defaultValue: boolean = null) {
+
+
+
+
         const value = await this.getString(key, null);
         if (value === null || value === undefined) {
             return defaultValue;
@@ -77,7 +101,7 @@ class ConfigRepository {
      * @param {boolean} value
      * @returns {Promise<void>}
      */
-    async setBool(key, value) {
+    async setBool(key: string, value: boolean) {
         await this.setString(key, value ? 'true' : 'false');
     }
 
@@ -86,7 +110,15 @@ class ConfigRepository {
      * @param {number} defaultValue
      * @returns {Promise<number | null>}
      */
-    async getInt(key, defaultValue = null) {
+
+
+
+
+    async getInt(key: string, defaultValue: number = null) {
+
+
+
+
         const value = await this.getString(key, null);
         if (value === null || value === undefined) {
             return defaultValue;
@@ -98,11 +130,15 @@ class ConfigRepository {
         return parsed;
     }
 
-    async setInt(key, value) {
+    async setInt(key: string, value: any) {
         await this.setString(key, value);
     }
 
-    async getFloat(key, defaultValue = null) {
+    async getFloat(key: string, defaultValue = null) {
+
+
+
+
         const value = await this.getString(key, null);
         if (value === null || value === undefined) {
             return defaultValue;
@@ -114,11 +150,15 @@ class ConfigRepository {
         return parsed;
     }
 
-    async setFloat(key, value) {
+    async setFloat(key: string, value: string) {
         await this.setString(key, value);
     }
 
-    async getObject(key, defaultValue = null) {
+    async getObject(key: string, defaultValue = null) {
+
+
+
+
         let value = await this.getString(key, null);
         if (value === null || value === undefined) {
             return defaultValue;
@@ -134,7 +174,7 @@ class ConfigRepository {
         return value;
     }
 
-    async setObject(key, value) {
+    async setObject(key: string, value: any) {
         await this.setString(key, JSON.stringify(value));
     }
 
@@ -143,7 +183,11 @@ class ConfigRepository {
      * @param {Array} defaultValue
      * @returns {Promise<Array | null>}
      */
-    async getArray(key, defaultValue = null) {
+
+
+
+
+    async getArray(key: string, defaultValue: Array<any> = null) {
         const value = await this.getObject(key, null);
         if (Array.isArray(value) === false) {
             return defaultValue;
@@ -151,7 +195,7 @@ class ConfigRepository {
         return value;
     }
 
-    async setArray(key, value) {
+    async setArray(key: string, value: any) {
         await this.setObject(key, value);
     }
 }

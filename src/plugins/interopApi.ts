@@ -1,14 +1,14 @@
 // @ts-nocheck
-import InteropApi from '../ipc-electron/interopApi.js';
-import configRepository from '../services/config.js';
-import vrcxJsonStorage from '../services/jsonStorage.js';
+import InteropApi from '../ipc-electron/interopApi';
+import configRepository from '../services/config';
+import vrcxJsonStorage from '../services/jsonStorage';
 
 export async function initInteropApi(isVrOverlay = false) {
     if (isVrOverlay) {
         if (WINDOWS) {
             await CefSharp.BindObjectAsync('AppApiVr');
         } else {
-            // @ts-ignore
+
             window.AppApiVr = InteropApi.AppApiVrElectron;
         }
     } else {

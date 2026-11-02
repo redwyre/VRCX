@@ -6,12 +6,12 @@ import { queryRequest } from '../../api';
  * @param {string} permission
  * @returns {boolean}
  */
-function hasGroupPermission(ref, permission) {
+function hasGroupPermission(ref: object, permission: string) {
     if (
         ref &&
-        ref.myMember &&
-        ref.myMember.permissions &&
-        (ref.myMember.permissions.includes('*') || ref.myMember.permissions.includes(permission))
+    (ref as any).myMember &&
+    (ref as any).myMember.permissions &&
+    ((ref as any).myMember.permissions.includes('*') || (ref as any).myMember.permissions.includes(permission))
     ) {
         return true;
     }
@@ -22,7 +22,7 @@ function hasGroupPermission(ref, permission) {
  * @param {object} group
  * @returns {boolean}
  */
-function hasGroupModerationPermission(group) {
+function hasGroupModerationPermission(group: object) {
     return (
         hasGroupPermission(group, 'group-invites-manage') ||
         hasGroupPermission(group, 'group-moderates-manage') ||
@@ -43,7 +43,7 @@ function hasGroupModerationPermission(group) {
  * @param {string} data
  * @returns {Promise<string>}
  */
-async function getGroupName(data) {
+async function getGroupName(data: string) {
     if (!data) {
         return '';
     }
@@ -51,6 +51,10 @@ async function getGroupName(data) {
     let groupId = data;
     if (!data.startsWith('grp_')) {
         const L = parseLocation(data);
+
+
+
+
         groupId = L.groupId;
         if (!L.groupId) {
             return '';
@@ -60,7 +64,7 @@ async function getGroupName(data) {
         const args = await queryRequest.fetch('group.dialog', {
             groupId
         });
-        groupName = args.ref.name;
+        groupName = (args as any).ref.name;
     } catch (err) {
         console.error(err);
     }
@@ -77,7 +81,7 @@ async function getGroupName(data) {
  * @param {string} search - Current search query
  * @returns {Array} Merged, deduplicated results
  */
-function mergeGroupMemberSearchResults(results, members, search) {
+function mergeGroupMemberSearchResults(results: Array<any>, members: Array<any>, search: string) {
     const merged = [...results];
     const seenUserIds = new Set(merged.map((member) => member.userId));
     const query = search.toLowerCase();

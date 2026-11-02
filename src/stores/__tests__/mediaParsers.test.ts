@@ -35,11 +35,11 @@ function makeDeps(overrides = {}) {
 // ─── addGameLogVideo ─────────────────────────────────────────────────
 
 describe('addGameLogVideo', () => {
-    let deps, parsers;
+    let deps: any, parsers: { addGameLogVideo: any; addGameLogVRDancing?: (gameLog: any, location: any) => Promise<void>; addGameLogLSMedia?: (gameLog: any, location: any) => Promise<void>; addGameLogPopcornPalace?: (gameLog: any, location: any) => Promise<void>; };
 
     beforeEach(() => {
         vi.clearAllMocks();
-        isRpcWorld.mockReturnValue(false);
+        (isRpcWorld as any).mockReturnValue(false);
         deps = makeDeps();
         parsers = createMediaParsers(deps);
     });
@@ -64,7 +64,7 @@ describe('addGameLogVideo', () => {
     });
 
     test('skips video in RPC world (non-YouTube)', async () => {
-        isRpcWorld.mockReturnValue(true);
+        (isRpcWorld as any).mockReturnValue(true);
         deps = makeDeps();
         parsers = createMediaParsers(deps);
 
@@ -78,7 +78,7 @@ describe('addGameLogVideo', () => {
     });
 
     test('processes YouTube video in RPC world when videoId is YouTube', async () => {
-        isRpcWorld.mockReturnValue(true);
+        (isRpcWorld as any).mockReturnValue(true);
         deps = makeDeps();
         parsers = createMediaParsers(deps);
 
@@ -172,12 +172,12 @@ describe('addGameLogVideo', () => {
 // ─── addGameLogPyPyDance ─────────────────────────────────────────────
 
 describe('addGameLogPyPyDance', () => {
-    let deps, parsers;
+    let deps: any, parsers: { addGameLogPyPyDance?: any; addGameLogVideo?: (gameLog: any, location: any, userId: any) => Promise<void>; addGameLogVRDancing?: (gameLog: any, location: any) => Promise<void>; addGameLogLSMedia?: (gameLog: any, location: any) => Promise<void>; addGameLogPopcornPalace?: (gameLog: any, location: any) => Promise<void>; };
 
     beforeEach(() => {
         vi.clearAllMocks();
-        isRpcWorld.mockReturnValue(true);
-        findUserByDisplayName.mockReturnValue(null);
+        (isRpcWorld as any).mockReturnValue(true);
+        (findUserByDisplayName as any).mockReturnValue(null);
         deps = makeDeps();
         parsers = createMediaParsers(deps);
     });
@@ -239,12 +239,12 @@ describe('addGameLogPyPyDance', () => {
 // ─── addGameLogVRDancing ─────────────────────────────────────────────
 
 describe('addGameLogVRDancing', () => {
-    let deps, parsers;
+    let deps: any, parsers: { addGameLogVRDancing: any; addGameLogVideo?: (gameLog: any, location: any, userId: any) => Promise<void>; addGameLogLSMedia?: (gameLog: any, location: any) => Promise<void>; addGameLogPopcornPalace?: (gameLog: any, location: any) => Promise<void>; };
 
     beforeEach(() => {
         vi.clearAllMocks();
-        isRpcWorld.mockReturnValue(true);
-        findUserByDisplayName.mockReturnValue(null);
+        (isRpcWorld as any).mockReturnValue(true);
+        (findUserByDisplayName as any).mockReturnValue(null);
         deps = makeDeps();
         parsers = createMediaParsers(deps);
     });
@@ -308,12 +308,12 @@ describe('addGameLogVRDancing', () => {
 // ─── addGameLogZuwaZuwaDance ─────────────────────────────────────────
 
 describe('addGameLogZuwaZuwaDance', () => {
-    let deps, parsers;
+    let deps: any, parsers: { addGameLogZuwaZuwaDance?: any; addGameLogVideo?: (gameLog: any, location: any, userId: any) => Promise<void>; addGameLogVRDancing?: (gameLog: any, location: any) => Promise<void>; addGameLogLSMedia?: (gameLog: any, location: any) => Promise<void>; addGameLogPopcornPalace?: (gameLog: any, location: any) => Promise<void>; };
 
     beforeEach(() => {
         vi.clearAllMocks();
-        isRpcWorld.mockReturnValue(true);
-        findUserByDisplayName.mockReturnValue(null);
+        (isRpcWorld as any).mockReturnValue(true);
+        (findUserByDisplayName as any).mockReturnValue(null);
         deps = makeDeps();
         parsers = createMediaParsers(deps);
     });
@@ -364,11 +364,11 @@ describe('addGameLogZuwaZuwaDance', () => {
 // ─── addGameLogLSMedia ───────────────────────────────────────────────
 
 describe('addGameLogLSMedia', () => {
-    let deps, parsers;
+    let deps: any, parsers: { addGameLogLSMedia: any; addGameLogVideo?: (gameLog: any, location: any, userId: any) => Promise<void>; addGameLogVRDancing?: (gameLog: any, location: any) => Promise<void>; addGameLogPopcornPalace?: (gameLog: any, location: any) => Promise<void>; };
 
     beforeEach(() => {
         vi.clearAllMocks();
-        findUserByDisplayName.mockReturnValue(null);
+        (findUserByDisplayName as any).mockReturnValue(null);
         deps = makeDeps();
         parsers = createMediaParsers(deps);
     });
@@ -409,7 +409,7 @@ describe('addGameLogLSMedia', () => {
     });
 
     test('looks up userId when displayName given', () => {
-        findUserByDisplayName.mockReturnValue({ id: 'usr_found' });
+        (findUserByDisplayName as any).mockReturnValue({ id: 'usr_found' });
 
         const gameLog = {
             dt: '2024-01-01',
@@ -424,11 +424,11 @@ describe('addGameLogLSMedia', () => {
 // ─── addGameLogPopcornPalace ─────────────────────────────────────────
 
 describe('addGameLogPopcornPalace', () => {
-    let deps, parsers;
+    let deps: any, parsers: { addGameLogPopcornPalace: any; addGameLogVideo?: (gameLog: any, location: any, userId: any) => Promise<void>; addGameLogVRDancing?: (gameLog: any, location: any) => Promise<void>; addGameLogLSMedia?: (gameLog: any, location: any) => Promise<void>; };
 
     beforeEach(() => {
         vi.clearAllMocks();
-        findUserByDisplayName.mockReturnValue(null);
+        (findUserByDisplayName as any).mockReturnValue(null);
         deps = makeDeps();
         parsers = createMediaParsers(deps);
     });

@@ -114,8 +114,8 @@ function createMockDeps(overrides = {}) {
 }
 
 describe('useUserDialogCommands', () => {
-    let userDialog;
-    let deps;
+    let userDialog: any;
+    let deps: any;
 
     beforeEach(() => {
         vi.clearAllMocks();
@@ -236,10 +236,10 @@ describe('useUserDialogCommands', () => {
         });
 
         it('Send Friend Request: should confirm then send', async () => {
-            friendRequest.sendFriendRequest.mockResolvedValue({
-                params: { userId: 'usr_test123' },
-                json: { success: true }
-            });
+            (friendRequest.sendFriendRequest as any).mockResolvedValue({
+    params: { userId: 'usr_test123' },
+    json: { success: true }
+});
             const { userDialogCommand } = useUserDialogCommands(userDialog, deps);
             userDialogCommand('Send Friend Request');
             await vi.waitFor(() => {
@@ -250,10 +250,10 @@ describe('useUserDialogCommands', () => {
         });
 
         it('Cancel Friend Request: should confirm then cancel', async () => {
-            friendRequest.cancelFriendRequest.mockResolvedValue({
-                params: { userId: 'usr_test123' },
-                json: {}
-            });
+            (friendRequest.cancelFriendRequest as any).mockResolvedValue({
+    params: { userId: 'usr_test123' },
+    json: {}
+});
             const { userDialogCommand } = useUserDialogCommands(userDialog, deps);
             userDialogCommand('Cancel Friend Request');
             await vi.waitFor(() => {
@@ -264,13 +264,13 @@ describe('useUserDialogCommands', () => {
         });
 
         it('Moderation Block: should confirm then send moderation', async () => {
-            playerModerationRequest.sendPlayerModeration.mockResolvedValue({
-                json: {
-                    targetUserId: 'usr_test123',
-                    sourceUserId: 'usr_current',
-                    type: 'block'
-                }
-            });
+            (playerModerationRequest.sendPlayerModeration as any).mockResolvedValue({
+    json: {
+        targetUserId: 'usr_test123',
+        sourceUserId: 'usr_current',
+        type: 'block'
+    }
+});
             const { userDialogCommand } = useUserDialogCommands(userDialog, deps);
             userDialogCommand('Moderation Block');
             await vi.waitFor(() => {
@@ -282,7 +282,7 @@ describe('useUserDialogCommands', () => {
         });
 
         it('Moderation Unblock: should confirm then delete moderation', async () => {
-            playerModerationRequest.deletePlayerModeration.mockResolvedValue({});
+            (playerModerationRequest.deletePlayerModeration as any).mockResolvedValue({});
             const { userDialogCommand } = useUserDialogCommands(userDialog, deps);
             userDialogCommand('Moderation Unblock');
             await vi.waitFor(() => {
@@ -297,17 +297,17 @@ describe('useUserDialogCommands', () => {
             const { userDialogCommand } = useUserDialogCommands(userDialog, deps);
             userDialogCommand('Report Hacking');
             await vi.waitFor(() => {
-                expect(miscRequest.reportUser).toHaveBeenCalledWith({
-                    userId: 'usr_test123',
-                    contentType: 'user',
-                    reason: 'behavior-hacking',
-                    type: 'report'
-                });
+                expect((miscRequest as any).reportUser).toHaveBeenCalledWith({
+    userId: 'usr_test123',
+    contentType: 'user',
+    reason: 'behavior-hacking',
+    type: 'report'
+});
             });
         });
 
         it('Unfriend: should confirm then delete friend', async () => {
-            friendRequest.deleteFriend.mockResolvedValue({});
+            (friendRequest.deleteFriend as any).mockResolvedValue({});
             const { userDialogCommand } = useUserDialogCommands(userDialog, deps);
             userDialogCommand('Unfriend');
             await vi.waitFor(() => {
@@ -335,10 +335,10 @@ describe('useUserDialogCommands', () => {
 
     describe('handleSendFriendRequest (internal)', () => {
         it('should add friend log and update dialog state on success', async () => {
-            friendRequest.sendFriendRequest.mockResolvedValue({
-                params: { userId: 'usr_test123' },
-                json: { success: true }
-            });
+            (friendRequest.sendFriendRequest as any).mockResolvedValue({
+    params: { userId: 'usr_test123' },
+    json: { success: true }
+});
             const { userDialogCommand } = useUserDialogCommands(userDialog, deps);
             userDialogCommand('Send Friend Request');
             await vi.waitFor(() => {
@@ -348,10 +348,10 @@ describe('useUserDialogCommands', () => {
         });
 
         it('should set outgoingRequest when not success', async () => {
-            friendRequest.sendFriendRequest.mockResolvedValue({
-                params: { userId: 'usr_test123' },
-                json: { success: false }
-            });
+            (friendRequest.sendFriendRequest as any).mockResolvedValue({
+    params: { userId: 'usr_test123' },
+    json: { success: false }
+});
             const { userDialogCommand } = useUserDialogCommands(userDialog, deps);
             userDialogCommand('Send Friend Request');
             await vi.waitFor(() => {
@@ -368,13 +368,13 @@ describe('useUserDialogCommands', () => {
                 sourceUserId: 'usr_current',
                 type: 'block'
             }));
-            playerModerationRequest.sendPlayerModeration.mockResolvedValue({
-                json: {
-                    targetUserId: 'usr_test123',
-                    sourceUserId: 'usr_current',
-                    type: 'block'
-                }
-            });
+            (playerModerationRequest.sendPlayerModeration as any).mockResolvedValue({
+    json: {
+        targetUserId: 'usr_test123',
+        sourceUserId: 'usr_current',
+        type: 'block'
+    }
+});
             const { userDialogCommand } = useUserDialogCommands(userDialog, deps);
             userDialogCommand('Moderation Block');
             await vi.waitFor(() => {
@@ -388,13 +388,13 @@ describe('useUserDialogCommands', () => {
                 sourceUserId: 'usr_current',
                 type: 'mute'
             }));
-            playerModerationRequest.sendPlayerModeration.mockResolvedValue({
-                json: {
-                    targetUserId: 'usr_test123',
-                    sourceUserId: 'usr_current',
-                    type: 'mute'
-                }
-            });
+            (playerModerationRequest.sendPlayerModeration as any).mockResolvedValue({
+    json: {
+        targetUserId: 'usr_test123',
+        sourceUserId: 'usr_current',
+        type: 'mute'
+    }
+});
             const { userDialogCommand } = useUserDialogCommands(userDialog, deps);
             userDialogCommand('Moderation Mute');
             await vi.waitFor(() => {

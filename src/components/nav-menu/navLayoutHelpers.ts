@@ -6,7 +6,7 @@ const DEFAULT_FOLDER_ICON = 'ri-folder-line';
  * @param {Array} layout
  * @returns {Set<string>}
  */
-export function collectLayoutKeys(layout) {
+export function collectLayoutKeys(layout: Array<any>) {
     const keys = new Set();
     if (!Array.isArray(layout)) {
         return keys;
@@ -19,7 +19,7 @@ export function collectLayoutKeys(layout) {
         }
 
         if (entry?.type === 'folder' && Array.isArray(entry.items)) {
-            entry.items.forEach((key) => {
+            entry.items.forEach((key: unknown) => {
                 if (key) {
                     keys.add(key);
                 }
@@ -36,8 +36,8 @@ export function collectLayoutKeys(layout) {
  * @param {Function} t
  * @returns {Array}
  */
-export function buildMenuItems(layout, navDefinitionMap, t) {
-    const items = [];
+export function buildMenuItems(layout: Array<any>, navDefinitionMap: Map<string, any>, t: Function) {
+    const items: { index: any; icon: any; title: any; titleIsCustom: boolean; children: any; }[] = [];
 
     layout.forEach((entry) => {
         if (entry.type === 'item') {
@@ -56,7 +56,7 @@ export function buildMenuItems(layout, navDefinitionMap, t) {
         }
 
         if (entry.type === 'folder') {
-            const folderDefinitions = (entry.items || []).map((key) => navDefinitionMap.get(key)).filter(Boolean);
+            const folderDefinitions = (entry.items || []).map((key: string) => navDefinitionMap.get(key)).filter(Boolean);
             if (folderDefinitions.length === 0) {
                 return;
             }
@@ -66,7 +66,7 @@ export function buildMenuItems(layout, navDefinitionMap, t) {
                 icon: entry.icon || DEFAULT_FOLDER_ICON,
                 title: entry.name?.trim() || t('nav_menu.custom_nav.folder_name_placeholder'),
                 titleIsCustom: true,
-                children: folderDefinitions.map((definition) => ({
+                children: folderDefinitions.map((definition: { labelKey: any; routeName: any; routeParams: any; key: any; icon: any; action: any; path: any; isDashboard: any; }) => ({
                     label: definition.labelKey,
                     routeName: definition.routeName,
                     routeParams: definition.routeParams,
@@ -88,7 +88,7 @@ export function buildMenuItems(layout, navDefinitionMap, t) {
  * @param {Map<string, any>} navDefinitionMap
  * @returns {object | null}
  */
-export function findFirstNavEntry(layout, navDefinitionMap) {
+export function findFirstNavEntry(layout: Array<any>, navDefinitionMap: Map<string, any>) {
     for (const entry of layout) {
         if (entry.type === 'item') {
             const definition = navDefinitionMap.get(entry.key);
@@ -99,8 +99,8 @@ export function findFirstNavEntry(layout, navDefinitionMap) {
 
         if (entry.type === 'folder' && entry.items?.length) {
             const definition = entry.items
-                .map((key) => navDefinitionMap.get(key))
-                .find((def) => isNavEntryActionable(def));
+                .map((key: string) => navDefinitionMap.get(key))
+                .find((def: object | null | undefined) => isNavEntryActionable(def));
             if (definition) {
                 return definition;
             }
@@ -115,7 +115,7 @@ export function findFirstNavEntry(layout, navDefinitionMap) {
  * @param {Map<string, any>} navDefinitionMap
  * @returns {string | null}
  */
-export function findFirstNavKey(layout, navDefinitionMap) {
+export function findFirstNavKey(layout: Array<any>, navDefinitionMap: Map<string, any>) {
     const entry = findFirstNavEntry(layout, navDefinitionMap);
     return entry?.key || null;
 }

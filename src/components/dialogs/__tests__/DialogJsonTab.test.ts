@@ -9,6 +9,10 @@ const { mockDownloadAndSaveJson } = vi.hoisted(() => ({
 vi.mock('../../../shared/utils', async (importOriginal) => {
     const actual = await importOriginal();
     return {
+
+
+
+
         ...actual,
         downloadAndSaveJson: mockDownloadAndSaveJson
     };
@@ -39,6 +43,10 @@ vi.mock('../../../plugins/router', () => ({
 vi.mock('vue-router', async (importOriginal) => {
     const actual = await importOriginal();
     return {
+
+
+
+
         ...actual,
         useRouter: vi.fn(() => ({
             push: vi.fn(),

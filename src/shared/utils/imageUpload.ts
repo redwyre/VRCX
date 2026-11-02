@@ -3,7 +3,7 @@ const UPLOAD_TIMEOUT_MS = 30_000;
 /**
  * @param promise
  */
-export function withUploadTimeout(promise) {
+export function withUploadTimeout(promise: Promise<unknown>) {
     return Promise.race([
         promise,
         new Promise((_, reject) => setTimeout(() => reject(new Error('Upload timed out')), UPLOAD_TIMEOUT_MS))
@@ -16,13 +16,13 @@ export function withUploadTimeout(promise) {
  * @param {Blob | File} blob
  * @returns {Promise<string>} Base64 encoded string
  */
-export function readFileAsBase64(blob) {
+export function readFileAsBase64(blob: Blob | File) {
     return new Promise((resolve, reject) => {
         const r = new FileReader();
         r.onerror = reject;
         r.onabort = reject;
         r.onload = () => {
-            const bytes = new Uint8Array(/** @type {ArrayBuffer} */ (r.result));
+            const bytes = new Uint8Array((r.result as ArrayBuffer));
             let binary = '';
             for (let i = 0; i < bytes.length; i++) {
                 binary += String.fromCharCode(bytes[i]);

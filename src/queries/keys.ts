@@ -1,11 +1,11 @@
 export const queryKeys = Object.freeze({
-    user: (userId) => ['user', userId],
-    profile: (userId) => ['profile', userId],
-    avatar: (avatarId) => ['avatar', avatarId],
-    world: (worldId) => ['world', worldId],
-    group: (groupId, includeRoles = false) => ['group', groupId, Boolean(includeRoles)],
-    groupMember: ({ groupId, userId }) => ['group', groupId, 'member', userId],
-    groupMembers: ({ groupId, n = 100, offset = 0, sort = '', roleId = '' }) => [
+    user: (userId: any) => ['user', userId],
+    profile: (userId: any) => ['profile', userId],
+    avatar: (avatarId: any) => ['avatar', avatarId],
+    world: (worldId: any) => ['world', worldId],
+    group: (groupId: any, includeRoles = false) => ['group', groupId, Boolean(includeRoles)],
+    groupMember: ({ groupId, userId }: any) => ['group', groupId, 'member', userId],
+    groupMembers: ({ groupId, n = 100, offset = 0, sort = '', roleId = '' }: any) => [
         'group',
         groupId,
         'members',
@@ -16,7 +16,7 @@ export const queryKeys = Object.freeze({
             roleId: String(roleId || '')
         }
     ],
-    groupGallery: ({ groupId, galleryId, n = 100, offset = 0 }) => [
+    groupGallery: ({ groupId, galleryId, n = 100, offset = 0 }: any) => [
         'group',
         groupId,
         'gallery',
@@ -26,9 +26,9 @@ export const queryKeys = Object.freeze({
             offset: Number(offset)
         }
     ],
-    groupCalendar: (groupId) => ['group', groupId, 'calendar'],
-    groupCalendarEvent: ({ groupId, eventId }) => ['group', groupId, 'calendarEvent', eventId],
-    avatarGallery: (avatarId) => ['avatar', avatarId, 'gallery'],
+    groupCalendar: (groupId: any) => ['group', groupId, 'calendar'],
+    groupCalendarEvent: ({ groupId, eventId }: any) => ['group', groupId, 'calendarEvent', eventId],
+    avatarGallery: (avatarId: any) => ['avatar', avatarId, 'gallery'],
     worldsByUser: ({
         userId,
         n = 50,
@@ -38,7 +38,7 @@ export const queryKeys = Object.freeze({
         user = '',
         releaseStatus = '',
         option = ''
-    }) => [
+    }: any) => [
         'worlds',
         'user',
         userId,
@@ -53,14 +53,14 @@ export const queryKeys = Object.freeze({
         }
     ],
     favoriteLimits: () => ['favorite', 'limits'],
-    userInventoryItem: ({ inventoryId, userId }) => ['inventory', 'item', userId, inventoryId],
-    fileAnalysis: ({ fileId, version, variant }) => ['analysis', fileId, Number(version), String(variant || '')],
-    worldPersistData: (worldId) => ['world', worldId, 'persistData'],
-    mutualCounts: (userId) => ['user', userId, 'mutualCounts'],
+    userInventoryItem: ({ inventoryId, userId }: any) => ['inventory', 'item', userId, inventoryId],
+    fileAnalysis: ({ fileId, version, variant }: any) => ['analysis', fileId, Number(version), String(variant || '')],
+    worldPersistData: (worldId: any) => ['world', worldId, 'persistData'],
+    mutualCounts: (userId: any) => ['user', userId, 'mutualCounts'],
     visits: () => ['visits'],
     instanceCount: () => ['instances', 'count'],
-    file: (fileId) => ['file', fileId],
+    file: (fileId: any) => ['file', fileId],
     avatarStyles: () => ['avatar', 'styles'],
-    representedGroup: (userId) => ['user', userId, 'representedGroup'],
+    representedGroup: (userId: any) => ['user', userId, 'representedGroup'],
     vrchatCredits: () => ['credits']
 });

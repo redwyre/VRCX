@@ -25,11 +25,12 @@ import { watchState } from '../services/watchState';
 import configRepository from '../services/config';
 
 import * as workerTimers from 'worker-timers';
+import { UpdateGroupMemberRequest } from "vrchat";
 
 /**
  * @param ref
  */
-function applyGroupLanguage(ref) {
+function applyGroupLanguage(ref: { $languages?: any; languages?: any; }) {
     const userStore = useUserStore();
     ref.$languages = [];
     const { languages } = ref;
@@ -52,12 +53,12 @@ function applyGroupLanguage(ref) {
  * @param {object} json
  * @returns {import('@/types/vrcx').VrcxGroup}
  */
-export function applyGroup(json) {
+export function applyGroup(json: object) {
     const groupStore = useGroupStore();
-    let ref = groupStore.cachedGroups.get(json.id);
+    let ref = groupStore.cachedGroups.get((json as any).id);
     sanitizeEntityJson(json, ['rules', 'name', 'description']);
-    if (Array.isArray(json.roles)) {
-        for (const role of json.roles) {
+    if (Array.isArray((json as any).roles)) {
+        for (const role of (json as any).roles) {
             sanitizeEntityJson(role, ['name', 'description']);
         }
     }
@@ -67,47 +68,47 @@ export function applyGroup(json) {
     } else {
         if (groupStore.currentUserGroups.has(ref.id)) {
             // compare group props
-            if (ref.ownerId && json.ownerId && ref.ownerId !== json.ownerId) {
+            if (ref.ownerId && (json as any).ownerId && ref.ownerId !== (json as any).ownerId) {
                 // owner changed
-                groupOwnerChange(json, ref.ownerId, json.ownerId);
+groupOwnerChange(json, ref.ownerId, (json as any).ownerId);
             }
-            if (ref.name && json.name && ref.name !== json.name) {
+            if (ref.name && (json as any).name && ref.name !== (json as any).name) {
                 // name changed
-                groupChange(json, `Name changed from ${ref.name} to ${json.name}`);
+groupChange(json, `Name changed from ${ref.name} to ${(json as any).name}`);
             }
-            if (ref.myMember?.roleIds && json.myMember?.roleIds) {
+            if (ref.myMember?.roleIds && (json as any).myMember?.roleIds) {
                 const oldRoleIds = ref.myMember.roleIds;
-                const newRoleIds = json.myMember.roleIds;
+                const newRoleIds = (json as any).myMember.roleIds;
                 if (
                     oldRoleIds.length !== newRoleIds.length ||
-                    !oldRoleIds.every((value, index) => value === newRoleIds[index])
+                    !oldRoleIds.every((value: any, index: string | number) => value === newRoleIds[index])
                 ) {
                     // roleIds changed
-                    groupRoleChange(json, ref.roles, json.roles, oldRoleIds, newRoleIds);
+groupRoleChange(json, ref.roles, (json as any).roles, oldRoleIds, newRoleIds);
                 }
             }
         }
-        if (json.myMember) {
-            if (typeof json.myMember.roleIds === 'undefined') {
+        if ((json as any).myMember) {
+            if (typeof (json as any).myMember.roleIds === 'undefined') {
                 // keep roleIds
-                json.myMember.roleIds = ref.myMember.roleIds;
+(json as any).myMember.roleIds = ref.myMember.roleIds;
             }
-            Object.assign(ref.myMember, json.myMember);
+            Object.assign(ref.myMember, (json as any).myMember);
         }
         Object.assign(ref, json);
     }
     // update myMember without fetching member
-    if (typeof json.memberVisibility !== 'undefined') {
-        ref.myMember.visibility = json.memberVisibility;
+    if (typeof (json as any).memberVisibility !== 'undefined') {
+        ref.myMember.visibility = (json as any).memberVisibility;
     }
-    if (typeof json.isRepresenting !== 'undefined') {
-        ref.myMember.isRepresenting = json.isRepresenting;
+    if (typeof (json as any).isRepresenting !== 'undefined') {
+        ref.myMember.isRepresenting = (json as any).isRepresenting;
     }
-    if (typeof json.membershipStatus !== 'undefined') {
-        ref.myMember.membershipStatus = json.membershipStatus;
+    if (typeof (json as any).membershipStatus !== 'undefined') {
+        ref.myMember.membershipStatus = (json as any).membershipStatus;
     }
-    if (typeof json.roleIds !== 'undefined') {
-        ref.myMember.roleIds = json.roleIds;
+    if (typeof (json as any).roleIds !== 'undefined') {
+        ref.myMember.roleIds = (json as any).roleIds;
     }
     applyGroupLanguage(ref);
 
@@ -132,47 +133,51 @@ export function applyGroup(json) {
  * @param {object} json
  * @returns {any}
  */
-export function applyGroupMember(json) {
+export function applyGroupMember(json: object) {
     const userStore = useUserStore();
     const groupStore = useGroupStore();
     let ref;
-    if (typeof json?.user !== 'undefined') {
-        if (json.userId === userStore.currentUser.id) {
-            json.user = userStore.currentUser;
-            json.$displayName = userStore.currentUser.displayName;
+    if (typeof (json as any)?.user !== 'undefined') {
+        if ((json as any).userId === userStore.currentUser.id) {
+            (json as any).user = userStore.currentUser;
+            (json as any).$displayName = userStore.currentUser.displayName;
         } else {
-            ref = userStore.cachedUsers.get(json.user.id);
+            ref = userStore.cachedUsers.get((json as any).user.id);
             if (typeof ref !== 'undefined') {
-                json.user = ref;
-                json.$displayName = ref.displayName;
+                (json as any).user = ref;
+                (json as any).$displayName = ref.displayName;
             } else {
-                json.$displayName = json.user?.displayName;
+                (json as any).$displayName = (json as any).user?.displayName;
             }
         }
     }
     // update myMember without fetching member
-    if (json?.userId === userStore.currentUser.id) {
-        ref = groupStore.cachedGroups.get(json.groupId);
+    if ((json as any)?.userId === userStore.currentUser.id) {
+        ref = groupStore.cachedGroups.get((json as any).groupId);
         if (typeof ref !== 'undefined') {
             /** @type {import('@/types/vrcx').Json<import('vrchat').GroupMyMember>} */
-            const groupMember = {
-                ...ref.myMember,
-                id: json.id,
-                isRepresenting: json.isRepresenting,
-                isSubscribedToAnnouncements: json.isSubscribedToAnnouncements,
-                isSubscribedToEventAnnouncements: json.isSubscribedToEventAnnouncements,
-                joinedAt: json.joinedAt,
-                lastPostReadAt: json.lastPostReadAt,
-                mRoleIds: json.mRoleIds,
-                membershipStatus: json.membershipStatus,
-                roleIds: json.roleIds,
-                userId: json.userId,
-                visibility: json.visibility
-            };
+
+
+
+
+const groupMember: import('@/types/vrcx').Json<import('vrchat').GroupMyMember> = {
+    ...ref.myMember,
+    id: (json as any).id,
+    isRepresenting: (json as any).isRepresenting,
+    isSubscribedToAnnouncements: (json as any).isSubscribedToAnnouncements,
+    isSubscribedToEventAnnouncements: (json as any).isSubscribedToEventAnnouncements,
+    joinedAt: (json as any).joinedAt,
+    lastPostReadAt: (json as any).lastPostReadAt,
+    mRoleIds: (json as any).mRoleIds,
+    membershipStatus: (json as any).membershipStatus,
+    roleIds: (json as any).roleIds,
+    userId: (json as any).userId,
+    visibility: (json as any).visibility
+};
             applyGroup({
-                id: json.groupId,
-                myMember: groupMember
-            });
+    id: (json as any).groupId,
+    myMember: groupMember
+});
         }
     }
 
@@ -183,7 +188,7 @@ export function applyGroupMember(json) {
  * @param ref
  * @param message
  */
-function groupChange(ref, message) {
+function groupChange(ref: any, message: any) {
     const groupStore = useGroupStore();
     const notificationStore = useNotificationStore();
     if (!groupStore.currentUserGroupsInit) {
@@ -219,15 +224,15 @@ function groupChange(ref, message) {
  * @param {string} newUserId
  * @returns {Promise<void>}
  */
-async function groupOwnerChange(ref, oldUserId, newUserId) {
+async function groupOwnerChange(ref: object, oldUserId: string, newUserId: string) {
     const oldUser = await queryRequest.fetch('user.dialog', {
         userId: oldUserId
     });
     const newUser = await queryRequest.fetch('user.dialog', {
         userId: newUserId
     });
-    const oldDisplayName = oldUser?.ref?.displayName;
-    const newDisplayName = newUser?.ref?.displayName;
+    const oldDisplayName = (oldUser as any)?.ref?.displayName;
+    const newDisplayName = (newUser as any)?.ref?.displayName;
 
     groupChange(ref, `Owner changed from ${oldDisplayName} to ${newDisplayName}`);
 }
@@ -239,7 +244,7 @@ async function groupOwnerChange(ref, oldUserId, newUserId) {
  * @param {Array} oldRoleIds
  * @param {Array} newRoleIds
  */
-function groupRoleChange(ref, oldRoles, newRoles, oldRoleIds, newRoleIds) {
+function groupRoleChange(ref: object, oldRoles: Array<any>, newRoles: Array<any>, oldRoleIds: Array<any>, newRoleIds: Array<any>) {
     // check for removed/added roleIds
     for (const roleId of oldRoleIds) {
         if (!newRoleIds.includes(roleId)) {
@@ -269,7 +274,7 @@ function groupRoleChange(ref, oldRoles, newRoles, oldRoleIds, newRoleIds) {
  * @param groupId
  * @param options
  */
-export function showGroupDialog(groupId, options = {}) {
+export function showGroupDialog(groupId: string | undefined, options = {}) {
     const t = i18n.global.t;
     const groupStore = useGroupStore();
     const uiStore = useUiStore();
@@ -277,7 +282,7 @@ export function showGroupDialog(groupId, options = {}) {
     if (!groupId) {
         return;
     }
-    const forceRefresh = Boolean(options?.forceRefresh);
+    const forceRefresh = Boolean((options as any)?.forceRefresh);
     const isMainDialogOpen = uiStore.openDialog({
         type: 'group',
         id: groupId
@@ -285,7 +290,7 @@ export function showGroupDialog(groupId, options = {}) {
     const D = groupStore.groupDialog;
     D.visible = true;
     if (isMainDialogOpen && D.id === groupId && !forceRefresh) {
-        uiStore.setDialogCrumbLabel('group', D.id, D.ref?.name || D.id);
+        uiStore.setDialogCrumbLabel('group', D.id, (D.ref as any)?.name || D.id);
         instanceStore.applyGroupDialogInstances();
         D.loading = false;
         return;
@@ -316,6 +321,10 @@ export function showGroupDialog(groupId, options = {}) {
     loadGroupRequest
         .catch((err) => {
             D.loading = false;
+
+
+
+
             D.id = null;
             D.visible = false;
             uiStore.jumpBackDialogCrumb();
@@ -326,8 +335,12 @@ export function showGroupDialog(groupId, options = {}) {
             const ref = args.ref || applyGroup(args.json);
             if (groupId === ref.id) {
                 D.ref = ref;
-                uiStore.setDialogCrumbLabel('group', D.id, D.ref?.name || D.id);
+                uiStore.setDialogCrumbLabel('group', D.id, (D.ref as any)?.name || D.id);
                 D.inGroup = ref.membershipStatus === 'member';
+
+
+
+
                 D.ownerDisplayName = ref.ownerId;
                 D.visible = true;
                 D.loading = false;
@@ -336,7 +349,7 @@ export function showGroupDialog(groupId, options = {}) {
                         userId: ref.ownerId
                     })
                     .then((args1) => {
-                        D.ownerDisplayName = args1.ref.displayName;
+                        D.ownerDisplayName = (args1 as any).ref.displayName;
                     });
                 database.getLastGroupVisit(D.id).then((r) => {
                     if (D.id === ref.id) {
@@ -371,7 +384,7 @@ export function clearGroupMemberModerationDialog() {
  * @param groupId
  * @param userId
  */
-export function showGroupMemberModerationDialog(groupId, userId = '') {
+export function showGroupMemberModerationDialog(groupId: string, userId = '') {
     const uiStore = useUiStore();
     const groupStore = useGroupStore();
     const isMainDialogOpen = uiStore.openDialog({
@@ -388,13 +401,17 @@ export function showGroupMemberModerationDialog(groupId, userId = '') {
     D.groupRef = {};
     D.auditLogTypes = [];
     queryRequest.fetch('group.dialog', { groupId }).then((args) => {
-        D.groupRef = args.ref;
-        uiStore.setDialogCrumbLabel('group-member-moderation', D.id, D.groupRef?.name || D.id);
+        D.groupRef = (args as any).ref;
+        uiStore.setDialogCrumbLabel('group-member-moderation', D.id, (D.groupRef as any)?.name || D.id);
         if (hasGroupPermission(D.groupRef, 'group-audit-view')) {
             groupRequest.getGroupAuditLogTypes({ groupId }).then((args) => {
                 if (D.id !== args.params.groupId) {
                     return;
                 }
+
+
+
+
                 D.auditLogTypes = args.json;
             });
         }
@@ -406,7 +423,7 @@ export function showGroupMemberModerationDialog(groupId, userId = '') {
  * @param groupId
  * @returns {Promise<void>}
  */
-export async function loadGroupRolesDialogRoles(groupId) {
+export async function loadGroupRolesDialogRoles(groupId: string) {
     const groupStore = useGroupStore();
     const D = groupStore.groupRolesDialog;
     D.loading = true;
@@ -417,6 +434,10 @@ export async function loadGroupRolesDialogRoles(groupId) {
                 return;
             }
             D.groupRef = args.ref;
+
+
+
+
             setGroupRolesDialogRoles(args.ref.roles);
             await loadViewOnlyGroupPermissions(groupId);
             return;
@@ -435,7 +456,7 @@ export async function loadGroupRolesDialogRoles(groupId) {
  * @param {object} groupRef
  * @returns {boolean}
  */
-function canEditGroupRoles(groupRef) {
+function canEditGroupRoles(groupRef: object) {
     return (
         hasGroupPermission(groupRef, 'group-roles-manage') || hasGroupPermission(groupRef, 'group-default-role-manage')
     );
@@ -444,9 +465,13 @@ function canEditGroupRoles(groupRef) {
 /**
  * @param {Array} roles
  */
-function setGroupRolesDialogRoles(roles) {
+function setGroupRolesDialogRoles(roles: Array<any>) {
     const groupStore = useGroupStore();
     const D = groupStore.groupRolesDialog;
+
+
+
+
     D.roles = [...roles].sort((a, b) => a.order - b.order);
 }
 
@@ -454,7 +479,7 @@ function setGroupRolesDialogRoles(roles) {
  * @param {string} groupId
  * @returns {Promise<void>} Jank to load group permission list from another group
  */
-async function loadViewOnlyGroupPermissions(groupId) {
+async function loadViewOnlyGroupPermissions(groupId: string) {
     const groupStore = useGroupStore();
     const D = groupStore.groupRolesDialog;
     const managedGroup = Array.from(groupStore.currentUserGroups.values()).find((group) =>
@@ -466,6 +491,10 @@ async function loadViewOnlyGroupPermissions(groupId) {
             if (D.id !== groupId) {
                 return;
             }
+
+
+
+
             D.permissions = args.json.map((permission) => ({ ...permission, allowedToAdd: false }));
             return;
         } catch (error) {
@@ -477,10 +506,14 @@ async function loadViewOnlyGroupPermissions(groupId) {
     }
     const permissionNames = new Set();
     for (const role of D.roles) {
-        for (const permission of role.permissions) {
+        for (const permission of (role as any).permissions) {
             permissionNames.add(permission);
         }
     }
+
+
+
+
     D.permissions = Array.from(permissionNames)
         .sort()
         .map((name) => ({ name, allowedToAdd: false }));
@@ -489,7 +522,7 @@ async function loadViewOnlyGroupPermissions(groupId) {
 /**
  * @param groupId
  */
-export function showGroupRolesDialog(groupId) {
+export function showGroupRolesDialog(groupId: string) {
     const uiStore = useUiStore();
     const groupStore = useGroupStore();
     uiStore.openDialog({
@@ -511,10 +544,10 @@ export function showGroupRolesDialog(groupId) {
             if (D.id !== groupId) {
                 return;
             }
-            D.groupRef = args.ref;
-            uiStore.setDialogCrumbLabel('group-roles', D.id, D.groupRef?.name || D.id);
+            D.groupRef = (args as any).ref;
+            uiStore.setDialogCrumbLabel('group-roles', D.id, (D.groupRef as any)?.name || D.id);
             if (!canEditGroupRoles(D.groupRef)) {
-                setGroupRolesDialogRoles(D.groupRef.roles);
+                setGroupRolesDialogRoles((D.groupRef as any).roles);
                 loadViewOnlyGroupPermissions(groupId).finally(() => {
                     D.loading = false;
                 });
@@ -525,6 +558,10 @@ export function showGroupRolesDialog(groupId) {
                 if (D.id !== args.params.groupId) {
                     return;
                 }
+
+
+
+
                 D.permissions = args.json;
             });
         })
@@ -538,23 +575,23 @@ export function showGroupRolesDialog(groupId) {
 /**
  * @param groupId
  */
-export function getGroupDialogCalendar(groupId) {
+export function getGroupDialogCalendar(groupId: any) {
     const groupStore = useGroupStore();
     const D = groupStore.groupDialog;
     queryRequest.fetch('groupCalendar', { groupId }).then((args) => {
-        if (D.id === args.params.groupId) {
-            D.calendar = args.json.results;
+        if (D.id === (args as any).params.groupId) {
+            D.calendar = (args as any).json.results;
             for (const event of D.calendar) {
                 Object.assign(event, groupStore.applyGroupEvent(event));
                 // fetch again for isFollowing
-                queryRequest
-                    .fetch('groupCalendarEvent', {
-                        groupId,
-                        eventId: event.id
-                    })
-                    .then((args) => {
-                        Object.assign(event, groupStore.applyGroupEvent(args.json));
-                    });
+queryRequest
+    .fetch('groupCalendarEvent', {
+    groupId,
+    eventId: (event as any).id
+})
+    .then((args) => {
+    Object.assign(event, groupStore.applyGroupEvent((args as any).json));
+});
             }
         }
     });
@@ -565,17 +602,17 @@ export function getGroupDialogCalendar(groupId) {
  * @param {object} [existingRef]
  * @returns {Promise<object>}
  */
-export function getGroupDialogGroup(groupId, existingRef) {
+export function getGroupDialogGroup(groupId: any, existingRef?: object) {
     const groupStore = useGroupStore();
     const instanceStore = useInstanceStore();
     const D = groupStore.groupDialog;
     D.isGetGroupDialogGroupLoading = false;
 
     const refPromise = existingRef
-        ? Promise.resolve({ ref: existingRef, args: undefined })
-        : queryRequest
-              .fetch('group.dialog', { groupId, includeRoles: true })
-              .then((args) => ({ ref: applyGroup(args.json), args }));
+    ? Promise.resolve({ ref: existingRef, args: undefined })
+    : queryRequest
+        .fetch('group.dialog', { groupId, includeRoles: true })
+        .then((args) => ({ ref: applyGroup((args as any).json), args }));
 
     return refPromise
         .catch((err) => {
@@ -591,10 +628,14 @@ export function getGroupDialogGroup(groupId, existingRef) {
                 for (const role of ref.roles) {
                     if (
                         D.ref &&
-                        D.ref.myMember &&
-                        Array.isArray(D.ref.myMember.roleIds) &&
-                        D.ref.myMember.roleIds.includes(role.id)
+    (D.ref as any).myMember &&
+    Array.isArray((D.ref as any).myMember.roleIds) &&
+    (D.ref as any).myMember.roleIds.includes(role.id)
                     ) {
+
+
+
+
                         D.memberRoles.push(role);
                     }
                 }
@@ -610,6 +651,10 @@ export function getGroupDialogGroup(groupId, existingRef) {
                         if (groupStore.groupDialog.id === args.params.groupId) {
                             instanceStore.applyGroupDialogInstances(args.json.instances);
                         }
+
+
+
+
                         for (const json of args.json.instances) {
                             instanceStore.applyInstance(json);
                             queryRequest
@@ -617,7 +662,7 @@ export function getGroupDialogGroup(groupId, existingRef) {
                                     worldId: json.world.id
                                 })
                                 .then((args1) => {
-                                    json.world = args1.ref;
+                                    json.world = (args1 as any).ref;
                                 });
                             // get queue size etc
                             instanceRequest.getInstance({
@@ -636,13 +681,13 @@ export function getGroupDialogGroup(groupId, existingRef) {
 /**
  * @param {object} ref
  */
-export function applyPresenceGroups(ref) {
+export function applyPresenceGroups(ref: object) {
     const groupStore = useGroupStore();
     if (!groupStore.currentUserGroupsInit) {
         // wait for init before diffing
         return;
     }
-    const groups = ref.presence?.groups;
+    const groups = (ref as any).presence?.groups;
     if (!groups) {
         console.error('applyPresenceGroups: invalid groups', ref);
         return;
@@ -668,7 +713,7 @@ export function applyPresenceGroups(ref) {
 /**
  * @param {string} groupId
  */
-export function onGroupJoined(groupId) {
+export function onGroupJoined(groupId: string) {
     const groupStore = useGroupStore();
     if (!groupStore.currentUserGroups.has(groupId)) {
         groupStore.currentUserGroups.set(groupId, {
@@ -693,7 +738,7 @@ export function onGroupJoined(groupId) {
 /**
  * @param {string} groupId
  */
-export async function onGroupLeft(groupId) {
+export async function onGroupLeft(groupId: string) {
     const groupStore = useGroupStore();
     const args = await groupRequest.getGroup({ groupId });
     const ref = applyGroup(args.json);
@@ -739,7 +784,7 @@ export function saveCurrentUserGroups() {
  * @param userId
  * @param groups
  */
-export async function loadCurrentUserGroups(userId, groups) {
+export async function loadCurrentUserGroups(userId: string, groups: any) {
     const groupStore = useGroupStore();
     const savedGroups = JSON.parse(await configRepository.getString(`VRCX_currentUserGroups_${userId}`, '[]'));
     groupStore.cachedGroups.clear();
@@ -762,7 +807,7 @@ export async function loadCurrentUserGroups(userId, groups) {
     }
 
     if (groups) {
-        const promises = groups.map(async (groupId) => {
+        const promises = groups.map(async (groupId: any) => {
             const groupRef = groupStore.cachedGroups.get(groupId);
 
             if (typeof groupRef !== 'undefined' && groupRef.roles?.length > 0) {
@@ -852,14 +897,14 @@ export async function updateInGameGroupOrder() {
  * @param {string} userId
  * @returns {boolean}
  */
-export function isSoleGroupOwner(group, userId) {
-    return group?.ownerId === userId && typeof group.memberCount === 'number' && group.memberCount <= 1;
+export function isSoleGroupOwner(group: object, userId: string) {
+    return (group as any)?.ownerId === userId && typeof (group as any).memberCount === 'number' && (group as any).memberCount <= 1;
 }
 
 /**
  * @param groupId
  */
-export function leaveGroup(groupId) {
+export function leaveGroup(groupId: any) {
     const groupStore = useGroupStore();
     const userStore = useUserStore();
     const group = groupStore.cachedGroups.get(groupId) ?? groupStore.currentUserGroups.get(groupId);
@@ -901,7 +946,7 @@ export function leaveGroup(groupId) {
 /**
  * @param groupId
  */
-export function leaveGroupPrompt(groupId) {
+export function leaveGroupPrompt(groupId: any) {
     const t = i18n.global.t;
     const modalStore = useModalStore();
     const groupStore = useGroupStore();
@@ -925,7 +970,7 @@ export function leaveGroupPrompt(groupId) {
  * @param groupId
  * @param visibility
  */
-export function setGroupVisibility(groupId, visibility) {
+export function setGroupVisibility(groupId: string, visibility: any) {
     const t = i18n.global.t;
     const userStore = useUserStore();
     return groupRequest
@@ -943,7 +988,7 @@ export function setGroupVisibility(groupId, visibility) {
  * @param groupId
  * @param subscribe
  */
-export function setGroupSubscription(groupId, subscribe) {
+export function setGroupSubscription(groupId: string, subscribe: any) {
     const t = i18n.global.t;
     const userStore = useUserStore();
     return groupRequest
@@ -961,7 +1006,7 @@ export function setGroupSubscription(groupId, subscribe) {
  * @param groupId
  * @param subscribeToEventAnnouncements
  */
-export function setGroupEventAnnouncements(groupId, subscribe) {
+export function setGroupEventAnnouncements(groupId: string, subscribe: any) {
     const t = i18n.global.t;
     const userStore = useUserStore();
     return groupRequest
@@ -980,7 +1025,7 @@ export function setGroupEventAnnouncements(groupId, subscribe) {
 /**
  * @param args
  */
-export function handleGroupRepresented(args) {
+export function handleGroupRepresented(args: { json?: any; params?: any; cache?: boolean; }) {
     const userStore = useUserStore();
     const D = userStore.userDialog;
     const json = args.json;
@@ -1005,7 +1050,7 @@ export function handleGroupRepresented(args) {
 /**
  * @param args
  */
-export function handleGroupList(args) {
+export function handleGroupList(args: { json: any; params?: any; }) {
     for (const json of args.json) {
         json.$memberId = json.id;
         json.id = json.groupId;
@@ -1016,7 +1061,7 @@ export function handleGroupList(args) {
 /**
  * @param args
  */
-export function handleGroupMemberProps(args) {
+export function handleGroupMemberProps(args: { json: any; userId: any; groupId?: string; params?: UpdateGroupMemberRequest; }) {
     const groupStore = useGroupStore();
     const userStore = useUserStore();
     if (args.userId === userStore.currentUser.id) {
@@ -1024,10 +1069,10 @@ export function handleGroupMemberProps(args) {
         json.$memberId = json.id;
         json.id = json.groupId;
         if (groupStore.groupDialog.visible && groupStore.groupDialog.id === json.groupId) {
-            groupStore.groupDialog.ref.myMember.visibility = json.visibility;
-            groupStore.groupDialog.ref.myMember.isSubscribedToAnnouncements = json.isSubscribedToAnnouncements;
-            groupStore.groupDialog.ref.myMember.isSubscribedToEventAnnouncements =
-                json.isSubscribedToEventAnnouncements;
+            (groupStore.groupDialog.ref as any).myMember.visibility = json.visibility;
+            (groupStore.groupDialog.ref as any).myMember.isSubscribedToAnnouncements = json.isSubscribedToAnnouncements;
+            (groupStore.groupDialog.ref as any).myMember.isSubscribedToEventAnnouncements =
+    json.isSubscribedToEventAnnouncements;
         }
         if (userStore.userDialog.visible && userStore.userDialog.id === userStore.currentUser.id) {
             getCurrentUserRepresentedGroup();
@@ -1044,14 +1089,14 @@ export function handleGroupMemberProps(args) {
         let i;
         for (i = 0; i < groupStore.groupDialog.members.length; ++i) {
             member = groupStore.groupDialog.members[i];
-            if (member.userId === args.json.userId) {
+            if ((member as any).userId === args.json.userId) {
                 Object.assign(member, applyGroupMember(args.json));
                 break;
             }
         }
         for (i = 0; i < groupStore.groupDialog.memberSearchResults.length; ++i) {
             member = groupStore.groupDialog.memberSearchResults[i];
-            if (member.userId === args.json.userId) {
+            if ((member as any).userId === args.json.userId) {
                 Object.assign(member, applyGroupMember(args.json));
                 break;
             }
@@ -1062,7 +1107,7 @@ export function handleGroupMemberProps(args) {
 /**
  * @param args
  */
-export function handleGroupPermissions(args) {
+export function handleGroupPermissions(args: { json: any; params: any; }) {
     const groupStore = useGroupStore();
     const userStore = useUserStore();
     if (args.params.userId !== userStore.currentUser.id) {
@@ -1081,14 +1126,14 @@ export function handleGroupPermissions(args) {
 /**
  * @param args
  */
-export function handleGroupMember(args) {
+export function handleGroupMember(args: { json: any; params?: { groupId: any; } | { groupId: any; }; ref?: any; }) {
     args.ref = applyGroupMember(args.json);
 }
 
 /**
  * @param args
  */
-export async function handleGroupUserInstances(args) {
+export async function handleGroupUserInstances(args: { json: any; }) {
     const groupStore = useGroupStore();
     const instanceStore = useInstanceStore();
     groupStore.setGroupInstances([]);
@@ -1108,6 +1153,10 @@ export async function handleGroupUserInstances(args) {
             }
             return;
         }
+
+
+
+
         groupStore.groupInstances.push({
             group: groupRef,
             instance: instanceRef

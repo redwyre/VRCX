@@ -8,7 +8,7 @@ vi.mock('../../services/config.js', () => ({
     }
 }));
 
-import configRepository from '../../services/config.js';
+import configRepository from '../../services/config';
 import { useGameStore } from '../game';
 
 function flushPromises() {
@@ -19,16 +19,16 @@ describe('useGameStore', () => {
     beforeEach(() => {
         setActivePinia(createPinia());
         vi.clearAllMocks();
-        configRepository.getBool.mockResolvedValue(true);
-        configRepository.getString.mockImplementation((key, defaultValue) => {
-            if (key === 'VRCX_lastGameSessionMs') {
-                return Promise.resolve('7200000');
-            }
-            if (key === 'VRCX_lastGameOfflineAt') {
-                return Promise.resolve('1700000000000');
-            }
-            return Promise.resolve(defaultValue ?? null);
-        });
+        (configRepository.getBool as any).mockResolvedValue(true);
+        (configRepository.getString as any).mockImplementation((key: string, defaultValue: any) => {
+    if (key === 'VRCX_lastGameSessionMs') {
+        return Promise.resolve('7200000');
+    }
+    if (key === 'VRCX_lastGameOfflineAt') {
+        return Promise.resolve('1700000000000');
+    }
+    return Promise.resolve(defaultValue ?? null);
+});
     });
 
     test('loads persisted last session data during init', async () => {

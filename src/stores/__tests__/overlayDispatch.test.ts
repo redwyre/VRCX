@@ -35,7 +35,7 @@ function makeDeps(overrides = {}) {
 // ─── notyGetImage ────────────────────────────────────────────────────
 
 describe('notyGetImage', () => {
-    let deps, dispatch;
+    let deps: any, dispatch: any;
 
     beforeEach(() => {
         vi.clearAllMocks();
@@ -120,84 +120,80 @@ describe('notyGetImage', () => {
 // ─── displayDesktopToast ─────────────────────────────────────────────
 
 describe('displayDesktopToast', () => {
-    let deps, dispatch;
+    let deps, dispatch: { displayDesktopToast: any; notySaveImage?: (noty: object) => Promise<string>; displayOverlayNotification?: (noty: string, message: string, imageFile: string) => void; displayXSNotification?: (noty: any, message: string, image: string) => void; displayOvrtNotification?: (playOvrtHudNotifications: any, playOvrtWristNotifications: any, noty: any, message: any, image: any) => void; notyGetImage?: (noty: object) => Promise<string>; desktopNotification?: (displayName: string, message: string, image: string) => void; };
 
     beforeEach(() => {
         vi.clearAllMocks();
-        globalThis.WINDOWS = true;
-        globalThis.AppApi = { DesktopNotification: vi.fn() };
+        (globalThis as any).WINDOWS = true;
+        (globalThis as any).AppApi = { DesktopNotification: vi.fn() };
         deps = makeDeps();
         dispatch = createOverlayDispatch(deps);
     });
 
     test('calls desktopNotification with message from getNotificationMessage', () => {
-        getNotificationMessage.mockReturnValue({
-            title: 'Friend Online',
-            body: 'Alice is online'
-        });
+        (getNotificationMessage as any).mockReturnValue({
+    title: 'Friend Online',
+    body: 'Alice is online'
+});
 
         dispatch.displayDesktopToast({}, 'some message', 'img.jpg');
 
         expect(getNotificationMessage).toHaveBeenCalled();
-        expect(AppApi.DesktopNotification).toHaveBeenCalledWith('Friend Online', 'Alice is online', 'img.jpg');
+        expect((AppApi as any).DesktopNotification).toHaveBeenCalledWith('Friend Online', 'Alice is online', 'img.jpg');
     });
 
     test('does nothing when getNotificationMessage returns null', () => {
-        getNotificationMessage.mockReturnValue(null);
+        (getNotificationMessage as any).mockReturnValue(null);
 
         dispatch.displayDesktopToast({}, 'some message', 'img.jpg');
 
-        expect(AppApi.DesktopNotification).not.toHaveBeenCalled();
+        expect((AppApi as any).DesktopNotification).not.toHaveBeenCalled();
     });
 });
 
 // ─── notySaveImage ───────────────────────────────────────────────────
 
 describe('notySaveImage', () => {
-    let deps, dispatch;
+    let deps: any, dispatch: { notySaveImage: any; displayDesktopToast?: (noty: any, message: any, image: any) => void; displayOverlayNotification?: (noty: string, message: string, imageFile: string) => void; displayXSNotification?: (noty: any, message: string, image: string) => void; displayOvrtNotification?: (playOvrtHudNotifications: any, playOvrtWristNotifications: any, noty: any, message: any, image: any) => void; notyGetImage?: (noty: object) => Promise<string>; desktopNotification?: (displayName: string, message: string, image: string) => void; };
 
     beforeEach(() => {
         vi.clearAllMocks();
-        globalThis.AppApi = {
-            GetImage: vi.fn().mockResolvedValue('/local/path.jpg')
-        };
+        (globalThis as any).AppApi = {
+    GetImage: vi.fn().mockResolvedValue('/local/path.jpg')
+};
         deps = makeDeps();
         dispatch = createOverlayDispatch(deps);
     });
 
     test('returns saved image path from fileId/fileVersion extraction', async () => {
-        extractFileId.mockReturnValue('file_123');
-        extractFileVersion.mockReturnValue('v1');
+        (extractFileId as any).mockReturnValue('file_123');
+        (extractFileVersion as any).mockReturnValue('v1');
 
         const noty = {
             thumbnailImageUrl: 'https://api.vrchat.cloud/file_123/v1'
         };
         const result = await dispatch.notySaveImage(noty);
 
-        expect(AppApi.GetImage).toHaveBeenCalledWith('https://api.vrchat.cloud/file_123/v1', 'file_123', 'v1');
+        expect((AppApi as any).GetImage).toHaveBeenCalledWith('https://api.vrchat.cloud/file_123/v1', 'file_123', 'v1');
         expect(result).toBe('/local/path.jpg');
     });
 
     test('falls back to URL-derived fileId for http URLs without fileId', async () => {
-        extractFileId.mockReturnValue('');
-        extractFileVersion.mockReturnValue('');
+        (extractFileId as any).mockReturnValue('');
+        (extractFileVersion as any).mockReturnValue('');
 
         const noty = {
             thumbnailImageUrl: 'https://cdn.example.com/1416226261.thumbnail-500.png'
         };
         const result = await dispatch.notySaveImage(noty);
 
-        expect(AppApi.GetImage).toHaveBeenCalledWith(
-            'https://cdn.example.com/1416226261.thumbnail-500.png',
-            '1416226261',
-            '1416226261.thumbnail-500.png'
-        );
+        expect((AppApi as any).GetImage).toHaveBeenCalledWith('https://cdn.example.com/1416226261.thumbnail-500.png', '1416226261', '1416226261.thumbnail-500.png');
         expect(result).toBe('/local/path.jpg');
     });
 
     test('returns empty string when no image URL is found', async () => {
-        extractFileId.mockReturnValue('');
-        extractFileVersion.mockReturnValue('');
+        (extractFileId as any).mockReturnValue('');
+        (extractFileVersion as any).mockReturnValue('');
         deps.getUserIdFromNoty.mockReturnValue('');
         dispatch = createOverlayDispatch(deps);
 
@@ -211,39 +207,35 @@ describe('notySaveImage', () => {
 // ─── displayXSNotification ──────────────────────────────────────────
 
 describe('displayXSNotification', () => {
-    let deps, dispatch;
+    let deps, dispatch: { displayXSNotification: any; notySaveImage?: (noty: object) => Promise<string>; displayDesktopToast?: (noty: any, message: any, image: any) => void; displayOverlayNotification?: (noty: string, message: string, imageFile: string) => void; displayOvrtNotification?: (playOvrtHudNotifications: any, playOvrtWristNotifications: any, noty: any, message: any, image: any) => void; notyGetImage?: (noty: object) => Promise<string>; desktopNotification?: (displayName: string, message: string, image: string) => void; };
 
     beforeEach(() => {
         vi.clearAllMocks();
-        globalThis.AppApi = { XSNotification: vi.fn() };
+        (globalThis as any).AppApi = { XSNotification: vi.fn() };
         deps = makeDeps();
         dispatch = createOverlayDispatch(deps);
     });
 
     test('calls XSNotification with formatted text', () => {
-        getNotificationMessage.mockReturnValue({
-            title: 'Title',
-            body: 'Body'
-        });
-        toNotificationText.mockReturnValue('Title: Body');
+        (getNotificationMessage as any).mockReturnValue({
+    title: 'Title',
+    body: 'Body'
+});
+        (toNotificationText as any).mockReturnValue('Title: Body');
 
         dispatch.displayXSNotification({ type: 'friendOnline' }, 'msg', 'img');
 
         expect(toNotificationText).toHaveBeenCalledWith('Title', 'Body', 'friendOnline');
-        expect(AppApi.XSNotification).toHaveBeenCalledWith(
-            'VRCX',
-            'Title: Body',
-            5, // 5000ms / 1000
-            0.8, // 80 / 100
-            'img'
-        );
+        expect((AppApi as any).XSNotification).toHaveBeenCalledWith('VRCX', 'Title: Body', 5, // 5000ms / 1000
+0.8, // 80 / 100
+'img');
     });
 
     test('does nothing when getNotificationMessage returns null', () => {
-        getNotificationMessage.mockReturnValue(null);
+        (getNotificationMessage as any).mockReturnValue(null);
 
         dispatch.displayXSNotification({}, 'msg', 'img');
 
-        expect(AppApi.XSNotification).not.toHaveBeenCalled();
+        expect((AppApi as any).XSNotification).not.toHaveBeenCalled();
     });
 });

@@ -11,16 +11,28 @@ const mocks = vi.hoisted(() => ({
 vi.mock('pinia', async (importOriginal) => {
     const actual = await importOriginal();
     return {
+
+
+
+
         ...actual,
-        storeToRefs: (store) => store
+        storeToRefs: (store: any) => store
     };
 });
 
 vi.mock('../../../plugins', () => ({
     i18n: {
         global: {
-            t: (...args) => mocks.t(...args),
-            te: (...args) => mocks.te(...args)
+
+
+
+
+            t: (...args: any[]) => mocks.t(...args),
+
+
+
+
+            te: (...args: any[]) => mocks.te(...args)
         }
     }
 }));
@@ -35,11 +47,11 @@ vi.mock('../../../stores', () => ({
 }));
 
 vi.mock('../../../coordinators/userCoordinator', () => ({
-    showUserDialog: (...args) => mocks.showUserDialog(...args)
+    showUserDialog: (...args: any[]) => mocks.showUserDialog(...args)
 }));
 
 vi.mock('../../../shared/utils', () => ({
-    formatDateFilter: (value, format) => `${format}:${value}`
+    formatDateFilter: (value: any, format: any) => `${format}:${value}`
 }));
 
 vi.mock('../../../components/ui/badge', () => ({ Badge: 'Badge' }));
@@ -55,9 +67,9 @@ vi.mock('lucide-vue-next', () => ({
     X: 'X'
 }));
 
-import { createColumns } from '../columns.jsx';
+import { createColumns } from '../columns';
 
-function createElement(type, props, ...children) {
+function createElement(type: any, props: any, ...children: any[]) {
     return {
         type,
         props: props ?? {},
@@ -65,7 +77,7 @@ function createElement(type, props, ...children) {
     };
 }
 
-function findNode(node, predicate) {
+function findNode(node: { children: any; }, predicate: { (n: any): boolean; (n: any): boolean; (n: any): boolean; (n: any): boolean; (arg0: any): any; }): any {
     if (!node) return null;
     if (Array.isArray(node)) {
         for (const item of node) {
@@ -105,10 +117,18 @@ describe('views/Moderation/columns.jsx', () => {
             getValue: vi.fn()
         };
 
+
+
+
+
         const sourceCell = sourceCol.cell({ row });
+
+
+
+
         const targetCell = targetCol.cell({ row });
-        findNode(sourceCell, (n) => n.type === 'span' && typeof n.props?.onClick === 'function').props.onClick();
-        findNode(targetCell, (n) => n.type === 'span' && typeof n.props?.onClick === 'function').props.onClick();
+        findNode(sourceCell, (n: { type: string; props: { onClick: any; }; }) => n.type === 'span' && typeof n.props?.onClick === 'function').props.onClick();
+        findNode(targetCell, (n: { type: string; props: { onClick: any; }; }) => n.type === 'span' && typeof n.props?.onClick === 'function').props.onClick();
 
         expect(mocks.showUserDialog).toHaveBeenNthCalledWith(1, 'usr_source');
         expect(mocks.showUserDialog).toHaveBeenNthCalledWith(2, 'usr_target');
@@ -120,6 +140,10 @@ describe('views/Moderation/columns.jsx', () => {
             onDeletePrompt: vi.fn()
         });
         const actionCol = cols.find((c) => c.id === 'action');
+
+
+
+
         const vnode = actionCol.cell({
             row: {
                 original: {
@@ -144,14 +168,22 @@ describe('views/Moderation/columns.jsx', () => {
             }
         };
 
+
+
+
+
         const promptCell = actionCol.cell({ row });
-        findNode(promptCell, (n) => n.type === 'button').props.onClick();
+        findNode(promptCell, (n: { type: string; }) => n.type === 'button').props.onClick();
         expect(onDeletePrompt).toHaveBeenCalledWith(row.original);
         expect(onDelete).not.toHaveBeenCalled();
 
         mocks.shiftHeld.value = true;
+
+
+
+
         const directCell = actionCol.cell({ row });
-        findNode(directCell, (n) => n.type === 'button').props.onClick();
+        findNode(directCell, (n: { type: string; }) => n.type === 'button').props.onClick();
         expect(onDelete).toHaveBeenCalledWith(row.original);
     });
 });

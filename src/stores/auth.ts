@@ -56,7 +56,7 @@ export const useAuthStore = defineStore('Auth', () => {
         visible: false,
         password: '',
         rePassword: '',
-        beforeClose(done) {
+        beforeClose(done: () => void) {
             // $app._data.enablePrimaryPassword = false;
             done();
         }
@@ -67,7 +67,7 @@ export const useAuthStore = defineStore('Auth', () => {
     const twoFactorAuthDialogVisible = ref(false);
 
     /** @type {import('vue').Ref<any>} */
-    const cachedConfig = ref({});
+    const cachedConfig: import('vue').Ref<any> = ref({});
 
     // fallback defaults
     const cachedPermissions = ref({
@@ -115,7 +115,7 @@ export const useAuthStore = defineStore('Auth', () => {
         (isFriendsLoaded) => {
             if (isFriendsLoaded) {
                 initWebsocket();
-                AppApi.IPCAnnounceStart();
+                (AppApi as any).IPCAnnounceStart();
             }
         },
         { flush: 'sync' }
@@ -139,18 +139,18 @@ export const useAuthStore = defineStore('Auth', () => {
             let edited = false;
             for (const userId in savedCredentials) {
                 // fix goofy typo
-                if (savedCredentials[userId].loginParmas) {
-                    savedCredentials[userId].loginParams = savedCredentials[userId].loginParmas;
-                    delete savedCredentials[userId].loginParmas;
+                if ((savedCredentials as any)[userId].loginParmas) {
+                    (savedCredentials as any)[userId].loginParams = (savedCredentials as any)[userId].loginParmas;
+                    delete (savedCredentials as any)[userId].loginParmas;
                     edited = true;
                 }
                 // fix missing fields
-                if (!savedCredentials[userId].loginParams.endpoint) {
-                    savedCredentials[userId].loginParams.endpoint = '';
+                if (!(savedCredentials as any)[userId].loginParams.endpoint) {
+                    (savedCredentials as any)[userId].loginParams.endpoint = '';
                     edited = true;
                 }
-                if (!savedCredentials[userId].loginParams.websocket) {
-                    savedCredentials[userId].loginParams.websocket = '';
+                if (!(savedCredentials as any)[userId].loginParams.websocket) {
+                    (savedCredentials as any)[userId].loginParams.websocket = '';
                     edited = true;
                 }
             }
@@ -166,9 +166,9 @@ export const useAuthStore = defineStore('Auth', () => {
     /**
      * @param userId
      */
-    async function getSavedCredentials(userId) {
+    async function getSavedCredentials(userId: string) {
         const savedCredentials = await getAllSavedCredentials();
-        return savedCredentials[userId];
+        return (savedCredentials as any)[userId];
     }
 
     async function handleLogoutEvent() {
@@ -258,7 +258,7 @@ export const useAuthStore = defineStore('Auth', () => {
      * @param {{ username?: string; password?: string; endpoint?: string; websocket?: string }} [params]
      * @returns {string}
      */
-    function buildLoginNetworkIssueAttemptFingerprint(params = {}) {
+    function buildLoginNetworkIssueAttemptFingerprint(params: { username?: string; password?: string; endpoint?: string; websocket?: string; } = {}) {
         return [params.username ?? '', params.password ?? '', params.endpoint ?? '', params.websocket ?? ''].join(
             '\u0000'
         );
@@ -267,7 +267,7 @@ export const useAuthStore = defineStore('Auth', () => {
     /**
      * @param {{ username?: string; password?: string; endpoint?: string; websocket?: string }} params
      */
-    function resetLoginNetworkIssueHintStateIfCredentialsChanged(params) {
+    function resetLoginNetworkIssueHintStateIfCredentialsChanged(params: { username?: string; password?: string; endpoint?: string; websocket?: string; }) {
         const fingerprint = buildLoginNetworkIssueAttemptFingerprint(params);
         if (
             loginNetworkIssueHintState.lastAttemptFingerprint &&
@@ -282,13 +282,17 @@ export const useAuthStore = defineStore('Auth', () => {
      * @param {Error & { status?: number; endpoint?: string }} err
      * @returns {boolean}
      */
-    function shouldCountLoginFailureForNetworkHint(err) {
+    function shouldCountLoginFailureForNetworkHint(err: Error & { status?: number; endpoint?: string; }) {
         if (!err || err.endpoint !== 'auth/user') {
             return false;
         }
         if (typeof err.message === 'string' && err.message.includes('Invalid Username/Email or Password')) {
             return false;
         }
+
+
+
+
         return [401].includes(err.status);
     }
 
@@ -297,6 +301,10 @@ export const useAuthStore = defineStore('Auth', () => {
         loginNetworkIssueHintState.timestamps = loginNetworkIssueHintState.timestamps.filter(
             (timestamp) => timestamp > now - loginNetworkIssueHintWindowMs
         );
+
+
+
+
         loginNetworkIssueHintState.timestamps.push(now);
         if (
             loginNetworkIssueHintState.hinted ||
@@ -305,14 +313,18 @@ export const useAuthStore = defineStore('Auth', () => {
             return;
         }
         loginNetworkIssueHintState.hinted = true;
+
+
+
+
         loginNetworkIssueHintToastId.value = toast.warning(t('message.auth.login_network_issue_hint_title'), {
-            description: t('message.auth.login_network_issue_hint_description'),
-            duration: Infinity,
-            action: {
-                label: t('common.actions.open'),
-                onClick: () => AppApi.OpenLink(links.troubleshootingAuthUserConnectionIssues)
-            }
-        });
+    description: t('message.auth.login_network_issue_hint_description'),
+    duration: Infinity,
+    action: {
+        label: t('common.actions.open'),
+        onClick: () => (AppApi as any).OpenLink(links.troubleshootingAuthUserConnectionIssues)
+    }
+});
     }
 
     function enablePrimaryPasswordChange() {
@@ -343,6 +355,10 @@ export const useAuthStore = defineStore('Auth', () => {
                         security
                             .decrypt(savedCredentials[userId].loginParams.password, value)
                             .then(async (pt) => {
+
+
+
+
                                 credentialsToSave.value = {
                                     username: savedCredentials[userId].loginParams.username,
                                     password: pt
@@ -370,14 +386,18 @@ export const useAuthStore = defineStore('Auth', () => {
             const key = enablePrimaryPasswordDialog.value.password;
             const savedCredentials = await getAllSavedCredentials();
             for (const userId in savedCredentials) {
-                if (!savedCredentials[userId].loginParams.password) continue;
-                security.encrypt(savedCredentials[userId].loginParams.password, key).then((ct) => {
-                    credentialsToSave.value = {
-                        username: savedCredentials[userId].loginParams.username,
-                        password: ct
-                    };
-                    updateStoredUser(savedCredentials[userId].user);
-                });
+                if (!(savedCredentials as any)[userId].loginParams.password) continue;
+                security.encrypt((savedCredentials as any)[userId].loginParams.password, key).then((ct) => {
+
+
+
+
+    credentialsToSave.value = {
+        username: (savedCredentials as any)[userId].loginParams.username,
+        password: ct
+    };
+    updateStoredUser((savedCredentials as any)[userId].user);
+});
             }
         }
     }
@@ -385,24 +405,28 @@ export const useAuthStore = defineStore('Auth', () => {
     /**
      * @param user
      */
-    async function updateStoredUser(user) {
+    async function updateStoredUser(user: { acceptedPrivacyVersion: number; acceptedTOSVersion: number; accountDeletionDate: null; accountDeletionLog: null; accountStanding: string; activeFriends: any[]; ageVerificationStatus: string; ageVerified: boolean; allowAvatarCopying: boolean; appleDetails: any; appleId: string; badges: any[]; bannerColor: string; bannerType: string; bannerUrl: string; bio: string; bioLinks: any[]; completedTutorials: any[]; currentAvatar: string; currentAvatarImageUrl: string; currentAvatarTags: any[]; currentAvatarThumbnailImageUrl: string; date_joined: string; developerType: string; discordDetails: { global_name: string; id: string; }; discordId: string; displayName: string; emailVerified: boolean; fallbackAvatar: string; friendGroupNames: any[]; friendKey: string; friends: any[]; googleDetails: any; googleId: string; hasAcceptedDiscordSocialSDKPerms: boolean; hasBirthday: boolean; hasDiscordFriendsOptOut: boolean; hasEmail: boolean; hasLoggedInFromClient: boolean; hasPendingEmail: boolean; hasSharedConnectionsOptOut: boolean; hideContentFilterSettings: boolean; homeLocation: string; id: string; isAdult: boolean; isBoopingEnabled: boolean; isEconomyCreator: boolean; isFriend: boolean; isTemporary: boolean; iconFrame: string; iconUrl: string; last_activity: string; last_login: string; last_mobile: null; last_platform: string; nameplateEffect: string; obfuscatedEmail: string; obfuscatedPendingEmail: string; oculusId: string; offlineFriends: any[]; onlineFriends: any[]; pastDisplayNames: any[]; picoId: string; platform_history: any[]; presence: { avatarThumbnail: string; currentAvatarTags: string; debugflag: string; displayName: string; groups: any[]; id: string; instance: string; instanceType: string; platform: string; profilePicOverride: string; status: string; travelingToInstance: string; travelingToWorld: string; userIcon: string; world: string; }; profileEffect: string; profilePicOverride: string; profilePicOverrideThumbnail: string; pronouns: string; pronounsHistory: any[]; queuedInstance: string; receiveMobileInvitations: boolean; state: string; status: string; statusDescription: string; statusFirstTime: boolean; statusHistory: any[]; steamDetails: any; steamId: string; tags: any[]; temporaryExpiryDate: null; twitchDetails: { display_name: string; id: string; login: string; profile_image_url: string; }; twitchId: string; twoFactorAuthEnabled: boolean; twoFactorAuthEnabledDate: null; unsubscribe: boolean; updated_at: string; userIcon: string; userLanguage: string; userLanguageCode: string; username: string; usesGeneratedPassword: boolean; viveId: string; $online_for: number; $offline_for: null; $location_at: number; $travelingToTime: number; $previousAvatarSwapTime: null; $homeLocation: any; $isVRCPlus: boolean; $isModerator: boolean; $isTroll: boolean; $isProbableTroll: boolean; $trustLevel: string; $trustClass: string; $userColour: string; $trustSortNum: number; $languages: any[]; $locationTag: string; $travelingToLocation: string; }) {
         const savedCredentials = await getAllSavedCredentials();
         if (credentialsToSave.value) {
-            savedCredentials[user.id] = {
-                user,
-                loginParams: {
-                    username: '',
-                    password: '',
-                    endpoint: '',
-                    websocket: '',
-                    ...savedCredentials[user.id]?.loginParams,
-                    ...credentialsToSave.value
-                }
-            };
+            (savedCredentials as any)[user.id] = {
+    user,
+    loginParams: {
+        username: '',
+        password: '',
+        endpoint: '',
+        websocket: '',
+        ...(savedCredentials as any)[user.id]?.loginParams,
+
+
+
+
+        ...credentialsToSave.value
+    }
+};
             credentialsToSave.value = null;
-        } else if (typeof savedCredentials[user.id] !== 'undefined') {
-            savedCredentials[user.id].user = user;
-            savedCredentials[user.id].cookies = await webApiService.getCookies();
+        } else if (typeof (savedCredentials as any)[user.id] !== 'undefined') {
+            (savedCredentials as any)[user.id].user = user;
+            (savedCredentials as any)[user.id].cookies = await webApiService.getCookies();
         }
         const jsonCredentialsArray = JSON.stringify(savedCredentials);
         await configRepository.setString('savedCredentials', jsonCredentialsArray);
@@ -412,6 +436,10 @@ export const useAuthStore = defineStore('Auth', () => {
 
     function queueSaveCredentials() {
         if (loginForm.value.saveCredentials) {
+
+
+
+
             credentialsToSave.value = {};
         }
     }
@@ -419,10 +447,10 @@ export const useAuthStore = defineStore('Auth', () => {
     async function migrateStoredUsers() {
         const savedCredentials = await getAllSavedCredentials();
         for (const name in savedCredentials) {
-            const userId = savedCredentials[name]?.user?.id;
+            const userId = (savedCredentials as any)[name]?.user?.id;
             if (userId && userId !== name) {
-                savedCredentials[userId] = savedCredentials[name];
-                delete savedCredentials[name];
+                (savedCredentials as any)[userId] = (savedCredentials as any)[name];
+                delete (savedCredentials as any)[name];
             }
         }
         await configRepository.setString('savedCredentials', JSON.stringify(savedCredentials));
@@ -431,7 +459,7 @@ export const useAuthStore = defineStore('Auth', () => {
     /**
      * @param args
      */
-    function checkPrimaryPassword(args) {
+    function checkPrimaryPassword(args: { password: unknown; }) {
         return new Promise((resolve, reject) => {
             if (!advancedSettingsStore.enablePrimaryPassword) {
                 resolve(args.password);
@@ -471,6 +499,10 @@ export const useAuthStore = defineStore('Auth', () => {
                 if (!ok) return;
                 const existingStyle = document.getElementById('login-container-style');
                 if (existingStyle) {
+
+
+
+
                     existingStyle.parentNode.removeChild(existingStyle);
                 }
                 handleLogoutEvent();
@@ -481,7 +513,7 @@ export const useAuthStore = defineStore('Auth', () => {
     /**
      * @param user
      */
-    async function relogin(user, { shouldTrackLoginNetworkIssueHint = !attemptingAutoLogin.value } = {}) {
+    async function relogin(user: { cookies?: any; user?: any; loginParams?: any; }, { shouldTrackLoginNetworkIssueHint = !attemptingAutoLogin.value } = {}) {
         const { loginParams } = user;
         if (user.cookies) {
             await webApiService.setCookies(user.cookies);
@@ -534,18 +566,22 @@ export const useAuthStore = defineStore('Auth', () => {
                     }
                 }
             } catch (err) {
+
+
+
+
                 if (shouldTrackLoginNetworkIssueHint && shouldCountLoginFailureForNetworkHint(err)) {
                     maybeShowLoginNetworkIssueHint();
                 }
-                if (err.message.includes('Check your email')) {
+                if ((err as any).message.includes('Check your email')) {
                     toast.error(t('message.auth.check_your_email'));
                 }
                 await handleLogoutEvent();
                 throw err;
             }
         } catch (err) {
-            const sessionExpired = !loginParams.password && err.status === 401;
-            if (sessionExpired || err.message.includes('Invalid Username/Email or Password')) {
+            const sessionExpired = !loginParams.password && (err as any).status === 401;
+            if (sessionExpired || (err as any).message.includes('Invalid Username/Email or Password')) {
                 toast.error(t('message.auth.saved_credentials_invalid'));
                 await deleteSavedLogin(user.user.id);
             }
@@ -558,9 +594,9 @@ export const useAuthStore = defineStore('Auth', () => {
     /**
      * @param userId
      */
-    async function deleteSavedLogin(userId) {
+    async function deleteSavedLogin(userId: string | number) {
         const savedCredentials = await getAllSavedCredentials();
-        delete savedCredentials[userId];
+        delete (savedCredentials as any)[userId];
         // Disable primary password when no account is available.
         if (Object.keys(savedCredentials).length === 0) {
             advancedSettingsStore.setEnablePrimaryPassword(false);
@@ -592,7 +628,7 @@ export const useAuthStore = defineStore('Auth', () => {
                 await authRequest.getConfig();
                 if (loginForm.value.saveCredentials && advancedSettingsStore.enablePrimaryPassword) {
                     try {
-                        const { ok, value } = await modalStore.prompt({
+                        const { ok, value }: any = await modalStore.prompt({
                             title: t('prompt.primary_password.header'),
                             description: t('prompt.primary_password.description'),
                             inputType: 'password',
@@ -600,11 +636,9 @@ export const useAuthStore = defineStore('Auth', () => {
                         });
                         if (ok) {
                             const savedCredentials = JSON.parse(await configRepository.getString('savedCredentials'));
-                            const saveCredential = Object.values(savedCredentials).find(
-                                (credential) => credential.loginParams.password
-                            );
+                            const saveCredential = Object.values(savedCredentials).find((credential) => (credential as any).loginParams.password);
                             if (saveCredential) {
-                                await security.decrypt(saveCredential.loginParams.password, value);
+                                await security.decrypt((saveCredential as any).loginParams.password, value);
                             }
                             const pwd = await security.encrypt(loginForm.value.password, value);
                             try {
@@ -617,6 +651,10 @@ export const useAuthStore = defineStore('Auth', () => {
                                     cipher: pwd
                                 });
                             } catch (err) {
+
+
+
+
                                 if (shouldCountLoginFailureForNetworkHint(err)) {
                                     maybeShowLoginNetworkIssueHint();
                                 }
@@ -636,10 +674,14 @@ export const useAuthStore = defineStore('Auth', () => {
                             saveCredentials: loginForm.value.saveCredentials
                         });
                     } catch (err) {
+
+
+
+
                         if (shouldCountLoginFailureForNetworkHint(err)) {
                             maybeShowLoginNetworkIssueHint();
                         }
-                        if (err.message.includes('Check your email')) {
+                        if ((err as any).message.includes('Check your email')) {
                             toast.error(t('message.auth.check_your_email'));
                         }
                         throw err;
@@ -655,7 +697,7 @@ export const useAuthStore = defineStore('Auth', () => {
         if (twoFactorAuthDialogVisible.value) {
             return;
         }
-        AppApi.FlashWindow();
+        (AppApi as any).FlashWindow();
         twoFactorAuthDialogVisible.value = true;
         modalStore
             .otpPrompt({
@@ -734,7 +776,7 @@ export const useAuthStore = defineStore('Auth', () => {
         if (twoFactorAuthDialogVisible.value) {
             return;
         }
-        AppApi.FlashWindow();
+        (AppApi as any).FlashWindow();
         twoFactorAuthDialogVisible.value = true;
         modalStore
             .otpPrompt({
@@ -782,7 +824,7 @@ export const useAuthStore = defineStore('Auth', () => {
      *   credential to login
      * @returns {Promise<{ origin: boolean; json: any }>}
      */
-    function authLogin(params) {
+    function authLogin(params: { username: string; password: string; endpoint: string; websocket: string; saveCredentials?: any; cipher?: string; }) {
         let { username, password, endpoint, websocket, saveCredentials, cipher } = params;
         const auth = btoa(`${encodeURIComponent(username)}:${encodeURIComponent(password)}`);
         if (saveCredentials) {
@@ -790,6 +832,10 @@ export const useAuthStore = defineStore('Auth', () => {
             if (cipher) {
                 password = cipher;
             }
+
+
+
+
             credentialsToSave.value = {
                 username,
                 password,
@@ -802,7 +848,7 @@ export const useAuthStore = defineStore('Auth', () => {
             headers: {
                 Authorization: `Basic ${auth}`
             }
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 origin: true
@@ -815,7 +861,7 @@ export const useAuthStore = defineStore('Auth', () => {
     /**
      * @param json
      */
-    function handleCurrentUserUpdate(json) {
+    function handleCurrentUserUpdate(json: any) {
         if (json.requiresTwoFactorAuth && json.requiresTwoFactorAuth.includes('emailOtp')) {
             promptEmailOTP();
         } else if (json.requiresTwoFactorAuth) {
@@ -870,7 +916,8 @@ export const useAuthStore = defineStore('Auth', () => {
         await database.initUserTables(userStore.currentUser.id);
         advancedSettingsStore.runAvatarAutoCleanup(userStore.currentUser.id);
         watchState.isLoggedIn = true;
-        AppApi.CheckGameRunning(); // restore state from hot-reload
+        (AppApi as any).CheckGameRunning(); // restore state from hot-reload
+ // restore state from hot-reload
 
         activityStore.startFullCacheBuild(userStore.currentUser.id);
     }
@@ -878,33 +925,43 @@ export const useAuthStore = defineStore('Auth', () => {
     /**
      * @param {object} value Latest config payload.
      */
-    function setCachedConfig(value) {
+    function setCachedConfig(value: object) {
         cachedConfig.value = value;
     }
 
     /**
      * @param {boolean} value Auto-login attempt flag.
      */
-    function setAttemptingAutoLogin(value) {
+    function setAttemptingAutoLogin(value: boolean) {
         attemptingAutoLogin.value = value;
     }
 
     async function getPermissions() {
         const permissions = await authRequest.getPermissions();
-        if (permissions['permission-user-stickers']?.max) {
-            cachedPermissions.value.maxUserStickers = permissions['permission-user-stickers'].max;
+
+        if ((permissions['permission-user-stickers' as keyof typeof permissions] as any)?.max) {
+
+            cachedPermissions.value.maxUserStickers = (permissions['permission-user-stickers' as keyof typeof permissions] as any).max;
         }
-        if (permissions['permission-user-emoji']?.max) {
-            cachedPermissions.value.maxUserEmoji = permissions['permission-user-emoji'].max;
+
+        if ((permissions['permission-user-emoji' as keyof typeof permissions] as any)?.max) {
+
+            cachedPermissions.value.maxUserEmoji = (permissions['permission-user-emoji' as keyof typeof permissions] as any).max;
         }
-        if (permissions['permission-user-gallery']?.max) {
-            cachedPermissions.value.maxUserGallery = permissions['permission-user-gallery'].max;
+
+        if ((permissions['permission-user-gallery' as keyof typeof permissions] as any)?.max) {
+
+            cachedPermissions.value.maxUserGallery = (permissions['permission-user-gallery' as keyof typeof permissions] as any).max;
         }
-        if (permissions['permission-user-icons']?.max) {
-            cachedPermissions.value.maxUserIcons = permissions['permission-user-icons'].max;
+
+        if ((permissions['permission-user-icons' as keyof typeof permissions] as any)?.max) {
+
+            cachedPermissions.value.maxUserIcons = (permissions['permission-user-icons' as keyof typeof permissions] as any).max;
         }
-        if (permissions['permission-user-prints']?.max) {
-            cachedPermissions.value.maxUserPrints = permissions['permission-user-prints'].max;
+
+        if ((permissions['permission-user-prints' as keyof typeof permissions] as any)?.max) {
+
+            cachedPermissions.value.maxUserPrints = (permissions['permission-user-prints' as keyof typeof permissions] as any).max;
         }
     }
 

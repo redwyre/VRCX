@@ -8,11 +8,11 @@ vi.mock('vue-i18n', () => {
     const { ref } = require('vue');
     return {
         useI18n: () => ({
-            t: (key, params) => (params ? `${key}:${JSON.stringify(params)}` : key),
+            t: (key: any, params: any) => (params ? `${key}:${JSON.stringify(params)}` : key),
             locale: ref('en')
         }),
         createI18n: () => ({
-            global: { t: (key) => key, locale: ref('en') },
+            global: { t: (key: any) => key, locale: ref('en') },
             install: vi.fn()
         })
     };
@@ -35,6 +35,10 @@ vi.mock('vue-router', async (importOriginal) => {
     const actual = await importOriginal();
     const { ref } = require('vue');
     return {
+
+
+
+
         ...actual,
         useRouter: vi.fn(() => ({
             push: vi.fn(),
@@ -131,13 +135,17 @@ const MOCK_POSTS = [
 /**
  * @param {object} overrides
  */
-function mountComponent(overrides = {}) {
+function mountComponent(overrides: object = {}) {
     const pinia = createTestingPinia({
         stubActions: false
     });
 
     const groupStore = useGroupStore(pinia);
     groupStore.$patch({
+
+
+
+
         groupDialog: {
             id: 'grp_1',
             visible: true,

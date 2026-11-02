@@ -1,3 +1,8 @@
+// TODO(ts-migrate): Check that this import is the one meant; TypeScript offered the name from
+// several modules.
+// describe was taken from vitest, over node:test. test was taken from vitest, over node:test
+// and node:test.
+import { describe, test, expect } from 'vitest';
 import {
     isPrefixMatch,
     matchName,
@@ -32,6 +37,10 @@ describe('matchName', () => {
     test('returns false for empty inputs', () => {
         expect(matchName('', 'query', comparer)).toBe(false);
         expect(matchName('name', '', comparer)).toBe(false);
+
+
+
+
         expect(matchName(null, 'query', comparer)).toBe(false);
     });
 
@@ -70,7 +79,7 @@ describe('searchFriends', () => {
      * @param memo
      * @param note
      */
-    function makeFriend(id, name, memo = '', note = '') {
+    function makeFriend(id: string, name: string, memo = '', note = '') {
         return [
             id,
             {
@@ -85,6 +94,10 @@ describe('searchFriends', () => {
             }
         ];
     }
+
+
+
+
 
     const friends = new Map([
         makeFriend('u1', 'Alice'),
@@ -110,15 +123,27 @@ describe('searchFriends', () => {
 
     test('returns empty for short / empty query', () => {
         expect(searchFriends('', friends, comparer)).toEqual([]);
+
+
+
+
         expect(searchFriends(null, friends, comparer)).toEqual([]);
     });
 
     test('respects limit', () => {
+
+
+
+
         const many = new Map(Array.from({ length: 20 }, (_, i) => makeFriend(`u${i}`, `Test${i}`)));
         expect(searchFriends('Test', many, comparer, 5)).toHaveLength(5);
     });
 
     test('prefix matches sort first', () => {
+
+
+
+
         const f = new Map([makeFriend('u1', 'XAliceX'), makeFriend('u2', 'Alice')]);
         const results = searchFriends('Alice', f, comparer);
         expect(results[0].id).toBe('u2'); // prefix match first
@@ -297,6 +322,10 @@ describe('searchFavoriteAvatars', () => {
     });
 
     test('returns empty for null input', () => {
+
+
+
+
         expect(searchFavoriteAvatars('test', null, comparer)).toEqual([]);
     });
 });

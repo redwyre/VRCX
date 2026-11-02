@@ -1,3 +1,8 @@
+// TODO(ts-migrate): Check that this import is the one meant; TypeScript offered the name from
+// several modules.
+// describe was taken from vitest, over node:test. test was taken from vitest, over node:test
+// and node:test.
+import { describe, test, vi, expect } from 'vitest';
 import { executeWithBackoff } from '../retry';
 
 describe('executeWithBackoff', () => {
@@ -44,7 +49,7 @@ describe('executeWithBackoff', () => {
     });
 
     test('uses exponential backoff delays', async () => {
-        const delays = [];
+        const delays: any = [];
         const originalSetTimeout = globalThis.setTimeout;
         vi.spyOn(globalThis, 'setTimeout').mockImplementation((fn, delay) => {
             delays.push(delay);

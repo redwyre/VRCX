@@ -11,139 +11,140 @@ import miscRequest from './misc';
 import userRequest from './user';
 
 import worldRequest from './world';
+import { GroupSearchSort, GroupRoleId } from "vrchat";
 
 const registry = Object.freeze({
     user: {
-        key: (params) => queryKeys.user(params.userId),
+        key: (params: { userId: any; }) => queryKeys.user(params.userId),
         policy: entityQueryPolicies.user,
-        queryFn: (params) => userRequest.getUser(params)
+        queryFn: (params: { userId: string; }) => userRequest.getUser(params)
     },
     'user.dialog': {
-        key: (params) => queryKeys.user(params.userId),
+        key: (params: { userId: any; }) => queryKeys.user(params.userId),
         policy: Object.freeze({
             ...entityQueryPolicies.user,
             staleTime: 60_000
         }),
-        queryFn: (params) => userRequest.getUser(params)
+        queryFn: (params: { userId: string; }) => userRequest.getUser(params)
     },
     'user.force': {
-        key: (params) => queryKeys.user(params.userId),
+        key: (params: { userId: any; }) => queryKeys.user(params.userId),
         policy: Object.freeze({
             ...entityQueryPolicies.user,
             staleTime: 0
         }),
-        queryFn: (params) => userRequest.getUser(params)
+        queryFn: (params: { userId: string; }) => userRequest.getUser(params)
     },
     publicProfile: {
-        key: (params) => queryKeys.profile(params.userId),
+        key: (params: { userId: any; }) => queryKeys.profile(params.userId),
         policy: entityQueryPolicies.profile,
-        queryFn: (params) => userRequest.getPublicProfile(params)
+        queryFn: (params: { userId: string; }) => userRequest.getPublicProfile(params)
     },
     avatar: {
-        key: (params) => queryKeys.avatar(params.avatarId),
+        key: (params: { avatarId: any; }) => queryKeys.avatar(params.avatarId),
         policy: entityQueryPolicies.avatar,
-        queryFn: (params) => avatarRequest.getAvatar(params)
+        queryFn: (params: { avatarId: string; }) => avatarRequest.getAvatar(params)
     },
     'avatar.dialog': {
-        key: (params) => queryKeys.avatar(params.avatarId),
+        key: (params: { avatarId: any; }) => queryKeys.avatar(params.avatarId),
         policy: Object.freeze({
             ...entityQueryPolicies.avatar,
             staleTime: 120_000
         }),
-        queryFn: (params) => avatarRequest.getAvatar(params)
+        queryFn: (params: { avatarId: string; }) => avatarRequest.getAvatar(params)
     },
     world: {
-        key: (params) => queryKeys.world(params.worldId),
+        key: (params: { worldId: any; }) => queryKeys.world(params.worldId),
         policy: entityQueryPolicies.world,
-        queryFn: (params) => worldRequest.getWorld(params)
+        queryFn: (params: { worldId: string; }) => worldRequest.getWorld(params)
     },
     'world.dialog': {
-        key: (params) => queryKeys.world(params.worldId),
+        key: (params: { worldId: any; }) => queryKeys.world(params.worldId),
         policy: Object.freeze({
             ...entityQueryPolicies.world,
             staleTime: 120_000
         }),
-        queryFn: (params) => worldRequest.getWorld(params)
+        queryFn: (params: { worldId: string; }) => worldRequest.getWorld(params)
     },
     'world.location': {
-        key: (params) => queryKeys.world(params.worldId),
+        key: (params: { worldId: any; }) => queryKeys.world(params.worldId),
         policy: Object.freeze({
             ...entityQueryPolicies.world,
             staleTime: 120_000
         }),
-        queryFn: (params) => worldRequest.getWorld(params)
+        queryFn: (params: { worldId: string; }) => worldRequest.getWorld(params)
     },
     'world.force': {
-        key: (params) => queryKeys.world(params.worldId),
+        key: (params: { worldId: any; }) => queryKeys.world(params.worldId),
         policy: Object.freeze({
             ...entityQueryPolicies.world,
             staleTime: 0
         }),
-        queryFn: (params) => worldRequest.getWorld(params)
+        queryFn: (params: { worldId: string; }) => worldRequest.getWorld(params)
     },
     worldsByUser: {
-        key: (params) => queryKeys.worldsByUser(params),
+        key: (params: { userId: any; n?: number | undefined; offset?: number | undefined; sort?: string | undefined; order?: string | undefined; user?: string | undefined; releaseStatus?: string | undefined; option?: string | undefined; }) => queryKeys.worldsByUser(params),
         policy: entityQueryPolicies.worldCollection,
-        queryFn: (params) => worldRequest.getWorlds(params, params.option || undefined)
+        queryFn: (params: any) => worldRequest.getWorlds(params, params.option || undefined)
     },
     group: {
-        key: (params) => queryKeys.group(params.groupId, params.includeRoles),
+        key: (params: { groupId: any; includeRoles: boolean | undefined; }) => queryKeys.group(params.groupId, params.includeRoles),
         policy: entityQueryPolicies.group,
-        queryFn: (params) => groupRequest.getGroup(params)
+        queryFn: (params: { groupId: string; } & { includeRoles?: boolean; purpose?: string; }) => groupRequest.getGroup(params)
     },
     'group.dialog': {
-        key: (params) => queryKeys.group(params.groupId, params.includeRoles),
+        key: (params: { groupId: any; includeRoles: boolean | undefined; }) => queryKeys.group(params.groupId, params.includeRoles),
         policy: Object.freeze({
             ...entityQueryPolicies.group,
             staleTime: 120_000
         }),
-        queryFn: (params) => groupRequest.getGroup(params)
+        queryFn: (params: { groupId: string; } & { includeRoles?: boolean; purpose?: string; }) => groupRequest.getGroup(params)
     },
     'group.force': {
-        key: (params) => queryKeys.group(params.groupId, params.includeRoles),
+        key: (params: { groupId: any; includeRoles: boolean | undefined; }) => queryKeys.group(params.groupId, params.includeRoles),
         policy: Object.freeze({
             ...entityQueryPolicies.group,
             staleTime: 0
         }),
-        queryFn: (params) => groupRequest.getGroup(params)
+        queryFn: (params: { groupId: string; } & { includeRoles?: boolean; purpose?: string; }) => groupRequest.getGroup(params)
     },
     groupMember: {
-        key: (params) => queryKeys.groupMember(params),
+        key: (params: { groupId: any; userId: any; }) => queryKeys.groupMember(params),
         policy: entityQueryPolicies.groupCollection,
-        queryFn: (params) => groupRequest.getGroupMember(params)
+        queryFn: (params: { groupId: string; userId: string; }) => groupRequest.getGroupMember(params)
     },
     groupMembers: {
-        key: (params) => queryKeys.groupMembers(params),
+        key: (params: { groupId: any; n?: number | undefined; offset?: number | undefined; sort?: string | undefined; roleId?: string | undefined; }) => queryKeys.groupMembers(params),
         policy: entityQueryPolicies.groupCollection,
-        queryFn: (params) => groupRequest.getGroupMembers(params)
+        queryFn: (params: { groupId: string; } & { n?: number; offset?: number; sort?: GroupSearchSort; roleId?: GroupRoleId; }) => groupRequest.getGroupMembers(params)
     },
     groupGallery: {
-        key: (params) => queryKeys.groupGallery(params),
+        key: (params: { groupId: any; galleryId: any; n?: number | undefined; offset?: number | undefined; }) => queryKeys.groupGallery(params),
         policy: entityQueryPolicies.groupCollection,
-        queryFn: (params) => groupRequest.getGroupGallery(params)
+        queryFn: (params: { groupId: string; galleryId: string; } & { n?: number; offset?: number; v?: number; approved?: boolean; }) => groupRequest.getGroupGallery(params)
     },
     groupCalendar: {
-        key: (params) => queryKeys.groupCalendar(params.groupId),
+        key: (params: { groupId: any; }) => queryKeys.groupCalendar(params.groupId),
         policy: entityQueryPolicies.groupCollection,
-        queryFn: (params) => groupRequest.getGroupCalendar(params.groupId)
+        queryFn: (params: { groupId: string; }) => groupRequest.getGroupCalendar(params.groupId)
     },
     groupCalendarEvent: {
-        key: (params) => queryKeys.groupCalendarEvent(params),
+        key: (params: { groupId: any; eventId: any; }) => queryKeys.groupCalendarEvent(params),
         policy: entityQueryPolicies.groupCalendarEvent,
-        queryFn: (params) => groupRequest.getGroupCalendarEvent(params)
+        queryFn: (params: { groupId: string; eventId: string; }) => groupRequest.getGroupCalendarEvent(params)
     },
     avatarGallery: {
-        key: (params) => queryKeys.avatarGallery(params.avatarId),
+        key: (params: { avatarId: any; }) => queryKeys.avatarGallery(params.avatarId),
         policy: entityQueryPolicies.avatarGallery,
-        queryFn: (params) => avatarRequest.getAvatarGallery(params.avatarId)
+        queryFn: (params: { avatarId: string; }) => avatarRequest.getAvatarGallery(params.avatarId)
     },
     'avatarGallery.force': {
-        key: (params) => queryKeys.avatarGallery(params.avatarId),
+        key: (params: { avatarId: any; }) => queryKeys.avatarGallery(params.avatarId),
         policy: Object.freeze({
             ...entityQueryPolicies.avatarGallery,
             staleTime: 0
         }),
-        queryFn: (params) => avatarRequest.getAvatarGallery(params.avatarId)
+        queryFn: (params: { avatarId: string; }) => avatarRequest.getAvatarGallery(params.avatarId)
     },
     favoriteLimits: {
         key: () => queryKeys.favoriteLimits(),
@@ -151,24 +152,24 @@ const registry = Object.freeze({
         queryFn: () => favoriteRequest.getFavoriteLimits()
     },
     userInventoryItem: {
-        key: (params) => queryKeys.userInventoryItem(params),
+        key: (params: { inventoryId: any; userId: any; }) => queryKeys.userInventoryItem(params),
         policy: entityQueryPolicies.inventoryCollection,
-        queryFn: (params) => inventoryRequest.getUserInventoryItem(params)
+        queryFn: (params: { inventoryId: string; userId: string; flags: any; }) => inventoryRequest.getUserInventoryItem(params)
     },
     fileAnalysis: {
-        key: (params) => queryKeys.fileAnalysis(params),
+        key: (params: { fileId: any; version: any; variant: any; }) => queryKeys.fileAnalysis(params),
         policy: entityQueryPolicies.fileAnalysis,
-        queryFn: (params) => miscRequest.getFileAnalysis(params)
+        queryFn: (params: { fileId: string; version: number; variant: string; }) => miscRequest.getFileAnalysis(params)
     },
     worldPersistData: {
-        key: (params) => queryKeys.worldPersistData(params.worldId),
+        key: (params: { worldId: any; }) => queryKeys.worldPersistData(params.worldId),
         policy: entityQueryPolicies.worldPersistData,
-        queryFn: (params) => miscRequest.hasWorldPersistData(params)
+        queryFn: (params: { worldId: string; }) => miscRequest.hasWorldPersistData(params)
     },
     mutualCounts: {
-        key: (params) => queryKeys.mutualCounts(params.userId),
+        key: (params: { userId: any; }) => queryKeys.mutualCounts(params.userId),
         policy: entityQueryPolicies.mutualCounts,
-        queryFn: (params) => userRequest.getMutualCounts(params)
+        queryFn: (params: { userId: string; }) => userRequest.getMutualCounts(params)
     },
     visits: {
         key: () => queryKeys.visits(),
@@ -181,9 +182,9 @@ const registry = Object.freeze({
         queryFn: () => instanceRequest.getInstanceCount()
     },
     file: {
-        key: (params) => queryKeys.file(params.fileId),
+        key: (params: { fileId: any; }) => queryKeys.file(params.fileId),
         policy: entityQueryPolicies.fileObject,
-        queryFn: (params) => miscRequest.getFile(params)
+        queryFn: (params: { fileId: string; }) => miscRequest.getFile(params)
     },
     avatarStyles: {
         key: () => queryKeys.avatarStyles(),
@@ -191,9 +192,9 @@ const registry = Object.freeze({
         queryFn: () => avatarRequest.getAvailableAvatarStyles()
     },
     representedGroup: {
-        key: (params) => queryKeys.representedGroup(params.userId),
+        key: (params: { userId: any; }) => queryKeys.representedGroup(params.userId),
         policy: entityQueryPolicies.representedGroup,
-        queryFn: (params) => groupRequest.getRepresentedGroup(params)
+        queryFn: (params: { userId: string; }) => groupRequest.getRepresentedGroup(params)
     },
     vrchatCredits: {
         key: () => queryKeys.vrchatCredits(),

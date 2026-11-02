@@ -53,7 +53,7 @@ export async function runLogoutFlow() {
  *
  * @param {object} json Current user payload from auth API.
  */
-export function runLoginSuccessFlow(json) {
+export function runLoginSuccessFlow(json: object) {
     const updateLoopStore = useUpdateLoopStore();
     const authStore = useAuthStore();
 

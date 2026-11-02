@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
-import { mount } from '@vue/test-utils';
+import { mount, VueWrapper } from '@vue/test-utils';
 import { nextTick, ref } from 'vue';
 
 const mocks = vi.hoisted(() => ({
@@ -13,12 +13,12 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock('pinia', () => ({
-    storeToRefs: (store) => store
+    storeToRefs: (store: any) => store
 }));
 
 vi.mock('vue-i18n', () => ({
     useI18n: () => ({
-        t: (key) => key,
+        t: (key: any) => key,
         locale: require('vue').ref('en')
     })
 }));
@@ -26,7 +26,7 @@ vi.mock('vue-i18n', () => ({
 vi.mock('../../../../stores', () => ({
     useAuthStore: () => mocks.authStore,
     useVRCXUpdaterStore: () => ({
-        restartVRCX: (...args) => mocks.restartVRCX(...args)
+        restartVRCX: (...args: any[]) => mocks.restartVRCX(...args)
     }),
     useVrcxStore: () => mocks.vrcxStore
 }));
@@ -102,8 +102,8 @@ function mountDialog() {
     });
 }
 
-function clickButtonByText(wrapper, text) {
-    const button = wrapper.findAll('button').find((node) => node.text().trim() === text);
+function clickButtonByText(wrapper: VueWrapper<any, any>, text: string) {
+    const button = wrapper.findAll('button').find((node: { text: () => string; }) => node.text().trim() === text);
     if (!button) {
         throw new Error(`Cannot find button with text: ${text}`);
     }
@@ -112,29 +112,49 @@ function clickButtonByText(wrapper, text) {
 
 describe('LoginSettingsDialog.vue', () => {
     beforeEach(() => {
+
+
+
+
         mocks.loginForm = ref({ endpoint: '', websocket: '' });
+
+
+
+
         mocks.enableCustomEndpoint = ref(false);
         mocks.toggleCustomEndpoint.mockReset();
         mocks.restartVRCX.mockReset();
         mocks.setProxyServer.mockReset();
 
+
+
+
+
         mocks.vrcxStore = {
             proxyServer: 'http://proxy.local:7890',
-            setProxyServer: (...args) => mocks.setProxyServer(...args)
+            setProxyServer: (...args: any[]) => mocks.setProxyServer(...args)
         };
         mocks.setProxyServer.mockImplementation((value) => {
+
+
+
+
             mocks.vrcxStore.proxyServer = value;
         });
+
+
+
+
         mocks.authStore = {
             loginForm: mocks.loginForm,
             enableCustomEndpoint: mocks.enableCustomEndpoint,
-            toggleCustomEndpoint: (...args) => mocks.toggleCustomEndpoint(...args)
+            toggleCustomEndpoint: (...args: any[]) => mocks.toggleCustomEndpoint(...args)
         };
 
-        globalThis.VRCXStorage = {
-            Set: vi.fn().mockResolvedValue(undefined),
-            Save: vi.fn().mockResolvedValue(undefined)
-        };
+        (globalThis as any).VRCXStorage = {
+    Set: vi.fn().mockResolvedValue(undefined),
+    Save: vi.fn().mockResolvedValue(undefined)
+};
     });
 
     test('loads proxy value when dialog opens', async () => {
@@ -143,7 +163,7 @@ describe('LoginSettingsDialog.vue', () => {
         await wrapper.get('[data-testid="open-dialog"]').trigger('click');
         await nextTick();
 
-        expect(wrapper.get('#login-settings-proxy').element.value).toBe('http://proxy.local:7890');
+        expect((wrapper.get('#login-settings-proxy').element as any).value).toBe('http://proxy.local:7890');
     });
 
     test('toggles custom endpoint and shows endpoint inputs', async () => {
@@ -163,8 +183,8 @@ describe('LoginSettingsDialog.vue', () => {
         await clickButtonByText(wrapper, 'prompt.proxy_settings.close');
 
         expect(mocks.setProxyServer).toHaveBeenCalledWith('http://127.0.0.1:8080');
-        expect(globalThis.VRCXStorage.Set).toHaveBeenCalledWith('VRCX_ProxyServer', 'http://127.0.0.1:8080');
-        expect(globalThis.VRCXStorage.Save).toHaveBeenCalledTimes(1);
+        expect((globalThis as any).VRCXStorage.Set).toHaveBeenCalledWith('VRCX_ProxyServer', 'http://127.0.0.1:8080');
+        expect((globalThis as any).VRCXStorage.Save).toHaveBeenCalledTimes(1);
         expect(mocks.restartVRCX).not.toHaveBeenCalled();
     });
 
@@ -176,7 +196,7 @@ describe('LoginSettingsDialog.vue', () => {
         await clickButtonByText(wrapper, 'prompt.proxy_settings.restart');
 
         expect(mocks.setProxyServer).toHaveBeenCalledWith('http://192.168.0.2:3128');
-        expect(globalThis.VRCXStorage.Save).toHaveBeenCalledTimes(1);
+        expect((globalThis as any).VRCXStorage.Save).toHaveBeenCalledTimes(1);
         expect(mocks.restartVRCX).toHaveBeenCalledWith(false);
     });
 });

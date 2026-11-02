@@ -7,17 +7,17 @@ import { replaceBioSymbols } from './base/string';
  * @param {object} json - Notification data (mutated in place)
  * @returns {object} The same json reference
  */
-export function sanitizeNotificationJson(json) {
+export function sanitizeNotificationJson(json: object) {
     for (const key in json) {
-        if (json[key] === null || typeof json[key] === 'undefined') {
-            delete json[key];
+        if ((json as any)[key] === null || typeof (json as any)[key] === 'undefined') {
+            delete (json as any)[key];
         }
     }
-    if (json.message) {
-        json.message = replaceBioSymbols(json.message);
+    if ((json as any).message) {
+        (json as any).message = replaceBioSymbols((json as any).message);
     }
-    if (json.title) {
-        json.title = replaceBioSymbols(json.title);
+    if ((json as any).title) {
+        (json as any).title = replaceBioSymbols((json as any).title);
     }
     return json;
 }
@@ -28,7 +28,7 @@ export function sanitizeNotificationJson(json) {
  * @param {any} details - Raw details value
  * @returns {object} Parsed details object
  */
-export function parseNotificationDetails(details) {
+export function parseNotificationDetails(details: any) {
     if (details === Object(details)) {
         return details;
     }
@@ -53,8 +53,12 @@ export function parseNotificationDetails(details) {
  * @param {Partial<import('@/types/vrcx').VrcxNotification>} json - Sanitized notification JSON
  * @returns {import('@/types/vrcx').VrcxNotification} Default notification ref
  */
-export function createDefaultNotificationRef(json) {
-    const ref = /** @type {import('@/types/vrcx').VrcxNotification} */ ({
+
+
+
+
+export function createDefaultNotificationRef(json: Partial<import('@/types/vrcx').VrcxNotification>) {
+    const ref = ({
         id: '',
         senderUserId: '',
         senderUsername: '',
@@ -68,7 +72,7 @@ export function createDefaultNotificationRef(json) {
         $isExpired: false,
         //
         ...json
-    });
+    } as import('@/types/vrcx').VrcxNotification);
     ref.details = parseNotificationDetails(ref.details);
     return ref;
 }
@@ -80,8 +84,12 @@ export function createDefaultNotificationRef(json) {
  * @param {Partial<import('@/types/vrcx').Json<import('vrchat').NotificationV2>>} json - Sanitized notification JSON
  * @returns {import('@/types/vrcx').Json<import('vrchat').NotificationV2>} Default notification V2 ref
  */
-export function createDefaultNotificationV2Ref(json) {
-    return /** @type {import('@/types/vrcx').Json<import('vrchat').NotificationV2>} */ ({
+
+
+
+
+export function createDefaultNotificationV2Ref(json: Partial<import('@/types/vrcx').Json<import('vrchat').NotificationV2>>) {
+    return ({
         id: '',
         createdAt: '',
         updatedAt: '',
@@ -112,7 +120,7 @@ export function createDefaultNotificationV2Ref(json) {
         requireSeen: false,
         titleKey: '',
         ...json
-    });
+    } as import('@/types/vrcx').Json<import('vrchat').NotificationV2>);
 }
 
 /**
@@ -122,16 +130,16 @@ export function createDefaultNotificationV2Ref(json) {
  * @param {object} ref - Notification V2 ref
  * @param {string} endpointDomain - API endpoint domain for emoji URLs
  */
-export function applyBoopLegacyHandling(ref, endpointDomain) {
-    if (ref.type !== 'boop' || !ref.title) {
+export function applyBoopLegacyHandling(ref: object, endpointDomain: string) {
+    if ((ref as any).type !== 'boop' || !(ref as any).title) {
         return;
     }
-    ref.message = ref.title;
-    ref.title = '';
-    if (ref.details?.emojiId?.startsWith('default_')) {
-        ref.imageUrl = ref.details.emojiId;
-        ref.message += ` ${ref.details.emojiId.replace('default_', '')}`;
+    (ref as any).message = (ref as any).title;
+    (ref as any).title = '';
+    if ((ref as any).details?.emojiId?.startsWith('default_')) {
+        (ref as any).imageUrl = (ref as any).details.emojiId;
+        (ref as any).message += ` ${(ref as any).details.emojiId.replace('default_', '')}`;
     } else {
-        ref.imageUrl = `${endpointDomain}/file/${ref.details.emojiId}/${ref.details.emojiVersion}`;
+        (ref as any).imageUrl = `${endpointDomain}/file/${(ref as any).details.emojiId}/${(ref as any).details.emojiVersion}`;
     }
 }

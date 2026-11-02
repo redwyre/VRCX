@@ -8,11 +8,11 @@ vi.mock('vue-i18n', () => {
     const { ref } = require('vue');
     return {
         useI18n: () => ({
-            t: (key, params) => (params ? `${key}:${JSON.stringify(params)}` : key),
+            t: (key: any, params: any) => (params ? `${key}:${JSON.stringify(params)}` : key),
             locale: ref('en')
         }),
         createI18n: () => ({
-            global: { t: (key) => key, locale: ref('en') },
+            global: { t: (key: any) => key, locale: ref('en') },
             install: vi.fn()
         })
     };
@@ -35,6 +35,10 @@ vi.mock('vue-router', async (importOriginal) => {
     const actual = await importOriginal();
     const { ref } = require('vue');
     return {
+
+
+
+
         ...actual,
         useRouter: vi.fn(() => ({
             push: vi.fn(),
@@ -116,22 +120,26 @@ function mountComponent(overrides = {}) {
     });
 
     const userStore = useUserStore(pinia);
+
+
+
+
     userStore.$patch({
-        userDialog: {
-            id: 'usr_me',
-            ref: { id: 'usr_me' },
-            avatars: [...MOCK_AVATARS],
-            avatarSorting: 'name',
-            avatarReleaseStatus: 'all',
-            isAvatarsLoading: false,
-            isWorldsLoading: false,
-            ...overrides
-        },
-        currentUser: {
-            id: 'usr_me',
-            ...overrides.currentUser
-        }
-    });
+    userDialog: {
+        id: 'usr_me',
+        ref: { id: 'usr_me' },
+        avatars: [...MOCK_AVATARS],
+        avatarSorting: 'name',
+        avatarReleaseStatus: 'all',
+        isAvatarsLoading: false,
+        isWorldsLoading: false,
+        ...overrides
+    },
+    currentUser: {
+        id: 'usr_me',
+        ...(overrides as any).currentUser
+    }
+});
 
     return mount(UserDialogAvatarsTab, {
         global: {

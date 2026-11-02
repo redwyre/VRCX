@@ -77,7 +77,7 @@ export const useNotificationStore = defineStore('Notification', () => {
     const notificationInitStatus = ref(false);
     const notificationTable = ref({
         data: [],
-        filters: /** @type {import('@/types/vrcx').TableFilter[]} */ ([
+        filters: ([
             {
                 prop: 'type',
                 value: []
@@ -86,7 +86,7 @@ export const useNotificationStore = defineStore('Notification', () => {
                 prop: ['senderUsername', 'message'],
                 value: ''
             }
-        ]),
+        ] as import('@/types/vrcx').TableFilter[]),
         pageSize: 20,
         pageSizeLinked: true,
         paginationProps: {
@@ -111,37 +111,41 @@ export const useNotificationStore = defineStore('Notification', () => {
     });
     const shownFreeListingIds = new Set();
 
-    const friendNotifications = computed(() =>
-        notificationTable.value.data.filter((n) => getNotificationCategory(n.type) === 'friend')
-    );
-    const groupNotifications = computed(() =>
-        notificationTable.value.data.filter((n) => getNotificationCategory(n.type) === 'group')
-    );
-    const otherNotifications = computed(() =>
-        notificationTable.value.data.filter((n) => getNotificationCategory(n.type) === 'other')
-    );
+    const friendNotifications = computed(() => notificationTable.value.data.filter((n) => getNotificationCategory((n as any).type) === 'friend'));
+    const groupNotifications = computed(() => notificationTable.value.data.filter((n) => getNotificationCategory((n as any).type) === 'group'));
+    const otherNotifications = computed(() => notificationTable.value.data.filter((n) => getNotificationCategory((n as any).type) === 'other'));
     const unseenSet = computed(() => new Set(unseenNotifications.value));
-    const unseenFriendNotifications = computed(() =>
-        friendNotifications.value.filter((n) => unseenSet.value.has(n.id))
-    );
-    const unseenGroupNotifications = computed(() => groupNotifications.value.filter((n) => unseenSet.value.has(n.id)));
-    const unseenOtherNotifications = computed(() => otherNotifications.value.filter((n) => unseenSet.value.has(n.id)));
+
+
+
+
+    const unseenFriendNotifications = computed(() => friendNotifications.value.filter((n) => unseenSet.value.has((n as any).id)));
+
+
+
+
+    const unseenGroupNotifications = computed(() => groupNotifications.value.filter((n) => unseenSet.value.has((n as any).id)));
+
+
+
+
+    const unseenOtherNotifications = computed(() => otherNotifications.value.filter((n) => unseenSet.value.has((n as any).id)));
     const recentCutoff = computed(() => dayjs().subtract(24, 'hour').valueOf());
-    const recentFriendNotifications = computed(() =>
-        friendNotifications.value.filter(
-            (n) => !unseenSet.value.has(n.id) && n.seen !== false && getNotificationTs(n) > recentCutoff.value
-        )
-    );
-    const recentGroupNotifications = computed(() =>
-        groupNotifications.value.filter(
-            (n) => !unseenSet.value.has(n.id) && n.seen !== false && getNotificationTs(n) > recentCutoff.value
-        )
-    );
-    const recentOtherNotifications = computed(() =>
-        otherNotifications.value.filter(
-            (n) => !unseenSet.value.has(n.id) && n.seen !== false && getNotificationTs(n) > recentCutoff.value
-        )
-    );
+
+
+
+
+    const recentFriendNotifications = computed(() => friendNotifications.value.filter((n) => !unseenSet.value.has((n as any).id) && (n as any).seen !== false && getNotificationTs(n) > recentCutoff.value));
+
+
+
+
+    const recentGroupNotifications = computed(() => groupNotifications.value.filter((n) => !unseenSet.value.has((n as any).id) && (n as any).seen !== false && getNotificationTs(n) > recentCutoff.value));
+
+
+
+
+    const recentOtherNotifications = computed(() => otherNotifications.value.filter((n) => !unseenSet.value.has((n as any).id) && (n as any).seen !== false && getNotificationTs(n) > recentCutoff.value));
     const hasUnseenNotifications = computed(() => unseenNotifications.value.length > 0);
 
     const notyMap = {};
@@ -193,7 +197,7 @@ export const useNotificationStore = defineStore('Notification', () => {
     /**
      * @param args
      */
-    function handleNotification(args) {
+    function handleNotification(args: any) {
         args.ref = applyNotification(args.json);
         const { ref } = args;
         const array = notificationTable.value.data;
@@ -201,10 +205,18 @@ export const useNotificationStore = defineStore('Notification', () => {
         if (ref.seen) {
             removeFromArray(unseenNotifications.value, ref.id);
         } else if (!unseenNotifications.value.includes(ref.id)) {
+
+
+
+
             unseenNotifications.value.push(ref.id);
         }
         for (let i = 0; i < length; ++i) {
-            if (array[i].id === ref.id) {
+            if ((array[i] as any).id === ref.id) {
+
+
+
+
                 array[i] = ref;
                 return;
             }
@@ -238,6 +250,10 @@ export const useNotificationStore = defineStore('Notification', () => {
                 uiStore.notifyMenu('notification');
             }
         }
+
+
+
+
         notificationTable.value.data.push(ref);
         const D = userStore.userDialog;
         if (D.visible === false || ref.type !== 'friendRequest' || ref.senderUserId !== D.id) {
@@ -249,29 +265,29 @@ export const useNotificationStore = defineStore('Notification', () => {
     /**
      * @param notificationId
      */
-    function handleNotificationHide(notificationId) {
-        const ref = notificationTable.value.data.find((n) => n.id === notificationId);
+    function handleNotificationHide(notificationId: any) {
+        const ref = notificationTable.value.data.find((n) => (n as any).id === notificationId);
         if (typeof ref === 'undefined') {
             return;
         }
-        if (ref.type === 'friendRequest' || ref.type === 'ignoredFriendRequest' || ref.type.includes('.')) {
+        if ((ref as any).type === 'friendRequest' || (ref as any).type === 'ignoredFriendRequest' || (ref as any).type.includes('.')) {
             removeFromArray(notificationTable.value.data, ref);
         } else {
-            ref.$isExpired = true;
+            (ref as any).$isExpired = true;
             database.updateNotificationExpired(ref);
         }
         handleNotificationExpire({
-            ref,
-            params: {
-                notificationId: ref.id
-            }
-        });
+    ref,
+    params: {
+        notificationId: (ref as any).id
+    }
+});
     }
 
     /**
      * @param args
      */
-    function handlePipelineNotification(args) {
+    function handlePipelineNotification(args: any) {
         const ref = args.json;
         if (ref.type === 'friendRequest' && generalSettingsStore.autoDeclineFriendRequests) {
             handleAutoDeclineFriendRequest(ref);
@@ -280,6 +296,10 @@ export const useNotificationStore = defineStore('Notification', () => {
             return;
         }
         const allowedStatuses = generalSettingsStore.autoAcceptInviteStatuses;
+
+
+
+
         if (allowedStatuses.length && !allowedStatuses.includes(userStore.currentUser.status)) {
             return;
         }
@@ -300,8 +320,8 @@ export const useNotificationStore = defineStore('Notification', () => {
         }
         if (
             generalSettingsStore.autoAcceptInviteRequests === 'All Favorites' &&
-            !favoriteStore.state.favoriteFriends_.some((x) => x.id === ref.senderUserId) &&
-            !favoriteStore.isInAnyLocalFriendGroup(ref.senderUserId)
+    !favoriteStore.state.favoriteFriends_.some((x) => (x as any).id === ref.senderUserId) &&
+    !favoriteStore.isInAnyLocalFriendGroup(ref.senderUserId)
         ) {
             return;
         }
@@ -312,9 +332,9 @@ export const useNotificationStore = defineStore('Notification', () => {
             } else {
                 let found = false;
                 for (const groupKey of groups) {
-                    if (groupKey.startsWith('local:')) {
-                        const localGroup = groupKey.slice(6);
-                        const localFavs = favoriteStore.localFriendFavorites[localGroup];
+                    if ((groupKey as any).startsWith('local:')) {
+                        const localGroup = (groupKey as any).slice(6);
+                        const localFavs = (favoriteStore.localFriendFavorites as any)[localGroup];
                         if (localFavs && localFavs.includes(ref.senderUserId)) {
                             found = true;
                             break;
@@ -348,38 +368,39 @@ export const useNotificationStore = defineStore('Notification', () => {
             })
             .then((args1) => {
                 notificationRequest
-                    .sendInvite(
-                        {
-                            instanceId: L.tag,
-                            worldId: L.tag,
-                            worldName: args1.ref.name,
-                            rsvp: true
-                        },
-                        ref.senderUserId
-                    )
-                    .then((_args) => {
-                        const text = `Auto invite sent to ${ref.senderUsername}`;
-                        if (AppDebug.errorNoty) {
-                            toast.dismiss(AppDebug.errorNoty);
-                        }
-                        AppDebug.errorNoty = toast.info(text);
-                        console.log(text);
-                        notificationRequest
-                            .hideNotification({
-                                notificationId: ref.id
-                            })
-                            .then(() => {
-                                handleNotificationHide(ref.id);
-                            });
-                        return _args;
-                    })
-                    .catch((err) => {
-                        console.error(err);
-                    });
+    .sendInvite({
+    instanceId: L.tag,
+    worldId: L.tag,
+    worldName: (args1 as any).ref.name,
+    rsvp: true
+}, ref.senderUserId)
+    .then((_args) => {
+    const text = `Auto invite sent to ${ref.senderUsername}`;
+    if (AppDebug.errorNoty) {
+        toast.dismiss(AppDebug.errorNoty);
+    }
+
+
+
+
+    AppDebug.errorNoty = toast.info(text);
+    console.log(text);
+    notificationRequest
+        .hideNotification({
+        notificationId: ref.id
+    })
+        .then(() => {
+        handleNotificationHide(ref.id);
+    });
+    return _args;
+})
+    .catch((err) => {
+    console.error(err);
+});
             });
     }
 
-    async function handleAutoDeclineFriendRequest(ref) {
+    async function handleAutoDeclineFriendRequest(ref: any) {
         const joinInfo = await database.getJoinCount({
             id: ref.senderUserId,
             displayName: ref.senderUsername
@@ -392,6 +413,10 @@ export const useNotificationStore = defineStore('Notification', () => {
         if (AppDebug.errorNoty) {
             toast.dismiss(AppDebug.errorNoty);
         }
+
+
+
+
         AppDebug.errorNoty = toast.info(text);
         console.log(text);
         await notificationRequest.hideNotification({
@@ -403,14 +428,18 @@ export const useNotificationStore = defineStore('Notification', () => {
     /**
      * @param {object} entry
      */
-    function appendNotificationTableEntry(entry) {
+    function appendNotificationTableEntry(entry: object) {
+
+
+
+
         notificationTable.value.data.push(entry);
     }
 
     /**
      * @param {boolean} value
      */
-    function setNotificationInitStatus(value) {
+    function setNotificationInitStatus(value: boolean) {
         notificationInitStatus.value = value;
     }
 
@@ -421,19 +450,19 @@ export const useNotificationStore = defineStore('Notification', () => {
     /**
      * @param notificationId
      */
-    function handleNotificationSee(notificationId) {
+    function handleNotificationSee(notificationId: any) {
         removeFromArray(unseenNotifications.value, notificationId);
         if (unseenNotifications.value.length === 0) {
             uiStore.removeNotify('notification');
         }
-        const ref = notificationTable.value.data.find((n) => n.id === notificationId);
+        const ref = notificationTable.value.data.find((n) => (n as any).id === notificationId);
         if (ref) {
-            ref.seen = true;
+            (ref as any).seen = true;
         }
         database.seenNotificationV2(notificationId);
     }
 
-    const seeQueue = [];
+    const seeQueue: any = [];
     const seenIds = new Set();
     let seeProcessing = false;
 
@@ -464,7 +493,7 @@ export const useNotificationStore = defineStore('Notification', () => {
                     {
                         maxRetries: 3,
                         baseDelay: 1000,
-                        shouldRetry: (err) => err?.status === 429 || (err?.message || '').includes('429')
+                        shouldRetry: (err: any) => err?.status === 429 || (err?.message || '').includes('429')
                     }
                 );
             } catch {
@@ -483,7 +512,7 @@ export const useNotificationStore = defineStore('Notification', () => {
      * @param {string} notificationId
      * @param {number} [version]
      */
-    function queueMarkAsSeen(notificationId, version = 1) {
+    function queueMarkAsSeen(notificationId: string, version: number = 1) {
         if (seenIds.has(notificationId)) return;
         seenIds.add(notificationId);
         seeQueue.push({ id: notificationId, version });
@@ -493,8 +522,8 @@ export const useNotificationStore = defineStore('Notification', () => {
     function markAllAsSeen() {
         const unseenIds = [...unseenNotifications.value];
         for (const id of unseenIds) {
-            const ref = notificationTable.value.data.find((n) => n.id === id);
-            const version = ref?.version || 1;
+            const ref = notificationTable.value.data.find((n) => (n as any).id === id);
+            const version = (ref as any)?.version || 1;
             queueMarkAsSeen(id, version);
         }
         unseenNotifications.value = [];
@@ -504,11 +533,11 @@ export const useNotificationStore = defineStore('Notification', () => {
     /**
      * @param args
      */
-    function handleNotificationAccept(args) {
+    function handleNotificationAccept(args: any) {
         let ref;
         const array = notificationTable.value.data;
         for (let i = array.length - 1; i >= 0; i--) {
-            if (array[i].id === args.params.notificationId) {
+            if ((array[i] as any).id === args.params.notificationId) {
                 ref = array[i];
                 break;
             }
@@ -516,19 +545,19 @@ export const useNotificationStore = defineStore('Notification', () => {
         if (typeof ref === 'undefined') {
             return;
         }
-        ref.$isExpired = true;
+        (ref as any).$isExpired = true;
         args.ref = ref;
         handleNotificationExpire({
-            ref,
-            params: {
-                notificationId: ref.id
-            }
-        });
+    ref,
+    params: {
+        notificationId: (ref as any).id
+    }
+});
         handleFriendAdd({
-            params: {
-                userId: ref.senderUserId
-            }
-        });
+    params: {
+        userId: (ref as any).senderUserId
+    }
+});
 
         const D = userStore.userDialog;
         if (typeof args.ref === 'undefined' || args.ref.type !== 'friendRequest' || args.ref.senderUserId !== D.id) {
@@ -541,7 +570,7 @@ export const useNotificationStore = defineStore('Notification', () => {
     /**
      * @param args
      */
-    function handleNotificationExpire(args) {
+    function handleNotificationExpire(args: any) {
         const { ref } = args;
         const D = userStore.userDialog;
         if (ref.type !== 'friendRequest' || ref.senderUserId !== D.id) {
@@ -554,12 +583,12 @@ export const useNotificationStore = defineStore('Notification', () => {
      * @param {object} data
      * @returns {object}
      */
-    function applyNotification(data) {
+    function applyNotification(data: object) {
         const json = sanitizeNotificationJson({ ...data });
         let ref;
         const array = notificationTable.value.data;
         for (let i = array.length - 1; i >= 0; i--) {
-            if (array[i].id === json.id) {
+            if ((array[i] as any).id === (json as any).id) {
                 ref = array[i];
                 break;
             }
@@ -568,7 +597,7 @@ export const useNotificationStore = defineStore('Notification', () => {
             ref = createDefaultNotificationRef(json);
         } else {
             Object.assign(ref, json);
-            ref.$isExpired = false;
+            (ref as any).$isExpired = false;
         }
         ref.details = parseNotificationDetails(ref.details);
         return ref;
@@ -577,15 +606,23 @@ export const useNotificationStore = defineStore('Notification', () => {
     /**
      * @param data
      */
-    function applyNotificationV2(data) {
+    function applyNotificationV2(data: any) {
         const json = sanitizeNotificationJson({ ...data });
-        let ref = notificationTable.value.data.find((n) => n.id === json.id);
+        let ref = notificationTable.value.data.find((n) => (n as any).id === (json as any).id);
         if (typeof ref === 'undefined') {
             ref = createDefaultNotificationV2Ref(json);
         } else {
             Object.assign(ref, json);
         }
+
+
+
+
         ref.created_at = ref.createdAt; // for table
+
+
+
+
         applyBoopLegacyHandling(ref, AppDebug.endpointDomain);
         return ref;
     }
@@ -593,14 +630,30 @@ export const useNotificationStore = defineStore('Notification', () => {
     /**
      * @param args
      */
-    function handleNotificationV2(args) {
+    function handleNotificationV2(args: any) {
         const ref = applyNotificationV2(args.json);
+
+
+
+
         if (ref.seen) {
+
+
+
+
             removeFromArray(unseenNotifications.value, ref.id);
         } else if (!unseenNotifications.value.includes(ref.id)) {
+
+
+
+
             unseenNotifications.value.push(ref.id);
         }
-        const existingNotification = notificationTable.value.data.find((n) => n.id === ref.id);
+
+
+
+
+        const existingNotification = notificationTable.value.data.find((n) => (n as any).id === ref.id);
         if (existingNotification) {
             Object.assign(existingNotification, ref);
             database.addNotificationV2ToDatabase(existingNotification); // update
@@ -610,12 +663,24 @@ export const useNotificationStore = defineStore('Notification', () => {
         const isNotificationInitReady = !notificationInitStatus.value || !isNotificationsLoading.value;
         const matchesNotificationTypeFilter =
             notificationTable.value.filters[0].value.length === 0 ||
+
+
+
+
             notificationTable.value.filters[0].value.includes(ref.type);
         if (isNotificationInitReady && matchesNotificationTypeFilter) {
             uiStore.notifyMenu('notification');
         }
         database.addNotificationV2ToDatabase(ref);
+
+
+
+
         notificationTable.value.data.push(ref);
+
+
+
+
         queueNotificationNoty(ref);
         sharedFeedStore.addEntry(ref);
     }
@@ -623,7 +688,7 @@ export const useNotificationStore = defineStore('Notification', () => {
     /**
      * @param args
      */
-    function handleNotificationV2Update(args) {
+    function handleNotificationV2Update(args: any) {
         const notificationId = args.params.notificationId;
         const json = { ...args.json };
         if (!json) {
@@ -644,19 +709,19 @@ export const useNotificationStore = defineStore('Notification', () => {
     /**
      * @param notificationId
      */
-    function handleNotificationV2Hide(notificationId) {
+    function handleNotificationV2Hide(notificationId: any) {
         database.expireNotificationV2(notificationId);
-        const ref = notificationTable.value.data.find((n) => n.id === notificationId);
+        const ref = notificationTable.value.data.find((n) => (n as any).id === notificationId);
         if (ref) {
-            ref.expiresAt = new Date().toJSON();
-            ref.seen = true;
+            (ref as any).expiresAt = new Date().toJSON();
+            (ref as any).seen = true;
         }
     }
 
     function expireFriendRequestNotifications() {
         const array = notificationTable.value.data;
         for (let i = array.length - 1; i >= 0; i--) {
-            if (array[i].type === 'friendRequest' || array[i].type === 'ignoredFriendRequest') {
+            if ((array[i] as any).type === 'friendRequest' || (array[i] as any).type === 'ignoredFriendRequest') {
                 array.splice(i, 1);
             }
         }
@@ -665,11 +730,11 @@ export const useNotificationStore = defineStore('Notification', () => {
     /**
      * @param {string} notificationId
      */
-    function expireNotification(notificationId) {
+    function expireNotification(notificationId: string) {
         let ref;
         const array = notificationTable.value.data;
         for (let i = array.length - 1; i >= 0; i--) {
-            if (array[i].id === notificationId) {
+            if ((array[i] as any).id === notificationId) {
                 ref = array[i];
                 break;
             }
@@ -677,14 +742,14 @@ export const useNotificationStore = defineStore('Notification', () => {
         if (typeof ref === 'undefined') {
             return;
         }
-        ref.$isExpired = true;
+        (ref as any).$isExpired = true;
         database.updateNotificationExpired(ref);
         handleNotificationExpire({
-            ref,
-            params: {
-                notificationId: ref.id
-            }
-        });
+    ref,
+    params: {
+        notificationId: (ref as any).id
+    }
+});
     }
 
     /**
@@ -767,15 +832,15 @@ export const useNotificationStore = defineStore('Notification', () => {
     /**
      * @param {object} noty
      */
-    function queueNotificationNoty(noty) {
-        noty.isFriend = friendStore.friends.has(noty.senderUserId);
-        noty.isFavorite = friendStore.localFavoriteFriends.has(noty.senderUserId);
+    function queueNotificationNoty(noty: object) {
+        (noty as any).isFriend = friendStore.friends.has((noty as any).senderUserId);
+        (noty as any).isFavorite = friendStore.localFavoriteFriends.has((noty as any).senderUserId);
         const notyFilter = notificationsSettingsStore.sharedFeedFilters.noty;
         if (
-            notyFilter[noty.type] &&
-            (notyFilter[noty.type] === 'On' ||
-                notyFilter[noty.type] === 'Friends' ||
-                (notyFilter[noty.type] === 'VIP' && noty.isFavorite))
+            (notyFilter as any)[(noty as any).type] &&
+    ((notyFilter as any)[(noty as any).type] === 'On' ||
+        (notyFilter as any)[(noty as any).type] === 'Friends' ||
+        ((notyFilter as any)[(noty as any).type] === 'VIP' && (noty as any).isFavorite))
         ) {
             playNoty(noty);
         }
@@ -784,7 +849,7 @@ export const useNotificationStore = defineStore('Notification', () => {
     /**
      * @param noty
      */
-    function playNoty(noty) {
+    function playNoty(noty: any) {
         if (userStore.currentUser.status === 'busy' || !watchState.isFriendsLoaded) {
             return;
         }
@@ -801,15 +866,15 @@ export const useNotificationStore = defineStore('Notification', () => {
         if (displayName) {
             // don't play noty twice
             const notyId = `${noty.type},${displayName}`;
-            if (notyMap[notyId] && notyMap[notyId] >= noty.created_at) {
+            if ((notyMap as any)[notyId] && (notyMap as any)[notyId] >= noty.created_at) {
                 return;
             }
-            notyMap[notyId] = noty.created_at;
+            (notyMap as any)[notyId] = noty.created_at;
         }
         const bias = new Date(Date.now() - 60000).toJSON();
         for (const [notyId, createdAt] of Object.entries(notyMap)) {
-            if (createdAt < bias) {
-                delete notyMap[notyId];
+            if (createdAt as any < bias) {
+                delete (notyMap as any)[notyId];
             }
         }
         if (noty.created_at < bias) {
@@ -831,10 +896,10 @@ export const useNotificationStore = defineStore('Notification', () => {
                 !gameStore.isGameNoVR
         };
 
-        const playNotificationTTS = notiConditions[notificationsSettingsStore.notificationTTS]?.();
-        const playDesktopToast = notiConditions[notificationsSettingsStore.desktopToast]?.() || notiConditions['AFK']();
+        const playNotificationTTS = (notiConditions as any)[notificationsSettingsStore.notificationTTS]?.();
+        const playDesktopToast = (notiConditions as any)[notificationsSettingsStore.desktopToast]?.() || notiConditions['AFK']();
 
-        const playOverlayToast = notiConditions[notificationsSettingsStore.overlayToast]?.();
+        const playOverlayToast = (notiConditions as any)[notificationsSettingsStore.overlayToast]?.();
         const playOverlayNotification = notificationsSettingsStore.overlayNotifications && playOverlayToast;
         const playXSNotification = notificationsSettingsStore.xsNotifications && playOverlayToast;
         const playOvrtHudNotifications = notificationsSettingsStore.ovrtHudNotifications && playOverlayToast;
@@ -905,19 +970,19 @@ export const useNotificationStore = defineStore('Notification', () => {
      * @param {string} displayName
      * @param {string} message
      */
-    async function playNotyTTS(noty, displayName, message) {
+    async function playNotyTTS(noty: object, displayName: string, message: string) {
         if (notificationsSettingsStore.notificationTTSNickName) {
             const userId = getUserIdFromNoty(noty);
             const memo = await getUserMemo(userId);
-            if (memo.memo) {
-                const array = memo.memo.split('\n');
+            if ((memo as any).memo) {
+                const array = (memo as any).memo.split('\n');
                 const nickName = array[0];
                 displayName = nickName;
             }
         }
         const msg = getNotificationMessage(noty, message, displayName);
         if (msg) {
-            notificationsSettingsStore.speak(toNotificationText(msg.title, msg.body, noty.type));
+            notificationsSettingsStore.speak(toNotificationText(msg.title, msg.body, (noty as any).type));
         }
     }
 
@@ -941,14 +1006,12 @@ export const useNotificationStore = defineStore('Notification', () => {
      * @param {object} noty
      * @returns
      */
-    function getUserIdFromNoty(noty) {
+    function getUserIdFromNoty(noty: object) {
         const id = getUserIdFromNotyBase(noty);
         if (id) return id;
-        if (noty.displayName) {
-            return (
-                findUserByDisplayName(userStore.cachedUsers, noty.displayName, userStore.cachedUserIdsByDisplayName)
-                    ?.id ?? ''
-            );
+        if ((noty as any).displayName) {
+            return (findUserByDisplayName(userStore.cachedUsers, (noty as any).displayName, userStore.cachedUserIdsByDisplayName)
+    ?.id ?? '');
         }
         return '';
     }
@@ -956,7 +1019,7 @@ export const useNotificationStore = defineStore('Notification', () => {
     /**
      * @param gamelog
      */
-    function queueGameLogNoty(gamelog) {
+    function queueGameLogNoty(gamelog: any) {
         const noty = structuredClone(gamelog);
         let bias;
         // remove join/leave notifications when switching worlds
@@ -965,6 +1028,10 @@ export const useNotificationStore = defineStore('Notification', () => {
             // noty.type === 'BlockedOnPlayerJoined' ||
             // noty.type === 'MutedOnPlayerJoined'
         ) {
+
+
+
+
             bias = locationStore.lastLocation.date + 30 * 1000; // 30 secs
             if (Date.parse(noty.created_at) <= bias) {
                 return;
@@ -1016,11 +1083,11 @@ export const useNotificationStore = defineStore('Notification', () => {
         }
         const notyFilter = notificationsSettingsStore.sharedFeedFilters.noty;
         if (
-            notyFilter[noty.type] &&
-            (notyFilter[noty.type] === 'On' ||
-                notyFilter[noty.type] === 'Everyone' ||
-                (notyFilter[noty.type] === 'Friends' && noty.isFriend) ||
-                (notyFilter[noty.type] === 'VIP' && noty.isFavorite))
+            (notyFilter as any)[noty.type] &&
+    ((notyFilter as any)[noty.type] === 'On' ||
+        (notyFilter as any)[noty.type] === 'Everyone' ||
+        ((notyFilter as any)[noty.type] === 'Friends' && noty.isFriend) ||
+        ((notyFilter as any)[noty.type] === 'VIP' && noty.isFavorite))
         ) {
             playNoty(noty);
         }
@@ -1029,7 +1096,7 @@ export const useNotificationStore = defineStore('Notification', () => {
     /**
      * @param feed
      */
-    function queueFeedNoty(feed) {
+    function queueFeedNoty(feed: any) {
         const noty = { ...feed };
         if (noty.type === 'Avatar') {
             return;
@@ -1042,10 +1109,10 @@ export const useNotificationStore = defineStore('Notification', () => {
         noty.isFavorite = friendStore.localFavoriteFriends.has(noty.userId);
         const notyFilter = notificationsSettingsStore.sharedFeedFilters.noty;
         if (
-            notyFilter[noty.type] &&
-            (notyFilter[noty.type] === 'Everyone' ||
-                (notyFilter[noty.type] === 'Friends' && noty.isFriend) ||
-                (notyFilter[noty.type] === 'VIP' && noty.isFavorite))
+            (notyFilter as any)[noty.type] &&
+    ((notyFilter as any)[noty.type] === 'Everyone' ||
+        ((notyFilter as any)[noty.type] === 'Friends' && noty.isFriend) ||
+        ((notyFilter as any)[noty.type] === 'VIP' && noty.isFavorite))
         ) {
             playNoty(noty);
         }
@@ -1054,7 +1121,7 @@ export const useNotificationStore = defineStore('Notification', () => {
     /**
      * @param noty
      */
-    function queueFriendLogNoty(noty) {
+    function queueFriendLogNoty(noty: any) {
         if (noty.type === 'FriendRequest') {
             return;
         }
@@ -1062,10 +1129,10 @@ export const useNotificationStore = defineStore('Notification', () => {
         noty.isFavorite = friendStore.localFavoriteFriends.has(noty.userId);
         const notyFilter = notificationsSettingsStore.sharedFeedFilters.noty;
         if (
-            notyFilter[noty.type] &&
-            (notyFilter[noty.type] === 'On' ||
-                notyFilter[noty.type] === 'Friends' ||
-                (notyFilter[noty.type] === 'VIP' && noty.isFavorite))
+            (notyFilter as any)[noty.type] &&
+    ((notyFilter as any)[noty.type] === 'On' ||
+        (notyFilter as any)[noty.type] === 'Friends' ||
+        ((notyFilter as any)[noty.type] === 'VIP' && noty.isFavorite))
         ) {
             playNoty(noty);
         }
@@ -1074,7 +1141,7 @@ export const useNotificationStore = defineStore('Notification', () => {
     /**
      * @param noty
      */
-    function queueModerationNoty(noty) {
+    function queueModerationNoty(noty: any) {
         noty.isFriend = false;
         noty.isFavorite = false;
         if (noty.userId) {
@@ -1082,7 +1149,7 @@ export const useNotificationStore = defineStore('Notification', () => {
             noty.isFavorite = friendStore.localFavoriteFriends.has(noty.userId);
         }
         const notyFilter = notificationsSettingsStore.sharedFeedFilters.noty;
-        if (notyFilter[noty.type] && notyFilter[noty.type] === 'On') {
+        if ((notyFilter as any)[noty.type] && (notyFilter as any)[noty.type] === 'On') {
             playNoty(noty);
         }
     }
@@ -1091,9 +1158,21 @@ export const useNotificationStore = defineStore('Notification', () => {
         notificationInitStatus.value = false;
         let tableData = await database.getNotificationsV2();
         let notifications = await database.getNotifications();
+
+
+
+
         tableData = tableData.concat(notifications.filter((n) => !tableData.some((t) => t.id === n.id)));
+
+
+
+
         tableData.sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at));
         tableData.splice(dbVars.maxTableSize);
+
+
+
+
         notificationTable.value.data = tableData;
         refreshNotifications();
     }
@@ -1126,29 +1205,37 @@ export const useNotificationStore = defineStore('Notification', () => {
         }
         const dialog = inventoryBundleDialog.value;
         if (dialog.visible) {
+
+
+
+
             dialog.bundles.push(...newBundles);
         } else {
+
+
+
+
             dialog.bundles = newBundles;
         }
         dialog.visible = true;
     }
 
-    function getEffectiveListingPrice(listing) {
+    function getEffectiveListingPrice(listing: any) {
         if (userStore.isLocalUserVrcPlusSupporter && listing.vrcPlusDiscountPrice != null) {
             return listing.vrcPlusDiscountPrice;
         }
         return listing.priceTokens;
     }
 
-    function isListingOwned(listing) {
+    function isListingOwned(listing: any) {
         if (userStore.ownedListingIds.has(listing.id)) {
             return true;
         }
         const productIds = listing.productIds ?? [];
-        return productIds.length > 0 && productIds.every((id) => userStore.ownedProductIds.has(id));
+        return productIds.length > 0 && productIds.every((id: any) => userStore.ownedProductIds.has(id));
     }
 
-    function isListingInBundle(listing, listings) {
+    function isListingInBundle(listing: any, listings: any) {
         const productIds = listing.productIds ?? [];
         if (productIds.length === 0) {
             return false;
@@ -1158,7 +1245,7 @@ export const useNotificationStore = defineStore('Notification', () => {
             if (
                 other.id !== listing.id &&
                 bundleProductIds.length > productIds.length &&
-                productIds.every((id) => bundleProductIds.includes(id))
+                productIds.every((id: any) => bundleProductIds.includes(id))
             ) {
                 return true;
             }
@@ -1216,8 +1303,16 @@ export const useNotificationStore = defineStore('Notification', () => {
         }
         const dialog = freeStoreItemDialog.value;
         if (dialog.visible) {
+
+
+
+
             dialog.listings.push(...newListings);
         } else {
+
+
+
+
             dialog.listings = newListings;
         }
         dialog.visible = true;
@@ -1234,7 +1329,7 @@ export const useNotificationStore = defineStore('Notification', () => {
     /**
      * @param row
      */
-    function acceptFriendRequestNotification(row) {
+    function acceptFriendRequestNotification(row: any) {
         modalStore
             .confirm({
                 description: t('confirm.accept_friend_request'),
@@ -1261,7 +1356,7 @@ export const useNotificationStore = defineStore('Notification', () => {
     /**
      * @param row
      */
-    async function hideNotification(row) {
+    async function hideNotification(row: any) {
         if (row.type === 'ignoredFriendRequest') {
             await friendRequest.deleteHiddenFriendRequest({ notificationId: row.id }, row.senderUserId);
             handleNotificationHide(row.id);
@@ -1279,7 +1374,7 @@ export const useNotificationStore = defineStore('Notification', () => {
     /**
      * @param row
      */
-    function hideNotificationPrompt(row) {
+    function hideNotificationPrompt(row: any) {
         modalStore
             .confirm({
                 description: t('confirm.decline_type', { type: row.type }),
@@ -1294,7 +1389,7 @@ export const useNotificationStore = defineStore('Notification', () => {
     /**
      * @param row
      */
-    function acceptRequestInvite(row) {
+    function acceptRequestInvite(row: any) {
         modalStore
             .confirm({
                 description: t('confirm.send_invite'),
@@ -1312,26 +1407,23 @@ export const useNotificationStore = defineStore('Notification', () => {
                 const L = parseLocation(currentLocation);
                 queryRequest.fetch('world', { worldId: L.worldId }).then((args) => {
                     notificationRequest
-                        .sendInvite(
-                            {
-                                instanceId: L.tag,
-                                worldId: L.tag,
-                                worldName: args.ref.name,
-                                rsvp: true
-                            },
-                            row.senderUserId
-                        )
-                        .then((_args) => {
-                            toast(t('message.invite.sent'));
-                            notificationRequest
-                                .hideNotification({
-                                    notificationId: row.id
-                                })
-                                .then(() => {
-                                    handleNotificationHide(row.id);
-                                });
-                            return _args;
-                        });
+    .sendInvite({
+    instanceId: L.tag,
+    worldId: L.tag,
+    worldName: (args as any).ref.name,
+    rsvp: true
+}, row.senderUserId)
+    .then((_args) => {
+    toast(t('message.invite.sent'));
+    notificationRequest
+        .hideNotification({
+        notificationId: row.id
+    })
+        .then(() => {
+        handleNotificationHide(row.id);
+    });
+    return _args;
+});
                 });
             })
             .catch(() => {});
@@ -1342,7 +1434,7 @@ export const useNotificationStore = defineStore('Notification', () => {
      * @param responses
      * @param responseType
      */
-    function sendNotificationResponse(notificationId, responses, responseType) {
+    function sendNotificationResponse(notificationId: any, responses: any, responseType: any) {
         if (!Array.isArray(responses) || responses.length === 0) return;
         let responseData = '';
         for (let i = 0; i < responses.length; i++) {
@@ -1369,8 +1461,8 @@ export const useNotificationStore = defineStore('Notification', () => {
     /**
      * @param row
      */
-    function deleteNotificationLog(row) {
-        const idx = notificationTable.value.data.findIndex((e) => e.id === row.id);
+    function deleteNotificationLog(row: any) {
+        const idx = notificationTable.value.data.findIndex((e) => (e as any).id === row.id);
         if (idx !== -1) {
             notificationTable.value.data.splice(idx, 1);
         }
@@ -1386,7 +1478,7 @@ export const useNotificationStore = defineStore('Notification', () => {
     /**
      * @param row
      */
-    function deleteNotificationLogPrompt(row) {
+    function deleteNotificationLogPrompt(row: any) {
         modalStore
             .confirm({
                 // TODO: type translation
@@ -1402,7 +1494,7 @@ export const useNotificationStore = defineStore('Notification', () => {
     /**
      * @param notification
      */
-    function isNotificationExpired(notification) {
+    function isNotificationExpired(notification: any) {
         if (notification.$isExpired !== undefined) {
             return notification.$isExpired;
         }
@@ -1416,7 +1508,7 @@ export const useNotificationStore = defineStore('Notification', () => {
     /**
      * @param link
      */
-    function openNotificationLink(link) {
+    function openNotificationLink(link: any) {
         if (!link) {
             return;
         }

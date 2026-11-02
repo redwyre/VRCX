@@ -178,6 +178,10 @@ export const useNotificationsSettingsStore = defineStore('NotificationsSettings'
         freeStoreItemNotifications.value = freeStoreItemNotificationsConfig;
         sharedFeedFilters.value = JSON.parse(sharedFeedFiltersConfig);
         notificationTTSVoice.value = Number(notificationTTSVoiceConfig);
+
+
+
+
         TTSvoices.value = speechSynthesis.getVoices();
         notificationPosition.value = notificationPositionConfig;
         notificationTimeout.value = Number(notificationTimeoutConfig);
@@ -192,7 +196,7 @@ export const useNotificationsSettingsStore = defineStore('NotificationsSettings'
 
     initNotificationsSettings();
 
-    function setOverlayToast(value) {
+    function setOverlayToast(value: string) {
         overlayToast.value = value;
         configRepository.setString('VRCX_overlayToast', value);
     }
@@ -221,7 +225,7 @@ export const useNotificationsSettingsStore = defineStore('NotificationsSettings'
         configRepository.setBool('VRCX_imageNotifications', imageNotifications.value);
     }
 
-    function changeNotificationPosition(value) {
+    function changeNotificationPosition(value: string) {
         notificationPosition.value = value;
         configRepository.setString('VRCX_notificationPosition', notificationPosition.value);
         vrStore.updateVRConfigVars();
@@ -229,7 +233,7 @@ export const useNotificationsSettingsStore = defineStore('NotificationsSettings'
     /**
      * @param {string} value
      */
-    function setDesktopToast(value) {
+    function setDesktopToast(value: string) {
         desktopToast.value = value;
         configRepository.setString('VRCX_desktopToast', value);
     }
@@ -240,7 +244,7 @@ export const useNotificationsSettingsStore = defineStore('NotificationsSettings'
     /**
      * @param {string} value
      */
-    function setNotificationTTS(value) {
+    function setNotificationTTS(value: string) {
         notificationTTS.value = value;
         configRepository.setString('VRCX_notificationTTS', value);
     }
@@ -310,7 +314,7 @@ export const useNotificationsSettingsStore = defineStore('NotificationsSettings'
             sharedFeedFilters.value.wrist.boop = 'Friends';
         }
     }
-    function setNotificationTTSVoice(index) {
+    function setNotificationTTSVoice(index: number) {
         notificationTTSVoice.value = index;
         configRepository.setString('VRCX_notificationTTSVoice', notificationTTSVoice.value.toString());
     }
@@ -331,7 +335,7 @@ export const useNotificationsSettingsStore = defineStore('NotificationsSettings'
         return voices[notificationTTSVoice.value].name;
     }
 
-    async function changeTTSVoice(index) {
+    async function changeTTSVoice(index: any) {
         setNotificationTTSVoice(index);
         let voices;
         if (WINDOWS) {
@@ -348,20 +352,24 @@ export const useNotificationsSettingsStore = defineStore('NotificationsSettings'
     }
 
     function updateTTSVoices() {
+
+
+
+
         TTSvoices.value = speechSynthesis.getVoices();
         if (LINUX) {
             const voices = speechSynthesis.getVoices();
-            let uniqueVoices = [];
+            let uniqueVoices: any = [];
             voices.forEach((voice) => {
-                if (!uniqueVoices.some((v) => v.lang === voice.lang)) {
+                if (!uniqueVoices.some((v: { lang: string; }) => v.lang === voice.lang)) {
                     uniqueVoices.push(voice);
                 }
             });
-            uniqueVoices = uniqueVoices.filter((v) => v.lang.startsWith('en'));
+            uniqueVoices = uniqueVoices.filter((v: { lang: string; }) => v.lang.startsWith('en'));
             TTSvoices.value = uniqueVoices;
         }
     }
-    async function saveNotificationTTS(value) {
+    async function saveNotificationTTS(value: string) {
         speechSynthesis.cancel();
         if ((await configRepository.getString('VRCX_notificationTTS')) === 'Never' && value !== 'Never') {
             speak('Notification text-to-speech enabled');
@@ -374,7 +382,7 @@ export const useNotificationsSettingsStore = defineStore('NotificationsSettings'
         speak(notificationTTSTest.value);
     }
 
-    function speak(text) {
+    function speak(text: string) {
         const tts = new SpeechSynthesisUtterance();
         const voices = speechSynthesis.getVoices();
         if (voices.length === 0) {
@@ -392,7 +400,7 @@ export const useNotificationsSettingsStore = defineStore('NotificationsSettings'
     /**
      * @param {number} seconds - Timeout in seconds
      */
-    function setNotificationTimeout(seconds) {
+    function setNotificationTimeout(seconds: number) {
         const ms = Math.trunc(Number(seconds) * 1000);
         if (isNaN(ms) || ms < 0) return;
         notificationTimeout.value = ms;

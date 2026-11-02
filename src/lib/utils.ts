@@ -2,7 +2,7 @@ import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { h, isVNode, render } from 'vue';
 
-export function cn(...inputs) {
+export function cn(...inputs: any[]) {
     return twMerge(clsx(inputs));
 }
 
@@ -10,7 +10,7 @@ export function cn(...inputs) {
  * Turn a sth into a vnode (nonconsentually) stolen from here:
  * https://github.com/TanStack/table/blob/70dbd624e5866ec56e10ba0659749e9bb3de9a92/packages/vue-table/src/FlexRender.ts#L12
  */
-function toVNode(renderable, props) {
+function toVNode(renderable: any, props: null | undefined) {
     if (typeof renderable === 'function') {
         const rendered = renderable(props);
 
@@ -35,7 +35,7 @@ function toVNode(renderable, props) {
 /**
  * Renders sth into raw html. Could be a component, jsx, a primitive what ever `h` does not choke on
  */
-export function renderToHtml(renderable, props) {
+export function renderToHtml(renderable: any, props: any) {
     const container = document.createElement('div');
     const vnode = toVNode(renderable, props);
     // if vnode is null, this whill clean up the container: https://github.com/vuejs/core/blob/cb3d01416c8bdcde5b8497937b87caf201704182/packages/runtime-core/src/renderer.ts#L2400-L2404

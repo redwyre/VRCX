@@ -4,7 +4,7 @@
  * @param {string | null} groupName
  * @returns {string}
  */
-function displayLocation(location, worldName, groupName = '') {
+function displayLocation(location: string, worldName: string, groupName: string | null = '') {
     let text = worldName;
     const L = parseLocation(location);
     if (L.isOffline) {
@@ -27,7 +27,7 @@ function displayLocation(location, worldName, groupName = '') {
  * @param {string} tag
  * @returns
  */
-function parseLocation(tag) {
+function parseLocation(tag: string) {
     let _tag = String(tag || '');
     const ctx = {
         tag: _tag,
@@ -78,18 +78,38 @@ function parseLocation(tag) {
                     const key = Z >= 0 ? s.substr(0, A) : s;
                     const value = A < Z ? s.substr(A + 1, Z - A - 1) : '';
                     if (key === 'hidden') {
+
+
+
+
                         ctx.hiddenId = value;
                     } else if (key === 'private') {
+
+
+
+
                         ctx.privateId = value;
                     } else if (key === 'friends') {
+
+
+
+
                         ctx.friendsId = value;
                     } else if (key === 'canRequestInvite') {
                         ctx.canRequestInvite = true;
                     } else if (key === 'region') {
                         ctx.region = value;
                     } else if (key === 'group') {
+
+
+
+
                         ctx.groupId = value;
                     } else if (key === 'groupAccessType') {
+
+
+
+
                         ctx.groupAccessType = value;
                     } else if (key === 'strict') {
                         ctx.strict = true;
@@ -141,14 +161,14 @@ function parseLocation(tag) {
  * @param {object} L - A parsed location object from parseLocation()
  * @returns {string} Region code (e.g. 'us', 'eu', 'jp') or empty string
  */
-function resolveRegion(L) {
-    if (L.isOffline || L.isPrivate || L.isTraveling) {
+function resolveRegion(L: object) {
+    if ((L as any).isOffline || (L as any).isPrivate || (L as any).isTraveling) {
         return '';
     }
-    if (L.region) {
-        return L.region;
+    if ((L as any).region) {
+        return (L as any).region;
     }
-    if (L.instanceId) {
+    if ((L as any).instanceId) {
         return 'us';
     }
     return '';
@@ -160,13 +180,17 @@ function resolveRegion(L) {
  * @param {object} keyMap - Mapping of access type names to locale keys
  * @returns {string} Translated access type label
  */
-function translateAccessType(accessTypeName, t, keyMap) {
-    const key = keyMap[accessTypeName];
+
+
+
+
+function translateAccessType(accessTypeName: string, t: function, keyMap: object) {
+    const key = (keyMap as any)[accessTypeName];
     if (!key) {
         return accessTypeName;
     }
     if (accessTypeName === 'groupPublic' || accessTypeName === 'groupPlus') {
-        const groupKey = keyMap['group'];
+        const groupKey = (keyMap as any)['group'];
         return t(groupKey) + ' ' + t(key);
     }
     return t(key);

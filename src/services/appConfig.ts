@@ -32,7 +32,7 @@ window.dayjs = dayjs;
  * @param {string | unknown[]} target
  * @param {...any} rest
  */
-export function logWebRequest(tag, target, ...rest) {
+export function logWebRequest(tag: string, target: string | unknown[], ...rest: any[]) {
     if (!AppDebug.debugWebRequests) return;
     console.log(tag, target, ...rest);
 }
@@ -48,7 +48,7 @@ let _queryLogDepth = 0;
  * @param {() => Promise<T>} fn
  * @returns {Promise<T>}
  */
-export async function withQueryLog(fn) {
+export async function withQueryLog<T>(fn: () => Promise<T>) {
     _queryLogDepth++;
     try {
         return await fn();

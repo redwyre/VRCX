@@ -8,7 +8,7 @@ import { queryKeys } from './keys';
  * @param userId
  * @param options
  */
-export function useUserQuery(userId, options = {}) {
+export function useUserQuery(userId: any, options = {}) {
     return useQuery({
         ...options,
         queryKey: queryKeys.user(userId),
@@ -22,7 +22,7 @@ export function useUserQuery(userId, options = {}) {
  * @param avatarId
  * @param options
  */
-export function useAvatarQuery(avatarId, options = {}) {
+export function useAvatarQuery(avatarId: any, options = {}) {
     return useQuery({
         ...options,
         queryKey: queryKeys.avatar(avatarId),
@@ -36,7 +36,7 @@ export function useAvatarQuery(avatarId, options = {}) {
  * @param worldId
  * @param options
  */
-export function useWorldQuery(worldId, options = {}) {
+export function useWorldQuery(worldId: any, options = {}) {
     return useQuery({
         ...options,
         queryKey: queryKeys.world(worldId),
@@ -51,7 +51,7 @@ export function useWorldQuery(worldId, options = {}) {
  * @param includeRoles
  * @param options
  */
-export function useGroupQuery(groupId, includeRoles = false, options = {}) {
+export function useGroupQuery(groupId: any, includeRoles = false, options = {}) {
     return useQuery({
         ...options,
         queryKey: queryKeys.group(groupId, includeRoles),

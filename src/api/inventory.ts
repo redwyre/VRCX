@@ -27,11 +27,11 @@ const inventoryReq = {
     getUserInventoryItem(params: {
         inventoryId: string;
         userId: string;
-        flags;
-    }): Promise<{ json: Json<InventoryItem>; params }> {
+        flags: any;
+    }): Promise<{ json: Json<InventoryItem>; params: any }> {
         return request(`user/${params.userId}/inventory/${params.inventoryId}`, {
             method: 'GET'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -40,11 +40,11 @@ const inventoryReq = {
         });
     },
 
-    getInventoryItem(params: { inventoryId: string }): Promise<{ json: Json<InventoryItem>; params }> {
+    getInventoryItem(params: { inventoryId: string }): Promise<{ json: Json<InventoryItem>; params: any }> {
         return request(`inventory/${params.inventoryId}`, {
             method: 'GET',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -59,7 +59,7 @@ const inventoryReq = {
         return request('inventory', {
             method: 'GET',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -70,11 +70,11 @@ const inventoryReq = {
 
     consumeInventoryBundle(params: {
         inventoryId: string;
-    }): Promise<{ json: Json<InventoryConsumptionResults>; params }> {
+    }): Promise<{ json: Json<InventoryConsumptionResults>; params: any }> {
         return request(`inventory/${params.inventoryId}/consume`, {
             method: 'PUT',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -84,11 +84,11 @@ const inventoryReq = {
         });
     },
 
-    getInventoryTemplate(params: { inventoryTemplateId: string }): Promise<{ json: Json<InventoryTemplate>; params }> {
+    getInventoryTemplate(params: { inventoryTemplateId: string }): Promise<{ json: Json<InventoryTemplate>; params: any }> {
         return request(`inventory/template/${params.inventoryTemplateId}`, {
             method: 'GET',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -103,7 +103,7 @@ const inventoryReq = {
         return request('reward/redeem', {
             method: 'POST',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -113,10 +113,10 @@ const inventoryReq = {
         });
     },
 
-    getGlobalInventory(): Promise<{ json: any; params }> {
+    getGlobalInventory(): Promise<{ json: any; params: any }> {
         return request('inventory/global', {
             method: 'GET'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params: {}
@@ -129,7 +129,7 @@ const inventoryReq = {
         return request('inventory', {
             method: 'GET',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -144,7 +144,7 @@ const inventoryReq = {
         return request(`inventory/${params.inventoryId}/equip`, {
             method: 'PUT',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -161,7 +161,7 @@ const inventoryReq = {
             params: {
                 isArchived: true
             }
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -178,7 +178,7 @@ const inventoryReq = {
             params: {
                 isArchived: false
             }
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params

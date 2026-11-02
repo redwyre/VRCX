@@ -21,6 +21,10 @@ vi.mock('../../../plugins/router', () => ({
 vi.mock('vue-router', async (importOriginal) => {
     const actual = await importOriginal();
     return {
+
+
+
+
         ...actual,
         useRouter: vi.fn(() => ({
             push: vi.fn(),
@@ -72,7 +76,7 @@ vi.mock('vee-validate', () => ({
     Field: {
         name: 'VeeField',
         props: ['name'],
-        setup(_props, { slots }) {
+        setup(_props: any, { slots }: any) {
             return () =>
                 slots.default?.({
                     field: { value: '', onChange: () => {}, onBlur: () => {} },
@@ -81,7 +85,7 @@ vi.mock('vee-validate', () => ({
         }
     },
     useForm: vi.fn(() => ({
-        handleSubmit: (fn) => fn,
+        handleSubmit: (fn: any) => fn,
         resetForm: vi.fn(),
         values: {}
     }))

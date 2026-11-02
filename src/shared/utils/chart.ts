@@ -1,4 +1,4 @@
-let echarts = null;
+let echarts: typeof import("echarts") | PromiseLike<typeof import("echarts")> | null = null;
 
 // lazy load echarts
 function loadEcharts() {

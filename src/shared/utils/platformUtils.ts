@@ -2,11 +2,15 @@
  * @param {object} unityPackages
  * @returns {{ isPC: boolean; isQuest: boolean; isIos: boolean }}
  */
-function getAvailablePlatforms(unityPackages) {
+function getAvailablePlatforms(unityPackages: object) {
     let isPC = false;
     let isQuest = false;
     let isIos = false;
     if (typeof unityPackages === 'object') {
+
+
+
+
         for (const unityPackage of unityPackages) {
             if (unityPackage.variant && unityPackage.variant !== 'standard' && unityPackage.variant !== 'security') {
                 continue;

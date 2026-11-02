@@ -8,23 +8,23 @@ import {
     computeActivityView,
     computeOverlapView,
     findBestOverlapTimeFromBuckets
-} from './activityEngine.js';
+} from './activityEngine';
 
 export { ONLINE_SESSION_MERGE_GAP_MS };
 
-export function buildSessionsFromEvents(events) {
+export function buildSessionsFromEvents(events: { created_at: string; type: string; }[]) {
     return engineBuildSessionsFromEvents(events).sessions;
 }
 
-export function buildSessionsFromGamelog(rows, mergeGapMs = ONLINE_SESSION_MERGE_GAP_MS) {
+export function buildSessionsFromGamelog(rows: string | any[], mergeGapMs = ONLINE_SESSION_MERGE_GAP_MS) {
     return engineBuildSessionsFromGamelog(rows, mergeGapMs);
 }
 
-export function filterSessionsByPeriod(sessions, cutoffMs) {
+export function filterSessionsByPeriod(sessions: { start: number; end: number; }[], cutoffMs: number) {
     return clipSessionsToRange(sessions, cutoffMs, Date.now());
 }
 
-export function calculateOverlapGrid(sessionsA, sessionsB) {
+export function calculateOverlapGrid(sessionsA: string | any[], sessionsB: string | any[]) {
     const nowMs = Date.now();
     const rawBuckets = buildOverlapBuckets(sessionsA, sessionsB, 0, nowMs);
     const grid = Array.from({ length: 7 }, () => new Array(24).fill(0));
@@ -51,7 +51,7 @@ export function calculateOverlapGrid(sessionsA, sessionsB) {
     };
 }
 
-export function aggregateSessionsToGrid(sessions) {
+export function aggregateSessionsToGrid(sessions: { start: number; end: number; }[]) {
     const rawBuckets = buildHeatmapBuckets(sessions, 0, Date.now());
     const grid = Array.from({ length: 7 }, () => new Array(24).fill(0));
     let maxVal = 0;
@@ -65,7 +65,7 @@ export function aggregateSessionsToGrid(sessions) {
     return { grid, maxVal };
 }
 
-export function findBestOverlapTime(grid, dayLabels) {
+export function findBestOverlapTime(grid: any[][], dayLabels: string[]) {
     const buckets = [];
     for (let day = 0; day < 7; day++) {
         for (let hour = 0; hour < 24; hour++) {
@@ -77,6 +77,6 @@ export function findBestOverlapTime(grid, dayLabels) {
 
 export { computeActivityView, computeOverlapView };
 
-function sumDurations(sessions) {
-    return sessions.reduce((sum, session) => sum + (session.end - session.start), 0);
+function sumDurations(sessions: any) {
+    return sessions.reduce((sum: number, session: { end: number; start: number; }) => sum + (session.end - session.start), 0);
 }

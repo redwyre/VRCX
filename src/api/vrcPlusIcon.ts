@@ -19,7 +19,7 @@ const VRCPlusIconsReq = {
         return request('files', {
             method: 'GET',
             params
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params
@@ -31,7 +31,7 @@ const VRCPlusIconsReq = {
     deleteFile(fileId: string): Promise<{ json: Json<File>; fileId: string }> {
         return request(`file/${fileId}`, {
             method: 'DELETE'
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 fileId
@@ -50,7 +50,7 @@ const VRCPlusIconsReq = {
             matchingDimensions: true,
             postData: JSON.stringify(params),
             imageData
-        }).then((json) => {
+        }).then((json: any) => {
             const args = {
                 json,
                 params

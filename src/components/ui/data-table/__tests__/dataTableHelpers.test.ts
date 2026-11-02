@@ -10,7 +10,7 @@ import {
 } from '../dataTableHelpers';
 
 // Helper to create a mock TanStack column instance
-const mockCol = (id, meta = {}, overrides = {}) => ({
+const mockCol = (id: string, meta = {}, overrides = {}) => ({
     id,
     columnDef: { meta },
     ...overrides
@@ -26,7 +26,15 @@ describe('isSpacer', () => {
     });
 
     it('returns false for null/undefined', () => {
+
+
+
+
         expect(isSpacer(null)).toBe(false);
+
+
+
+
         expect(isSpacer(undefined)).toBe(false);
     });
 });
@@ -41,6 +49,10 @@ describe('isStretch', () => {
     });
 
     it('returns false for null column', () => {
+
+
+
+
         expect(isStretch(null)).toBe(false);
     });
 });
@@ -60,10 +72,18 @@ describe('resolveHeaderLabel', () => {
     });
 
     it('returns empty string for null column', () => {
+
+
+
+
         expect(resolveHeaderLabel(null)).toBe('');
     });
 
     it('returns empty string for undefined column', () => {
+
+
+
+
         expect(resolveHeaderLabel(undefined)).toBe('');
     });
 });
@@ -102,6 +122,10 @@ describe('getToggleableColumns', () => {
     });
 
     it('returns empty array for non-array input', () => {
+
+
+
+
         expect(getToggleableColumns(null)).toEqual([]);
     });
 
@@ -167,6 +191,10 @@ describe('isReorderable', () => {
     });
 
     it('returns false for null header', () => {
+
+
+
+
         expect(isReorderable(null, noPinning)).toBe(false);
     });
 

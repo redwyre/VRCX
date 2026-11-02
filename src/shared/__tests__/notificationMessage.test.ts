@@ -1,8 +1,13 @@
+// TODO(ts-migrate): Check that this import is the one meant; TypeScript offered the name from
+// several modules.
+// describe was taken from vitest, over node:test. test was taken from vitest, over node:test
+// and node:test.
+import { vi, describe, test, expect } from 'vitest';
 import { getNotificationMessage, getUserIdFromNoty, toNotificationText } from '../utils/notificationMessage';
 
 // Mock displayLocation to return a predictable string
 vi.mock('../utils', () => ({
-    displayLocation: (location, worldName, groupName) => {
+    displayLocation: (location: any, worldName: any, groupName: any) => {
         let text = worldName || location;
         if (groupName) text += ` (${groupName})`;
         return text;
@@ -40,8 +45,20 @@ describe('getNotificationMessage', () => {
             },
             ''
         );
+
+
+
+
         expect(result.title).toBe('Alice');
+
+
+
+
         expect(result.body).toContain('is in');
+
+
+
+
         expect(result.body).toContain('TestWorld');
     });
 
@@ -56,8 +73,20 @@ describe('getNotificationMessage', () => {
             },
             ''
         );
+
+
+
+
         expect(result.title).toBe('Alice');
+
+
+
+
         expect(result.body).toContain('has logged in');
+
+
+
+
         expect(result.body).toContain('Lobby');
     });
 
@@ -99,9 +128,25 @@ describe('getNotificationMessage', () => {
             },
             ' (msg)'
         );
+
+
+
+
         expect(result.title).toBe('Bob');
+
+
+
+
         expect(result.body).toContain('has invited you to');
+
+
+
+
         expect(result.body).toContain('Hub');
+
+
+
+
         expect(result.body).toContain('(msg)');
     });
 
@@ -165,7 +210,15 @@ describe('getNotificationMessage', () => {
             },
             ''
         );
+
+
+
+
         expect(result.title).toBe('Alice');
+
+
+
+
         expect(result.body).toContain('has spawned a portal to');
     });
 
