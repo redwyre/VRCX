@@ -7,9 +7,11 @@
         "src/**/*.js",
         "src/**/*.ts",
         "src/**/*.jsx",
+        "src/**/*.tsx",
         "src/**/*.vue",
         "src/types/**/*.d.ts",
-        "src-electron/**/*.js"
+        "src-electron/**/*.js",
+        "src-electron/**/*.ts"
     ],
     "exclude": [
         "node_modules",
