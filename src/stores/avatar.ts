@@ -3,6 +3,8 @@ import { defineStore } from 'pinia';
 
 import { checkVRChatCache, formatFileSize } from '../shared/utils';
 import { queryRequest } from '../api';
+import type { VrcxAvatar, VrcxFileAnalysis } from '../types/vrcx';
+import type { UnityPackage } from 'vrchat';
 import { getAvatarHistory, preloadOwnAvatars } from '../coordinators/avatarCoordinator';
 import { database } from '../services/database';
 import { watchState } from '../services/watchState';
@@ -19,7 +21,7 @@ export const useAvatarStore = defineStore('Avatar', () => {
         lastActiveTab: 'Info',
         id: '',
         memo: '',
-        ref: {},
+        ref: {} as VrcxAvatar,
         isFavorite: false,
         isBlocked: false,
         isQuestFallback: false,
@@ -28,14 +30,14 @@ export const useAvatarStore = defineStore('Avatar', () => {
         isPC: false,
         isQuest: false,
         isIos: false,
-        platformInfo: {},
+        platformInfo: {} as Record<'pc' | 'android' | 'ios', Partial<UnityPackage>>,
         galleryImages: [],
         galleryLoading: false,
         inCache: false,
         cacheSize: '',
         cacheLocked: false,
         cachePath: '',
-        fileAnalysis: {},
+        fileAnalysis: {} as VrcxFileAnalysis,
         timeSpent: 0
     });
     const avatarHistory = ref([]);
@@ -92,27 +94,29 @@ export const useAvatarStore = defineStore('Avatar', () => {
         }
         D.galleryImages = [];
         // wtf is this? why is order sorting only needed if it's your own avatar?
-const sortedGallery = (args as any).json.sort((a: {
-    order: number;
-}, b: {
-    order: number;
-}) => {
-    if (!a.order && !b.order) {
-        return 0;
-    }
-    return a.order - b.order;
-});
+        const sortedGallery = (args as any).json.sort(
+            (
+                a: {
+                    order: number;
+                },
+                b: {
+                    order: number;
+                }
+            ) => {
+                if (!a.order && !b.order) {
+                    return 0;
+                }
+                return a.order - b.order;
+            }
+        );
         for (const file of sortedGallery) {
             const url = file.versions[file.versions.length - 1].file.url;
-
-
-
 
             D.galleryImages.push({ id: file.id, url });
         }
 
         // for JSON tab treeData
-(D.ref as any).gallery = (args as any).json;
+        (D.ref as any).gallery = (args as any).json;
         return D.galleryImages;
     }
 
@@ -179,10 +183,6 @@ const sortedGallery = (args as any).json.sort((a: {
      * @param {Array} value
      */
     function setAvatarHistory(value: Array<any>) {
-
-
-
-
         avatarHistory.value = value;
     }
 

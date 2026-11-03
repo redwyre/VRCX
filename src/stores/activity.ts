@@ -92,12 +92,12 @@ function isUserInFlight(userId: any) {
     return false;
 }
 
-function clearDerivedViews(snapshot: { activityViews: { clear: () => void; }; overlapViews: { clear: () => void; }; }) {
+function clearDerivedViews(snapshot: { activityViews: { clear: () => void }; overlapViews: { clear: () => void } }) {
     snapshot.activityViews.clear();
     snapshot.overlapViews.clear();
 }
 
-function overlapExcludeKey(excludeHours: { enabled: any; startHour: any; endHour: any; }) {
+function overlapExcludeKey(excludeHours: { enabled: any; startHour: any; endHour: any }) {
     if (!excludeHours?.enabled) {
         return '';
     }
@@ -148,7 +148,13 @@ export const useActivityStore = defineStore('Activity', () => {
 
     async function loadActivity(
         userId: any,
-        { isSelf = false, rangeDays = 30, normalizeConfig, dayLabels, forceRefresh = false }: { isSelf: boolean; rangeDays: number; dayLabels: any; forceRefresh: boolean; normalizeConfig: any; }
+        {
+            isSelf = false,
+            rangeDays = 30,
+            normalizeConfig,
+            dayLabels,
+            forceRefresh = false
+        }: { isSelf: boolean; rangeDays: number; dayLabels: any; forceRefresh: boolean; normalizeConfig: any }
     ) {
         const snapshot = await ensureSnapshot(userId, {
             isSelf,
@@ -171,29 +177,13 @@ export const useActivityStore = defineStore('Activity', () => {
             });
             if ((persisted as any)?.builtFromCursor === currentCursor) {
                 view = {
-
-
-
-
                     ...persisted.summary,
-
-
-
 
                     rawBuckets: persisted.rawBuckets,
 
-
-
-
                     normalizedBuckets: persisted.normalizedBuckets,
 
-
-
-
                     builtFromCursor: persisted.builtFromCursor,
-
-
-
 
                     builtAt: persisted.builtAt
                 };
@@ -202,17 +192,13 @@ export const useActivityStore = defineStore('Activity', () => {
             }
         }
 
-        const computed = await workerCall('computeActivityView', {
+        const computed = (await workerCall('computeActivityView', {
             sessions: snapshot.sessions,
             dayLabels,
             rangeDays,
             normalizeConfig
-        });
+        })) as Record<string, any>;
         view = {
-
-
-
-
             ...computed,
             builtFromCursor: currentCursor,
             builtAt: new Date().toISOString()
@@ -240,7 +226,13 @@ export const useActivityStore = defineStore('Activity', () => {
     async function loadOverlap(
         currentUserId: any,
         targetUserId: any,
-        { rangeDays = 30, dayLabels, normalizeConfig, excludeHours, forceRefresh = false }: { rangeDays: number; dayLabels: any; excludeHours: any; forceRefresh: boolean; normalizeConfig: any; }
+        {
+            rangeDays = 30,
+            dayLabels,
+            normalizeConfig,
+            excludeHours,
+            forceRefresh = false
+        }: { rangeDays: number; dayLabels: any; excludeHours: any; forceRefresh: boolean; normalizeConfig: any }
     ) {
         const [selfSnapshot, targetSnapshot] = await Promise.all([
             ensureSnapshot(currentUserId, {
@@ -274,12 +266,12 @@ export const useActivityStore = defineStore('Activity', () => {
             });
             if ((persisted as any)?.builtFromCursor === cursor) {
                 view = {
-    ...(persisted as any).summary,
-    rawBuckets: (persisted as any).rawBuckets,
-    normalizedBuckets: (persisted as any).normalizedBuckets,
-    builtFromCursor: (persisted as any).builtFromCursor,
-    builtAt: (persisted as any).builtAt
-};
+                    ...(persisted as any).summary,
+                    rawBuckets: (persisted as any).rawBuckets,
+                    normalizedBuckets: (persisted as any).normalizedBuckets,
+                    builtFromCursor: (persisted as any).builtFromCursor,
+                    builtAt: (persisted as any).builtAt
+                };
                 targetSnapshot.overlapViews.set(cacheKey, view);
                 return view;
             }
@@ -323,7 +315,15 @@ export const useActivityStore = defineStore('Activity', () => {
      * @param {string} userId
      * @param {{ rangeDays?: number; limit?: number; sortBy?: 'time' | 'count'; excludeWorldId?: string }} options
      */
-    async function loadTopWorlds(userId: string, { rangeDays = 30, limit = 5, sortBy = 'time', excludeWorldId = '' }: { rangeDays?: number; limit?: number; sortBy?: 'time' | 'count'; excludeWorldId?: string; }) {
+    async function loadTopWorlds(
+        userId: string,
+        {
+            rangeDays = 30,
+            limit = 5,
+            sortBy = 'time',
+            excludeWorldId = ''
+        }: { rangeDays?: number; limit?: number; sortBy?: 'time' | 'count'; excludeWorldId?: string }
+    ) {
         void userId;
         return database.getMyTopWorlds(rangeDays, limit, sortBy, excludeWorldId);
     }
@@ -383,7 +383,19 @@ export const useActivityStore = defineStore('Activity', () => {
      *     excludeWorldId?: string;
      * }} options
      */
-    async function loadTopWorldsView({ userId, rangeDays = 30, limit = 5, sortBy = 'time', excludeWorldId = '' }: { userId: string; rangeDays?: number; limit?: number; sortBy?: 'time' | 'count'; excludeWorldId?: string; }) {
+    async function loadTopWorldsView({
+        userId,
+        rangeDays = 30,
+        limit = 5,
+        sortBy = 'time',
+        excludeWorldId = ''
+    }: {
+        userId: string;
+        rangeDays?: number;
+        limit?: number;
+        sortBy?: 'time' | 'count';
+        excludeWorldId?: string;
+    }) {
         return loadTopWorlds(userId, {
             rangeDays,
             limit,
@@ -437,16 +449,13 @@ export const useActivityStore = defineStore('Activity', () => {
                 targetDays = Math.min(targetDays + FULL_CACHE_BATCH_DAYS, totalDays);
                 const nextTarget = targetDays;
 
-                await new Promise((resolve) => {
+                await new Promise<void>((resolve) => {
                     const callback = async () => {
                         try {
                             await expandRange(snapshot, nextTarget);
                         } catch (error) {
                             console.error('[Activity] full cache batch failed:', error);
                         }
-
-
-
 
                         resolve();
                     };
@@ -513,7 +522,10 @@ export const useActivityStore = defineStore('Activity', () => {
     };
 });
 
-function buildActivityResponse(snapshot: { userId: any; isSelf: any; sync: { cachedRangeDays: any; }; sessions: any; }, view: any) {
+function buildActivityResponse(
+    snapshot: { userId: any; isSelf: any; sync: { cachedRangeDays: any }; sessions: any },
+    view: any
+) {
     return {
         userId: snapshot.userId,
         isSelf: snapshot.isSelf,
@@ -536,14 +548,11 @@ async function hydrateSnapshot(userId: any, isSelf: boolean) {
 
     if (syncState) {
         snapshot.sync = {
-    ...snapshot.sync,
+            ...snapshot.sync,
 
-
-
-
-    ...syncState,
-    isSelf: typeof (syncState as any).isSelf === 'boolean' ? (syncState as any).isSelf : snapshot.isSelf
-};
+            ...syncState,
+            isSelf: typeof (syncState as any).isSelf === 'boolean' ? (syncState as any).isSelf : snapshot.isSelf
+        };
     }
     if (sessions.length > 0) {
         snapshot.sessions = sessions;
@@ -551,7 +560,10 @@ async function hydrateSnapshot(userId: any, isSelf: boolean) {
     return snapshot;
 }
 
-async function ensureSnapshot(userId: any, { isSelf, rangeDays, forceRefresh = false }: { isSelf: boolean; rangeDays: number; forceRefresh: boolean; }) {
+async function ensureSnapshot(
+    userId: any,
+    { isSelf, rangeDays, forceRefresh = false }: { isSelf: boolean; rangeDays: number; forceRefresh: boolean }
+) {
     const jobKey = `${userId}:${isSelf}:${rangeDays}:${forceRefresh ? 'force' : 'normal'}`;
     const existingJob = inFlightJobs.get(jobKey);
     if (existingJob) {
@@ -596,13 +608,13 @@ async function fullRefresh(snapshot: any, rangeDays: any) {
 
     snapshot.sessions = (result as any).sessions;
     snapshot.sync = {
-    ...snapshot.sync,
-    updatedAt: new Date().toISOString(),
-    isSelf: snapshot.isSelf,
-    sourceLastCreatedAt,
-    pendingSessionStartAt: (result as any).pendingSessionStartAt,
-    cachedRangeDays: rangeDays
-};
+        ...snapshot.sync,
+        updatedAt: new Date().toISOString(),
+        isSelf: snapshot.isSelf,
+        sourceLastCreatedAt,
+        pendingSessionStartAt: (result as any).pendingSessionStartAt,
+        cachedRangeDays: rangeDays
+    };
     clearDerivedViews(snapshot);
 
     deferWrite(() => database.replaceActivitySessionsV2(snapshot.userId, snapshot.sessions));
@@ -642,11 +654,11 @@ async function incrementalRefresh(snapshot: any) {
     const merged = mergeSessions(snapshot.sessions, (result as any).sessions);
     snapshot.sessions = merged;
     snapshot.sync = {
-    ...snapshot.sync,
-    updatedAt: new Date().toISOString(),
-    sourceLastCreatedAt,
-    pendingSessionStartAt: (result as any).pendingSessionStartAt
-};
+        ...snapshot.sync,
+        updatedAt: new Date().toISOString(),
+        sourceLastCreatedAt,
+        pendingSessionStartAt: (result as any).pendingSessionStartAt
+    };
     clearDerivedViews(snapshot);
 
     const tailSessions =
@@ -696,60 +708,64 @@ async function expandRange(snapshot: any, rangeDays: any) {
 
 function pickActivityNormalizeConfig(isSelf: boolean, rangeDays: number) {
     const role = isSelf ? 'self' : 'friend';
-    return (({
-    self: {
-        7: {
-            floorPercentile: 10,
-            capPercentile: 80,
-            rankWeight: 0.15,
-            targetCoverage: 0.12,
-            targetVolume: 40
-        },
-        30: {
+    return (
+        (
+            {
+                self: {
+                    7: {
+                        floorPercentile: 10,
+                        capPercentile: 80,
+                        rankWeight: 0.15,
+                        targetCoverage: 0.12,
+                        targetVolume: 40
+                    },
+                    30: {
+                        floorPercentile: 15,
+                        capPercentile: 85,
+                        rankWeight: 0.2,
+                        targetCoverage: 0.25,
+                        targetVolume: 60
+                    },
+                    90: {
+                        floorPercentile: 15,
+                        capPercentile: 85,
+                        rankWeight: 0.2,
+                        targetCoverage: 0.3,
+                        targetVolume: 50
+                    }
+                },
+                friend: {
+                    7: {
+                        floorPercentile: 10,
+                        capPercentile: 80,
+                        rankWeight: 0.15,
+                        targetCoverage: 0.12,
+                        targetVolume: 40
+                    },
+                    30: {
+                        floorPercentile: 15,
+                        capPercentile: 85,
+                        rankWeight: 0.2,
+                        targetCoverage: 0.25,
+                        targetVolume: 60
+                    },
+                    90: {
+                        floorPercentile: 15,
+                        capPercentile: 85,
+                        rankWeight: 0.2,
+                        targetCoverage: 0.3,
+                        targetVolume: 50
+                    }
+                }
+            }[role] as any
+        )[rangeDays] || {
             floorPercentile: 15,
             capPercentile: 85,
             rankWeight: 0.2,
             targetCoverage: 0.25,
             targetVolume: 60
-        },
-        90: {
-            floorPercentile: 15,
-            capPercentile: 85,
-            rankWeight: 0.2,
-            targetCoverage: 0.3,
-            targetVolume: 50
         }
-    },
-    friend: {
-        7: {
-            floorPercentile: 10,
-            capPercentile: 80,
-            rankWeight: 0.15,
-            targetCoverage: 0.12,
-            targetVolume: 40
-        },
-        30: {
-            floorPercentile: 15,
-            capPercentile: 85,
-            rankWeight: 0.2,
-            targetCoverage: 0.25,
-            targetVolume: 60
-        },
-        90: {
-            floorPercentile: 15,
-            capPercentile: 85,
-            rankWeight: 0.2,
-            targetCoverage: 0.3,
-            targetVolume: 50
-        }
-    }
-}[role] as any)[rangeDays] || {
-    floorPercentile: 15,
-    capPercentile: 85,
-    rankWeight: 0.2,
-    targetCoverage: 0.25,
-    targetVolume: 60
-});
+    );
 }
 
 function pickOverlapNormalizeConfig(rangeDays: number) {

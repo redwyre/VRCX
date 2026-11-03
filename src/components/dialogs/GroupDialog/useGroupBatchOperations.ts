@@ -1,20 +1,21 @@
 import { ref } from 'vue';
+import type { Ref } from 'vue';
 import { toast } from 'vue-sonner';
 
 /**
  * Composable for batch moderation operations with progress tracking.
  *
  * @param {object} deps
- * @param {import('vue').Ref} deps.currentUser
- * @param {import('vue').Ref} deps.groupMemberModeration
+ * @param {Ref} deps.currentUser
+ * @param {Ref} deps.groupMemberModeration
  * @param {Function} deps.deselectedUsers
  * @param {object} deps.groupRequest
  * @param {Function} deps.handleGroupMemberRoleChange
  * @param {Function} deps.handleGroupMemberProps
  */
 export function useGroupBatchOperations(deps: {
-    currentUser: import('vue').Ref;
-    groupMemberModeration: import('vue').Ref;
+    currentUser: Ref;
+    groupMemberModeration: Ref;
     deselectedUsers: Function;
     groupRequest: object;
     handleGroupMemberRoleChange: Function;
@@ -35,14 +36,21 @@ export function useGroupBatchOperations(deps: {
      * @param {Function} [options.onComplete] - Called after the loop finishes
      * @returns {Promise<void>}
      */
-    async function runBatchOperation({ action, logPrefix, successMessage, errorMessage, skipSelf = true, onComplete }: {
-    action: Function;
-    logPrefix: string;
-    successMessage: string;
-    errorMessage: string;
-    skipSelf?: boolean;
-    onComplete?: Function;
-}) {
+    async function runBatchOperation({
+        action,
+        logPrefix,
+        successMessage,
+        errorMessage,
+        skipSelf = true,
+        onComplete
+    }: {
+        action: Function;
+        logPrefix: string;
+        successMessage: string;
+        errorMessage: string;
+        skipSelf?: boolean;
+        onComplete?: Function;
+    }) {
         const users = [...deps.groupMemberModeration.value.selectedUsersArray];
         const memberCount = users.length;
         const groupId = deps.groupMemberModeration.value.id;
@@ -78,68 +86,80 @@ export function useGroupBatchOperations(deps: {
     /**
      * @param callbacks
      */
-    async function groupMembersBan(callbacks: { onComplete: any; }) {
+    async function groupMembersBan(callbacks: { onComplete?: () => void } = {}) {
         await runBatchOperation({
-    action: (user: {
-        userId: any;
-    }, groupId: any) => (deps.groupRequest as any).banGroupMember({
-        groupId,
-        userId: user.userId
-    }),
-    logPrefix: 'Banning',
-    successMessage: 'Banned {count} group members',
-    errorMessage: 'Failed to ban group member',
-    onComplete: callbacks?.onComplete
-});
+            action: (
+                user: {
+                    userId: any;
+                },
+                groupId: any
+            ) =>
+                (deps.groupRequest as any).banGroupMember({
+                    groupId,
+                    userId: user.userId
+                }),
+            logPrefix: 'Banning',
+            successMessage: 'Banned {count} group members',
+            errorMessage: 'Failed to ban group member',
+            onComplete: callbacks?.onComplete
+        });
     }
 
     /**
      * @param callbacks
      */
-    async function groupMembersUnban(callbacks: { onComplete: any; }) {
+    async function groupMembersUnban(callbacks: { onComplete?: () => void } = {}) {
         await runBatchOperation({
-    action: (user: {
-        userId: any;
-    }, groupId: any) => (deps.groupRequest as any).unbanGroupMember({
-        groupId,
-        userId: user.userId
-    }),
-    logPrefix: 'Unbanning',
-    successMessage: 'Unbanned {count} group members',
-    errorMessage: 'Failed to unban group member',
-    onComplete: callbacks?.onComplete
-});
+            action: (
+                user: {
+                    userId: any;
+                },
+                groupId: any
+            ) =>
+                (deps.groupRequest as any).unbanGroupMember({
+                    groupId,
+                    userId: user.userId
+                }),
+            logPrefix: 'Unbanning',
+            successMessage: 'Unbanned {count} group members',
+            errorMessage: 'Failed to unban group member',
+            onComplete: callbacks?.onComplete
+        });
     }
 
     /**
      * @param callbacks
      */
-    async function groupMembersKick(callbacks: { onComplete: any; }) {
+    async function groupMembersKick(callbacks: { onComplete?: () => void } = {}) {
         await runBatchOperation({
-    action: (user: {
-        userId: any;
-    }, groupId: any) => (deps.groupRequest as any).kickGroupMember({
-        groupId,
-        userId: user.userId
-    }),
-    logPrefix: 'Kicking',
-    successMessage: 'Kicked {count} group members',
-    errorMessage: 'Failed to kick group member',
-    onComplete: callbacks?.onComplete
-});
+            action: (
+                user: {
+                    userId: any;
+                },
+                groupId: any
+            ) =>
+                (deps.groupRequest as any).kickGroupMember({
+                    groupId,
+                    userId: user.userId
+                }),
+            logPrefix: 'Kicking',
+            successMessage: 'Kicked {count} group members',
+            errorMessage: 'Failed to kick group member',
+            onComplete: callbacks?.onComplete
+        });
     }
 
     /**
      * @param noteValue
      * @param callbacks
      */
-    async function groupMembersSaveNote(noteValue: any, callbacks: { onComplete: any; }) {
+    async function groupMembersSaveNote(noteValue: any, callbacks: { onComplete?: () => void } = {}) {
         await runBatchOperation({
-            action: async (user: { managerNotes: any; userId: any; }, groupId: any) => {
+            action: async (user: { managerNotes: any; userId: any }, groupId: any) => {
                 if (user.managerNotes === noteValue) return;
                 const args = await (deps.groupRequest as any).setGroupMemberProps(user.userId, groupId, {
-    managerNotes: noteValue
-});
+                    managerNotes: noteValue
+                });
                 deps.handleGroupMemberProps(args);
             },
             logPrefix: 'Setting note for',
@@ -154,10 +174,13 @@ export function useGroupBatchOperations(deps: {
      * @param roleIds
      * @param callbacks
      */
-    async function groupMembersRemoveRoles(roleIds: Iterable<unknown> | null | undefined, callbacks: { onComplete: any; }) {
+    async function groupMembersRemoveRoles(
+        roleIds: Iterable<unknown> | null | undefined,
+        callbacks: { onComplete?: () => void } = {}
+    ) {
         const rolesToRemoveSet = new Set(roleIds);
         await runBatchOperation({
-            action: async (user: { roleIds: any; userId: any; }, groupId: any) => {
+            action: async (user: { roleIds: any; userId: any }, groupId: any) => {
                 const currentRoles = new Set(user.roleIds || []);
                 const rolesToRemoveForUser: unknown[] = [];
                 rolesToRemoveSet.forEach((roleId) => {
@@ -168,10 +191,10 @@ export function useGroupBatchOperations(deps: {
                 if (!rolesToRemoveForUser.length) return;
                 for (const roleId of rolesToRemoveForUser) {
                     const args = await (deps.groupRequest as any).removeGroupMemberRole({
-    groupId,
-    userId: user.userId,
-    roleId
-});
+                        groupId,
+                        userId: user.userId,
+                        roleId
+                    });
                     deps.handleGroupMemberRoleChange(args);
                 }
             },
@@ -186,10 +209,13 @@ export function useGroupBatchOperations(deps: {
      * @param roleIds
      * @param callbacks
      */
-    async function groupMembersAddRoles(roleIds: Iterable<unknown> | null | undefined, callbacks: { onComplete: any; }) {
+    async function groupMembersAddRoles(
+        roleIds: Iterable<unknown> | null | undefined,
+        callbacks: { onComplete?: () => void } = {}
+    ) {
         const rolesToAddSet = new Set(roleIds);
         await runBatchOperation({
-            action: async (user: { roleIds: any; userId: any; }, groupId: any) => {
+            action: async (user: { roleIds: any; userId: any }, groupId: any) => {
                 const currentRoles = new Set(user.roleIds || []);
                 const rolesToAddForUser: unknown[] = [];
                 rolesToAddSet.forEach((roleId) => {
@@ -200,10 +226,10 @@ export function useGroupBatchOperations(deps: {
                 if (!rolesToAddForUser.length) return;
                 for (const roleId of rolesToAddForUser) {
                     const args = await (deps.groupRequest as any).addGroupMemberRole({
-    groupId,
-    userId: user.userId,
-    roleId
-});
+                        groupId,
+                        userId: user.userId,
+                        roleId
+                    });
                     deps.handleGroupMemberRoleChange(args);
                 }
             },
@@ -217,91 +243,111 @@ export function useGroupBatchOperations(deps: {
     /**
      * @param callbacks
      */
-    async function groupMembersDeleteSentInvite(callbacks: { onComplete: any; }) {
+    async function groupMembersDeleteSentInvite(callbacks: { onComplete?: () => void } = {}) {
         await runBatchOperation({
-    action: (user: {
-        userId: any;
-    }, groupId: any) => (deps.groupRequest as any).deleteSentGroupInvite({
-        groupId,
-        userId: user.userId
-    }),
-    logPrefix: 'Deleting group invite',
-    successMessage: 'Deleted {count} group invites',
-    errorMessage: 'Failed to delete group invites',
-    onComplete: callbacks?.onComplete
-});
+            action: (
+                user: {
+                    userId: any;
+                },
+                groupId: any
+            ) =>
+                (deps.groupRequest as any).deleteSentGroupInvite({
+                    groupId,
+                    userId: user.userId
+                }),
+            logPrefix: 'Deleting group invite',
+            successMessage: 'Deleted {count} group invites',
+            errorMessage: 'Failed to delete group invites',
+            onComplete: callbacks?.onComplete
+        });
     }
 
     /**
      * @param callbacks
      */
-    async function groupMembersAcceptInviteRequest(callbacks: { onComplete: any; }) {
+    async function groupMembersAcceptInviteRequest(callbacks: { onComplete?: () => void } = {}) {
         await runBatchOperation({
-    action: (user: {
-        userId: any;
-    }, groupId: any) => (deps.groupRequest as any).acceptGroupInviteRequest({
-        groupId,
-        userId: user.userId
-    }),
-    logPrefix: 'Accepting group join request from',
-    successMessage: 'Accepted {count} group join requests',
-    errorMessage: 'Failed to accept group join requests',
-    onComplete: callbacks?.onComplete
-});
+            action: (
+                user: {
+                    userId: any;
+                },
+                groupId: any
+            ) =>
+                (deps.groupRequest as any).acceptGroupInviteRequest({
+                    groupId,
+                    userId: user.userId
+                }),
+            logPrefix: 'Accepting group join request from',
+            successMessage: 'Accepted {count} group join requests',
+            errorMessage: 'Failed to accept group join requests',
+            onComplete: callbacks?.onComplete
+        });
     }
 
     /**
      * @param callbacks
      */
-    async function groupMembersRejectInviteRequest(callbacks: { onComplete: any; }) {
+    async function groupMembersRejectInviteRequest(callbacks: { onComplete?: () => void } = {}) {
         await runBatchOperation({
-    action: (user: {
-        userId: any;
-    }, groupId: any) => (deps.groupRequest as any).rejectGroupInviteRequest({
-        groupId,
-        userId: user.userId
-    }),
-    logPrefix: 'Rejecting group join request from',
-    successMessage: 'Rejected {count} group join requests',
-    errorMessage: 'Failed to reject group join requests',
-    onComplete: callbacks?.onComplete
-});
+            action: (
+                user: {
+                    userId: any;
+                },
+                groupId: any
+            ) =>
+                (deps.groupRequest as any).rejectGroupInviteRequest({
+                    groupId,
+                    userId: user.userId
+                }),
+            logPrefix: 'Rejecting group join request from',
+            successMessage: 'Rejected {count} group join requests',
+            errorMessage: 'Failed to reject group join requests',
+            onComplete: callbacks?.onComplete
+        });
     }
 
     /**
      * @param callbacks
      */
-    async function groupMembersBlockJoinRequest(callbacks: { onComplete: any; }) {
+    async function groupMembersBlockJoinRequest(callbacks: { onComplete?: () => void } = {}) {
         await runBatchOperation({
-    action: (user: {
-        userId: any;
-    }, groupId: any) => (deps.groupRequest as any).blockGroupInviteRequest({
-        groupId,
-        userId: user.userId
-    }),
-    logPrefix: 'Blocking group join request from',
-    successMessage: 'Blocked {count} group join requests',
-    errorMessage: 'Failed to block group join requests',
-    onComplete: callbacks?.onComplete
-});
+            action: (
+                user: {
+                    userId: any;
+                },
+                groupId: any
+            ) =>
+                (deps.groupRequest as any).blockGroupInviteRequest({
+                    groupId,
+                    userId: user.userId
+                }),
+            logPrefix: 'Blocking group join request from',
+            successMessage: 'Blocked {count} group join requests',
+            errorMessage: 'Failed to block group join requests',
+            onComplete: callbacks?.onComplete
+        });
     }
 
     /**
      * @param callbacks
      */
-    async function groupMembersDeleteBlockedRequest(callbacks: { onComplete: any; }) {
+    async function groupMembersDeleteBlockedRequest(callbacks: { onComplete?: () => void } = {}) {
         await runBatchOperation({
-    action: (user: {
-        userId: any;
-    }, groupId: any) => (deps.groupRequest as any).deleteBlockedGroupRequest({
-        groupId,
-        userId: user.userId
-    }),
-    logPrefix: 'Deleting blocked group request for',
-    successMessage: 'Deleted {count} blocked group requests',
-    errorMessage: 'Failed to delete blocked group requests',
-    onComplete: callbacks?.onComplete
-});
+            action: (
+                user: {
+                    userId: any;
+                },
+                groupId: any
+            ) =>
+                (deps.groupRequest as any).deleteBlockedGroupRequest({
+                    groupId,
+                    userId: user.userId
+                }),
+            logPrefix: 'Deleting blocked group request for',
+            successMessage: 'Deleted {count} blocked group requests',
+            errorMessage: 'Failed to delete blocked group requests',
+            onComplete: callbacks?.onComplete
+        });
     }
 
     return {

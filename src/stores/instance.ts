@@ -40,6 +40,8 @@ import { useWorldStore } from './world';
 import { watchState } from '../services/watchState';
 
 import configRepository from '../services/config';
+import type { VrcxFileAnalysis, VrcxWorld } from '../types/vrcx';
+import type { Ref } from 'vue';
 
 export const useInstanceStore = defineStore('Instance', () => {
     const locationStore = useLocationStore();
@@ -74,7 +76,7 @@ export const useInstanceStore = defineStore('Instance', () => {
     const lastInstanceApplied = ref('');
 
     const currentInstanceWorld = ref({
-        ref: {},
+        ref: {} as VrcxWorld,
         instance: {},
         isPC: false,
         isQuest: false,
@@ -83,11 +85,11 @@ export const useInstanceStore = defineStore('Instance', () => {
         focusViewDisabled: false,
         inCache: false,
         cacheSize: '',
-        fileAnalysis: {}
+        fileAnalysis: {} as VrcxFileAnalysis
     });
 
-    /** @type {import('vue').Ref<any>} */
-    const currentInstanceLocation: import('vue').Ref<any> = ref({});
+    /** @type {Ref<any>} */
+    const currentInstanceLocation: Ref<any> = ref({});
 
     const queuedInstances = reactive(new Map());
 
@@ -294,7 +296,11 @@ export const useInstanceStore = defineStore('Instance', () => {
                 queryRequest
                     .fetch('world.dialog', { worldId: location.worldId })
                     .then((args) => {
-                        uiStore.setDialogCrumbLabel('previous-instances-info', instanceId, formatPreviousInstancesInfoLabel(instanceId, (args as any)?.ref?.name || ''));
+                        uiStore.setDialogCrumbLabel(
+                            'previous-instances-info',
+                            instanceId,
+                            formatPreviousInstancesInfoLabel(instanceId, (args as any)?.ref?.name || '')
+                        );
                     })
                     .catch(() => {});
             }
@@ -311,32 +317,23 @@ export const useInstanceStore = defineStore('Instance', () => {
         if (variant === 'user') {
             resolved = await resolveUserRef(targetRef);
 
-
-
-
             previousInstancesListDialog.value.userRef = resolved;
         } else if (variant === 'world') {
             resolved = await resolveWorldRef(targetRef);
 
-
-
-
             previousInstancesListDialog.value.worldRef = resolved;
         } else {
             resolved = await resolveGroupRef(targetRef);
-
-
-
 
             previousInstancesListDialog.value.groupRef = resolved;
         }
         previousInstancesListDialog.value.visible = true;
         const dialogId = (resolved as any)?.id || '';
         const label = (resolved as any)?.id
-    ? variant === 'user'
-        ? (resolved as any).displayName || (resolved as any).id
-        : (resolved as any).name || (resolved as any).id
-    : '';
+            ? variant === 'user'
+                ? (resolved as any).displayName || (resolved as any).id
+                : (resolved as any).name || (resolved as any).id
+            : '';
         uiStore.openDialog({
             type: `previous-instances-${variant}`,
             id: dialogId,
@@ -352,7 +349,7 @@ export const useInstanceStore = defineStore('Instance', () => {
         }
         if (!instanceId) {
             currentInstanceWorld.value = {
-                ref: {},
+                ref: {} as VrcxWorld,
                 instance: {},
                 isPC: false,
                 isQuest: false,
@@ -361,12 +358,12 @@ export const useInstanceStore = defineStore('Instance', () => {
                 focusViewDisabled: false,
                 inCache: false,
                 cacheSize: '',
-                fileAnalysis: {}
+                fileAnalysis: {} as VrcxFileAnalysis
             };
             currentInstanceLocation.value = {};
         } else if (instanceId !== currentInstanceLocation.value.tag) {
             currentInstanceWorld.value = {
-                ref: {},
+                ref: {} as VrcxWorld,
                 instance: {},
                 isPC: false,
                 isQuest: false,
@@ -375,7 +372,7 @@ export const useInstanceStore = defineStore('Instance', () => {
                 focusViewDisabled: false,
                 inCache: false,
                 cacheSize: '',
-                fileAnalysis: {}
+                fileAnalysis: {} as VrcxFileAnalysis
             };
             L = parseLocation(instanceId);
             currentInstanceLocation.value = L;
@@ -422,11 +419,11 @@ export const useInstanceStore = defineStore('Instance', () => {
                     currentInstanceWorld.value.isQuest = isQuest;
                     currentInstanceWorld.value.isIos = isIos;
                     checkVRChatCache((args as any).ref).then((cacheInfo) => {
-    if (cacheInfo.Item1 > 0) {
-        currentInstanceWorld.value.inCache = true;
-        currentInstanceWorld.value.cacheSize = formatFileSize(cacheInfo.Item1);
-    }
-});
+                        if (cacheInfo.Item1 > 0) {
+                            currentInstanceWorld.value.inCache = true;
+                            currentInstanceWorld.value.cacheSize = formatFileSize(cacheInfo.Item1);
+                        }
+                    });
                 });
         }
         if (isRealInstance(instanceId)) {
@@ -485,7 +482,10 @@ export const useInstanceStore = defineStore('Instance', () => {
         if (ref?.world?.name) {
             ref.world.name = replaceBioSymbols(ref.world.name);
         }
-        ref.$disabledContentSettings = computeDisabledContentSettings((json as any).contentSettings, instanceContentSettings);
+        ref.$disabledContentSettings = computeDisabledContentSettings(
+            (json as any).contentSettings,
+            instanceContentSettings
+        );
         if (ref.displayName) {
             ref.displayName = replaceBioSymbols(ref.displayName);
         }
@@ -520,9 +520,6 @@ export const useInstanceStore = defineStore('Instance', () => {
                     worldId: L.worldId,
                     instanceId: L.instanceId
                 });
-
-
-
 
                 instanceName = args.ref.displayName;
             } catch (e) {
@@ -633,30 +630,30 @@ export const useInstanceStore = defineStore('Instance', () => {
             for (instance of (D.ref as any).slimInstances) {
                 const { instanceId, n_users } = instance;
                 (instances as any)[instanceId] = {
-    id: instanceId,
-    tag: `${D.id}:${instanceId}`,
-    $location: {},
-    friendCount: 0,
-    users: [],
-    shortName: '',
-    ref: {
-        userCount: n_users,
-        capacity: (D.ref as any).capacity
-    }
-};
+                    id: instanceId,
+                    tag: `${D.id}:${instanceId}`,
+                    $location: {},
+                    friendCount: 0,
+                    users: [],
+                    shortName: '',
+                    ref: {
+                        userCount: n_users,
+                        capacity: (D.ref as any).capacity
+                    }
+                };
             }
         }
         const { instanceId, shortName }: any = D?.$location || {};
         if (instanceId && typeof (instances as any)[instanceId] === 'undefined') {
             (instances as any)[instanceId] = {
-    id: instanceId,
-    tag: `${D.id}:${instanceId}`,
-    $location: {},
-    friendCount: 0,
-    users: [],
-    shortName,
-    ref: {}
-};
+                id: instanceId,
+                tag: `${D.id}:${instanceId}`,
+                $location: {},
+                friendCount: 0,
+                users: [],
+                shortName,
+                ref: {}
+            };
         }
         const cachedCurrentUser = userStore.cachedUsers.get(userStore.currentUser.id);
         const lastLocation$ = cachedCurrentUser?.$location;
@@ -676,7 +673,7 @@ export const useInstanceStore = defineStore('Instance', () => {
             (instances as any)[instance.id] = instance;
             for (const friend of friendsInInstance.values()) {
                 // if friend isn't in instance add them
-                const addUser = !instance.users.some(function (user: { id: any; }) {
+                const addUser = !instance.users.some(function (user: { id: any }) {
                     return friend.userId === user.id;
                 });
                 if (addUser) {
@@ -817,16 +814,13 @@ export const useInstanceStore = defineStore('Instance', () => {
             return compareById(a, b);
         });
 
-
-
-
         D.rooms = rooms;
     }
 
     /**
      * @param {object} inputInstances
      */
-    function applyGroupDialogInstances(inputInstances?: object) {
+    function applyGroupDialogInstances(inputInstances?: Array<Record<string, any>>) {
         let ref;
         let instance;
         const D = groupStore.groupDialog;
@@ -836,30 +830,22 @@ export const useInstanceStore = defineStore('Instance', () => {
         const instances = {};
         for (instance of D.instances) {
             (instances as any)[(instance as any).tag] = {
-
-
-
-
-    ...instance,
-    friendCount: 0,
-    users: []
-};
+                ...instance,
+                friendCount: 0,
+                users: []
+            };
         }
         if (typeof inputInstances !== 'undefined') {
-
-
-
-
             for (instance of inputInstances) {
                 (instances as any)[instance.location] = {
-    id: instance.instanceId,
-    tag: instance.location,
-    $location: {},
-    friendCount: 0,
-    users: [],
-    shortName: instance.shortName,
-    ref: instance
-};
+                    id: instance.instanceId,
+                    tag: instance.location,
+                    $location: {},
+                    friendCount: 0,
+                    users: [],
+                    shortName: instance.shortName,
+                    ref: instance
+                };
             }
         }
         const cachedCurrentUser = userStore.cachedUsers.get(userStore.currentUser.id);
@@ -886,10 +872,6 @@ export const useInstanceStore = defineStore('Instance', () => {
                 if (addUser) {
                     ref = userStore.cachedUsers.get(friend.userId);
                     if (typeof ref !== 'undefined') {
-
-
-
-
                         instance.users.push(ref);
                     }
                 }
@@ -948,8 +930,8 @@ export const useInstanceStore = defineStore('Instance', () => {
         const rooms = [];
         for (instance of Object.values(instances)) {
             // due to references on callback of API.getUser()
-// this should be block scope variable
-const L = parseLocation((instance as any).tag);
+            // this should be block scope variable
+            const L = parseLocation((instance as any).tag);
             (instance as any).location = (instance as any).tag;
             (instance as any).$location = L;
             if ((instance as any).friendCount === 0) {
@@ -969,9 +951,9 @@ const L = parseLocation((instance as any).tag);
                 Object.assign((room as any).ref, ref);
             } else if (isRealInstance((room as any).tag)) {
                 instanceRequest.getInstance({
-    worldId: (room as any).$location.worldId,
-    instanceId: (room as any).$location.instanceId
-});
+                    worldId: (room as any).$location.worldId,
+                    instanceId: (room as any).$location.instanceId
+                });
             }
         }
         rooms.sort(function (a, b) {
@@ -995,9 +977,6 @@ const L = parseLocation((instance as any).tag);
             }
             return -1;
         });
-
-
-
 
         D.instances = rooms;
     }
@@ -1094,9 +1073,6 @@ const L = parseLocation((instance as any).tag);
         notificationStore.queueNotificationNoty(noty);
         sharedFeedStore.addEntry(noty);
 
-
-
-
         notificationStore.notificationTable.data.push(noty);
     }
 
@@ -1152,9 +1128,6 @@ const L = parseLocation((instance as any).tag);
         } else {
             updatePlayerListExecute();
 
-
-
-
             state.updatePlayerListTimer = setTimeout(() => {
                 if (state.updatePlayerListPending) {
                     updatePlayerListExecute();
@@ -1175,8 +1148,42 @@ const L = parseLocation((instance as any).tag);
     }
 
     function updatePlayerListDebounce() {
-        const users: { ref: any; profileRef: any; displayName: any; timer: any; $trustSortNum: any; photonId: number; isMaster: boolean; isModerator: boolean; inVRMode: any; groupOnNameplate: string; isFriend: boolean; timeoutTime: number; isBlocked: boolean; isMuted: boolean; isAvatarInteractionDisabled: boolean; isChatBoxMuted: boolean; ageVerified: boolean; }[] = [];
-        const pushUser = function (ref: { id: any; displayName: any; isFriend: boolean; $moderations: { isBlocked: boolean; isMuted: boolean; isAvatarInteractionDisabled: boolean; isChatBoxMuted: boolean; }; ageVerificationStatus: string; $location_at: any; $trustSortNum: any; }, profileRef: any) {
+        const users: {
+            ref: any;
+            profileRef: any;
+            displayName: any;
+            timer: any;
+            $trustSortNum: any;
+            photonId: number;
+            isMaster: boolean;
+            isModerator: boolean;
+            inVRMode: any;
+            groupOnNameplate: string;
+            isFriend: boolean;
+            timeoutTime: number;
+            isBlocked: boolean;
+            isMuted: boolean;
+            isAvatarInteractionDisabled: boolean;
+            isChatBoxMuted: boolean;
+            ageVerified: boolean;
+        }[] = [];
+        const pushUser = function (
+            ref: {
+                id: any;
+                displayName: any;
+                isFriend: boolean;
+                $moderations: {
+                    isBlocked: boolean;
+                    isMuted: boolean;
+                    isAvatarInteractionDisabled: boolean;
+                    isChatBoxMuted: boolean;
+                };
+                ageVerificationStatus: string;
+                $location_at: any;
+                $trustSortNum: any;
+            },
+            profileRef: any
+        ) {
             let photonId = -1;
             let isFriend = false;
             let isBlocked = false;
@@ -1298,9 +1305,6 @@ const L = parseLocation((instance as any).tag);
                 }
             }
         }
-
-
-
 
         currentInstanceUsersData.value = users;
     }

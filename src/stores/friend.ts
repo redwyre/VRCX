@@ -1,5 +1,6 @@
 import { computed, reactive, ref, shallowRef, watch } from 'vue';
 import { defineStore } from 'pinia';
+import type { TableFilter } from '../types/vrcx';
 import { useRouter } from 'vue-router';
 
 import { i18n } from '../plugins/i18n';
@@ -113,15 +114,13 @@ export const useFriendStore = defineStore('Friend', () => {
         const groups = generalSettingsStore.localFavoriteFriendsGroups;
         const set = new Set();
         for (const ref of favoriteStore.cachedFavorites.values()) {
-
-
-
-
             if (ref.type === 'friend' && (groups.length === 0 || groups.includes(ref.$groupKey))) {
                 set.add(ref.favoriteId);
             }
         }
-        let localGroups = groups.filter((key) => (key as any).startsWith('local:')).map((key) => (key as any).replace('local:', ''));
+        let localGroups = groups
+            .filter((key) => (key as any).startsWith('local:'))
+            .map((key) => (key as any).replace('local:', ''));
         if (groups.length === 0) {
             // Use all groups when no groups are selected
             localGroups = Object.keys(favoriteStore.localFriendFavorites);
@@ -154,10 +153,6 @@ export const useFriendStore = defineStore('Friend', () => {
     }
 
     function rebuildSortedFriends() {
-
-
-
-
         sortedFriends.value = Array.from(friends.values()).sort(getSortedFriendsComparator());
         pendingSortedFriendsRebuild = false;
     }
@@ -236,16 +231,15 @@ export const useFriendStore = defineStore('Friend', () => {
             }
         }
 
-
-
-
         next.splice(low, 0, ctx);
         sortedFriends.value = next;
     }
 
     const allFavoriteOnlineFriends = computed(() => {
         const favoriteIds = allFavoriteFriendIds.value;
-        const result = sortedFriends.value.filter((f) => (f as any).state === 'online' && favoriteIds.has((f as any).id));
+        const result = sortedFriends.value.filter(
+            (f) => (f as any).state === 'online' && favoriteIds.has((f as any).id)
+        );
         trackDerivedDebug('allFavoriteOnlineFriends', result.length);
         return result;
     });
@@ -259,7 +253,7 @@ export const useFriendStore = defineStore('Friend', () => {
 
     const friendLogTable = ref({
         data: [],
-        filters: ([
+        filters: [
             {
                 prop: 'type',
                 value: []
@@ -271,9 +265,9 @@ export const useFriendStore = defineStore('Friend', () => {
             {
                 prop: 'type',
                 value: false,
-                filterFn: (row: { type: string; }, filter: { value: any; }) => !(filter.value && row.type === 'Unfriend')
+                filterFn: (row: { type: string }, filter: { value: any }) => !(filter.value && row.type === 'Unfriend')
             }
-        ] as import('@/types/vrcx').TableFilter[]),
+        ] as TableFilter[],
         pageSizeLinked: true,
         loading: false
     });
@@ -282,10 +276,6 @@ export const useFriendStore = defineStore('Friend', () => {
         [router.currentRoute, () => dashboardStore.dashboards],
         ([value]) => {
             const isDashboardPanel =
-
-
-
-
                 value.name === 'dashboard' && dashboardStore.getDashboard(value.params.id, 'friend-log');
             if (value.name === 'friend-log' || isDashboardPanel) {
                 initFriendLogHistoryTable();
@@ -332,7 +322,10 @@ export const useFriendStore = defineStore('Friend', () => {
             }
 
             let locationTag = (friend as any).ref.$location.tag;
-            if (!(friend as any).ref.$location.isRealInstance && locationStore.lastLocation.friendList.has((friend as any).id)) {
+            if (
+                !(friend as any).ref.$location.isRealInstance &&
+                locationStore.lastLocation.friendList.has((friend as any).id)
+            ) {
                 locationTag = locationStore.lastLocation.location;
             }
             const isReal = isRealInstance(locationTag);
@@ -495,9 +488,6 @@ export const useFriendStore = defineStore('Friend', () => {
      * @param {string | null} state_input
      */
 
-
-
-
     function addFriend(id: string, state_input: string | null = undefined) {
         if (friends.has(id)) {
             return;
@@ -616,7 +606,8 @@ export const useFriendStore = defineStore('Friend', () => {
                 {
                     maxRetries: MAX_RETRY,
                     baseDelay: RETRY_BASE_DELAY,
-                    shouldRetry: (err: { status: number; message: any; }) => err?.status === 429 || (err?.message || '').includes('429')
+                    shouldRetry: (err: { status: number; message: any }) =>
+                        err?.status === 429 || (err?.message || '').includes('429')
                 }
             );
             return result;
@@ -962,9 +953,6 @@ export const useFriendStore = defineStore('Friend', () => {
     async function initFriendLogHistoryTable() {
         friendLogTable.value.loading = true;
 
-
-
-
         friendLogTable.value.data = await database.getFriendLogHistory();
         friendLogTable.value.loading = false;
     }
@@ -1144,10 +1132,10 @@ export const useFriendStore = defineStore('Friend', () => {
                 continue;
             }
             result.push({
-    id: (ref as any).userId,
-    displayName: (ref as any).displayName,
-    created_at: (ref as any).created_at
-});
+                id: (ref as any).userId,
+                displayName: (ref as any).displayName,
+                created_at: (ref as any).created_at
+            });
         }
         result.sort(compareByCreatedAtAscending);
         return result;

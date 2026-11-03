@@ -1,15 +1,15 @@
+import type { Avatar } from 'vrchat';
+import type { Json } from '@/types/vrcx';
+
 /**
  * Create a default avatar ref object.
  *
- * @param {Partial<import('@/types/vrcx').Json<import('vrchat').Avatar>>} json - API response to merge
- * @returns {import('@/types/vrcx').Json<import('vrchat').Avatar>}
+ * @param {Partial<Json<Avatar>>} json - API response to merge
+ * @returns {Json<Avatar>}
  */
 
-
-
-
-export function createDefaultAvatarRef(json: Partial<import('@/types/vrcx').Json<import('vrchat').Avatar>>) {
-    return ({
+export function createDefaultAvatarRef(json: Partial<Json<Avatar>>) {
+    return {
         acknowledgements: '',
         activeAssetReviewId: '',
         assetUrl: '',
@@ -42,5 +42,5 @@ export function createDefaultAvatarRef(json: Partial<import('@/types/vrcx').Json
         updated_at: '',
         version: 0,
         ...json
-    } as import('@/types/vrcx').Json<import('vrchat').Avatar>);
+    } as Json<Avatar>;
 }

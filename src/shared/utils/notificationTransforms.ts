@@ -1,4 +1,6 @@
 import { replaceBioSymbols } from './base/string';
+import type { NotificationV2 } from 'vrchat';
+import type { Json, VrcxNotification } from '@/types/vrcx';
 
 /**
  * Remove null/undefined keys from a notification JSON object
@@ -50,15 +52,12 @@ export function parseNotificationDetails(details: any) {
  * Does NOT perform cache lookup — caller is responsible for
  * checking existing refs and merging.
  *
- * @param {Partial<import('@/types/vrcx').VrcxNotification>} json - Sanitized notification JSON
- * @returns {import('@/types/vrcx').VrcxNotification} Default notification ref
+ * @param {Partial<VrcxNotification>} json - Sanitized notification JSON
+ * @returns {VrcxNotification} Default notification ref
  */
 
-
-
-
-export function createDefaultNotificationRef(json: Partial<import('@/types/vrcx').VrcxNotification>) {
-    const ref = ({
+export function createDefaultNotificationRef(json: Partial<VrcxNotification>) {
+    const ref = {
         id: '',
         senderUserId: '',
         senderUsername: '',
@@ -72,7 +71,7 @@ export function createDefaultNotificationRef(json: Partial<import('@/types/vrcx'
         $isExpired: false,
         //
         ...json
-    } as import('@/types/vrcx').VrcxNotification);
+    } as VrcxNotification;
     ref.details = parseNotificationDetails(ref.details);
     return ref;
 }
@@ -81,15 +80,12 @@ export function createDefaultNotificationRef(json: Partial<import('@/types/vrcx'
  * Build a default V2 notification ref from JSON data.
  * Handles boop legacy formatting.
  *
- * @param {Partial<import('@/types/vrcx').Json<import('vrchat').NotificationV2>>} json - Sanitized notification JSON
- * @returns {import('@/types/vrcx').Json<import('vrchat').NotificationV2>} Default notification V2 ref
+ * @param {Partial<Json<NotificationV2>>} json - Sanitized notification JSON
+ * @returns {Json<NotificationV2>} Default notification V2 ref
  */
 
-
-
-
-export function createDefaultNotificationV2Ref(json: Partial<import('@/types/vrcx').Json<import('vrchat').NotificationV2>>) {
-    return ({
+export function createDefaultNotificationV2Ref(json: Partial<Json<NotificationV2>>) {
+    return {
         id: '',
         createdAt: '',
         updatedAt: '',
@@ -120,7 +116,7 @@ export function createDefaultNotificationV2Ref(json: Partial<import('@/types/vrc
         requireSeen: false,
         titleKey: '',
         ...json
-    } as import('@/types/vrcx').Json<import('vrchat').NotificationV2>);
+    } as Json<NotificationV2>;
 }
 
 /**
@@ -140,6 +136,7 @@ export function applyBoopLegacyHandling(ref: object, endpointDomain: string) {
         (ref as any).imageUrl = (ref as any).details.emojiId;
         (ref as any).message += ` ${(ref as any).details.emojiId.replace('default_', '')}`;
     } else {
-        (ref as any).imageUrl = `${endpointDomain}/file/${(ref as any).details.emojiId}/${(ref as any).details.emojiVersion}`;
+        (ref as any).imageUrl =
+            `${endpointDomain}/file/${(ref as any).details.emojiId}/${(ref as any).details.emojiVersion}`;
     }
 }

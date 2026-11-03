@@ -239,7 +239,7 @@
     async function loadInitialData() {
         try {
             const rows = await database.lookupGameLogDatabase([], []);
-            for (const row of rows) {
+            for (const row of /** @type {any[]} */ (rows)) {
                 row.isFriend = row.userId ? friendStore.friends.has(row.userId) : false;
                 row.isFavorite = row.userId ? friendStore.localFavoriteFriends.has(row.userId) : false;
             }

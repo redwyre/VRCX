@@ -489,6 +489,7 @@
     }
 
     const virtualRows = computed(() => {
+        /** @type {Record<string, any>[]} */
         const rows = [];
 
         rows.push(

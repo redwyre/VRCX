@@ -84,7 +84,7 @@ function hexToRgb(hex: string) {
  * @param {{ r: number; g: number; b: number }} rgb
  * @returns {string}
  */
-function rgbToHex(rgb: { r: number; g: number; b: number; }) {
+function rgbToHex(rgb: { r: number; g: number; b: number }) {
     const toHex = (value: number) => {
         const n = Math.max(0, Math.min(255, Math.round(value)));
         return n.toString(16).padStart(2, '0');
@@ -96,7 +96,7 @@ function rgbToHex(rgb: { r: number; g: number; b: number; }) {
  * @param {{ r: number; g: number; b: number }} rgb
  * @returns {number}
  */
-function getRelativeLuminance(rgb: { r: number; g: number; b: number; }) {
+function getRelativeLuminance(rgb: { r: number; g: number; b: number }) {
     const channel = (value: number) => {
         const normalized = value / 255;
         if (normalized <= 0.03928) {
@@ -116,7 +116,7 @@ function getRelativeLuminance(rgb: { r: number; g: number; b: number; }) {
  * @param {number} weight
  * @returns {{ r: number; g: number; b: number }}
  */
-function mixRgb(from: { r: number; g: number; b: number; }, to: { r: number; g: number; b: number; }, weight: number) {
+function mixRgb(from: { r: number; g: number; b: number }, to: { r: number; g: number; b: number }, weight: number) {
     return {
         r: from.r + (to.r - from.r) * weight,
         g: from.g + (to.g - from.g) * weight,
@@ -186,7 +186,11 @@ function invertHexColor(colorValue: string) {
  * @param {object} currentUser - Current user object from useUserStore
  * @returns
  */
-function userStatusClass(user: object, pendingOffline: boolean = false, currentUser: object) {
+function userStatusClass(
+    user: object,
+    pendingOffline: boolean = false,
+    currentUser: object
+): Record<string, boolean> | null {
     const style = {
         'status-icon': true
     };
@@ -202,23 +206,23 @@ function userStatusClass(user: object, pendingOffline: boolean = false, currentU
     if (id === (currentUser as any)?.id) {
         const platform = (currentUser as any).presence?.platform;
         return {
-    ...style,
-    ...statusClass((user as any).status),
-    mobile: platform && platform !== 'standalonewindows' && platform !== 'web'
-};
+            ...style,
+            ...statusClass((user as any).status),
+            mobile: platform && platform !== 'standalonewindows' && platform !== 'web'
+        };
     }
     if (!(user as any).isFriend) {
         return null;
     }
     if (pendingOffline) {
         // Pending offline
-(style as any).offline = true;
+        (style as any).offline = true;
     } else if (
         (user as any).status !== 'active' &&
-    (user as any).location === 'private' &&
-    (user as any).state === '' &&
-    id &&
-    !((currentUser as any)?.onlineFriends || []).includes(id)
+        (user as any).location === 'private' &&
+        (user as any).state === '' &&
+        id &&
+        !((currentUser as any)?.onlineFriends || []).includes(id)
     ) {
         // temp fix
         if (((currentUser as any)?.activeFriends || []).includes(id)) {
@@ -234,7 +238,7 @@ function userStatusClass(user: object, pendingOffline: boolean = false, currentU
             }
         } else {
             // Offline
-(style as any).offline = true;
+            (style as any).offline = true;
         }
     } else if ((user as any).state === 'active') {
         // Active
@@ -249,28 +253,28 @@ function userStatusClass(user: object, pendingOffline: boolean = false, currentU
         }
     } else if ((user as any).location === 'offline') {
         // Offline
-(style as any).offline = true;
+        (style as any).offline = true;
     } else if ((user as any).status === 'active') {
         // Online
-(style as any).online = true;
+        (style as any).online = true;
     } else if ((user as any).status === 'join me') {
         // Join Me
-(style as any).joinme = true;
+        (style as any).joinme = true;
     } else if ((user as any).status === 'ask me') {
         // Ask Me
-(style as any).askme = true;
+        (style as any).askme = true;
     } else if ((user as any).status === 'busy') {
         // Do Not Disturb
-(style as any).busy = true;
+        (style as any).busy = true;
     } else {
         // Unknown status
         return null;
     }
     if (
         (user as any).$platform &&
-    (user as any).$platform !== 'standalonewindows' &&
-    (user as any).$platform !== 'web' &&
-    (user as any).state === 'online'
+        (user as any).$platform !== 'standalonewindows' &&
+        (user as any).$platform !== 'web' &&
+        (user as any).state === 'online'
     ) {
         (style as any).mobile = true;
     }
@@ -290,16 +294,16 @@ function statusClass(status: string) {
     };
     if (status === 'active') {
         // Online
-(style as any).online = true;
+        (style as any).online = true;
     } else if (status === 'join me') {
         // Join Me
-(style as any).joinme = true;
+        (style as any).joinme = true;
     } else if (status === 'ask me') {
         // Ask Me
-(style as any).askme = true;
+        (style as any).askme = true;
     } else if (status === 'busy') {
         // Do Not Disturb
-(style as any).busy = true;
+        (style as any).busy = true;
     } else {
         return null;
     }
@@ -379,10 +383,11 @@ function parseUserUrl(user: string) {
  * @returns {object | undefined}
  */
 
-
-
-
-function findUserByDisplayName(cachedUsers: Map, displayName: string, cachedUserIdsByDisplayName?: Map<string, Set<string>>) {
+function findUserByDisplayName(
+    cachedUsers: Map<string, any>,
+    displayName: string,
+    cachedUserIdsByDisplayName?: Map<string, Set<string>>
+) {
     const indexedUserIds = cachedUserIdsByDisplayName?.get(displayName);
     if (indexedUserIds) {
         for (const userId of indexedUserIds) {

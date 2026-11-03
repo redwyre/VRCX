@@ -56,6 +56,7 @@
         return {};
     });
 
+    /** @type {import('vue').Ref<Partial<import('vrchat').File>>} */
     const image = ref({
         frames: null,
         framesOverTime: null,

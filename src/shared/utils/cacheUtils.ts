@@ -14,13 +14,15 @@
  * @returns {{ deletedCount: number }}
  */
 
-
-
-
-export function evictMapCache(cache: Map, maxSize: number, isRetainedFn: (value: any, key: string) => boolean, opts: {
-    sortFn?: (a: { key: string; value: any; }, b: { key: string; value: any; }) => number;
-    logLabel?: string;
-} = {}) {
+export function evictMapCache<K, V>(
+    cache: Map<K, V>,
+    maxSize: number,
+    isRetainedFn: (value: V, key: K) => boolean,
+    opts: {
+        sortFn?: (a: { key: K; value: V }, b: { key: K; value: V }) => number;
+        logLabel?: string;
+    } = {}
+) {
     if (cache.size <= maxSize) {
         return { deletedCount: 0 };
     }

@@ -245,7 +245,7 @@
                                         {{ t('dialog.avatar.actions.block') }}
                                     </DropdownMenuItem>
                                     <DropdownMenuItem
-                                        v-if="/quest/.test(avatarDialog.ref.tags)"
+                                        v-if="avatarDialog.ref.tags.some((tag) => /quest/.test(tag))"
                                         @click="avatarDialogCommand('Select Fallback Avatar')">
                                         <Check class="size-4" />
                                         {{ t('dialog.avatar.actions.select_fallback') }}

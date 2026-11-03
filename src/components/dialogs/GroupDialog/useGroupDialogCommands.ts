@@ -1,10 +1,11 @@
 import { copyToClipboard } from '../../../shared/utils';
+import type { Ref } from 'vue';
 
 /**
  * Composable for GroupDialog command dispatch.
  * Uses a command map pattern consistent with Avatar/World/User dialogs.
  *
- * @param {import('vue').Ref} groupDialog - Reactive ref to the group dialog state
+ * @param {Ref} groupDialog - Reactive ref to the group dialog state
  * @param {object} deps - External dependencies
  * @param deps.t
  * @param deps.modalStore
@@ -24,23 +25,40 @@ import { copyToClipboard } from '../../../shared/utils';
  * @returns {object} Command composable API
  */
 export function useGroupDialogCommands(
-    groupDialog: import('vue').Ref, { t, modalStore, currentUser, showGroupDialog, leaveGroupPrompt, setGroupVisibility, setGroupSubscription, setGroupEventAnnouncements, showPreviousInstancesListDialog, showGroupMemberModerationDialog, showGroupRolesDialog, showInviteGroupDialog, showGroupTransferDialog, showGroupPostEditDialog, groupRequest }: {
-    t: any;
-    modalStore: any;
-    currentUser: any;
-    showGroupDialog: any;
-    leaveGroupPrompt: any;
-    setGroupVisibility: any;
-    setGroupSubscription: any;
-    setGroupEventAnnouncements?: any;
-    showPreviousInstancesListDialog?: any;
-    showGroupMemberModerationDialog: any;
-    showGroupRolesDialog?: any;
-    showInviteGroupDialog: any;
-    showGroupTransferDialog?: any;
-    showGroupPostEditDialog: any;
-    groupRequest: any;
-}
+    groupDialog: Ref,
+    {
+        t,
+        modalStore,
+        currentUser,
+        showGroupDialog,
+        leaveGroupPrompt,
+        setGroupVisibility,
+        setGroupSubscription,
+        setGroupEventAnnouncements,
+        showPreviousInstancesListDialog,
+        showGroupMemberModerationDialog,
+        showGroupRolesDialog,
+        showInviteGroupDialog,
+        showGroupTransferDialog,
+        showGroupPostEditDialog,
+        groupRequest
+    }: {
+        t: any;
+        modalStore: any;
+        currentUser: any;
+        showGroupDialog: any;
+        leaveGroupPrompt: any;
+        setGroupVisibility: any;
+        setGroupSubscription: any;
+        setGroupEventAnnouncements?: any;
+        showPreviousInstancesListDialog?: any;
+        showGroupMemberModerationDialog: any;
+        showGroupRolesDialog?: any;
+        showInviteGroupDialog: any;
+        showGroupTransferDialog?: any;
+        showGroupPostEditDialog: any;
+        groupRequest: any;
+    }
 ) {
     // --- Command map ---
     // Direct commands: function
@@ -114,7 +132,7 @@ export function useGroupDialogCommands(
                     destructive: true
                 }),
                 handler: (id: any) => {
-                    groupRequest.blockGroup({ groupId: id }).then((args: { params: { groupId: any; }; }) => {
+                    groupRequest.blockGroup({ groupId: id }).then((args: { params: { groupId: any } }) => {
                         if (groupDialog.value.visible && groupDialog.value.id === args.params.groupId) {
                             showGroupDialog(args.params.groupId);
                         }
@@ -132,7 +150,7 @@ export function useGroupDialogCommands(
                             groupId: id,
                             userId: currentUser.value.id
                         })
-                        .then((args: { params: { groupId: any; }; }) => {
+                        .then((args: { params: { groupId: any } }) => {
                             if (groupDialog.value.visible && groupDialog.value.id === args.params.groupId) {
                                 showGroupDialog(args.params.groupId);
                             }

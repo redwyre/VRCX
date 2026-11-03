@@ -2,6 +2,8 @@ import { router } from './router';
 import { startRendererMemoryThresholdReport } from './rendererMemoryReport';
 
 import configRepository from '../services/config';
+import type { App } from 'vue';
+import type * as SentryVue from '@sentry/vue';
 
 export async function isSentryOptedIn() {
     return NIGHTLY && configRepository.getBool('VRCX_SentryEnabled', false);
@@ -10,16 +12,16 @@ export async function isSentryOptedIn() {
 /**
  * Guarded import, prevents leaking Sentry into non-nightly bundles.
  *
- * @returns {Promise<typeof import('@sentry/vue')> | null}
+ * @returns {Promise<unknown> | null}
  */
-export function getSentry() {
+export function getSentry(): Promise<unknown> | null {
     return NIGHTLY ? import('@sentry/vue') : null;
 }
 
 /**
- * @param {import('vue').App} app
+ * @param {App} app
  */
-export async function initSentry(app: import('vue').App) {
+export async function initSentry(app: App) {
     if (!NIGHTLY) return;
 
     try {
@@ -39,10 +41,8 @@ export async function initSentry(app: import('vue').App) {
             return;
         }
         const dsn = atob(response.data);
-        const Sentry = await getSentry();
-
-
-
+        const Sentry = (await getSentry()) as typeof SentryVue | null;
+        if (!Sentry) return;
 
         Sentry.init({
             app,
@@ -53,7 +53,7 @@ export async function initSentry(app: import('vue').App) {
             replaysOnErrorSampleRate: 1.0,
             tracesSampleRate: 0.0001,
             beforeSend(event, hint) {
-                const error = (hint.originalException as any);
+                const error = hint.originalException as any;
                 if (error && typeof error.message === 'string') {
                     if (
                         error.message.includes('401') ||
@@ -79,22 +79,12 @@ export async function initSentry(app: import('vue').App) {
             },
 
             integrations: [
-
-
-
-
                 Sentry.replayIntegration({
                     maskAllText: true,
                     blockAllMedia: true
                 }),
 
-
-
-
                 Sentry.browserTracingIntegration({ router }),
-
-
-
 
                 Sentry.vueIntegration({
                     tracingOptions: {

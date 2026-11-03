@@ -11,7 +11,12 @@ const MAX_PREVIEW_SIZE = 800;
  * @param {boolean} flipV
  * @returns {HTMLCanvasElement}
  */
-export function applyTransforms(img: HTMLImageElement | HTMLCanvasElement, angleDeg: number, flipH: boolean, flipV: boolean) {
+export function applyTransforms(
+    img: HTMLImageElement | HTMLCanvasElement,
+    angleDeg: number,
+    flipH: boolean,
+    flipV: boolean
+) {
     const angleRad = (angleDeg * Math.PI) / 180;
     const absCos = Math.abs(Math.cos(angleRad));
     const absSin = Math.abs(Math.sin(angleRad));
@@ -24,29 +29,13 @@ export function applyTransforms(img: HTMLImageElement | HTMLCanvasElement, angle
     cvs.height = rotH;
     const ctx = cvs.getContext('2d');
 
-
-
-
-
     ctx.translate(rotW / 2, rotH / 2);
-
-
-
 
     ctx.rotate(angleRad);
 
-
-
-
     if (flipH) ctx.scale(-1, 1);
 
-
-
-
     if (flipV) ctx.scale(1, -1);
-
-
-
 
     ctx.drawImage(img, -img.width / 2, -img.height / 2);
 
@@ -60,7 +49,12 @@ export function applyTransforms(img: HTMLImageElement | HTMLCanvasElement, angle
  * @param {File} [originalFile]
  * @returns {Promise<Blob | null>}
  */
-export function cropImage(originalImage: HTMLImageElement | HTMLCanvasElement, previewScale: number, cropperResult: { coordinates: object; image: object; }, originalFile?: File) {
+export function cropImage(
+    originalImage: HTMLImageElement | HTMLCanvasElement,
+    previewScale: number,
+    cropperResult: { coordinates: object; image: object },
+    originalFile?: File
+) {
     if (!cropperResult?.coordinates || !originalImage) {
         return Promise.resolve(null);
     }
@@ -96,10 +90,6 @@ export function cropImage(originalImage: HTMLImageElement | HTMLCanvasElement, p
     cropCanvas.height = cropH;
     const ctx = cropCanvas.getContext('2d');
 
-
-
-
-
     ctx.drawImage(source, -cropX, -cropY);
 
     return new Promise((resolve) => {
@@ -129,12 +119,13 @@ export function useImageCropper() {
     function loadImageForCrop(file: File) {
         const r = new FileReader();
         r.onload = () => {
+            const dataUrl = r.result;
+            if (typeof dataUrl !== 'string') {
+                resetCropState();
+                return;
+            }
             const img = new Image();
             img.onload = () => {
-
-
-
-
                 originalImage.value = img;
                 if (img.width > MAX_PREVIEW_SIZE || img.height > MAX_PREVIEW_SIZE) {
                     const scale = Math.min(MAX_PREVIEW_SIZE / img.width, MAX_PREVIEW_SIZE / img.height);
@@ -144,30 +135,19 @@ export function useImageCropper() {
                     cvs.height = Math.round(img.height * scale);
                     const ctx = cvs.getContext('2d');
 
-
-
-
                     ctx.drawImage(img, 0, 0, cvs.width, cvs.height);
                     cropperImageSrc.value = cvs.toDataURL('image/jpeg', 0.9);
                 } else {
                     previewScale.value = 1;
 
-
-
-
-
-                    cropperImageSrc.value = r.result;
+                    cropperImageSrc.value = dataUrl;
                 }
             };
             img.onerror = () => {
                 resetCropState();
             };
 
-
-
-
-
-            img.src = r.result;
+            img.src = dataUrl;
         };
         r.onerror = () => {
             resetCropState();
@@ -182,9 +162,6 @@ export function useImageCropper() {
      */
     function getCroppedBlob(originalFile?: File) {
         const result = (cropperRef.value as any)?.getResult();
-
-
-
 
         return cropImage(originalImage.value, previewScale.value, result, originalFile);
     }

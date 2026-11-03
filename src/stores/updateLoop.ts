@@ -75,7 +75,7 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
                 if (--state.nextFriendsRefresh <= 0) {
                     state.nextFriendsRefresh = 3600; // 1hour
                     runRefreshFriendsListFlow();
-                    authStore.updateStoredUser(userStore.currentUser);
+                    authStore.updateStoredUser(userStore.currentUser as any);
                     if (
                         userStore.currentUser.last_activity &&
                         new Date(userStore.currentUser.last_activity) > new Date(Date.now() - 3600 * 1000) // 1hour
@@ -125,7 +125,10 @@ export const useUpdateLoopStore = defineStore('UpdateLoop', () => {
                 }
                 if (LINUX && --state.nextGameRunningCheck <= 0) {
                     state.nextGameRunningCheck = 1;
-                    await runUpdateIsGameRunningFlow(await (AppApi as any).IsGameRunning(), await (AppApi as any).IsSteamVRRunning());
+                    await runUpdateIsGameRunningFlow(
+                        await (AppApi as any).IsGameRunning(),
+                        await (AppApi as any).IsSteamVRRunning()
+                    );
                     vrStore.vrInit(); // TODO: make this event based
                 }
                 if (--state.nextDatabaseOptimize <= 0) {

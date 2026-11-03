@@ -8,7 +8,7 @@ export function useDateNavigation(allDateOfActivity: any, reloadData: any) {
     const allDateOfActivityArray = computed(() => {
         return allDateOfActivity.value
             ? Array.from(allDateOfActivity.value)
-                  .map((item) => dayjs(item))
+                  .map((item) => dayjs(String(item)))
                   .sort((a, b) => b.valueOf() - a.valueOf())
             : [];
     });

@@ -1,15 +1,14 @@
+import type { VrcxGroup } from '@/types/vrcx';
+
 /**
  * Create a default group ref object.
  *
- * @param {Partial<import('@/types/vrcx').VrcxGroup>} json - API response to merge
- * @returns {import('@/types/vrcx').VrcxGroup}
+ * @param {Partial<VrcxGroup>} json - API response to merge
+ * @returns {VrcxGroup}
  */
 
-
-
-
-export function createDefaultGroupRef(json: Partial<import('@/types/vrcx').VrcxGroup>) {
-    return ({
+export function createDefaultGroupRef(json: Partial<VrcxGroup>): VrcxGroup {
+    return {
         id: '',
         name: '',
         shortCode: '',
@@ -76,5 +75,5 @@ export function createDefaultGroupRef(json: Partial<import('@/types/vrcx').VrcxG
         // VRCX
         $languages: [],
         ...json
-    } as import('@/types/vrcx').VrcxGroup);
+    } as VrcxGroup;
 }

@@ -7,6 +7,9 @@ const path = require('node:path');
 const yargs = require('yargs/yargs');
 const { hideBin } = require('yargs/helpers');
 
+/** @typedef {Record<string, any> & { language?: string }} LocalizationObject */
+
+/** @returns {Generator<[string, LocalizationObject]>} */
 const getLocalizationObjects = function* () {
     const localeFolder = './src/localization';
     const files = fs
@@ -19,6 +22,7 @@ const getLocalizationObjects = function* () {
     }
 };
 
+/** @param {LocalizationObject} obj @param {string[]} objects @param {string} value @param {string | undefined} above_key */
 const addKey = function (obj, objects, value, above_key) {
     console.log(
         `Adding key to ${obj.language} at path '${objects.join('.')}' with value '${value}' above key '${above_key}'`
@@ -39,9 +43,10 @@ const addKey = function (obj, objects, value, above_key) {
 };
 
 // Shamelessly stolen from https://stackoverflow.com/a/55017155/11030436
+/** @param {LocalizationObject} obj @param {string} key @param {string} value @param {string | undefined} above_key */
 const InsertKeyInObj = (obj, key, value, above_key) => {
     const keys = Object.keys(obj);
-    if (keys.length === 0 || !Object.hasOwn(obj, above_key)) {
+    if (keys.length === 0 || typeof above_key === 'undefined' || !Object.hasOwn(obj, above_key)) {
         obj[key] = value;
         return obj;
     }
@@ -74,6 +79,7 @@ const InsertKeyInObj = (obj, key, value, above_key) => {
     Object.assign(obj, ret);
 };
 
+/** @param {string} key @param {string} value @param {string | undefined} above_key */
 const addLocalizationKey = (key, value, above_key) => {
     const objects = key.split('.');
 
@@ -85,6 +91,7 @@ const addLocalizationKey = (key, value, above_key) => {
     console.log(`\`${key}:${value}\` added to every localization file!`);
 };
 
+/** @param {LocalizationObject} obj @param {string[]} objects @param {number} [i] */
 const removeKey = (obj, objects, i = 0) => {
     console.log(`Removing key from ${obj.language} at path '${objects.join('.')}'`);
     if (!Object.hasOwn(obj, objects[i])) {
@@ -101,6 +108,7 @@ const removeKey = (obj, objects, i = 0) => {
     }
 };
 
+/** @param {string} key */
 const removeLocalizationKey = (key) => {
     const objects = key.split('.');
     for (const [localePath, localeObj] of getLocalizationObjects()) {
@@ -120,6 +128,10 @@ const Validate = function () {
     const enIndex = files.findIndex((file) => path.basename(file[0]) === 'en.json');
     const [_, enObj] = files.splice(enIndex, 1)[0];
 
+    /**
+     * @param {LocalizationObject} obj @param {(obj: LocalizationObject, key: string, pathes: string[]) => void}
+     *   predicate @param {string[]} [pathes]
+     */
     const traverse = function (obj, predicate, pathes = []) {
         for (const key in obj) {
             if (typeof obj[key] === 'string' || obj[key] instanceof String) {
@@ -132,7 +144,8 @@ const Validate = function () {
 
     let hasRemoved = false;
     for (const [_, localeObj] of files) {
-        let toRemove = [];
+        /** @type {string[][]} */
+        const toRemove = [];
         traverse(localeObj, (_, key, pathes) => {
             let currObj = enObj;
             for (const pathSegment of pathes) {
@@ -155,11 +168,13 @@ const Validate = function () {
         }
     }
 
-    let toAdd = [];
+    /** @type {[LocalizationObject, string[], string, string | undefined][]} */
+    const toAdd = [];
     traverse(enObj, (obj, key, pathes) => {
         // Add above_key to the toAdd entry
-        if (toAdd.length > 0 && typeof toAdd.at(-1)[3] === 'undefined' && toAdd.at(-1)[1].at(-2) === pathes.at(-1)) {
-            toAdd.at(-1)[3] = key;
+        const lastAdd = toAdd.at(-1);
+        if (lastAdd && typeof lastAdd[3] === 'undefined' && lastAdd[1].at(-2) === pathes.at(-1)) {
+            lastAdd[3] = key;
         }
 
         for (const [_, localeObj] of files) {
@@ -193,24 +208,26 @@ const Validate = function () {
 };
 
 const cliParser = yargs(hideBin(nodeprocess.argv))
-    .command({
-        command: 'add <key> <value> [above_key]',
-        aliases: ['a', 'replace', 'r'],
-        desc: 'adds or replaces a key and value to all localization files above `above_key`',
-        handler: (argv) => addLocalizationKey(argv.key, argv.value, argv.above_key)
-    })
-    .command({
-        command: 'remove <key>',
-        aliases: ['rm', 'r'],
-        desc: 'removes key from all localization files',
-        handler: (argv) => removeLocalizationKey(argv.key)
-    })
-    .command({
-        command: 'validate',
-        aliases: [],
-        desc: "removes keys from other languages that don't exist in the en translation and adds keys that don't exist in other languages",
-        handler: Validate
-    })
+    .command(
+        ['add <key> <value> [above_key]', 'a', 'replace', 'r'],
+        'adds or replaces a key and value to all localization files above `above_key`',
+        undefined,
+        (argv) =>
+            addLocalizationKey(
+                String(argv.key),
+                String(argv.value),
+                typeof argv.above_key === 'string' ? argv.above_key : undefined
+            )
+    )
+    .command(['remove <key>', 'rm', 'r'], 'removes key from all localization files', undefined, (argv) =>
+        removeLocalizationKey(String(argv.key))
+    )
+    .command(
+        'validate',
+        "removes keys from other languages that don't exist in the en translation and adds keys that don't exist in other languages",
+        undefined,
+        Validate
+    )
     .demandCommand(1)
     .example([
         ['$0 add foo.bar "I\'m adding a key!"', 'Adding a key as `foo.bar`'],
@@ -222,11 +239,10 @@ const cliParser = yargs(hideBin(nodeprocess.argv))
 
 cliParser
     .wrap(cliParser.terminalWidth())
-    .command({
-        command: 'help',
-        aliases: ['h'],
-        desc: 'Shows the help message',
-        handler: () => cliParser.showHelp()
+    .command(['help', 'h'], 'Shows the help message', undefined, () => {
+        cliParser.showHelp();
     })
-    .fail(() => cliParser.showHelp())
+    .fail(() => {
+        cliParser.showHelp();
+    })
     .parse();

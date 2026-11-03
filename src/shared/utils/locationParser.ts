@@ -78,38 +78,18 @@ function parseLocation(tag: string) {
                     const key = Z >= 0 ? s.substr(0, A) : s;
                     const value = A < Z ? s.substr(A + 1, Z - A - 1) : '';
                     if (key === 'hidden') {
-
-
-
-
                         ctx.hiddenId = value;
                     } else if (key === 'private') {
-
-
-
-
                         ctx.privateId = value;
                     } else if (key === 'friends') {
-
-
-
-
                         ctx.friendsId = value;
                     } else if (key === 'canRequestInvite') {
                         ctx.canRequestInvite = true;
                     } else if (key === 'region') {
                         ctx.region = value;
                     } else if (key === 'group') {
-
-
-
-
                         ctx.groupId = value;
                     } else if (key === 'groupAccessType') {
-
-
-
-
                         ctx.groupAccessType = value;
                     } else if (key === 'strict') {
                         ctx.strict = true;
@@ -181,10 +161,7 @@ function resolveRegion(L: object) {
  * @returns {string} Translated access type label
  */
 
-
-
-
-function translateAccessType(accessTypeName: string, t: function, keyMap: object) {
+function translateAccessType(accessTypeName: string, t: Function, keyMap: object) {
     const key = (keyMap as any)[accessTypeName];
     if (!key) {
         return accessTypeName;

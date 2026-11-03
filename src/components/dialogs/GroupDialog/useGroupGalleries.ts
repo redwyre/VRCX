@@ -1,4 +1,5 @@
 import { computed, ref } from 'vue';
+import type { ComputedRef, Ref } from 'vue';
 import { toast } from 'vue-sonner';
 
 import { groupRequest, queryRequest } from '../../../api';
@@ -7,12 +8,12 @@ import { hasGroupPermission, removeFromArray } from '../../../shared/utils';
 /**
  * Composable for managing group gallery loading and display state.
  *
- * @param {import('vue').Ref} groupDialog - Reactive ref to the group dialog state
- * @param {{ t?: Function; modalStore?: any; currentUser?: import('vue').Ref }} [deps]
+ * @param {Ref} groupDialog - Reactive ref to the group dialog state
+ * @param {{ t?: Function; modalStore?: any; currentUser?: Ref }} [deps]
  * @returns {{
- *     isGroupGalleryLoading: import('vue').Ref<boolean>;
- *     groupDialogGalleryCurrentName: import('vue').Ref<string>;
- *     groupGalleryTabs: import('vue').ComputedRef<Array>;
+ *     isGroupGalleryLoading: Ref<boolean>;
+ *     groupDialogGalleryCurrentName: Ref<string>;
+ *     groupGalleryTabs: ComputedRef<Array>;
  *     groupGalleryStatus: (gallery: Object) => Object;
  *     getGroupGalleries: () => Promise<void>;
  *     getGroupGallery: (groupId: string, galleryId: string) => Promise<void>;
@@ -27,13 +28,13 @@ import { hasGroupPermission, removeFromArray } from '../../../shared/utils';
  *     deleteGalleryImage: (image: Object) => Promise<void>;
  * }}
  */
-export function useGroupGalleries(groupDialog: import('vue').Ref, deps: { t?: Function; modalStore?: any; currentUser?: import('vue').Ref; } = {}) {
+export function useGroupGalleries(groupDialog: Ref, deps: { t?: Function; modalStore?: any; currentUser?: Ref } = {}) {
     const { t, modalStore, currentUser } = deps;
     const groupDialogGalleryCurrentName = ref('0');
     const isGroupGalleryLoading = ref(false);
 
     const groupGalleryTabs = computed(() =>
-        (groupDialog.value?.ref?.galleries || []).map((gallery: { name: any; }, index: any) => ({
+        (groupDialog.value?.ref?.galleries || []).map((gallery: { name: any }, index: any) => ({
             value: String(index),
             label: gallery?.name ?? ''
         }))
@@ -69,7 +70,9 @@ export function useGroupGalleries(groupDialog: import('vue').Ref, deps: { t?: Fu
         groupDialogGalleryCurrentName.value = '0';
         isGroupGalleryLoading.value = true;
         const groupId = groupDialog.value.id;
-        const tasks = (groupDialog.value.ref.galleries || []).map((gallery: { id: string; }) => getGroupGallery(groupId, gallery.id));
+        const tasks = (groupDialog.value.ref.galleries || []).map((gallery: { id: string }) =>
+            getGroupGallery(groupId, gallery.id)
+        );
         await Promise.allSettled(tasks);
         isGroupGalleryLoading.value = false;
     }
@@ -147,7 +150,7 @@ export function useGroupGalleries(groupDialog: import('vue').Ref, deps: { t?: Fu
      * @param {{ name: string; description: string; membersOnly: boolean }} fields
      * @returns {Promise<boolean>}
      */
-    async function createGallery(fields: { name: string; description: string; membersOnly: boolean; }) {
+    async function createGallery(fields: { name: string; description: string; membersOnly: boolean }) {
         const args = await groupRequest.createGroupGallery({
             groupId: groupDialog.value.id,
             ...fields
@@ -160,14 +163,8 @@ export function useGroupGalleries(groupDialog: import('vue').Ref, deps: { t?: Fu
         }
         groupDialog.value.ref.galleries.push(args.json);
 
-
-
-
         groupDialog.value.galleries[args.json.id] = [];
         groupDialogGalleryCurrentName.value = String(groupDialog.value.ref.galleries.length - 1);
-
-
-
 
         toast.success(t('dialog.group.gallery.created'));
         return true;
@@ -178,34 +175,24 @@ export function useGroupGalleries(groupDialog: import('vue').Ref, deps: { t?: Fu
      */
     async function deleteGallery(gallery: object) {
         const { ok } = await modalStore.confirm({
+            description: t('confirm.delete_gallery', { name: (gallery as any).name }),
 
-
-
-
-    description: t('confirm.delete_gallery', { name: (gallery as any).name }),
-
-
-
-
-    title: t('confirm.title'),
-    destructive: true
-});
+            title: t('confirm.title'),
+            destructive: true
+        });
         if (!ok) {
             return;
         }
         const args = await groupRequest.deleteGroupGallery({
-    groupId: groupDialog.value.id,
-    galleryId: (gallery as any).id
-});
+            groupId: groupDialog.value.id,
+            galleryId: (gallery as any).id
+        });
         if (groupDialog.value.id !== args.params.groupId) {
             return;
         }
         removeFromArray(groupDialog.value.ref.galleries, gallery);
         delete groupDialog.value.galleries[(gallery as any).id];
         groupDialogGalleryCurrentName.value = '0';
-
-
-
 
         toast.success(t('dialog.group.gallery.deleted'));
     }
@@ -215,7 +202,10 @@ export function useGroupGalleries(groupDialog: import('vue').Ref, deps: { t?: Fu
      * @param {{ name: string; description: string; membersOnly: boolean }} fields
      * @returns {Promise<boolean>}
      */
-    async function updateGallery(galleryId: string, fields: { name: string; description: string; membersOnly: boolean; }) {
+    async function updateGallery(
+        galleryId: string,
+        fields: { name: string; description: string; membersOnly: boolean }
+    ) {
         const args = await groupRequest.editGroupGallery({
             groupId: groupDialog.value.id,
             galleryId,
@@ -224,13 +214,10 @@ export function useGroupGalleries(groupDialog: import('vue').Ref, deps: { t?: Fu
         if (groupDialog.value.id !== args.params.groupId) {
             return false;
         }
-        const gallery = groupDialog.value.ref.galleries?.find((item: { id: string; }) => item.id === galleryId);
+        const gallery = groupDialog.value.ref.galleries?.find((item: { id: string }) => item.id === galleryId);
         if (gallery) {
             Object.assign(gallery, args.json);
         }
-
-
-
 
         toast.success(t('dialog.group.gallery.saved'));
         return true;
@@ -250,10 +237,6 @@ export function useGroupGalleries(groupDialog: import('vue').Ref, deps: { t?: Fu
             return;
         }
         if (!args.json.approved) {
-
-
-
-
             toast.success(t('dialog.group.gallery.image_pending_approval'));
             return;
         }
@@ -261,9 +244,6 @@ export function useGroupGalleries(groupDialog: import('vue').Ref, deps: { t?: Fu
             groupDialog.value.galleries[galleryId] = [];
         }
         groupDialog.value.galleries[galleryId].unshift(args.json);
-
-
-
 
         toast.success(t('dialog.group.gallery.image_added'));
     }
@@ -273,14 +253,7 @@ export function useGroupGalleries(groupDialog: import('vue').Ref, deps: { t?: Fu
      */
     async function deleteGalleryImage(image: object) {
         const { ok } = await modalStore.confirm({
-
-
-
-
             description: t('confirm.delete_gallery_image'),
-
-
-
 
             title: t('confirm.title'),
             destructive: true
@@ -289,10 +262,10 @@ export function useGroupGalleries(groupDialog: import('vue').Ref, deps: { t?: Fu
             return;
         }
         const args = await groupRequest.deleteGroupGalleryImage({
-    groupId: (image as any).groupId,
-    galleryId: (image as any).galleryId,
-    imageId: (image as any).id
-});
+            groupId: (image as any).groupId,
+            galleryId: (image as any).galleryId,
+            imageId: (image as any).id
+        });
         if (groupDialog.value.id !== args.params.groupId) {
             return;
         }
@@ -300,9 +273,6 @@ export function useGroupGalleries(groupDialog: import('vue').Ref, deps: { t?: Fu
         if (images) {
             removeFromArray(images, image);
         }
-
-
-
 
         toast.success(t('dialog.group.gallery.image_deleted'));
     }

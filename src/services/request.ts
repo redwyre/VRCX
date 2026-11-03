@@ -8,6 +8,7 @@ import { statusCodes } from '../shared/constants/api';
 import { watchState } from './watchState';
 
 import webApiService from './webapi';
+import type { RequestOptions, WebApiOptions } from '../types/vrcx';
 
 const pendingGetRequests = new Map();
 export let failedGetRequests = new Map();
@@ -16,20 +17,14 @@ const t = i18n.global.t;
 
 /**
  * @param {string} endpoint
- * @param {import('@/types/vrcx').RequestOptions} [options]
- * @returns {import('@/types/vrcx').WebApiOptions} Init object ready for webApiService.execute
+ * @param {RequestOptions} [options]
+ * @returns {WebApiOptions} Init object ready for webApiService.execute
  */
 
+export function buildRequestInit(endpoint: string, options?: RequestOptions) {
+    /** @type {WebApiOptions} */
 
-
-
-export function buildRequestInit(endpoint: string, options?: import('@/types/vrcx').RequestOptions) {
-    /** @type {import('@/types/vrcx').WebApiOptions} */
-
-
-
-
-    const init: import('@/types/vrcx').WebApiOptions = {
+    const init: WebApiOptions = {
         url: `${AppDebug.endpointDomain}/${endpoint}`,
         method: 'GET',
         ...options
@@ -81,14 +76,11 @@ export function parseResponse(response: any) {
 /**
  * @template [T=any]
  * @param {string} endpoint
- * @param {import('@/types/vrcx').RequestOptions} [options]
+ * @param {RequestOptions} [options]
  * @returns {Promise<T>}
  */
 
-
-
-
-export function request<T = any>(endpoint: string, options?: import('@/types/vrcx').RequestOptions) {
+export function request<T = any>(endpoint: string, options?: RequestOptions) {
     const authStore = useAuthStore();
     const modalStore = useModalStore();
     const notificationStore = useNotificationStore();
@@ -344,24 +336,14 @@ export function $throw(code: number, error?: string | object, endpoint?: string)
  * @returns {Promise<void>} Promise that resolves when bulk processing is complete
  */
 export async function processBulk(options: {
-
-
-
-
-    fn: function;
+    fn: (...args: any[]) => any;
     params?: object;
     N?: number;
     limitParam?: string;
 
+    handle?: (...args: any[]) => void;
 
-
-
-    handle?: function;
-
-
-
-
-    done?: function;
+    done?: (success: boolean) => void;
 }) {
     const { fn, params: rawParams = {}, N = -1, limitParam = 'n', handle, done } = options;
 

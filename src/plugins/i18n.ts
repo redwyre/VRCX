@@ -1,4 +1,5 @@
 import { createI18n } from 'vue-i18n';
+import type { NamedValue } from 'vue-i18n';
 
 import { getLocalizedStrings } from '../localization';
 
@@ -32,10 +33,10 @@ async function updateLocalizedStrings() {
  *
  * @param {string} locale
  * @param {string} key
- * @param {import('vue-i18n').NamedValue=} params
+ * @param {NamedValue} [params]
  * @returns {Promise<string>}
  */
-async function tForLocale(locale: string, key: string, params: import('vue-i18n').NamedValue = {}) {
+async function tForLocale(locale: string, key: string, params: NamedValue = {}) {
     await loadLocalizedStrings(locale);
     return i18n.global.t(key, params, { locale });
 }

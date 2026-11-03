@@ -1,18 +1,25 @@
 import { convertYoutubeTime, findUserByDisplayName, isRpcWorld, replaceBioSymbols } from '../../shared/utils';
+import type { Ref } from 'vue';
 
 /**
  * Creates the media parser functions for the GameLog store.
  *
  * @param {object} deps
- * @param {import('vue').Ref} deps.nowPlaying
+ * @param {Ref} deps.nowPlaying
  * @param {Function} deps.setNowPlaying
  * @param {Function} deps.clearNowPlaying
  * @param {object} deps.userStore – needs `.cachedUsers`
  * @param {object} deps.advancedSettingsStore – needs `.youTubeApi`, `.lookupYouTubeVideo()`
  * @returns {object} The media parser functions
  */
-export function createMediaParsers({ nowPlaying, setNowPlaying, clearNowPlaying, userStore, advancedSettingsStore }: {
-    nowPlaying: import('vue').Ref;
+export function createMediaParsers({
+    nowPlaying,
+    setNowPlaying,
+    clearNowPlaying,
+    userStore,
+    advancedSettingsStore
+}: {
+    nowPlaying: Ref;
     setNowPlaying: Function;
     clearNowPlaying: Function;
     userStore: object;
@@ -42,10 +49,6 @@ export function createMediaParsers({ nowPlaying, setNowPlaying, clearNowPlaying,
                     url.origin === 'https://nextnex.com' ||
                     url.origin === 'https://r.0cm.org'
                 ) {
-
-
-
-
                     url = new URL(url.searchParams.get('url'));
                 }
                 if (videoUrl.startsWith('https://u2b.cx/')) {
@@ -129,8 +132,11 @@ export function createMediaParsers({ nowPlaying, setNowPlaying, clearNowPlaying,
         let userId = '';
         if (displayName) {
             userId =
-    findUserByDisplayName((userStore as any).cachedUsers, displayName, (userStore as any).cachedUserIdsByDisplayName)?.id ??
-        '';
+                findUserByDisplayName(
+                    (userStore as any).cachedUsers,
+                    displayName,
+                    (userStore as any).cachedUserIdsByDisplayName
+                )?.id ?? '';
         }
         if (videoId === 'YouTube') {
             const entry1 = {
@@ -184,8 +190,11 @@ export function createMediaParsers({ nowPlaying, setNowPlaying, clearNowPlaying,
         let userId = '';
         if (displayName) {
             userId =
-    findUserByDisplayName((userStore as any).cachedUsers, displayName, (userStore as any).cachedUserIdsByDisplayName)?.id ??
-        '';
+                findUserByDisplayName(
+                    (userStore as any).cachedUsers,
+                    displayName,
+                    (userStore as any).cachedUserIdsByDisplayName
+                )?.id ?? '';
         }
         const entry1 = {
             created_at: gameLog.dt,
@@ -241,8 +250,11 @@ export function createMediaParsers({ nowPlaying, setNowPlaying, clearNowPlaying,
         let userId = '';
         if (displayName) {
             userId =
-    findUserByDisplayName((userStore as any).cachedUsers, displayName, (userStore as any).cachedUserIdsByDisplayName)?.id ??
-        '';
+                findUserByDisplayName(
+                    (userStore as any).cachedUsers,
+                    displayName,
+                    (userStore as any).cachedUserIdsByDisplayName
+                )?.id ?? '';
         }
         const entry1 = {
             created_at: gameLog.dt,

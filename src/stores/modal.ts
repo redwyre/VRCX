@@ -87,11 +87,11 @@ export const useModalStore = defineStore('Modal', () => {
     const otpMode = ref('totp'); // 'totp' | 'emailOtp' | 'otp'
 
     /** @type {{ resolve: ((result: ConfirmResult) => void) | null } | null} */
-    let pending: { resolve: ((result: ConfirmResult) => void) | null; } | null = null;
+    let pending: { resolve: ((result: ConfirmResult) => void) | null } | null = null;
     /** @type {{ resolve: ((result: PromptResult) => void) | null } | null} */
-    let pendingPrompt: { resolve: ((result: PromptResult) => void) | null; } | null = null;
+    let pendingPrompt: { resolve: ((result: PromptResult) => void) | null } | null = null;
     /** @type {{ resolve: ((result: PromptResult) => void) | null } | null} */
-    let pendingOtp: { resolve: ((result: PromptResult) => void) | null; } | null = null;
+    let pendingOtp: { resolve: ((result: PromptResult) => void) | null } | null = null;
 
     function closeDialog() {
         alertOpen.value = false;
@@ -170,7 +170,7 @@ export const useModalStore = defineStore('Modal', () => {
 
         alertOpen.value = true;
 
-        return new Promise((resolve) => {
+        return new Promise<ConfirmResult>((resolve) => {
             pending = { resolve };
         });
     }
@@ -193,9 +193,6 @@ export const useModalStore = defineStore('Modal', () => {
         promptInputValue.value = inputValueCopy;
         promptInputType.value = options.inputType || 'text';
 
-
-
-
         promptPattern.value = options.pattern ?? null;
         promptErrorMessage.value = options.errorMessage || t('dialog.prompt.input_invalid');
 
@@ -204,7 +201,7 @@ export const useModalStore = defineStore('Modal', () => {
 
         promptOpen.value = true;
 
-        return new Promise((resolve) => {
+        return new Promise<PromptResult>((resolve) => {
             pendingPrompt = { resolve };
         });
     }
@@ -339,7 +336,7 @@ export const useModalStore = defineStore('Modal', () => {
 
         otpOpen.value = true;
 
-        return new Promise((resolve) => {
+        return new Promise<PromptResult>((resolve) => {
             pendingOtp = { resolve };
         });
     }

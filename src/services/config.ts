@@ -17,9 +17,6 @@ class ConfigRepository {
     async remove(key: string) {
         const _key = transformKey(key);
 
-
-
-
         await sqliteService.executeNonQuery(`DELETE FROM configs WHERE key = @key`, {
             '@key': _key
         });
@@ -31,9 +28,6 @@ class ConfigRepository {
      * @returns {Promise<string | null>}
      */
 
-
-
-
     async getString(key: string, defaultValue: string = null) {
         const _key = transformKey(key);
         let value = undefined;
@@ -42,9 +36,6 @@ class ConfigRepository {
                 value = row[0];
             },
             `SELECT value FROM configs WHERE key = @key`,
-
-
-
 
             {
                 '@key': _key
@@ -66,9 +57,6 @@ class ConfigRepository {
         const _key = transformKey(key);
         const _value = String(value);
 
-
-
-
         await sqliteService.executeNonQuery(`INSERT OR REPLACE INTO configs (key, value) VALUES (@key, @value)`, {
             '@key': _key,
             '@value': _value
@@ -81,14 +69,7 @@ class ConfigRepository {
      * @returns {Promise<boolean | null>}
      */
 
-
-
-
     async getBool(key: string, defaultValue: boolean = null) {
-
-
-
-
         const value = await this.getString(key, null);
         if (value === null || value === undefined) {
             return defaultValue;
@@ -111,14 +92,7 @@ class ConfigRepository {
      * @returns {Promise<number | null>}
      */
 
-
-
-
     async getInt(key: string, defaultValue: number = null) {
-
-
-
-
         const value = await this.getString(key, null);
         if (value === null || value === undefined) {
             return defaultValue;
@@ -135,10 +109,6 @@ class ConfigRepository {
     }
 
     async getFloat(key: string, defaultValue = null) {
-
-
-
-
         const value = await this.getString(key, null);
         if (value === null || value === undefined) {
             return defaultValue;
@@ -150,15 +120,11 @@ class ConfigRepository {
         return parsed;
     }
 
-    async setFloat(key: string, value: string) {
-        await this.setString(key, value);
+    async setFloat(key: string, value: number) {
+        await this.setString(key, String(value));
     }
 
     async getObject(key: string, defaultValue = null) {
-
-
-
-
         let value = await this.getString(key, null);
         if (value === null || value === undefined) {
             return defaultValue;
@@ -183,9 +149,6 @@ class ConfigRepository {
      * @param {Array} defaultValue
      * @returns {Promise<Array | null>}
      */
-
-
-
 
     async getArray(key: string, defaultValue: Array<any> = null) {
         const value = await this.getObject(key, null);

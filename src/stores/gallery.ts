@@ -21,6 +21,7 @@ import { watchState } from '../services/watchState';
 import { database } from '../services/database';
 
 import * as workerTimers from 'worker-timers';
+import type { File as VrcChatFile, GetInventory } from 'vrchat';
 
 export const useGalleryStore = defineStore('Gallery', () => {
     const advancedSettingsStore = useAdvancedSettingsStore();
@@ -29,8 +30,8 @@ export const useGalleryStore = defineStore('Gallery', () => {
     const modalStore = useModalStore();
 
     const state = reactive({
-        printCache: [],
-        printQueue: [],
+        printCache: [] as string[],
+        printQueue: [] as string[],
         printQueueWorker: null,
         instanceInventoryCache: [],
         instanceInventoryQueue: [],
@@ -102,7 +103,7 @@ export const useGalleryStore = defineStore('Gallery', () => {
     /**
      * @param args
      */
-    function handleFilesList(args: { json: any; params: any; }) {
+    function handleFilesList(args: { json: any; params: any }) {
         if (args.params.tag === 'gallery') {
             galleryTable.value = args.json.reverse();
         }
@@ -122,12 +123,8 @@ export const useGalleryStore = defineStore('Gallery', () => {
     /**
      * @param args
      */
-    function handleGalleryImageAdd(args: { json: any; }) {
+    function handleGalleryImageAdd(args: { json: any }) {
         if (Object.keys(galleryTable.value).length !== 0) {
-
-
-
-
             galleryTable.value.unshift(args.json);
         }
     }
@@ -192,7 +189,7 @@ export const useGalleryStore = defineStore('Gallery', () => {
     /**
      * @param e
      */
-    function inviteImageUpload(e: { target: { files: any; }; dataTransfer: { files: any; }; }) {
+    function inviteImageUpload(e: Event) {
         const { file } = handleImageUploadInput(e, {
             inputSelector: null,
             tooLargeMessage: () => t('message.file.too_large'),
@@ -204,15 +201,13 @@ export const useGalleryStore = defineStore('Gallery', () => {
         }
         const r = new FileReader();
         r.onload = function () {
-            uploadImage.value = btoa((r.result as string));
+            uploadImage.value = btoa(r.result as string);
         };
         r.readAsBinaryString(file);
     }
 
     function clearInviteImageUpload() {
-        const buttonList = (
-            document.querySelectorAll('.inviteImageUploadButton') as NodeListOf<HTMLInputElement>
-        );
+        const buttonList = document.querySelectorAll('.inviteImageUploadButton') as NodeListOf<HTMLInputElement>;
         buttonList.forEach((button) => (button.value = ''));
         uploadImage.value = '';
     }
@@ -237,12 +232,8 @@ export const useGalleryStore = defineStore('Gallery', () => {
     /**
      * @param args
      */
-    function handleStickerAdd(args: { json: any; }) {
+    function handleStickerAdd(args: { json: any }) {
         if (Object.keys(stickerTable.value).length !== 0) {
-
-
-
-
             stickerTable.value.unshift(args.json);
         }
     }
@@ -253,16 +244,9 @@ export const useGalleryStore = defineStore('Gallery', () => {
      * @param inventoryId
      */
     async function trySaveStickerToFile(displayName: any, userId: any, inventoryId: any) {
-
-
-
-
         if (instanceStickersCache.value.includes(inventoryId)) {
             return;
         }
-
-
-
 
         instanceStickersCache.value.push(inventoryId);
         if (instanceStickersCache.value.length > 100) {
@@ -283,15 +267,16 @@ export const useGalleryStore = defineStore('Gallery', () => {
         const fileNameDate = createdAt.replace(/:/g, '-').replace(/T/g, '_').replace(/Z/g, '');
         const fileName = `${displayName}_${fileNameDate}_${inventoryId}.png`;
         try {
-            const filePath = await (AppApi as any).SaveStickerToFile(imageUrl, advancedSettingsStore.ugcFolderPath, monthFolder, fileName);
+            const filePath = await (AppApi as any).SaveStickerToFile(
+                imageUrl,
+                advancedSettingsStore.ugcFolderPath,
+                monthFolder,
+                fileName
+            );
             if (filePath) {
                 console.log(`Sticker saved to file: ${monthFolder}\\${fileName}`);
             }
         } catch (e) {
-
-
-
-
             handleFileSaveError(e, 'sticker');
         }
     }
@@ -328,9 +313,6 @@ export const useGalleryStore = defineStore('Gallery', () => {
                 return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
             });
 
-
-
-
             printTable.value = args.json;
         } catch (error) {
             console.error('Error fetching prints:', error);
@@ -349,33 +331,18 @@ export const useGalleryStore = defineStore('Gallery', () => {
      * @param printId
      */
     function queueSavePrintToFile(printId: any) {
-
-
-
-
         if (state.printCache.includes(printId)) {
             return;
         }
-
-
-
 
         state.printCache.push(printId);
         if (state.printCache.length > 100) {
             state.printCache.shift();
         }
 
-
-
-
-
         state.printQueue.push(printId);
 
         if (!state.printQueueWorker) {
-
-
-
-
             state.printQueueWorker = workerTimers.setInterval(() => {
                 const printId = state.printQueue.shift();
                 if (printId) {
@@ -388,7 +355,7 @@ export const useGalleryStore = defineStore('Gallery', () => {
     /**
      * @param printId
      */
-    async function trySavePrintToFile(printId: never) {
+    async function trySavePrintToFile(printId: string) {
         const args = await vrcPlusImageRequest.getPrint({ printId });
         const imageUrl = args.json?.files?.image;
         if (!imageUrl) {
@@ -401,14 +368,21 @@ export const useGalleryStore = defineStore('Gallery', () => {
             const owner = await queryRequest.fetch('user.dialog', {
                 userId: print.ownerId
             });
-            console.log(`Print spawned by ${(owner as any)?.json?.displayName} id:${print.id} note:${print.note} authorName:${print.authorName} at:${new Date().toISOString()}`);
+            console.log(
+                `Print spawned by ${(owner as any)?.json?.displayName} id:${print.id} note:${print.note} authorName:${print.authorName} at:${new Date().toISOString()}`
+            );
         } catch (err) {
             console.error(err);
         }
         const monthFolder = createdAt.toISOString().slice(0, 7);
         const fileName = getPrintFileName(print);
         try {
-            const filePath = await (AppApi as any).SavePrintToFile(imageUrl, advancedSettingsStore.ugcFolderPath, monthFolder, fileName);
+            const filePath = await (AppApi as any).SavePrintToFile(
+                imageUrl,
+                advancedSettingsStore.ugcFolderPath,
+                monthFolder,
+                fileName
+            );
             if (filePath) {
                 console.log(`Print saved to file: ${monthFolder}\\${fileName}`);
                 if (advancedSettingsStore.cropInstancePrints) {
@@ -418,18 +392,10 @@ export const useGalleryStore = defineStore('Gallery', () => {
                 }
             }
         } catch (e) {
-
-
-
-
             handleFileSaveError(e, 'print');
         }
 
         if (state.printQueue.length === 0) {
-
-
-
-
             workerTimers.clearInterval(state.printQueueWorker);
             state.printQueueWorker = null;
         }
@@ -458,8 +424,8 @@ export const useGalleryStore = defineStore('Gallery', () => {
     async function getInventory() {
         inventoryTable.value = [];
         advancedSettingsStore.currentUserInventory.clear();
-        /** @type {import('vrchat').GetInventory['query']} */
-        const params: import('vrchat').GetInventory['query'] = {
+        /** @type {GetInventory['query']} */
+        const params: GetInventory['query'] = {
             n: 100,
             offset: 0,
             order: 'newest',
@@ -468,17 +434,10 @@ export const useGalleryStore = defineStore('Gallery', () => {
         galleryDialogInventoryLoading.value = true;
         try {
             for (let i = 0; i < 100; i++) {
-
-
-
-
                 params.offset = i * params.n;
                 const args = await inventoryRequest.getInventoryItems(params);
                 for (const item of args.json.data) {
                     advancedSettingsStore.currentUserInventory.set(item.id, item);
-
-
-
 
                     inventoryTable.value.push(item);
                 }
@@ -488,10 +447,6 @@ export const useGalleryStore = defineStore('Gallery', () => {
             }
             const globalInventory = await inventoryRequest.getGlobalInventory();
             for (const item of globalInventory.json) {
-
-
-
-
                 inventoryTable.value.push(item);
             }
         } catch (error) {
@@ -538,9 +493,6 @@ export const useGalleryStore = defineStore('Gallery', () => {
                     toast.dismiss(AppDebug.errorNoty);
                 }
 
-
-
-
                 AppDebug.errorNoty = toast.info(text);
             }
         } catch (err) {
@@ -553,7 +505,7 @@ export const useGalleryStore = defineStore('Gallery', () => {
      * @param imageUrl
      * @param fileName
      */
-    function showFullscreenImageDialog(imageUrl: string, fileName: string) {
+    function showFullscreenImageDialog(imageUrl: string, fileName = '') {
         if (!imageUrl) {
             return;
         }
@@ -568,33 +520,18 @@ export const useGalleryStore = defineStore('Gallery', () => {
      * @param userId
      */
     function queueCheckInstanceInventory(inventoryId: any, userId: any) {
-
-
-
-
         if (state.instanceInventoryCache.includes(inventoryId) || instanceStickersCache.value.includes(inventoryId)) {
             return;
         }
-
-
-
 
         state.instanceInventoryCache.push(inventoryId);
         if (state.instanceInventoryCache.length > 100) {
             state.instanceInventoryCache.shift();
         }
 
-
-
-
-
         state.instanceInventoryQueue.push({ inventoryId, userId });
 
         if (!state.instanceInventoryQueueWorker) {
-
-
-
-
             state.instanceInventoryQueueWorker = workerTimers.setInterval(() => {
                 const item = state.instanceInventoryQueue.shift();
                 if ((item as any)?.inventoryId) {
@@ -620,8 +557,8 @@ export const useGalleryStore = defineStore('Gallery', () => {
         }
 
         const userArgs = await queryRequest.fetch('user.dialog', {
-    userId: (args as any).json.holderId
-});
+            userId: (args as any).json.holderId
+        });
         const displayName = (userArgs as any).json?.displayName ?? '';
 
         const emoji = (args as any).json.metadata;
@@ -633,23 +570,20 @@ export const useGalleryStore = defineStore('Gallery', () => {
         const monthFolder = createdAt.slice(0, 7);
 
         try {
-            const filePath = await (AppApi as any).SaveEmojiToFile(imageUrl, advancedSettingsStore.ugcFolderPath, monthFolder, emojiFileName);
+            const filePath = await (AppApi as any).SaveEmojiToFile(
+                imageUrl,
+                advancedSettingsStore.ugcFolderPath,
+                monthFolder,
+                emojiFileName
+            );
             if (filePath) {
                 console.log(`Emoji saved to file: ${monthFolder}\\${emojiFileName}`);
             }
         } catch (e) {
-
-
-
-
             handleFileSaveError(e, 'emoji');
         }
 
         if (state.instanceInventoryQueue.length === 0) {
-
-
-
-
             workerTimers.clearInterval(state.instanceInventoryQueueWorker);
             state.instanceInventoryQueueWorker = null;
         }
@@ -658,8 +592,8 @@ export const useGalleryStore = defineStore('Gallery', () => {
     /**
      * @param fileId
      */
-    async function getCachedEmoji(fileId: any) {
-        return new Promise((resolve, reject) => {
+    async function getCachedEmoji(fileId: any): Promise<Partial<VrcChatFile>> {
+        return new Promise<Partial<VrcChatFile>>((resolve, reject) => {
             let ref = cachedEmoji.get(fileId);
             if (typeof ref !== 'undefined') {
                 resolve(ref);

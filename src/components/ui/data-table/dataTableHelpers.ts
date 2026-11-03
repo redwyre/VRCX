@@ -71,10 +71,7 @@ export function getColStyle(col: object) {
  * @returns {boolean}
  */
 
-
-
-
-export function isReorderable(header: object, getPinnedState: function) {
+export function isReorderable(header: object, getPinnedState: Function) {
     const col = (header as any)?.column;
     if (!col) return false;
     if (isSpacer(col)) return false;

@@ -1,4 +1,5 @@
 import { ref } from 'vue';
+import type { Ref } from 'vue';
 import { toast } from 'vue-sonner';
 
 import { debounce, mergeGroupMemberSearchResults } from '../../../shared/utils';
@@ -11,8 +12,8 @@ import * as workerTimers from 'worker-timers';
  * searching, sorting and filtering.
  *
  * @param {object} deps
- * @param {import('vue').Ref} deps.groupMemberModeration - Store ref
- * @param {import('vue').Ref} deps.currentUser - Store ref
+ * @param {Ref} deps.groupMemberModeration - Store ref
+ * @param {Ref} deps.currentUser - Store ref
  * @param {Function} deps.applyGroupMember - Store action
  * @param {Function} deps.handleGroupMember - Store action
  * @param {object} deps.tables - Reactive table data objects
@@ -28,8 +29,8 @@ import * as workerTimers from 'worker-timers';
  * @param {object} deps.groupRequest - API module
  */
 export function useGroupModerationData(deps: {
-    groupMemberModeration: import('vue').Ref;
-    currentUser: import('vue').Ref;
+    groupMemberModeration: Ref;
+    currentUser: Ref;
     applyGroupMember: Function;
     handleGroupMember: Function;
     tables: {
@@ -88,29 +89,28 @@ export function useGroupModerationData(deps: {
         if (memberFilter.value.id !== null) {
             loadMoreGroupMembersParams.value.roleId = memberFilter.value.id;
         }
-        await (groupRequest as any).getGroupMember({
-    groupId: groupMemberModeration.value.id,
-    userId: currentUser.value.id
-})
-    .then((args: {
-    ref: any;
-    json: {
-        user: any;
-    };
-}) => {
-    args.ref = applyGroupMember(args.json);
-    if (args.json) {
-        args.json.user = currentUser.value;
-        if (memberFilter.value.id === null) {
-
-
-
-
-            members.value.push(args.json);
-        }
-    }
-    return args;
-});
+        await (groupRequest as any)
+            .getGroupMember({
+                groupId: groupMemberModeration.value.id,
+                userId: currentUser.value.id
+            })
+            .then(
+                (args: {
+                    ref: any;
+                    json: {
+                        user: any;
+                    };
+                }) => {
+                    args.ref = applyGroupMember(args.json);
+                    if (args.json) {
+                        args.json.user = currentUser.value;
+                        if (memberFilter.value.id === null) {
+                            members.value.push(args.json);
+                        }
+                    }
+                    return args;
+                }
+            );
         await loadMoreGroupMembers();
     }
 
@@ -118,74 +118,68 @@ export function useGroupModerationData(deps: {
      * @param {object} [options]
      * @param {boolean} [options.preserveSearch] - Keep the active member search when loading more members
      */
-    async function loadMoreGroupMembers(options: {
-    preserveSearch?: boolean;
-} = {}) {
+    async function loadMoreGroupMembers(
+        options: {
+            preserveSearch?: boolean;
+        } = {}
+    ) {
         if (isGroupMembersDone.value || isGroupMembersLoading.value) {
             return;
         }
         const params = loadMoreGroupMembersParams.value;
         if (params.roleId === '') {
-
-
-
-
             delete params.roleId;
         }
         if (!options.preserveSearch) {
             memberSearch.value = '';
         }
         isGroupMembersLoading.value = true;
-        await (groupRequest as any).getGroupMembers(params)
-    .finally(() => {
-    isGroupMembersLoading.value = false;
-})
-    .then((args: {
-    json: string | any[];
-    params: {
-        groupId: any;
-    };
-}) => {
-    for (const json of args.json) {
-        handleGroupMember({
-            json,
-            params: { groupId: args.params.groupId }
-        });
-    }
-    for (let i = 0; i < args.json.length; i++) {
-        const member = args.json[i];
-        if (member.userId === currentUser.value.id) {
-            if (members.value.length > 0 && (members.value[0] as any).userId === currentUser.value.id) {
-                members.value.splice(0, 1);
-            }
-            break;
-        }
-    }
-    if (args.json.length < params.n) {
-        isGroupMembersDone.value = true;
-    }
+        await (groupRequest as any)
+            .getGroupMembers(params)
+            .finally(() => {
+                isGroupMembersLoading.value = false;
+            })
+            .then(
+                (args: {
+                    json: string | any[];
+                    params: {
+                        groupId: any;
+                    };
+                }) => {
+                    for (const json of args.json) {
+                        handleGroupMember({
+                            json,
+                            params: { groupId: args.params.groupId }
+                        });
+                    }
+                    for (let i = 0; i < args.json.length; i++) {
+                        const member = args.json[i];
+                        if (member.userId === currentUser.value.id) {
+                            if (members.value.length > 0 && (members.value[0] as any).userId === currentUser.value.id) {
+                                members.value.splice(0, 1);
+                            }
+                            break;
+                        }
+                    }
+                    if (args.json.length < params.n) {
+                        isGroupMembersDone.value = true;
+                    }
 
-
-
-
-    members.value = [...members.value, ...args.json];
-    if (!options.preserveSearch) {
-        (tables.members as any).data = members.value.map((member) => ({
-
-
-
-
-            ...member,
-            $selected: Boolean((selection.selectedUsers as any)[(member as any).userId])
-        }));
-    }
-    params.offset += params.n;
-    return args;
-})
-    .catch((err: any) => {
-    isGroupMembersDone.value = true;
-    throw err;
-});
+                    members.value = [...members.value, ...args.json];
+                    if (!options.preserveSearch) {
+                        (tables.members as any).data = members.value.map((member) => ({
+                            ...member,
+                            $selected: Boolean((selection.selectedUsers as any)[(member as any).userId])
+                        }));
+                    }
+                    params.offset += params.n;
+                    return args;
+                }
+            )
+            .catch((err: any) => {
+                isGroupMembersDone.value = true;
+                throw err;
+            });
     }
 
     async function loadAllGroupMembers() {
@@ -206,7 +200,7 @@ export function useGroupModerationData(deps: {
     /**
      * @param sortOrder
      */
-    async function setGroupMemberSortOrder(sortOrder: { id: string; name: string; value: string; }) {
+    async function setGroupMemberSortOrder(sortOrder: { id: string; name: string; value: string }) {
         if (memberSortOrder.value === sortOrder) {
             return;
         }
@@ -217,7 +211,7 @@ export function useGroupModerationData(deps: {
     /**
      * @param filter
      */
-    async function setGroupMemberFilter(filter: { id: null; name: string; }) {
+    async function setGroupMemberFilter(filter: { id: null; name: string }) {
         if (memberFilter.value === filter) {
             return;
         }
@@ -251,11 +245,11 @@ export function useGroupModerationData(deps: {
         isGroupMembersLoading.value = true;
         try {
             const args = await (groupRequest as any).getGroupMembersSearch({
-    groupId,
-    query: search,
-    n: 100,
-    offset: 0
-});
+                groupId,
+                query: search,
+                n: 100,
+                offset: 0
+            });
             for (const json of args.json.results) {
                 handleGroupMember({
                     json,
@@ -271,9 +265,9 @@ export function useGroupModerationData(deps: {
             }
             const results = mergeGroupMemberSearchResults(args.json.results, members.value, search);
             (tables.members as any).data = results.map((member) => ({
-    ...member,
-    $selected: Boolean((selection.selectedUsers as any)[member.userId])
-}));
+                ...member,
+                $selected: Boolean((selection.selectedUsers as any)[member.userId])
+            }));
             await groupMembersSearchLoadRemaining(requestId, search);
         } catch {
             // ignore search errors, they are reported by the request layer
@@ -289,11 +283,11 @@ export function useGroupModerationData(deps: {
         for (let page = 0; page < groupMembersSearchMaxPages; ++page) {
             if (
                 (tables.members as any).data.length ||
-    !groupMemberModeration.value.visible ||
-    loadMoreGroupMembersParams.value.groupId !== groupId ||
-    requestId !== memberSearchRequestId ||
-    search !== memberSearch.value ||
-    isGroupMembersDone.value
+                !groupMemberModeration.value.visible ||
+                loadMoreGroupMembersParams.value.groupId !== groupId ||
+                requestId !== memberSearchRequestId ||
+                search !== memberSearch.value ||
+                isGroupMembersDone.value
             ) {
                 return;
             }
@@ -320,9 +314,9 @@ export function useGroupModerationData(deps: {
             }
             const results = mergeGroupMemberSearchResults((tables.members as any).data, members.value, search);
             (tables.members as any).data = results.map((member) => ({
-    ...member,
-    $selected: Boolean((selection.selectedUsers as any)[member.userId])
-}));
+                ...member,
+                $selected: Boolean((selection.selectedUsers as any)[member.userId])
+            }));
         }
     }
 
@@ -514,7 +508,7 @@ export function useGroupModerationData(deps: {
                         continue;
                     }
                     for (const json of args.json.results) {
-                        const existsInData = newData.some((dataItem: { id: any; }) => dataItem.id === json.id);
+                        const existsInData = newData.some((dataItem: { id: any }) => dataItem.id === json.id);
                         if (!existsInData) {
                             newData.push(json);
                         }
@@ -545,9 +539,9 @@ export function useGroupModerationData(deps: {
         const D = groupMemberModeration.value;
         let member: { userId?: any; user?: any; displayName?: any } = {};
         const memberArgs = await (groupRequest as any).getGroupMember({
-    groupId: D.id,
-    userId
-});
+            groupId: D.id,
+            userId
+        });
         if (memberArgs && memberArgs.json) {
             member = applyGroupMember(memberArgs.json);
         }

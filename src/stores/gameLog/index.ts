@@ -135,10 +135,6 @@ export const useGameLogStore = defineStore('GameLog', () => {
         async ([value]) => {
             await initPromise;
             const isDashboardPanel =
-
-
-
-
                 value.name === 'dashboard' && dashboardStore.getDashboard(value.params.id, 'game-log');
             if (value.name === 'game-log' || isDashboardPanel) {
                 if (sessionsViewMode.value === 'sessions') {
@@ -194,42 +190,23 @@ export const useGameLogStore = defineStore('GameLog', () => {
     function insertGameLogSorted(entry: any) {
         const arr = gameLogTableData.value;
         if (arr.length === 0) {
-
-
-
-
             gameLogTableData.value = [entry];
             return;
         }
         if (compareGameLogRows(entry, arr[0]) < 0) {
-
-
-
-
             gameLogTableData.value = [entry, ...arr];
             return;
         }
         if (compareGameLogRows(entry, arr[arr.length - 1]) > 0) {
-
-
-
-
             gameLogTableData.value = [...arr, entry];
             return;
         }
         for (let i = 1; i < arr.length; i++) {
             if (compareGameLogRows(entry, arr[i]) < 0) {
-
-
-
-
                 gameLogTableData.value = [...arr.slice(0, i), entry, ...arr.slice(i)];
                 return;
             }
         }
-
-
-
 
         gameLogTableData.value = [...arr, entry];
     }
@@ -255,29 +232,13 @@ export const useGameLogStore = defineStore('GameLog', () => {
         nowPlayingEntry = updated;
         await database.updateGamelogVideoPlayName(entry.rowId, videoName);
 
-
-
-
-
         if (gameLogTableData.value.includes(entry)) {
-
-
-
-
             gameLogTableData.value = gameLogTableData.value.map((row) => (row === entry ? updated : row));
         }
         const isSameEvent = (event: any) =>
             event.type === 'VideoPlay' && event.created_at === entry.created_at && event.videoUrl === entry.videoUrl;
         if (sessionsRawEvents.value.some(isSameEvent)) {
-
-
-
-
             sessionsRawEvents.value = sessionsRawEvents.value.map((event) =>
-
-
-
-
                 isSameEvent(event) ? { ...event, videoName } : event
             );
             rebuildSessionsDebounced();
@@ -453,9 +414,6 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 (row as any).isFavorite = gameLogIsFavorite(row);
             }
 
-
-
-
             gameLogTableData.value = rows;
         } finally {
             gameLogTable.value.loading = false;
@@ -494,9 +452,6 @@ export const useGameLogStore = defineStore('GameLog', () => {
             ) {
                 return;
             }
-
-
-
 
             if (gameLogTable.value.filter.length > 0 && !gameLogTable.value.filter.includes(entry.type)) {
                 return;
@@ -641,7 +596,9 @@ export const useGameLogStore = defineStore('GameLog', () => {
             return false;
         }
 
-        return [(event as any).displayName].map((item) => String(item ?? '').toUpperCase()).some((item) => item.includes(value));
+        return [(event as any).displayName]
+            .map((item) => String(item ?? '').toUpperCase())
+            .some((item) => item.includes(value));
     }
 
     /**
@@ -655,15 +612,15 @@ export const useGameLogStore = defineStore('GameLog', () => {
         }
         if ((event as any).type === 'JoinGroup' || (event as any).type === 'LeftGroup') {
             return Array.isArray((event as any).members)
-    ? (event as any).members.some((member: any) => isSessionsMemberSearchMatch(member, value))
-    : false;
+                ? (event as any).members.some((member: any) => isSessionsMemberSearchMatch(member, value))
+                : false;
         }
         if (gameLogSearchFilter(event, value)) {
             return true;
         }
         return [(event as any).displayName, (event as any).videoName, (event as any).videoUrl]
-    .map((item) => String(item ?? '').toUpperCase())
-    .some((item) => item.includes(value));
+            .map((item) => String(item ?? '').toUpperCase())
+            .some((item) => item.includes(value));
     }
 
     /**
@@ -672,7 +629,9 @@ export const useGameLogStore = defineStore('GameLog', () => {
      * @returns {boolean}
      */
     function isSessionsSegmentHeaderSearchMatch(segment: object, value: string) {
-        return [(segment as any).worldName].map((item) => String(item ?? '').toUpperCase()).some((item) => item.includes(value));
+        return [(segment as any).worldName]
+            .map((item) => String(item ?? '').toUpperCase())
+            .some((item) => item.includes(value));
     }
 
     /**
@@ -687,10 +646,6 @@ export const useGameLogStore = defineStore('GameLog', () => {
         }
 
         if (sessionsEventFilters.value.length > 0) {
-
-
-
-
             result = result.filter((event) => sessionsEventFilters.value.includes((event as any).type));
         }
 
@@ -734,21 +689,23 @@ export const useGameLogStore = defineStore('GameLog', () => {
             }
 
             const events = Array.isArray((segment as any).events)
-    ? (segment as any).events.flatMap((event: any) => {
-        if (event.type === 'JoinGroup' || event.type === 'LeftGroup') {
-            if (!Array.isArray(event.members)) {
-                return [];
-            }
-            const matchedMembers = event.members.filter((member: any) => isSessionsMemberSearchMatch(member, value));
-            return matchedMembers.map((member: any) => ({
-                ...member,
-                type: event.type === 'JoinGroup' ? 'OnPlayerJoined' : 'OnPlayerLeft',
-                location: (segment as any).location
-            }));
-        }
-        return isSessionsEventSearchMatch(event, value) ? [event] : [];
-    })
-    : [];
+                ? (segment as any).events.flatMap((event: any) => {
+                      if (event.type === 'JoinGroup' || event.type === 'LeftGroup') {
+                          if (!Array.isArray(event.members)) {
+                              return [];
+                          }
+                          const matchedMembers = event.members.filter((member: any) =>
+                              isSessionsMemberSearchMatch(member, value)
+                          );
+                          return matchedMembers.map((member: any) => ({
+                              ...member,
+                              type: event.type === 'JoinGroup' ? 'OnPlayerJoined' : 'OnPlayerLeft',
+                              location: (segment as any).location
+                          }));
+                      }
+                      return isSessionsEventSearchMatch(event, value) ? [event] : [];
+                  })
+                : [];
             if (events.length > 0) {
                 filtered.push({
                     ...segment,
@@ -768,13 +725,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
         }
         const events = filterSessionsEventsByFilters(sessionsRawEvents.value);
 
-
-
-
-        const result = buildGameLogSessions(sessionsRawLocations.value, events);
-
-
-
+        const result = buildGameLogSessions(sessionsRawLocations.value, events as any[]);
 
         sessionsSegments.value = applySessionsSearchFilter(filterSessionsSegmentsByDateRange(result.segments));
     }
@@ -806,16 +757,8 @@ export const useGameLogStore = defineStore('GameLog', () => {
         if (hasAll && !wasAll) {
             sessionsEventFilters.value = [];
         } else if (wasAll && types.length > 0) {
-
-
-
-
             sessionsEventFilters.value = types;
         } else {
-
-
-
-
             sessionsEventFilters.value =
                 types.length === SESSIONS_EVENT_FILTER_TYPES.length ? [] : types.length > 0 ? types : [];
         }
@@ -879,13 +822,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
 
         const events = await fetchEventsForLocations(locations);
 
-
-
-
         sessionsRawLocations.value = [...sessionsRawLocations.value, ...locations];
-
-
-
 
         sessionsRawEvents.value = [...sessionsRawEvents.value, ...events];
         rebuildSessions();
@@ -952,10 +889,6 @@ export const useGameLogStore = defineStore('GameLog', () => {
                 sessionsRawEvents.value = [];
                 sessionsSegments.value = [];
                 while (hasMore && sessionsSegments.value.length === 0) {
-
-
-
-
                     const locations =
                         beforeId === null
                             ? await database.getSessionsLocationSegmentsByAnchor(
@@ -977,7 +910,9 @@ export const useGameLogStore = defineStore('GameLog', () => {
                         break;
                     }
 
-                    const inRangeLocations = locations.filter((location: any) => isSessionsLocationInDateRange(location));
+                    const inRangeLocations = locations.filter((location: any) =>
+                        isSessionsLocationInDateRange(location)
+                    );
                     const oldestLocationEpoch = toSessionsEpoch(locations[locations.length - 1].created_at);
                     const newestLocationEpoch = toSessionsEpoch(locations[0].created_at);
                     const isEntireBatchAfterRange =
@@ -998,13 +933,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
 
                     const events = await fetchEventsForLocations(inRangeLocations);
 
-
-
-
                     sessionsRawLocations.value = [...sessionsRawLocations.value, ...inRangeLocations];
-
-
-
 
                     sessionsRawEvents.value = [...sessionsRawEvents.value, ...events];
                     beforeId = locations[locations.length - 1].id;
@@ -1033,13 +962,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
 
             const events = await fetchEventsForLocations(locations);
 
-
-
-
             sessionsRawLocations.value = locations;
-
-
-
 
             sessionsRawEvents.value = events;
             rebuildSessions();
@@ -1099,14 +1022,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
 
             const moreEvents = await fetchEventsForLocations(moreLocations);
 
-
-
-
-
             sessionsRawLocations.value = [...sessionsRawLocations.value, ...moreLocations];
-
-
-
 
             sessionsRawEvents.value = [...sessionsRawEvents.value, ...moreEvents];
             rebuildSessions();
@@ -1152,13 +1068,7 @@ export const useGameLogStore = defineStore('GameLog', () => {
 
             const events = await fetchEventsForLocations(locations);
 
-
-
-
             sessionsRawLocations.value = locations;
-
-
-
 
             sessionsRawEvents.value = events;
             rebuildSessions();
@@ -1212,47 +1122,36 @@ export const useGameLogStore = defineStore('GameLog', () => {
 
         if (type === 'Location') {
             // Add a new location segment
-sessionsRawLocations.value = [
-
-
-
-
-    {
-        id: (entry as any).rowId || Date.now(),
-        created_at: (entry as any).created_at,
-        location: (entry as any).location,
-        worldId: (entry as any).worldId,
-        worldName: (entry as any).worldName,
-        time: (entry as any).time,
-        groupName: (entry as any).groupName || ''
-    },
-    ...sessionsRawLocations.value
-];
+            sessionsRawLocations.value = [
+                {
+                    id: (entry as any).rowId || Date.now(),
+                    created_at: (entry as any).created_at,
+                    location: (entry as any).location,
+                    worldId: (entry as any).worldId,
+                    worldName: (entry as any).worldName,
+                    time: (entry as any).time,
+                    groupName: (entry as any).groupName || ''
+                },
+                ...sessionsRawLocations.value
+            ];
         } else {
             // Append event
-sessionsRawEvents.value = [
+            sessionsRawEvents.value = [
+                ...sessionsRawEvents.value,
 
-
-
-
-    ...sessionsRawEvents.value,
-
-
-
-
-    {
-        type,
-        created_at: (entry as any).created_at,
-        displayName: (entry as any).displayName,
-        userId: (entry as any).userId,
-        location: (entry as any).location,
-        videoUrl: (entry as any).videoUrl,
-        videoName: (entry as any).videoName,
-        videoId: (entry as any).videoId,
-        isFriend: (entry as any).isFriend,
-        isFavorite: (entry as any).isFavorite
-    }
-];
+                {
+                    type,
+                    created_at: (entry as any).created_at,
+                    displayName: (entry as any).displayName,
+                    userId: (entry as any).userId,
+                    location: (entry as any).location,
+                    videoUrl: (entry as any).videoUrl,
+                    videoName: (entry as any).videoName,
+                    videoId: (entry as any).videoId,
+                    isFriend: (entry as any).isFriend,
+                    isFavorite: (entry as any).isFavorite
+                }
+            ];
         }
         rebuildSessionsDebounced();
     }

@@ -81,7 +81,7 @@ export const useUiStore = defineStore('Ui', () => {
         }
     });
 
-    function pushDialogCrumb(data: { label: any; id: any; type?: any; }) {
+    function pushDialogCrumb(data: { label?: any; id: any; type?: any }) {
         const { type, id, label } = data;
         if (!type || !id) {
             return;
@@ -105,9 +105,6 @@ export const useUiStore = defineStore('Ui', () => {
         if (!data.label) {
             data.label = data.id;
         }
-
-
-
 
         items.push(data);
     }
@@ -221,13 +218,7 @@ export const useUiStore = defineStore('Ui', () => {
      * @param {string} [data.label]
      * @returns {boolean}
      */
-    function openDialog(data: {
-    type: string;
-    id: string;
-    tag?: string;
-    shortName?: string;
-    label?: string;
-}) {
+    function openDialog(data: { type: string; id: string; tag?: string; shortName?: string; label?: string }) {
         const { type } = data;
         const userStore = useUserStore();
         const worldStore = useWorldStore();
@@ -275,9 +266,6 @@ export const useUiStore = defineStore('Ui', () => {
             clearDialogCrumbs();
         }
 
-
-
-
         pushDialogCrumb(data);
         return hadActiveDialog;
     }
@@ -319,14 +307,7 @@ export const useUiStore = defineStore('Ui', () => {
     function notifyMenu(index: RouteRecordNameGeneric) {
         const currentRouteName = router.currentRoute.value?.name;
 
-
-
-
         if (index !== currentRouteName && !notifiedMenus.value.includes(index)) {
-
-
-
-
             notifiedMenus.value.push(index);
             updateTrayIconNotify();
         }
@@ -345,10 +326,6 @@ export const useUiStore = defineStore('Ui', () => {
     function updateTrayIconNotify(force = false) {
         const newState =
             appearanceSettings.notificationIconDot &&
-
-
-
-
             (notifiedMenus.value.includes('notification') || notifiedMenus.value.includes('friend-log'));
 
         if (trayIconNotify.value !== newState || force) {

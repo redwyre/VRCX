@@ -8,15 +8,15 @@ import { parseLocation } from './location';
  * @param {Map} deps.cachedInstances - Instance cache map
  * @returns {boolean}
  */
-function checkCanInvite(location: string, deps: {
-    currentUserId: string;
-    lastLocationStr: string;
+function checkCanInvite(
+    location: string,
+    deps: {
+        currentUserId: string;
+        lastLocationStr: string;
 
-
-
-
-    cachedInstances: Map;
-}) {
+        cachedInstances: Map<string, any>;
+    }
+) {
     if (!location) {
         return false;
     }
@@ -45,19 +45,16 @@ function checkCanInvite(location: string, deps: {
  * @param {Map} deps.friends - Friends map
  * @returns {boolean}
  */
-function checkCanInviteSelf(location: string, deps: {
-    currentUserId: string;
+function checkCanInviteSelf(
+    location: string,
+    deps: {
+        currentUserId: string;
 
+        cachedInstances: Map<string, any>;
 
-
-
-    cachedInstances: Map;
-
-
-
-
-    friends: Map;
-}) {
+        friends: Map<string, any>;
+    }
+) {
     if (!location) {
         return false;
     }

@@ -195,7 +195,7 @@
                 v-if="!isGroupMembersDone"
                 class="box-border flex items-center p-1.5 text-[13px] cursor-pointer"
                 style="width: 100%; height: 45px; text-align: center"
-                @click="loadMoreGroupMembers">
+                @click="() => loadMoreGroupMembers()">
                 <div v-if="!isGroupMembersLoading" class="flex-1 overflow-hidden">
                     <span class="block truncate font-medium leading-[18px]">{{
                         t('dialog.group.members.load_more')

@@ -1,17 +1,15 @@
+import type { UnityPackage } from 'vrchat';
+
 /**
- * @param {object} unityPackages
+ * @param {unknown} unityPackages
  * @returns {{ isPC: boolean; isQuest: boolean; isIos: boolean }}
  */
-function getAvailablePlatforms(unityPackages: object) {
+function getAvailablePlatforms(unityPackages: unknown) {
     let isPC = false;
     let isQuest = false;
     let isIos = false;
-    if (typeof unityPackages === 'object') {
-
-
-
-
-        for (const unityPackage of unityPackages) {
+    if (Array.isArray(unityPackages)) {
+        for (const unityPackage of unityPackages as UnityPackage[]) {
             if (unityPackage.variant && unityPackage.variant !== 'standard' && unityPackage.variant !== 'security') {
                 continue;
             }

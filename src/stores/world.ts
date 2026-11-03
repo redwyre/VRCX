@@ -1,9 +1,10 @@
 import { reactive, shallowReactive, watch } from 'vue';
 import { defineStore } from 'pinia';
 
-import { checkVRChatCache, formatFileSize } from '../shared/utils';
+import { checkVRChatCache, formatFileSize, parseLocation } from '../shared/utils';
 import { preloadOwnWorlds } from '../coordinators/worldCoordinator';
 import { watchState } from '../services/watchState';
+import type { VrcxFileAnalysis, VrcxWorld } from '../types/vrcx';
 
 export const useWorldStore = defineStore('World', () => {
     const worldDialog = reactive({
@@ -13,8 +14,8 @@ export const useWorldStore = defineStore('World', () => {
         lastActiveTab: 'Instances',
         id: '',
         memo: '',
-        $location: {},
-        ref: {},
+        $location: parseLocation(''),
+        ref: {} as VrcxWorld,
         isFavorite: false,
         avatarScalingDisabled: false,
         focusViewDisabled: false,
@@ -23,7 +24,7 @@ export const useWorldStore = defineStore('World', () => {
         cacheSize: '',
         cacheLocked: false,
         cachePath: '',
-        fileAnalysis: {},
+        fileAnalysis: {} as VrcxFileAnalysis,
         lastVisit: '',
         visitCount: 0,
         timeSpent: 0,

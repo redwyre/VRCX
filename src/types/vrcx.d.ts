@@ -1,4 +1,17 @@
-import type { CurrentUser, Favorite, Group, Instance, Notification, UpdateInstanceRequest, User, World } from 'vrchat';
+import type {
+    Avatar,
+    CurrentUser,
+    Favorite,
+    FileAnalysis,
+    Group,
+    GroupPost,
+    Instance,
+    Notification,
+    UpdateInstanceRequest,
+    User,
+    World
+} from 'vrchat';
+import type { parseLocation } from '../shared/utils/locationParser';
 
 // cursed line to convert Date and bigint to expected types
 export type Json<T> = T extends Date
@@ -11,6 +24,20 @@ export type Json<T> = T extends Date
           ? { [K in keyof T]: Json<T[K]> }
           : T;
 
+export type VrcxAvatar = Json<Avatar>;
+export type VrcxGroupPost = Json<GroupPost>;
+export type VrcxFileAnalysis = Record<
+    string,
+    Json<FileAnalysis> & {
+        _fileSize?: string;
+        _uncompressedSize?: string;
+        _totalTextureUsage?: string;
+    }
+>;
+export type VrcxLocation = ReturnType<typeof parseLocation> & {
+    user?: VrcxUser;
+};
+
 export interface moderations {
     isBlocked: boolean;
     isMuted: boolean;
@@ -19,7 +46,18 @@ export interface moderations {
 }
 
 export interface VrcxUser extends Json<User> {
-    $location: {};
+    backgroundType?: string;
+    backgroundGradientTop?: string;
+    backgroundGradientBottom?: string;
+    backgroundTextureId?: string;
+    backgroundTemplateId?: string;
+    bio?: string;
+    bioLinks?: Array<{ category: string; url: string }>;
+    badges?: Array<any>;
+    currentAvatarThumbnailImageUrl?: string;
+    currentAvatarTags?: string[];
+    fallbackAvatar?: string;
+    $location: VrcxLocation;
     $location_at: number;
     $online_for: number;
     $travelingToTime: number;
@@ -33,7 +71,7 @@ export interface VrcxUser extends Json<User> {
     $trustClass: string;
     $userColour: string;
     $trustSortNum: number;
-    $languages: string[];
+    $languages: { key: string; value: string }[];
     $joinCount: number;
     $timeSpent: number;
     $lastSeen: string;
@@ -50,13 +88,32 @@ export interface VrcxUser extends Json<User> {
     $platform: string;
 }
 
-export interface VrcxCurrentUser extends Json<CurrentUser> {
+export interface VrcxCurrentUser extends Omit<
+    Json<CurrentUser>,
+    'ageVerificationStatus' | 'developerType' | 'state' | 'status'
+> {
+    ageVerificationStatus: string;
+    developerType: string;
+    state: string;
+    status: string;
+    hasAcceptedDiscordSocialSDKPerms?: boolean;
+    profilePicOverride?: string;
+    profilePicOverrideThumbnail?: string;
+    userIcon?: string;
+    backgroundType?: string;
+    backgroundGradientTop?: string;
+    backgroundGradientBottom?: string;
+    backgroundTextureId?: string;
+    backgroundTemplateId?: string;
+    bio?: string;
+    bioLinks?: Array<{ category: string; url: string }>;
+    badges?: Array<any>;
     $online_for?: number;
     $offline_for?: number | null;
     $location_at?: number;
     $travelingToTime?: number;
     $previousAvatarSwapTime?: number | null;
-    $homeLocation?: {};
+    $homeLocation?: VrcxLocation;
     $isVRCPlus?: boolean;
     $isModerator?: boolean;
     $isTroll?: boolean;
@@ -65,7 +122,7 @@ export interface VrcxCurrentUser extends Json<CurrentUser> {
     $trustClass?: string;
     $userColour?: string;
     $trustSortNum?: number;
-    $languages?: string[];
+    $languages?: { key: string; value: string }[];
     $locationTag?: string;
     $travelingToLocation?: string;
 }
@@ -117,6 +174,8 @@ export interface MarketplaceAvatarSearchParams {
 
 export interface VrcxWorld extends Json<World> {
     $isLabs: boolean;
+    unityPackageUrl?: string;
+    disabledPropAbilities?: string[];
 }
 
 export type VrcxNotification = Json<Notification> & {

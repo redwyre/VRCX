@@ -1,4 +1,5 @@
 import { computed, ref } from 'vue';
+import type { Ref } from 'vue';
 
 import {
     groupDialogFilterOptions,
@@ -14,20 +15,28 @@ import * as workerTimers from 'worker-timers';
 /**
  * Composable for managing group member loading, searching, sorting, and filtering.
  *
- * @param {import('vue').Ref} groupDialog - Reactive ref to the group dialog state
+ * @param {Ref} groupDialog - Reactive ref to the group dialog state
  * @param {object} deps - External dependencies
- * @param {import('vue').Ref} deps.currentUser - Reactive ref to the current user
+ * @param {Ref} deps.currentUser - Reactive ref to the current user
  * @param {Function} deps.applyGroupMember - Function to apply group member data
  * @param {Function} deps.handleGroupMember - Function to handle group member updates
  * @param {Function} deps.t - I18n translation function
  * @returns {object} Members composable API
  */
-export function useGroupMembers(groupDialog: import('vue').Ref, { currentUser, applyGroupMember, handleGroupMember, t }: {
-    currentUser: import('vue').Ref;
-    applyGroupMember: Function;
-    handleGroupMember: Function;
-    t: Function;
-}) {
+export function useGroupMembers(
+    groupDialog: Ref,
+    {
+        currentUser,
+        applyGroupMember,
+        handleGroupMember,
+        t
+    }: {
+        currentUser: Ref;
+        applyGroupMember: Function;
+        handleGroupMember: Function;
+        t: Function;
+    }
+) {
     const isGroupMembersDone = ref(false);
     const isGroupMembersLoading = ref(false);
 
@@ -74,7 +83,7 @@ export function useGroupMembers(groupDialog: import('vue').Ref, { currentUser, a
 
             if (key.startsWith('role:')) {
                 const roleId = key.slice('role:'.length);
-                const role = groupDialog.value?.ref?.roles?.find((r: { id: string; }) => r.id === roleId);
+                const role = groupDialog.value?.ref?.roles?.find((r: { id: string }) => r.id === roleId);
                 if (role) {
                     setGroupMemberFilter(role);
                 }
@@ -90,8 +99,8 @@ export function useGroupMembers(groupDialog: import('vue').Ref, { currentUser, a
         }));
 
         const roleItems = (groupDialog.value?.ref?.roles ?? [])
-            .filter((role: { defaultRole: any; }) => !role.defaultRole)
-            .map((role: { id: any; name: any; }) => ({
+            .filter((role: { defaultRole: any }) => !role.defaultRole)
+            .map((role: { id: any; name: any }) => ({
                 value: `role:${role.id}`,
                 label: role.name,
                 search: role.name
@@ -143,9 +152,6 @@ export function useGroupMembers(groupDialog: import('vue').Ref, { currentUser, a
                 offset: 0
             });
 
-
-
-
             for (const json of args.json.results) {
                 handleGroupMember({
                     json,
@@ -157,9 +163,6 @@ export function useGroupMembers(groupDialog: import('vue').Ref, { currentUser, a
             if (requestId !== memberSearchRequestId || D.id !== args.params.groupId || search !== D.memberSearch) {
                 return;
             }
-
-
-
 
             D.memberSearchResults = mergeGroupMemberSearchResults(args.json.results, D.members, search);
             await groupMembersSearchLoadRemaining(requestId, search);
@@ -239,7 +242,7 @@ export function useGroupMembers(groupDialog: import('vue').Ref, { currentUser, a
                         (args as any).json.user = currentUser.value;
                         if (D.memberFilter.id === null) {
                             // when flitered by role don't include self
-D.members.push((args as any).json);
+                            D.members.push((args as any).json);
                         }
                     }
                     return args;
@@ -252,19 +255,17 @@ D.members.push((args as any).json);
      * @param {object} [options]
      * @param {boolean} [options.preserveSearch] - Keep the active member search when loading more members
      */
-    async function loadMoreGroupMembers(options: {
-    preserveSearch?: boolean;
-} = {}) {
+    async function loadMoreGroupMembers(
+        options: {
+            preserveSearch?: boolean;
+        } = {}
+    ) {
         if (isGroupMembersDone.value || isGroupMembersLoading.value) {
             return;
         }
         const D = groupDialog.value;
         const params = loadMoreGroupMembersParams.value;
         if (params.roleId === '') {
-
-
-
-
             delete params.roleId;
         }
         if (!options.preserveSearch) {
@@ -279,11 +280,11 @@ D.members.push((args as any).json);
             .then((args) => {
                 for (const json of (args as any).json) {
                     handleGroupMember({
-    json,
-    params: {
-        groupId: (args as any).params.groupId
-    }
-});
+                        json,
+                        params: {
+                            groupId: (args as any).params.groupId
+                        }
+                    });
                 }
                 for (let i = 0; i < (args as any).json.length; i++) {
                     const member = (args as any).json[i];

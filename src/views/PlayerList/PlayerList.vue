@@ -317,7 +317,7 @@
         (next) => {
             playerListTable.setOptions((prev) => ({
                 ...prev,
-                columns: next
+                columns: /** @type {any} */ (next)
             }));
         },
         { immediate: true }

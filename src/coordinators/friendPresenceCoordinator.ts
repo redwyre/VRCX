@@ -20,18 +20,18 @@ import { watchState } from '../services/watchState';
  * @param {function} [options.nowIso] ISO timestamp provider.
  */
 export async function runUpdateFriendDelayedCheckFlow(
-    ctx: object, newState: string, location: string, $location_at: number, { now = Date.now, nowIso = () => new Date().toJSON() }: {
+    ctx: object,
+    newState: string,
+    location: string,
+    $location_at: number,
+    {
+        now = Date.now,
+        nowIso = () => new Date().toJSON()
+    }: {
+        now?: () => number;
 
-
-
-
-    now?: function;
-
-
-
-
-    nowIso?: function;
-} = {}
+        nowIso?: () => string;
+    } = {}
 ) {
     const friendStore = useFriendStore();
     const feedStore = useFeedStore();
@@ -93,15 +93,15 @@ export async function runUpdateFriendDelayedCheckFlow(
             worldName = await getWorldName(location);
             groupName = await getGroupName(location);
             feed = {
-    created_at: nowIso(),
-    type: 'Online',
-    userId: id,
-    displayName: (ctx as any).name,
-    location,
-    worldName,
-    groupName,
-    time: ''
-};
+                created_at: nowIso(),
+                type: 'Online',
+                userId: id,
+                displayName: (ctx as any).name,
+                location,
+                worldName,
+                groupName,
+                time: ''
+            };
             notificationStore.queueFeedNoty(feed);
             sharedFeedStore.addEntry(feed);
             const persistedFeed = await database.addOnlineOfflineToDatabase(feed);
@@ -135,18 +135,16 @@ export async function runUpdateFriendDelayedCheckFlow(
  * @param {function} [options.nowIso] ISO timestamp provider.
  */
 export async function runUpdateFriendFlow(
-    id: string, stateInput: string | undefined = undefined, { now = Date.now, nowIso = () => new Date().toJSON() }: {
+    id: string,
+    stateInput: string | undefined = undefined,
+    {
+        now = Date.now,
+        nowIso = () => new Date().toJSON()
+    }: {
+        now?: () => number;
 
-
-
-
-    now?: function;
-
-
-
-
-    nowIso?: function;
-} = {}
+        nowIso?: () => string;
+    } = {}
 ) {
     const friendStore = useFriendStore();
     const userStore = useUserStore();
@@ -266,17 +264,13 @@ export async function runUpdateFriendFlow(
  * @param {function} [options.now] Timestamp provider.
  * @param {function} [options.nowIso] ISO timestamp provider.
  */
-export async function runPendingOfflineTickFlow({ now = Date.now, nowIso = () => new Date().toJSON() }: {
+export async function runPendingOfflineTickFlow({
+    now = Date.now,
+    nowIso = () => new Date().toJSON()
+}: {
+    now?: () => number;
 
-
-
-
-    now?: function;
-
-
-
-
-    nowIso?: function;
+    nowIso?: () => string;
 } = {}) {
     const friendStore = useFriendStore();
     const { friends, pendingOfflineMap, pendingOfflineDelay } = friendStore;

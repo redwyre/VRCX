@@ -1,8 +1,10 @@
+import type { Ref } from 'vue';
+
 /**
  * Consumer for the "Now Playing" log spec: https://protv.dev/guides/nowplaying
  *
  * @param {object} deps
- * @param {import('vue').Ref} deps.nowPlaying
+ * @param {Ref} deps.nowPlaying
  * @param {Function} deps.setNowPlaying
  * @param {Function} deps.clearNowPlaying
  * @param {Function} deps.startNowPlayingTicker
@@ -10,8 +12,15 @@
  * @param {Function} deps.addGameLogVideo
  * @returns {object}
  */
-export function createNowPlayingSpecHandler({ nowPlaying, setNowPlaying, clearNowPlaying, startNowPlayingTicker, updateNowPlayingVideoName, addGameLogVideo }: {
-    nowPlaying: import('vue').Ref;
+export function createNowPlayingSpecHandler({
+    nowPlaying,
+    setNowPlaying,
+    clearNowPlaying,
+    startNowPlayingTicker,
+    updateNowPlayingVideoName,
+    addGameLogVideo
+}: {
+    nowPlaying: Ref;
     setNowPlaying: Function;
     clearNowPlaying: Function;
     startNowPlayingTicker: Function;
@@ -66,10 +75,6 @@ export function createNowPlayingSpecHandler({ nowPlaying, setNowPlaying, clearNo
         } else if (host === 'youtube.com') {
             const [, section, pathId] = parsed.pathname.split('/');
             if (section === 'watch') {
-
-
-
-
                 id = parsed.searchParams.get('v');
             } else if (['shorts', 'live', 'embed'].includes(section)) {
                 id = pathId;
@@ -109,7 +114,10 @@ export function createNowPlayingSpecHandler({ nowPlaying, setNowPlaying, clearNo
         };
     }
 
-    function getPosition(producer: { paused: any; stopped: any; anchorPos: number; anchorWall: number; speed: number; length: number; }, now: number) {
+    function getPosition(
+        producer: { paused: any; stopped: any; anchorPos: number; anchorWall: number; speed: number; length: number },
+        now: number
+    ) {
         if (producer.paused || producer.stopped) {
             return producer.anchorPos;
         }
@@ -139,7 +147,7 @@ export function createNowPlayingSpecHandler({ nowPlaying, setNowPlaying, clearNo
         return best;
     }
 
-    function getDisplayUrl(producer: { hideUrl: any; name: any; url: any; }) {
+    function getDisplayUrl(producer: { hideUrl: any; name: any; url: any }) {
         return producer.hideUrl ? producer.name : producer.url;
     }
 

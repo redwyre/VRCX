@@ -11,12 +11,10 @@ import { useAuthStore } from '../stores/auth';
  * @param {object} [options] Test seams.
  * @param {function} [options.isOnline] Online-check provider.
  */
-export async function runHandleAutoLoginFlow({ isOnline = () => navigator.onLine }: {
-
-
-
-
-    isOnline?: function;
+export async function runHandleAutoLoginFlow({
+    isOnline = () => navigator.onLine
+}: {
+    isOnline?: Function;
 } = {}) {
     const authStore = useAuthStore();
     const advancedSettingsStore = useAdvancedSettingsStore();
@@ -40,7 +38,9 @@ export async function runHandleAutoLoginFlow({ isOnline = () => navigator.onLine
         return;
     }
     const currentTimestamp = Date.now();
-    const attemptsInLastHour = Array.from(authStore.autoLoginAttempts).filter((timestamp) => timestamp as any > currentTimestamp - 3600000).length;
+    const attemptsInLastHour = Array.from(authStore.autoLoginAttempts).filter(
+        (timestamp) => (timestamp as any) > currentTimestamp - 3600000
+    ).length;
     if (attemptsInLastHour >= 3) {
         console.error(
             'More than 3 auto login attempts within the past hour, logging out instead of attempting auto login.'
@@ -58,9 +58,6 @@ export async function runHandleAutoLoginFlow({ isOnline = () => navigator.onLine
             toast.dismiss(AppDebug.errorNoty);
         }
 
-
-
-
         AppDebug.errorNoty = toast.success(t('message.auth.auto_login_success'));
         console.log('Automatically logged in.');
     } catch (err) {
@@ -68,18 +65,11 @@ export async function runHandleAutoLoginFlow({ isOnline = () => navigator.onLine
             toast.dismiss(AppDebug.errorNoty);
         }
 
-
-
-
         AppDebug.errorNoty = toast.error(t('message.auth.auto_login_failed'));
         console.error('Failed to login automatically.', err);
     } finally {
         authStore.setAttemptingAutoLogin(false);
         if (!isOnline()) {
-
-
-
-
             AppDebug.errorNoty = toast.error(t('message.auth.offline'));
             console.error(`You're offline.`);
         }

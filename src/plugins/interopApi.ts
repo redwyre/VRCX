@@ -5,15 +5,14 @@ import vrcxJsonStorage from '../services/jsonStorage';
 
 export async function initInteropApi(isVrOverlay = false) {
     if (isVrOverlay) {
-        if (WINDOWS) {
+        if (typeof WINDOWS !== 'undefined' && WINDOWS) {
             await CefSharp.BindObjectAsync('AppApiVr');
         } else {
-
             window.AppApiVr = InteropApi.AppApiVrElectron;
         }
     } else {
         // #region | Init Cef C# bindings
-        if (WINDOWS) {
+        if (typeof WINDOWS !== 'undefined' && WINDOWS) {
             await CefSharp.BindObjectAsync(
                 'AppApi',
                 'WebApi',

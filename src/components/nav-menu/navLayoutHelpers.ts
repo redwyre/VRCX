@@ -37,7 +37,7 @@ export function collectLayoutKeys(layout: Array<any>) {
  * @returns {Array}
  */
 export function buildMenuItems(layout: Array<any>, navDefinitionMap: Map<string, any>, t: Function) {
-    const items: { index: any; icon: any; title: any; titleIsCustom: boolean; children: any; }[] = [];
+    const items: { index: any; icon: any; title: any; titleIsCustom: boolean; children?: any; action?: string }[] = [];
 
     layout.forEach((entry) => {
         if (entry.type === 'item') {
@@ -56,7 +56,9 @@ export function buildMenuItems(layout: Array<any>, navDefinitionMap: Map<string,
         }
 
         if (entry.type === 'folder') {
-            const folderDefinitions = (entry.items || []).map((key: string) => navDefinitionMap.get(key)).filter(Boolean);
+            const folderDefinitions = (entry.items || [])
+                .map((key: string) => navDefinitionMap.get(key))
+                .filter(Boolean);
             if (folderDefinitions.length === 0) {
                 return;
             }
@@ -66,16 +68,27 @@ export function buildMenuItems(layout: Array<any>, navDefinitionMap: Map<string,
                 icon: entry.icon || DEFAULT_FOLDER_ICON,
                 title: entry.name?.trim() || t('nav_menu.custom_nav.folder_name_placeholder'),
                 titleIsCustom: true,
-                children: folderDefinitions.map((definition: { labelKey: any; routeName: any; routeParams: any; key: any; icon: any; action: any; path: any; isDashboard: any; }) => ({
-                    label: definition.labelKey,
-                    routeName: definition.routeName,
-                    routeParams: definition.routeParams,
-                    index: definition.key,
-                    icon: definition.icon,
-                    action: definition.action,
-                    path: definition.path,
-                    titleIsCustom: Boolean(definition.isDashboard)
-                }))
+                children: folderDefinitions.map(
+                    (definition: {
+                        labelKey: any;
+                        routeName: any;
+                        routeParams: any;
+                        key: any;
+                        icon: any;
+                        action: any;
+                        path: any;
+                        isDashboard: any;
+                    }) => ({
+                        label: definition.labelKey,
+                        routeName: definition.routeName,
+                        routeParams: definition.routeParams,
+                        index: definition.key,
+                        icon: definition.icon,
+                        action: definition.action,
+                        path: definition.path,
+                        titleIsCustom: Boolean(definition.isDashboard)
+                    })
+                )
             });
         }
     });

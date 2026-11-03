@@ -203,7 +203,8 @@
             onLaunch: showLaunchDialog,
             onShowInfo: handleShowInfo,
             onDelete: deleteGameLogInstance,
-            onDeletePrompt: deleteGameLogInstancePrompt
+            onDeletePrompt: deleteGameLogInstancePrompt,
+            forceUpdateKey: currentId.value
         })
     );
 
@@ -263,21 +264,21 @@
             }
             if (props.variant === 'user') {
                 const data = await database.getPreviousInstancesByUserId(D.userRef);
-                for (const item of data.values()) {
+                for (const item of /** @type {Iterable<Record<string, any>>} */ (data.values())) {
                     item.$location = parseLocation(item.location);
                     item.timer = item.time > 0 ? timeToText(item.time) : '';
                     array.push(item);
                 }
             } else if (props.variant === 'world') {
                 const data = await database.getPreviousInstancesByWorldId(D.worldRef);
-                for (const ref of data.values()) {
+                for (const ref of /** @type {Iterable<Record<string, any>>} */ (data.values())) {
                     ref.$location = parseLocation(ref.location);
                     ref.timer = ref.time > 0 ? timeToText(ref.time) : '';
                     array.push(ref);
                 }
             } else {
                 const data = await database.getPreviousInstancesByGroupId(D.groupRef.id);
-                for (const ref of data.values()) {
+                for (const ref of /** @type {Iterable<Record<string, any>>} */ (data.values())) {
                     ref.$location = parseLocation(ref.location);
                     ref.timer = ref.time > 0 ? timeToText(ref.time) : '';
                     array.push(ref);

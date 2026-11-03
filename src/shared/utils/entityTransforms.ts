@@ -1,4 +1,6 @@
 import { replaceBioSymbols } from './base/string';
+import type { FavoriteGroup } from 'vrchat';
+import type { Json, VrcxFavorite } from '@/types/vrcx';
 
 /**
  * Sanitize arbitrary entity JSON fields via replaceBioSymbols.
@@ -19,15 +21,12 @@ export function sanitizeEntityJson(json: object, fields: string[]) {
 /**
  * Build a default favorite group ref from JSON data.
  *
- * @param {Partial<import('@/types/vrcx').Json<import('vrchat').FavoriteGroup>>} json
- * @returns {import('@/types/vrcx').Json<import('vrchat').FavoriteGroup>}
+ * @param {Partial<Json<FavoriteGroup>>} json
+ * @returns {Json<FavoriteGroup>}
  */
 
-
-
-
-export function createDefaultFavoriteGroupRef(json: Partial<import('@/types/vrcx').Json<import('vrchat').FavoriteGroup>>) {
-    return ({
+export function createDefaultFavoriteGroupRef(json: Partial<Json<FavoriteGroup>>) {
+    return {
         id: '',
         ownerId: '',
         ownerDisplayName: '',
@@ -37,22 +36,19 @@ export function createDefaultFavoriteGroupRef(json: Partial<import('@/types/vrcx
         visibility: '',
         tags: [],
         ...json
-    } as import('@/types/vrcx').Json<import('vrchat').FavoriteGroup>);
+    } as Json<FavoriteGroup>;
 }
 
 /**
  * Build a default cached favorite ref from JSON data.
  * Computes $groupKey from type and first tag.
  *
- * @param {Partial<import('@/types/vrcx').VrcxFavorite>} json
- * @returns {import('@/types/vrcx').VrcxFavorite}
+ * @param {Partial<VrcxFavorite>} json
+ * @returns {VrcxFavorite}
  */
 
-
-
-
-export function createDefaultFavoriteCachedRef(json: Partial<import('@/types/vrcx').VrcxFavorite>) {
-    const ref = ({
+export function createDefaultFavoriteCachedRef(json: Partial<VrcxFavorite>) {
+    const ref = {
         id: '',
         type: '',
         favoriteId: '',
@@ -61,7 +57,7 @@ export function createDefaultFavoriteCachedRef(json: Partial<import('@/types/vrc
         $groupKey: '',
         //
         ...json
-    } as import('@/types/vrcx').VrcxFavorite);
+    } as VrcxFavorite;
     ref.$groupKey = `${ref.type}:${String(ref.tags[0])}`;
     return ref;
 }

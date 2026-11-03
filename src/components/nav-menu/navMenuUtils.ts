@@ -8,10 +8,7 @@ const DEFAULT_FOLDER_ICON = 'ri-folder-line';
  * @returns {string[]} Normalized, deduplicated array of valid keys
  */
 
-
-
-
-export function normalizeHiddenKeys(hiddenKeys: string[], definitionMap: Map) {
+export function normalizeHiddenKeys(hiddenKeys: string[], definitionMap: Map<string, any>) {
     if (!Array.isArray(hiddenKeys)) {
         return [];
     }
@@ -39,10 +36,14 @@ export function normalizeHiddenKeys(hiddenKeys: string[], definitionMap: Map) {
  * @returns {Array} Sanitized layout
  */
 
-
-
-
-export function sanitizeLayout(layout: Array<any>, hiddenKeys: string[], definitionMap: Map, allDefinitions: Array<any>, t: Function, generateFolderId: Function) {
+export function sanitizeLayout(
+    layout: Array<any>,
+    hiddenKeys: string[],
+    definitionMap: Map<string, any>,
+    allDefinitions: Array<any>,
+    t: Function,
+    generateFolderId: Function
+) {
     const usedKeys = new Set();
     const normalizedHiddenKeys = normalizeHiddenKeys(hiddenKeys, definitionMap);
     const hiddenSet = new Set(normalizedHiddenKeys);
@@ -50,7 +51,7 @@ export function sanitizeLayout(layout: Array<any>, hiddenKeys: string[], definit
     const chartsKeys = ['charts-instance', 'charts-mutual', 'charts-hot-worlds'];
 
     const appendItemEntry = (key: unknown, target = normalized) => {
-        if (!key || usedKeys.has(key) || !definitionMap.has(key)) {
+        if (typeof key !== 'string' || usedKeys.has(key) || !definitionMap.has(key)) {
             return;
         }
         target.push({ type: 'item', key });
@@ -89,7 +90,7 @@ export function sanitizeLayout(layout: Array<any>, hiddenKeys: string[], definit
             if (entry?.type === 'folder') {
                 const folderItems: any = [];
                 (entry.items || []).forEach((key: unknown) => {
-                    if (!key || usedKeys.has(key) || !definitionMap.has(key)) {
+                    if (typeof key !== 'string' || usedKeys.has(key) || !definitionMap.has(key)) {
                         return;
                     }
                     folderItems.push(key);
@@ -116,7 +117,8 @@ export function sanitizeLayout(layout: Array<any>, hiddenKeys: string[], definit
         if (!usedKeys.has(item.key) && !hiddenSet.has(item.key)) {
             if (chartsKeys.includes(item.key)) {
                 const chartsFolder = normalized.find(
-                    (entry: { type: string; id: string; }) => entry.type === 'folder' && entry.id === 'default-folder-charts'
+                    (entry: { type: string; id: string }) =>
+                        entry.type === 'folder' && entry.id === 'default-folder-charts'
                 );
                 if (chartsFolder && Array.isArray(chartsFolder.items)) {
                     chartsFolder.items.push(item.key);
@@ -133,7 +135,9 @@ export function sanitizeLayout(layout: Array<any>, hiddenKeys: string[], definit
     }
 
     // Ensure direct-access is always the last item
-    const directAccessIdx = normalized.findIndex((entry: { type: string; key: string; }) => entry.type === 'item' && entry.key === 'direct-access');
+    const directAccessIdx = normalized.findIndex(
+        (entry: { type: string; key: string }) => entry.type === 'item' && entry.key === 'direct-access'
+    );
     if (directAccessIdx !== -1 && directAccessIdx !== normalized.length - 1) {
         const [directAccessEntry] = normalized.splice(directAccessIdx, 1);
         normalized.push(directAccessEntry);
@@ -150,10 +154,7 @@ export function sanitizeLayout(layout: Array<any>, hiddenKeys: string[], definit
  * @returns {string | null} The route name of the first routable entry, or null
  */
 
-
-
-
-export function getFirstNavRoute(layout: Array<any>, definitionMap: Map) {
+export function getFirstNavRoute(layout: Array<any>, definitionMap: Map<string, any>) {
     for (const entry of layout) {
         if (entry.type === 'item') {
             const definition = definitionMap.get(entry.key);
@@ -162,7 +163,9 @@ export function getFirstNavRoute(layout: Array<any>, definitionMap: Map) {
             }
         }
         if (entry.type === 'folder' && entry.items?.length) {
-            const definition = entry.items.map((key: any) => definitionMap.get(key)).find((def: { routeName: any; }) => def?.routeName);
+            const definition = entry.items
+                .map((key: any) => definitionMap.get(key))
+                .find((def: { routeName: any }) => def?.routeName);
             if (definition?.routeName) {
                 return definition.routeName;
             }

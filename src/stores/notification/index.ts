@@ -57,6 +57,7 @@ import { useWristOverlaySettingsStore } from '../settings/wristOverlay';
 import { watchState } from '../../services/watchState';
 
 import configRepository from '../../services/config';
+import type { TableFilter } from '@/types/vrcx';
 
 export const useNotificationStore = defineStore('Notification', () => {
     const { t } = useI18n();
@@ -77,7 +78,7 @@ export const useNotificationStore = defineStore('Notification', () => {
     const notificationInitStatus = ref(false);
     const notificationTable = ref({
         data: [],
-        filters: ([
+        filters: [
             {
                 prop: 'type',
                 value: []
@@ -86,7 +87,7 @@ export const useNotificationStore = defineStore('Notification', () => {
                 prop: ['senderUsername', 'message'],
                 value: ''
             }
-        ] as import('@/types/vrcx').TableFilter[]),
+        ] as TableFilter[],
         pageSize: 20,
         pageSizeLinked: true,
         paginationProps: {
@@ -111,41 +112,56 @@ export const useNotificationStore = defineStore('Notification', () => {
     });
     const shownFreeListingIds = new Set();
 
-    const friendNotifications = computed(() => notificationTable.value.data.filter((n) => getNotificationCategory((n as any).type) === 'friend'));
-    const groupNotifications = computed(() => notificationTable.value.data.filter((n) => getNotificationCategory((n as any).type) === 'group'));
-    const otherNotifications = computed(() => notificationTable.value.data.filter((n) => getNotificationCategory((n as any).type) === 'other'));
+    const friendNotifications = computed(() =>
+        notificationTable.value.data.filter((n) => getNotificationCategory((n as any).type) === 'friend')
+    );
+    const groupNotifications = computed(() =>
+        notificationTable.value.data.filter((n) => getNotificationCategory((n as any).type) === 'group')
+    );
+    const otherNotifications = computed(() =>
+        notificationTable.value.data.filter((n) => getNotificationCategory((n as any).type) === 'other')
+    );
     const unseenSet = computed(() => new Set(unseenNotifications.value));
 
+    const unseenFriendNotifications = computed(() =>
+        friendNotifications.value.filter((n) => unseenSet.value.has((n as any).id))
+    );
 
+    const unseenGroupNotifications = computed(() =>
+        groupNotifications.value.filter((n) => unseenSet.value.has((n as any).id))
+    );
 
-
-    const unseenFriendNotifications = computed(() => friendNotifications.value.filter((n) => unseenSet.value.has((n as any).id)));
-
-
-
-
-    const unseenGroupNotifications = computed(() => groupNotifications.value.filter((n) => unseenSet.value.has((n as any).id)));
-
-
-
-
-    const unseenOtherNotifications = computed(() => otherNotifications.value.filter((n) => unseenSet.value.has((n as any).id)));
+    const unseenOtherNotifications = computed(() =>
+        otherNotifications.value.filter((n) => unseenSet.value.has((n as any).id))
+    );
     const recentCutoff = computed(() => dayjs().subtract(24, 'hour').valueOf());
 
+    const recentFriendNotifications = computed(() =>
+        friendNotifications.value.filter(
+            (n) =>
+                !unseenSet.value.has((n as any).id) &&
+                (n as any).seen !== false &&
+                getNotificationTs(n) > recentCutoff.value
+        )
+    );
 
+    const recentGroupNotifications = computed(() =>
+        groupNotifications.value.filter(
+            (n) =>
+                !unseenSet.value.has((n as any).id) &&
+                (n as any).seen !== false &&
+                getNotificationTs(n) > recentCutoff.value
+        )
+    );
 
-
-    const recentFriendNotifications = computed(() => friendNotifications.value.filter((n) => !unseenSet.value.has((n as any).id) && (n as any).seen !== false && getNotificationTs(n) > recentCutoff.value));
-
-
-
-
-    const recentGroupNotifications = computed(() => groupNotifications.value.filter((n) => !unseenSet.value.has((n as any).id) && (n as any).seen !== false && getNotificationTs(n) > recentCutoff.value));
-
-
-
-
-    const recentOtherNotifications = computed(() => otherNotifications.value.filter((n) => !unseenSet.value.has((n as any).id) && (n as any).seen !== false && getNotificationTs(n) > recentCutoff.value));
+    const recentOtherNotifications = computed(() =>
+        otherNotifications.value.filter(
+            (n) =>
+                !unseenSet.value.has((n as any).id) &&
+                (n as any).seen !== false &&
+                getNotificationTs(n) > recentCutoff.value
+        )
+    );
     const hasUnseenNotifications = computed(() => unseenNotifications.value.length > 0);
 
     const notyMap = {};
@@ -205,18 +221,10 @@ export const useNotificationStore = defineStore('Notification', () => {
         if (ref.seen) {
             removeFromArray(unseenNotifications.value, ref.id);
         } else if (!unseenNotifications.value.includes(ref.id)) {
-
-
-
-
             unseenNotifications.value.push(ref.id);
         }
         for (let i = 0; i < length; ++i) {
             if ((array[i] as any).id === ref.id) {
-
-
-
-
                 array[i] = ref;
                 return;
             }
@@ -251,9 +259,6 @@ export const useNotificationStore = defineStore('Notification', () => {
             }
         }
 
-
-
-
         notificationTable.value.data.push(ref);
         const D = userStore.userDialog;
         if (D.visible === false || ref.type !== 'friendRequest' || ref.senderUserId !== D.id) {
@@ -270,18 +275,22 @@ export const useNotificationStore = defineStore('Notification', () => {
         if (typeof ref === 'undefined') {
             return;
         }
-        if ((ref as any).type === 'friendRequest' || (ref as any).type === 'ignoredFriendRequest' || (ref as any).type.includes('.')) {
+        if (
+            (ref as any).type === 'friendRequest' ||
+            (ref as any).type === 'ignoredFriendRequest' ||
+            (ref as any).type.includes('.')
+        ) {
             removeFromArray(notificationTable.value.data, ref);
         } else {
             (ref as any).$isExpired = true;
             database.updateNotificationExpired(ref);
         }
         handleNotificationExpire({
-    ref,
-    params: {
-        notificationId: (ref as any).id
-    }
-});
+            ref,
+            params: {
+                notificationId: (ref as any).id
+            }
+        });
     }
 
     /**
@@ -296,9 +305,6 @@ export const useNotificationStore = defineStore('Notification', () => {
             return;
         }
         const allowedStatuses = generalSettingsStore.autoAcceptInviteStatuses;
-
-
-
 
         if (allowedStatuses.length && !allowedStatuses.includes(userStore.currentUser.status)) {
             return;
@@ -320,8 +326,8 @@ export const useNotificationStore = defineStore('Notification', () => {
         }
         if (
             generalSettingsStore.autoAcceptInviteRequests === 'All Favorites' &&
-    !favoriteStore.state.favoriteFriends_.some((x) => (x as any).id === ref.senderUserId) &&
-    !favoriteStore.isInAnyLocalFriendGroup(ref.senderUserId)
+            !favoriteStore.state.favoriteFriends_.some((x) => (x as any).id === ref.senderUserId) &&
+            !favoriteStore.isInAnyLocalFriendGroup(ref.senderUserId)
         ) {
             return;
         }
@@ -368,35 +374,35 @@ export const useNotificationStore = defineStore('Notification', () => {
             })
             .then((args1) => {
                 notificationRequest
-    .sendInvite({
-    instanceId: L.tag,
-    worldId: L.tag,
-    worldName: (args1 as any).ref.name,
-    rsvp: true
-}, ref.senderUserId)
-    .then((_args) => {
-    const text = `Auto invite sent to ${ref.senderUsername}`;
-    if (AppDebug.errorNoty) {
-        toast.dismiss(AppDebug.errorNoty);
-    }
+                    .sendInvite(
+                        {
+                            instanceId: L.tag,
+                            worldId: L.tag,
+                            worldName: (args1 as any).ref.name,
+                            rsvp: true
+                        },
+                        ref.senderUserId
+                    )
+                    .then((_args) => {
+                        const text = `Auto invite sent to ${ref.senderUsername}`;
+                        if (AppDebug.errorNoty) {
+                            toast.dismiss(AppDebug.errorNoty);
+                        }
 
-
-
-
-    AppDebug.errorNoty = toast.info(text);
-    console.log(text);
-    notificationRequest
-        .hideNotification({
-        notificationId: ref.id
-    })
-        .then(() => {
-        handleNotificationHide(ref.id);
-    });
-    return _args;
-})
-    .catch((err) => {
-    console.error(err);
-});
+                        AppDebug.errorNoty = toast.info(text);
+                        console.log(text);
+                        notificationRequest
+                            .hideNotification({
+                                notificationId: ref.id
+                            })
+                            .then(() => {
+                                handleNotificationHide(ref.id);
+                            });
+                        return _args;
+                    })
+                    .catch((err) => {
+                        console.error(err);
+                    });
             });
     }
 
@@ -414,9 +420,6 @@ export const useNotificationStore = defineStore('Notification', () => {
             toast.dismiss(AppDebug.errorNoty);
         }
 
-
-
-
         AppDebug.errorNoty = toast.info(text);
         console.log(text);
         await notificationRequest.hideNotification({
@@ -429,10 +432,6 @@ export const useNotificationStore = defineStore('Notification', () => {
      * @param {object} entry
      */
     function appendNotificationTableEntry(entry: object) {
-
-
-
-
         notificationTable.value.data.push(entry);
     }
 
@@ -548,16 +547,16 @@ export const useNotificationStore = defineStore('Notification', () => {
         (ref as any).$isExpired = true;
         args.ref = ref;
         handleNotificationExpire({
-    ref,
-    params: {
-        notificationId: (ref as any).id
-    }
-});
+            ref,
+            params: {
+                notificationId: (ref as any).id
+            }
+        });
         handleFriendAdd({
-    params: {
-        userId: (ref as any).senderUserId
-    }
-});
+            params: {
+                userId: (ref as any).senderUserId
+            }
+        });
 
         const D = userStore.userDialog;
         if (typeof args.ref === 'undefined' || args.ref.type !== 'friendRequest' || args.ref.senderUserId !== D.id) {
@@ -615,13 +614,7 @@ export const useNotificationStore = defineStore('Notification', () => {
             Object.assign(ref, json);
         }
 
-
-
-
         ref.created_at = ref.createdAt; // for table
-
-
-
 
         applyBoopLegacyHandling(ref, AppDebug.endpointDomain);
         return ref;
@@ -633,25 +626,11 @@ export const useNotificationStore = defineStore('Notification', () => {
     function handleNotificationV2(args: any) {
         const ref = applyNotificationV2(args.json);
 
-
-
-
         if (ref.seen) {
-
-
-
-
             removeFromArray(unseenNotifications.value, ref.id);
         } else if (!unseenNotifications.value.includes(ref.id)) {
-
-
-
-
             unseenNotifications.value.push(ref.id);
         }
-
-
-
 
         const existingNotification = notificationTable.value.data.find((n) => (n as any).id === ref.id);
         if (existingNotification) {
@@ -663,23 +642,13 @@ export const useNotificationStore = defineStore('Notification', () => {
         const isNotificationInitReady = !notificationInitStatus.value || !isNotificationsLoading.value;
         const matchesNotificationTypeFilter =
             notificationTable.value.filters[0].value.length === 0 ||
-
-
-
-
             notificationTable.value.filters[0].value.includes(ref.type);
         if (isNotificationInitReady && matchesNotificationTypeFilter) {
             uiStore.notifyMenu('notification');
         }
         database.addNotificationV2ToDatabase(ref);
 
-
-
-
         notificationTable.value.data.push(ref);
-
-
-
 
         queueNotificationNoty(ref);
         sharedFeedStore.addEntry(ref);
@@ -745,11 +714,11 @@ export const useNotificationStore = defineStore('Notification', () => {
         (ref as any).$isExpired = true;
         database.updateNotificationExpired(ref);
         handleNotificationExpire({
-    ref,
-    params: {
-        notificationId: (ref as any).id
-    }
-});
+            ref,
+            params: {
+                notificationId: (ref as any).id
+            }
+        });
     }
 
     /**
@@ -838,9 +807,9 @@ export const useNotificationStore = defineStore('Notification', () => {
         const notyFilter = notificationsSettingsStore.sharedFeedFilters.noty;
         if (
             (notyFilter as any)[(noty as any).type] &&
-    ((notyFilter as any)[(noty as any).type] === 'On' ||
-        (notyFilter as any)[(noty as any).type] === 'Friends' ||
-        ((notyFilter as any)[(noty as any).type] === 'VIP' && (noty as any).isFavorite))
+            ((notyFilter as any)[(noty as any).type] === 'On' ||
+                (notyFilter as any)[(noty as any).type] === 'Friends' ||
+                ((notyFilter as any)[(noty as any).type] === 'VIP' && (noty as any).isFavorite))
         ) {
             playNoty(noty);
         }
@@ -873,7 +842,7 @@ export const useNotificationStore = defineStore('Notification', () => {
         }
         const bias = new Date(Date.now() - 60000).toJSON();
         for (const [notyId, createdAt] of Object.entries(notyMap)) {
-            if (createdAt as any < bias) {
+            if ((createdAt as any) < bias) {
                 delete (notyMap as any)[notyId];
             }
         }
@@ -897,7 +866,8 @@ export const useNotificationStore = defineStore('Notification', () => {
         };
 
         const playNotificationTTS = (notiConditions as any)[notificationsSettingsStore.notificationTTS]?.();
-        const playDesktopToast = (notiConditions as any)[notificationsSettingsStore.desktopToast]?.() || notiConditions['AFK']();
+        const playDesktopToast =
+            (notiConditions as any)[notificationsSettingsStore.desktopToast]?.() || notiConditions['AFK']();
 
         const playOverlayToast = (notiConditions as any)[notificationsSettingsStore.overlayToast]?.();
         const playOverlayNotification = notificationsSettingsStore.overlayNotifications && playOverlayToast;
@@ -1010,8 +980,13 @@ export const useNotificationStore = defineStore('Notification', () => {
         const id = getUserIdFromNotyBase(noty);
         if (id) return id;
         if ((noty as any).displayName) {
-            return (findUserByDisplayName(userStore.cachedUsers, (noty as any).displayName, userStore.cachedUserIdsByDisplayName)
-    ?.id ?? '');
+            return (
+                findUserByDisplayName(
+                    userStore.cachedUsers,
+                    (noty as any).displayName,
+                    userStore.cachedUserIdsByDisplayName
+                )?.id ?? ''
+            );
         }
         return '';
     }
@@ -1028,10 +1003,6 @@ export const useNotificationStore = defineStore('Notification', () => {
             // noty.type === 'BlockedOnPlayerJoined' ||
             // noty.type === 'MutedOnPlayerJoined'
         ) {
-
-
-
-
             bias = locationStore.lastLocation.date + 30 * 1000; // 30 secs
             if (Date.parse(noty.created_at) <= bias) {
                 return;
@@ -1084,10 +1055,10 @@ export const useNotificationStore = defineStore('Notification', () => {
         const notyFilter = notificationsSettingsStore.sharedFeedFilters.noty;
         if (
             (notyFilter as any)[noty.type] &&
-    ((notyFilter as any)[noty.type] === 'On' ||
-        (notyFilter as any)[noty.type] === 'Everyone' ||
-        ((notyFilter as any)[noty.type] === 'Friends' && noty.isFriend) ||
-        ((notyFilter as any)[noty.type] === 'VIP' && noty.isFavorite))
+            ((notyFilter as any)[noty.type] === 'On' ||
+                (notyFilter as any)[noty.type] === 'Everyone' ||
+                ((notyFilter as any)[noty.type] === 'Friends' && noty.isFriend) ||
+                ((notyFilter as any)[noty.type] === 'VIP' && noty.isFavorite))
         ) {
             playNoty(noty);
         }
@@ -1110,9 +1081,9 @@ export const useNotificationStore = defineStore('Notification', () => {
         const notyFilter = notificationsSettingsStore.sharedFeedFilters.noty;
         if (
             (notyFilter as any)[noty.type] &&
-    ((notyFilter as any)[noty.type] === 'Everyone' ||
-        ((notyFilter as any)[noty.type] === 'Friends' && noty.isFriend) ||
-        ((notyFilter as any)[noty.type] === 'VIP' && noty.isFavorite))
+            ((notyFilter as any)[noty.type] === 'Everyone' ||
+                ((notyFilter as any)[noty.type] === 'Friends' && noty.isFriend) ||
+                ((notyFilter as any)[noty.type] === 'VIP' && noty.isFavorite))
         ) {
             playNoty(noty);
         }
@@ -1130,9 +1101,9 @@ export const useNotificationStore = defineStore('Notification', () => {
         const notyFilter = notificationsSettingsStore.sharedFeedFilters.noty;
         if (
             (notyFilter as any)[noty.type] &&
-    ((notyFilter as any)[noty.type] === 'On' ||
-        (notyFilter as any)[noty.type] === 'Friends' ||
-        ((notyFilter as any)[noty.type] === 'VIP' && noty.isFavorite))
+            ((notyFilter as any)[noty.type] === 'On' ||
+                (notyFilter as any)[noty.type] === 'Friends' ||
+                ((notyFilter as any)[noty.type] === 'VIP' && noty.isFavorite))
         ) {
             playNoty(noty);
         }
@@ -1156,22 +1127,13 @@ export const useNotificationStore = defineStore('Notification', () => {
 
     async function initNotifications() {
         notificationInitStatus.value = false;
-        let tableData = await database.getNotificationsV2();
-        let notifications = await database.getNotifications();
-
-
-
+        let tableData: any[] = await database.getNotificationsV2();
+        const notifications: any[] = await database.getNotifications();
 
         tableData = tableData.concat(notifications.filter((n) => !tableData.some((t) => t.id === n.id)));
 
-
-
-
         tableData.sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at));
         tableData.splice(dbVars.maxTableSize);
-
-
-
 
         notificationTable.value.data = tableData;
         refreshNotifications();
@@ -1205,16 +1167,8 @@ export const useNotificationStore = defineStore('Notification', () => {
         }
         const dialog = inventoryBundleDialog.value;
         if (dialog.visible) {
-
-
-
-
             dialog.bundles.push(...newBundles);
         } else {
-
-
-
-
             dialog.bundles = newBundles;
         }
         dialog.visible = true;
@@ -1303,16 +1257,8 @@ export const useNotificationStore = defineStore('Notification', () => {
         }
         const dialog = freeStoreItemDialog.value;
         if (dialog.visible) {
-
-
-
-
             dialog.listings.push(...newListings);
         } else {
-
-
-
-
             dialog.listings = newListings;
         }
         dialog.visible = true;
@@ -1407,23 +1353,26 @@ export const useNotificationStore = defineStore('Notification', () => {
                 const L = parseLocation(currentLocation);
                 queryRequest.fetch('world', { worldId: L.worldId }).then((args) => {
                     notificationRequest
-    .sendInvite({
-    instanceId: L.tag,
-    worldId: L.tag,
-    worldName: (args as any).ref.name,
-    rsvp: true
-}, row.senderUserId)
-    .then((_args) => {
-    toast(t('message.invite.sent'));
-    notificationRequest
-        .hideNotification({
-        notificationId: row.id
-    })
-        .then(() => {
-        handleNotificationHide(row.id);
-    });
-    return _args;
-});
+                        .sendInvite(
+                            {
+                                instanceId: L.tag,
+                                worldId: L.tag,
+                                worldName: (args as any).ref.name,
+                                rsvp: true
+                            },
+                            row.senderUserId
+                        )
+                        .then((_args) => {
+                            toast(t('message.invite.sent'));
+                            notificationRequest
+                                .hideNotification({
+                                    notificationId: row.id
+                                })
+                                .then(() => {
+                                    handleNotificationHide(row.id);
+                                });
+                            return _args;
+                        });
                 });
             })
             .catch(() => {});

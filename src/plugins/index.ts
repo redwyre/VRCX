@@ -7,7 +7,7 @@ import { initUi, initUiForVrOverlay } from './ui';
  * @param {boolean} isVrOverlay
  * @returns {Promise<void>}
  */
-export async function initPlugins(isVrOverlay: boolean = false) {
+export async function initPlugins(isVrOverlay: boolean = false): Promise<void> {
     await initInteropApi(isVrOverlay);
     if (!isVrOverlay) {
         await initUi();

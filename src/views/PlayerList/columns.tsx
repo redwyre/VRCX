@@ -30,7 +30,16 @@ const sortButton = ({ column, label, descFirst = false }: any) => {
     );
 };
 
-const getInstanceIconWeight = (item: { isMaster: any; isModerator: any; isFriend: any; isBlocked: any; isMuted: any; isAvatarInteractionDisabled: any; isChatBoxMuted: any; ageVerified: any; }) => {
+const getInstanceIconWeight = (item: {
+    isMaster: any;
+    isModerator: any;
+    isFriend: any;
+    isBlocked: any;
+    isMuted: any;
+    isAvatarInteractionDisabled: any;
+    isChatBoxMuted: any;
+    ageVerified: any;
+}) => {
     if (!item) return 0;
     let value = 0;
     if (item.isMaster) value += 1000;
@@ -57,7 +66,7 @@ export const createColumns = ({
     const cols = [
         {
             id: 'avatar',
-            accessorFn: (row: { photo: any; }) => row?.photo,
+            accessorFn: (row: { photo: any }) => row?.photo,
             header: () => t('table.playerList.avatar'),
             size: 70,
             enableSorting: false,
@@ -67,47 +76,28 @@ export const createColumns = ({
                 const src = userImage(userRef);
                 if (!src) return null;
                 return (
-
-
-
-
                     <div class="flex items-center pl-2">
-
-
-
-
                         <img
                             src={src}
                             class="h-4 w-4 rounded-sm object-cover"
                             loading="lazy"
-                            onError={(e: { target: HTMLElement; }) => {
-                                const img = (e.target as HTMLElement);
+                            onError={(e: Event) => {
+                                const img = e.target as HTMLImageElement;
                                 img.style.display = 'none';
                                 (img.nextElementSibling as HTMLElement).style.display = '';
                             }}
                         />
 
-
-
-
                         <div class="h-4 w-4 rounded-sm bg-muted flex items-center justify-center" style="display: none">
                             <User class="h-3 w-3 text-muted-foreground" />
-
-
-
-
                         </div>
-
-
-
-
                     </div>
                 );
             }
         },
         {
             id: 'timer',
-            accessorFn: (row: { timer: any; }) => row?.timer,
+            accessorFn: (row: { timer: any }) => row?.timer,
             header: ({ column }: any) =>
                 sortButton({
                     column,
@@ -115,12 +105,13 @@ export const createColumns = ({
                 }),
             size: 90,
             meta: { label: () => t('table.playerList.timer') },
-            sortFn: (rowA: { original: any; }, rowB: { original: { timer: any; }; }) => (rowA.original?.timer ?? 0) - (rowB.original?.timer ?? 0),
+            sortFn: (rowA: { original: any }, rowB: { original: { timer: any } }) =>
+                (rowA.original?.timer ?? 0) - (rowB.original?.timer ?? 0),
             cell: ({ row }: any) => <Timer epoch={row.original?.timer} />
         },
         {
             id: 'displayName',
-            accessorFn: (row: { displayName: any; }) => row?.displayName,
+            accessorFn: (row: { displayName: any }) => row?.displayName,
             header: ({ column }: any) =>
                 sortButton({
                     column,
@@ -128,44 +119,37 @@ export const createColumns = ({
                 }),
             size: 200,
             meta: { label: () => t('table.playerList.displayName') },
-            sortFn: (rowA: { original: any; }, rowB: { original: any; }) => sortAlphabetically(rowA.original, rowB.original, 'displayName'),
+            sortFn: (rowA: { original: any }, rowB: { original: any }) =>
+                sortAlphabetically(rowA.original, rowB.original, 'displayName'),
             cell: ({ row }: any) => {
                 const userRef = row.original?.ref;
                 const style = randomUserColours?.value ? { color: userRef?.$userColour } : null;
-
-
-
 
                 return <span style={style}>{userRef?.displayName ?? ''}</span>;
             }
         },
         {
             id: 'rank',
-            accessorFn: (row: { ref: { $trustSortNum: any; }; }) => row?.ref?.$trustSortNum,
+            accessorFn: (row: { ref: { $trustSortNum: any } }) => row?.ref?.$trustSortNum,
             header: ({ column }: any) => sortButton({ column, label: () => t('table.playerList.rank') }),
             size: 110,
             meta: { label: () => t('table.playerList.rank') },
-            sortFn: (rowA: { original: { ref: { $trustSortNum: any; }; }; }, rowB: { original: { ref: { $trustSortNum: any; }; }; }) => (rowA.original?.ref?.$trustSortNum ?? 0) - (rowB.original?.ref?.$trustSortNum ?? 0),
+            sortFn: (
+                rowA: { original: { ref: { $trustSortNum: any } } },
+                rowB: { original: { ref: { $trustSortNum: any } } }
+            ) => (rowA.original?.ref?.$trustSortNum ?? 0) - (rowB.original?.ref?.$trustSortNum ?? 0),
             cell: ({ row }: any) => {
                 const userRef = row.original?.ref;
                 return (
-
-
-
-
                     <span class={['name', userRef?.$trustClass].filter(Boolean).join(' ')}>
                         {userRef?.$trustLevel ?? ''}
-
-
-
-
                     </span>
                 );
             }
         },
         {
             id: 'status',
-            accessorFn: (row: { ref: { statusDescription: any; }; }) => row?.ref?.statusDescription,
+            accessorFn: (row: { ref: { statusDescription: any } }) => row?.ref?.statusDescription,
             header: () => t('table.playerList.status'),
             size: 200,
             minSize: 100,
@@ -178,32 +162,17 @@ export const createColumns = ({
                 const userRef = row.original?.ref;
                 const status = userRef?.status;
                 return (
-
-
-
-
                     <span class="flex w-full min-w-0 items-center gap-2">
-
-
-
-
                         <i class={['x-user-status', 'shrink-0', 'mr-1', status ? statusClass(status) : null]}></i>
 
-
-
-
                         <span class="min-w-0 truncate">{userRef?.statusDescription ?? ''}</span>
-
-
-
-
                     </span>
                 );
             }
         },
         {
             id: 'photonId',
-            accessorFn: (row: { photonId: any; }) => row?.photonId,
+            accessorFn: (row: { photonId: any }) => row?.photonId,
             header: ({ column }: any) =>
                 sortButton({
                     column,
@@ -216,30 +185,23 @@ export const createColumns = ({
                 disableVisibilityToggle: true,
                 defaultHidden: true
             },
-            sortFn: (rowA: { original: { photonId: any; }; }, rowB: { original: { photonId: any; }; }) => (rowA.original?.photonId ?? 0) - (rowB.original?.photonId ?? 0),
+            sortFn: (rowA: { original: { photonId: any } }, rowB: { original: { photonId: any } }) =>
+                (rowA.original?.photonId ?? 0) - (rowB.original?.photonId ?? 0),
             cell: ({ row }: any) => {
                 const userRef = row.original?.ref;
                 const userId = userRef?.id;
                 const isBlocked = userId && chatboxUserBlacklist?.value?.has?.(userId);
 
                 return (
-
-
-
-
                     <div class="flex items-center">
                         {userId ? (
-
-
-
-
                             <button
                                 class={
                                     isBlocked
                                         ? 'mr-1 text-xs underline cursor-pointer text-destructive'
                                         : 'mr-1 text-xs underline cursor-pointer'
                                 }
-                                onClick={(e: { stopPropagation: () => void; }) => {
+                                onClick={(e: { stopPropagation: () => void }) => {
                                     e.stopPropagation();
                                     if (isBlocked) {
                                         onUnblockChatbox(userId);
@@ -249,21 +211,10 @@ export const createColumns = ({
                                 }}
                             >
                                 {isBlocked ? 'Unblock' : 'Block'}
-
-
-
-
                             </button>
                         ) : null}
 
-
-
-
                         <span>{String(row.original?.photonId ?? '')}</span>
-
-
-
-
                     </div>
                 );
             }
@@ -282,7 +233,7 @@ export const createColumns = ({
                 class: 'text-center',
                 label: () => t('table.playerList.icon')
             },
-            sortFn: (rowA: { original: any; }, rowB: { original: any; }, _columnId: any) => {
+            sortFn: (rowA: { original: any }, rowB: { original: any }, _columnId: any) => {
                 const a = rowA.original;
                 const b = rowB.original;
                 return -sortInstanceIcon(a, b);
@@ -290,80 +241,44 @@ export const createColumns = ({
             cell: ({ row }: any) => {
                 const r = row.original;
                 return (
-
-
-
-
                     <div class="flex items-center justify-center gap-1">
                         {r?.isMaster ? (
                             <TooltipWrapper side="left" content="Instance Master">
-
-
-
-
                                 <span>👑</span>
                             </TooltipWrapper>
                         ) : null}
                         {r?.isModerator ? (
                             <TooltipWrapper side="left" content="Moderator">
-
-
-
-
                                 <span>⚔️</span>
                             </TooltipWrapper>
                         ) : null}
                         {r?.isFriend ? (
                             <TooltipWrapper side="left" content="Friend">
-
-
-
-
                                 <span>💚</span>
                             </TooltipWrapper>
                         ) : null}
                         {r?.isBlocked ? (
                             <TooltipWrapper side="left" content="Blocked">
-
-
-
-
                                 <span class="text-destructive">⛔</span>
                             </TooltipWrapper>
                         ) : null}
                         {r?.isMuted ? (
                             <TooltipWrapper side="left" content="Muted">
-
-
-
-
                                 <span class="text-muted-foreground">🔇</span>
                             </TooltipWrapper>
                         ) : null}
                         {r?.isAvatarInteractionDisabled ? (
                             <TooltipWrapper side="left" content="Avatar Interaction Disabled">
-
-
-
-
                                 <span class="text-muted-foreground">🚫</span>
                             </TooltipWrapper>
                         ) : null}
                         {r?.isChatBoxMuted ? (
                             <TooltipWrapper side="left" content="Chatbox Muted">
-
-
-
-
                                 <span class="text-muted-foreground">💬</span>
                             </TooltipWrapper>
                         ) : null}
                         {r?.timeoutTime ? (
                             <TooltipWrapper side="left" content="Timeout">
-
-
-
-
                                 <span class="text-destructive">🔴{r.timeoutTime}s</span>
                             </TooltipWrapper>
                         ) : null}
@@ -372,10 +287,6 @@ export const createColumns = ({
                                 <IdCard class="h-4 w-4 x-tag-age-verification" />
                             </TooltipWrapper>
                         ) : null}
-
-
-
-
                     </div>
                 );
             }
@@ -399,10 +310,6 @@ export const createColumns = ({
                     ) : platform === 'ios' ? (
                         <Apple class="h-4 w-4 shrink-0 x-tag-platform-ios" />
                     ) : platform ? (
-
-
-
-
                         <span>{String(platform)}</span>
                     ) : null;
 
@@ -416,21 +323,10 @@ export const createColumns = ({
                             : 'D';
 
                 return (
-
-
-
-
                     <div class="flex items-center gap-1">
                         {platformIcon}
 
-
-
-
                         {mode ? <span>{mode}</span> : null}
-
-
-
-
                     </div>
                 );
             }
@@ -445,42 +341,22 @@ export const createColumns = ({
                 const userRef = row.original?.ref;
                 const langs = userRef?.$languages ?? [];
                 return (
-
-
-
-
                     <div class="flex items-center gap-0.5">
-                        {langs.map((item: { key: string; value: any; }) => (
+                        {langs.map((item: { key: string; value: any }) => (
                             <TooltipWrapper
                                 key={item.key}
                                 side="top"
                                 v-slots={{
                                     content: () => (
-
-
-
-
                                         <span>
                                             {item.value} ({item.key})
-
-
-
-
                                         </span>
                                     )
                                 }}
                             >
-
-
-
-
                                 <span class={['flags', 'inline-block', 'mr-1', languageClass(item.key)]} />
                             </TooltipWrapper>
                         ))}
-
-
-
-
                     </div>
                 );
             }
@@ -494,48 +370,32 @@ export const createColumns = ({
             cell: ({ row }: any) => {
                 const links = row.original?.profileRef?.bioLinks?.filter(Boolean) ?? [];
                 return (
-
-
-
-
                     <div class="flex items-center">
                         {links.map((link: string, index: any) => (
                             <TooltipWrapper
                                 key={index}
                                 v-slots={{
-
-
-
-
                                     content: () => <span>{String(link ?? '')}</span>
                                 }}
                             >
-
-
-
-
                                 <img
                                     src={getFaviconUrl(link)}
                                     class="h-4 w-4 mr-1 align-middle cursor-pointer"
                                     loading="lazy"
-                                    onClick={(e: { stopPropagation: () => void; }) => {
+                                    onClick={(e: { stopPropagation: () => void }) => {
                                         e.stopPropagation();
                                         openExternalLink(String(link));
                                     }}
                                 />
                             </TooltipWrapper>
                         ))}
-
-
-
-
                     </div>
                 );
             }
         },
         {
             id: 'note',
-            accessorFn: (row: { ref: { note: any; }; }) => row?.ref?.note,
+            accessorFn: (row: { ref: { note: any } }) => row?.ref?.note,
             header: () => t('table.playerList.note'),
             size: 150,
             minSize: 20,
@@ -548,15 +408,12 @@ export const createColumns = ({
                 const note = row.original?.ref?.note;
                 const text = typeof note === 'string' || typeof note === 'number' ? String(note) : '';
 
-
-
-
                 return <span>{text}</span>;
             }
         },
         {
             id: 'memo',
-            accessorFn: (row: { ref: { $memo: any; }; }) => row?.ref?.$memo,
+            accessorFn: (row: { ref: { $memo: any } }) => row?.ref?.$memo,
             header: () => t('table.playerList.memo'),
             size: 150,
             minSize: 20,
@@ -568,9 +425,6 @@ export const createColumns = ({
             cell: ({ row }: any) => {
                 const memo = row.original?.ref?.$memo;
                 const text = typeof memo === 'string' || typeof memo === 'number' ? String(memo) : '';
-
-
-
 
                 return <span>{text}</span>;
             }

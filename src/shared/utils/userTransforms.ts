@@ -1,3 +1,5 @@
+import type { VrcxUser } from '@/types/vrcx';
+
 import { removeEmojis, replaceBioSymbols } from './base/string';
 
 /**
@@ -172,15 +174,12 @@ export function diffObjectProps(ref: object, json: object, arraysMatchFn: (a: an
  * Create a default user ref object with all expected fields.
  * Returns a plain object (caller wraps in reactive() if needed).
  *
- * @param {Partial<import('@/types/vrcx').VrcxUser>} json - API response to merge
- * @returns {import('@/types/vrcx').VrcxUser} Default user object with json spread on top
+ * @param {Partial<Omit<VrcxUser, 'state'>> & { state?: string }} json - API response to merge
+ * @returns {VrcxUser} Default user object with json spread on top
  */
 
-
-
-
-export function createDefaultUserRef(json: Partial<import('@/types/vrcx').VrcxUser>) {
-    return ({
+export function createDefaultUserRef(json: Partial<Omit<VrcxUser, 'state'>> & { state?: string }) {
+    return {
         acceptedPrivacyVersion: 0,
         acceptedTOSVersion: 0,
         accountDeletionDate: null,
@@ -264,5 +263,5 @@ export function createDefaultUserRef(json: Partial<import('@/types/vrcx').VrcxUs
         $moderations: {},
         //
         ...json
-    } as import('@/types/vrcx').VrcxUser);
+    } as VrcxUser;
 }

@@ -40,7 +40,9 @@
 
     const forwarded = useForwardPropsEmits(delegatedProps, emits);
 
+    /** @type {import('vue').Ref<Map<string, any>>} */
     const allItems = ref(new Map());
+    /** @type {import('vue').Ref<Map<string, Set<string>>>} */
     const allGroups = ref(new Map());
 
     const { contains } = useFilter({ sensitivity: 'base' });

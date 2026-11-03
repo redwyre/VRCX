@@ -1,17 +1,18 @@
 import { computed } from 'vue';
+import type { ComputedRef, Ref } from 'vue';
 
 /**
  * Composable for filtering group calendar events into past and upcoming,
  * and updating follow state on individual events.
  *
- * @param {import('vue').Ref} groupDialog - Reactive ref to the group dialog state
+ * @param {Ref} groupDialog - Reactive ref to the group dialog state
  * @returns {{
- *     pastCalenderEvents: import('vue').ComputedRef<Array>;
- *     upcomingCalenderEvents: import('vue').ComputedRef<Array>;
+ *     pastCalenderEvents: ComputedRef<Array>;
+ *     upcomingCalenderEvents: ComputedRef<Array>;
  *     updateFollowingCalendarData: (event: Object) => void;
  * }}
  */
-export function useGroupCalendarEvents(groupDialog: import('vue').Ref) {
+export function useGroupCalendarEvents(groupDialog: Ref) {
     const pastCalenderEvents = computed(() => {
         if (!groupDialog.value.calendar) {
             return [];

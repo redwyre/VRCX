@@ -61,6 +61,7 @@
         "@tanstack/vue-table": "^9.3.1",
         "@tanstack/vue-virtual": "^3.13.39",
         "@types/node": "^26.6.5",
+        "@types/yargs": "^17.0.35",
         "@vee-validate/zod": "^4.15.1",
         "@vitejs/plugin-vue": "^6.0.10",
         "@vitejs/plugin-vue-jsx": "^5.1.6",

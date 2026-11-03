@@ -1,24 +1,25 @@
 import { computed, ref } from 'vue';
+import type { Ref } from 'vue';
 
 /**
  * @param {object} options
- * @param {import('vue').Ref<Array>} options.remoteGroups - Remote groups ref
- * @param {import('vue').Ref<Array>} options.localGroups - Local groups ref (string keys)
- * @param {import('vue').Ref<object>} options.localFavorites - Local favorites map { groupKey: items[] }
+ * @param {Ref<Array>} options.remoteGroups - Remote groups ref
+ * @param {Ref<Array>} options.localGroups - Local groups ref (string keys)
+ * @param {Ref<object>} options.localFavorites - Local favorites map { groupKey: items[] }
  * @param {Function} options.clearSelection - Callback to clear entity selection
  * @param {Array} [options.placeholders] - Placeholder groups when remote data not yet loaded
  * @param {boolean} [options.hasHistory] - Whether history group type is supported (Avatar only)
- * @param {import('vue').Ref<Array>} [options.historyItems] - Items for history group
+ * @param {Ref<Array>} [options.historyItems] - Items for history group
  * @returns {object}
  */
 export function useFavoritesGroupPanel(options: {
-    remoteGroups: import('vue').Ref<Array<any>>;
-    localGroups: import('vue').Ref<Array<any>>;
-    localFavorites: import('vue').Ref<object>;
+    remoteGroups: Ref<Array<any>>;
+    localGroups: Ref<Array<any>>;
+    localFavorites: Ref<object>;
     clearSelection: Function;
     placeholders?: Array<any>;
     hasHistory?: boolean;
-    historyItems?: import('vue').Ref<Array<any>>;
+    historyItems?: Ref<Array<any>>;
 }) {
     const {
         remoteGroups,
@@ -47,9 +48,6 @@ export function useFavoritesGroupPanel(options: {
             return null;
         }
 
-
-
-
         return remoteGroups.value.find((group) => group.key === selectedGroup.value.key) || null;
     });
 
@@ -57,9 +55,6 @@ export function useFavoritesGroupPanel(options: {
         if (!isLocalGroupSelected.value) {
             return '';
         }
-
-
-
 
         return selectedGroup.value.key;
     });
@@ -78,10 +73,6 @@ export function useFavoritesGroupPanel(options: {
      */
     function handleGroupMenuVisible(key: string, visible: boolean) {
         if (visible) {
-
-
-
-
             activeGroupMenu.value = key;
             return;
         }
@@ -100,9 +91,6 @@ export function useFavoritesGroupPanel(options: {
         if ((selectedGroup.value as any)?.type === type && (selectedGroup.value as any)?.key === key) {
             return;
         }
-
-
-
 
         selectedGroup.value = { type, key };
         if ((opts as any).userInitiated) {

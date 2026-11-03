@@ -51,72 +51,73 @@ export const useFeedStore = defineStore('Feed', () => {
 
     init();
 
-    function feedSearch(row: { location: any; type: any; displayName: any; worldName: any; status: any; statusDescription: any; avatarName: any; bio: any; previousBio: any; bioLinks: any[]; }) {
+    function feedSearch(row: object) {
+        const entry = row as Record<string, any>;
         const value = feedTable.value.search.trim().toUpperCase();
         if (!value) {
             return true;
         }
         if (
             (value.startsWith('wrld_') || value.startsWith('grp_')) &&
-            String(row.location).toUpperCase().includes(value)
+            String(entry.location).toUpperCase().includes(value)
         ) {
             return true;
         }
-        switch (row.type) {
+        switch (entry.type) {
             case 'GPS':
-                if (String(row.displayName).toUpperCase().includes(value)) {
+                if (String(entry.displayName).toUpperCase().includes(value)) {
                     return true;
                 }
-                if (String(row.worldName).toUpperCase().includes(value)) {
+                if (String(entry.worldName).toUpperCase().includes(value)) {
                     return true;
                 }
                 return false;
             case 'Online':
-                if (String(row.displayName).toUpperCase().includes(value)) {
+                if (String(entry.displayName).toUpperCase().includes(value)) {
                     return true;
                 }
-                if (String(row.worldName).toUpperCase().includes(value)) {
+                if (String(entry.worldName).toUpperCase().includes(value)) {
                     return true;
                 }
                 return false;
             case 'Offline':
-                if (String(row.displayName).toUpperCase().includes(value)) {
+                if (String(entry.displayName).toUpperCase().includes(value)) {
                     return true;
                 }
-                if (String(row.worldName).toUpperCase().includes(value)) {
+                if (String(entry.worldName).toUpperCase().includes(value)) {
                     return true;
                 }
                 return false;
             case 'Status':
-                if (String(row.displayName).toUpperCase().includes(value)) {
+                if (String(entry.displayName).toUpperCase().includes(value)) {
                     return true;
                 }
-                if (String(row.status).toUpperCase().includes(value)) {
+                if (String(entry.status).toUpperCase().includes(value)) {
                     return true;
                 }
-                if (String(row.statusDescription).toUpperCase().includes(value)) {
+                if (String(entry.statusDescription).toUpperCase().includes(value)) {
                     return true;
                 }
                 return false;
             case 'Avatar':
-                if (String(row.displayName).toUpperCase().includes(value)) {
+                if (String(entry.displayName).toUpperCase().includes(value)) {
                     return true;
                 }
-                if (String(row.avatarName).toUpperCase().includes(value)) {
+                if (String(entry.avatarName).toUpperCase().includes(value)) {
                     return true;
                 }
                 return false;
             case 'Bio':
-                if (String(row.displayName).toUpperCase().includes(value)) {
+                if (String(entry.displayName).toUpperCase().includes(value)) {
                     return true;
                 }
-                if (String(row.bio).toUpperCase().includes(value)) {
+                if (String(entry.bio).toUpperCase().includes(value)) {
                     return true;
                 }
-                if (String(row.previousBio).toUpperCase().includes(value)) {
+                if (String(entry.previousBio).toUpperCase().includes(value)) {
                     return true;
                 }
-                if (row.bioLinks?.some((link) => String(link).toUpperCase().includes(value))) {
+                if (entry.bioLinks?.some((link) => String(link).toUpperCase().includes(value))) {
                     return true;
                 }
                 return false;
@@ -148,9 +149,6 @@ export const useFeedStore = defineStore('Feed', () => {
                     : await database.lookupFeedDatabase(feedTable.value.filter, vipList);
             feedTableData.value = [];
 
-
-
-
             feedTableData.value = [...feedTableData.value, ...rows];
         } finally {
             feedTable.value.loading = false;
@@ -164,19 +162,12 @@ export const useFeedStore = defineStore('Feed', () => {
      * @param {object} feed The feed entry to add.
      */
     function addFeedEntry(feed: object) {
-
-
-
-
         if (feedTable.value.filter.length > 0 && !feedTable.value.filter.includes((feed as any).type)) {
             return;
         }
         if (feedTable.value.vip && !friendStore.localFavoriteFriends.has((feed as any).userId)) {
             return;
         }
-
-
-
 
         if (!feedSearch(feed)) {
             return;
@@ -187,9 +178,6 @@ export const useFeedStore = defineStore('Feed', () => {
         if (feedTable.value.dateTo && (feed as any).created_at > feedTable.value.dateTo) {
             return;
         }
-
-
-
 
         feedTableData.value = [feed, ...feedTableData.value];
         sweepFeed();

@@ -1,11 +1,12 @@
 import { computed } from 'vue';
+import type { Ref } from 'vue';
 import { commaNumber, compareUnityVersion, formatDateFilter, timeToText } from '../../../shared/utils';
 import { database } from '../../../services/database';
 
 /**
  * Composable for WorldDialogInfoTab computed properties and actions.
  *
- * @param {import('vue').Ref} worldDialog - Reactive ref to the world dialog state
+ * @param {Ref} worldDialog - Reactive ref to the world dialog state
  * @param {object} deps - External dependencies
  * @param {Function} deps.t - I18n translation function
  * @param {object} deps.toast - Toast notification functions
@@ -14,14 +15,21 @@ import { database } from '../../../services/database';
  * @param {string} [deps.sdkUnityVersion]
  * @returns {object} Info composable API
  */
-export function useWorldDialogInfo(worldDialog: import('vue').Ref, { t, toast, sdkUnityVersion }: {
-    t: Function;
-    toast: {
-        success: Function;
-        error: Function;
-    };
-    sdkUnityVersion?: string;
-}) {
+export function useWorldDialogInfo(
+    worldDialog: Ref,
+    {
+        t,
+        toast,
+        sdkUnityVersion
+    }: {
+        t: Function;
+        toast: {
+            success: Function;
+            error: Function;
+        };
+        sdkUnityVersion?: string;
+    }
+) {
     const { memo, onWorldMemoChange } = useWorldMemo(worldDialog);
 
     const isTimeInLabVisible = computed(() => {
@@ -157,10 +165,10 @@ export function useWorldDialogInfo(worldDialog: import('vue').Ref, { t, toast, s
 }
 
 /**
- * @param {import('vue').Ref} worldDialog - Reactive ref to the world dialog state
+ * @param {Ref} worldDialog - Reactive ref to the world dialog state
  * @returns {object} Memo composable API
  */
-export function useWorldMemo(worldDialog: import('vue').Ref) {
+export function useWorldMemo(worldDialog: Ref) {
     const memo = computed({
         get() {
             return worldDialog.value.memo;

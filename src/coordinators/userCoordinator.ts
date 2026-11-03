@@ -55,18 +55,17 @@ import { useSharedFeedStore } from '../stores/sharedFeed';
 import { useUiStore } from '../stores/ui';
 import { useUserStore } from '../stores/user';
 import { useFeedStore } from '../stores/feed';
+import type { Json, VrcxCurrentUser, VrcxUser } from '../types/vrcx';
+import type { CurrentUser, PublicProfile, User, UserStatus } from 'vrchat';
 
 const getRobotUrl = () => `${AppDebug.endpointDomain}/file/file_0e8c4e32-7444-44ea-ade4-313c010d4bae/1/file`;
 
 /**
- * @param {import('@/types/vrcx').Json<import('vrchat').PublicProfile> & { $lastFetch?: number }} json
- * @returns {import('@/types/vrcx').Json<import('vrchat').PublicProfile> & { $lastFetch?: number }}
+ * @param {Json<PublicProfile> & { $lastFetch?: number }} json
+ * @returns {Json<PublicProfile> & { $lastFetch?: number }}
  */
 
-
-
-
-export function applyPublicProfile(json: import('@/types/vrcx').Json<import('vrchat').PublicProfile> & { $lastFetch?: number; }) {
+export function applyPublicProfile(json: Json<PublicProfile> & { $lastFetch?: number }) {
     const { cachedProfiles } = useUserStore();
     let ref = cachedProfiles.get(json.id);
     if (typeof ref === 'undefined') {
@@ -83,7 +82,7 @@ export function applyPublicProfile(json: import('@/types/vrcx').Json<import('vrc
     if (
         ref.hasVrcPlus &&
         ref.badges &&
-        ref.badges.every((x: { badgeId: string; }) => x.badgeId !== 'bdg_754f9935-0f97-49d8-b857-95afb9b673fa')
+        ref.badges.every((x: { badgeId: string }) => x.badgeId !== 'bdg_754f9935-0f97-49d8-b857-95afb9b673fa')
     ) {
         ref.badges.unshift({
             badgeId: 'bdg_754f9935-0f97-49d8-b857-95afb9b673fa',
@@ -100,7 +99,7 @@ export function applyPublicProfile(json: import('@/types/vrcx').Json<import('vrc
     return ref;
 }
 
-async function updateUserProfile(ref: { id: any; bio: any; bioLinks: any[]; displayName: any; }) {
+async function updateUserProfile(ref: { id: any; bio: any; bioLinks: any[]; displayName: any }) {
     if (!ref.id || typeof ref.bio !== 'string') {
         return;
     }
@@ -113,15 +112,15 @@ async function updateUserProfile(ref: { id: any; bio: any; bioLinks: any[]; disp
         return;
     }
     const feed = {
-    created_at: new Date().toJSON(),
-    type: 'Bio',
-    userId: ref.id,
-    displayName: ref.displayName,
-    bio: ref.bio,
-    previousBio: (existing as any).bio,
-    bioLinks: ref.bioLinks,
-    previousBioLinks: (existing as any).bioLinks
-};
+        created_at: new Date().toJSON(),
+        type: 'Bio',
+        userId: ref.id,
+        displayName: ref.displayName,
+        bio: ref.bio,
+        previousBio: (existing as any).bio,
+        bioLinks: ref.bioLinks,
+        previousBioLinks: (existing as any).bioLinks
+    };
     useNotificationStore().queueFeedNoty(feed);
     useSharedFeedStore().addEntry(feed);
     const persistedFeed = await database.addBioToDatabase(feed);
@@ -153,14 +152,11 @@ async function refreshStaleUserProfile(userId: any) {
 }
 
 /**
- * @param {import('@/types/vrcx').Json<import('vrchat').User>} json
- * @returns {import('@/types/vrcx').VrcxUser}
+ * @param {Partial<Json<User>> & { id: string }} json
+ * @returns {VrcxUser}
  */
 
-
-
-
-export function applyUser(json: import('@/types/vrcx').Json<import('vrchat').User>) {
+export function applyUser(json: Partial<Omit<Json<User>, 'state'>> & { id: string; state?: string }) {
     const userStore = useUserStore();
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const friendStore = useFriendStore();
@@ -374,7 +370,7 @@ export function showUserDialog(userId: string) {
         return;
     }
     D.id = userId;
-    D.ref = {};
+    D.ref = {} as VrcxUser;
     D.publicProfileRef = {};
     D.memo = '';
     D.note = '';
@@ -390,7 +386,7 @@ export function showUserDialog(userId: string) {
     D.instance = {
         id: '',
         tag: '',
-        $location: {},
+        $location: parseLocation(''),
         friendCount: 0,
         users: [],
         shortName: '',
@@ -445,9 +441,6 @@ export function showUserDialog(userId: string) {
         })
         .catch((err) => {
             D.loading = false;
-
-
-
 
             D.id = null;
             D.visible = false;
@@ -523,9 +516,6 @@ export function showUserDialog(userId: string) {
                             }
                         }
 
-
-
-
                         D.dateFriendedInfo = dateFriendedInfo;
                         if (dateFriendedInfo.length > 0) {
                             const latestFriendedInfo = dateFriendedInfo[0];
@@ -533,10 +523,6 @@ export function showUserDialog(userId: string) {
                             D.dateFriended = latestFriendedInfo.created_at;
                         }
                         displayNameMap.forEach((updated_at, displayName) => {
-
-
-
-
                             D.previousDisplayNames.push({
                                 displayName,
                                 updated_at
@@ -544,14 +530,13 @@ export function showUserDialog(userId: string) {
                         });
                     });
                     (AppApi as any).GetVRChatUserModeration(currentUser.id, userId).then((result: number) => {
-    D.avatarModeration = result;
-    if (result === 4) {
-        D.isHideAvatar = true;
-    }
-    else if (result === 5) {
-        D.isShowAvatar = true;
-    }
-});
+                        D.avatarModeration = result;
+                        if (result === 4) {
+                            D.isHideAvatar = true;
+                        } else if (result === 5) {
+                            D.isShowAvatar = true;
+                        }
+                    });
                     if (!currentUser.hasSharedConnectionsOptOut) {
                         try {
                             queryRequest.fetch('mutualCounts', { userId }).then((args) => {
@@ -600,28 +585,16 @@ export function updateUserDialogProfile() {
             if (appearanceSettingsStore.displayVRCProfileThemes) {
                 D.theme = {
                     iconColor: getReadableProfileThemeColor(
-
-
-
-
                         args1.json.themeIconColor,
                         'var(--muted-foreground)',
                         appearanceSettingsStore.isDarkMode
                     ),
                     buttonColor: getReadableProfileThemeColor(
-
-
-
-
                         args1.json.themeButtonColor,
                         'var(--primary)',
                         appearanceSettingsStore.isDarkMode
                     ),
                     subtextColor: getReadableProfileThemeColor(
-
-
-
-
                         args1.json.themeSubtextColor,
                         'var(--muted-foreground)',
                         appearanceSettingsStore.isDarkMode
@@ -646,20 +619,20 @@ function onPlayerTraveling(ref: object) {
 
     if (
         !gameStore.isGameRunning ||
-    !locationStore.lastLocation.location ||
-    locationStore.lastLocation.location !== (ref as any).travelingToLocation ||
-    (ref as any).id === userStore.currentUser.id ||
-    locationStore.lastLocation.playerList.has((ref as any).id)
+        !locationStore.lastLocation.location ||
+        locationStore.lastLocation.location !== (ref as any).travelingToLocation ||
+        (ref as any).id === userStore.currentUser.id ||
+        locationStore.lastLocation.playerList.has((ref as any).id)
     ) {
         return;
     }
 
     const onPlayerJoining = {
-    created_at: new Date((ref as any).created_at).toJSON(),
-    userId: (ref as any).id,
-    displayName: (ref as any).displayName,
-    type: 'OnPlayerJoining'
-};
+        created_at: new Date((ref as any).created_at).toJSON(),
+        userId: (ref as any).id,
+        displayName: (ref as any).displayName,
+        type: 'OnPlayerJoining'
+    };
     notificationStore.queueFeedNoty(onPlayerJoining);
 }
 
@@ -675,7 +648,7 @@ async function handleUserUpdate(ref: object, props: object) {
 /**
  * @param fileId
  */
-export async function refreshUserDialogAvatars(fileId: string) {
+export async function refreshUserDialogAvatars(fileId = '') {
     const userStore = useUserStore();
     const avatarStore = useAvatarStore();
 
@@ -708,7 +681,7 @@ export async function refreshUserDialogAvatars(fileId: string) {
             fn: avatarRequest.getAvatars,
             N: -1,
             params,
-            handle: (args: { json: any; }) => {
+            handle: (args: { json: any }) => {
                 for (const json of args.json) {
                     const ref = applyAvatar(json);
                     map.set(ref.id, ref);
@@ -719,7 +692,7 @@ export async function refreshUserDialogAvatars(fileId: string) {
             fn: avatarRequest.getLicensedAvatars,
             N: -1,
             params: { n: 100, offset: 0 },
-            handle: (args: { json: any; }) => {
+            handle: (args: { json: any }) => {
                 for (const json of args.json) {
                     const ref = applyAvatar(json);
                     licensedMap.set(ref.id, ref);
@@ -752,7 +725,7 @@ export async function refreshUserDialogAvatars(fileId: string) {
 /**
  * @param ref
  */
-export async function lookupUser(ref: { userId: string; displayName: string; }) {
+export async function lookupUser(ref: { userId?: string; displayName?: string }) {
     const userStore = useUserStore();
     const searchStore = useSearchStore();
 
@@ -789,8 +762,8 @@ export function handleConfig(args: object) {
     const userStore = useUserStore();
 
     const ref = {
-    ...(args as any).json
-};
+        ...(args as any).json
+    };
     (args as any).ref = ref;
     authStore.setCachedConfig(ref);
     if (typeof (args as any).ref?.whiteListedAssetUrls !== 'object') {
@@ -805,14 +778,11 @@ export function handleConfig(args: object) {
 }
 
 /**
- * @param {import('@/types/vrcx').Json<import('vrchat').CurrentUser>} json
- * @returns {import('@/types/vrcx').VrcxCurrentUser}
+ * @param {Json<CurrentUser>} json
+ * @returns {VrcxCurrentUser}
  */
 
-
-
-
-export function applyCurrentUser(json: import('@/types/vrcx').Json<import('vrchat').CurrentUser>) {
+export function applyCurrentUser(json: Json<CurrentUser>) {
     const userStore = useUserStore();
     const appearanceSettingsStore = useAppearanceSettingsStore();
     const authStore = useAuthStore();
@@ -821,10 +791,7 @@ export function applyCurrentUser(json: import('@/types/vrcx').Json<import('vrcha
 
     authStore.setAttemptingAutoLogin(false);
 
-
-
-
-    let ref = (userStore.currentUser as import('@/types/vrcx').VrcxCurrentUser);
+    let ref = userStore.currentUser as VrcxCurrentUser;
     runAvatarSwapFlow({
         json,
         ref,
@@ -837,7 +804,7 @@ export function applyCurrentUser(json: import('@/types/vrcx').Json<import('vrcha
             }
         }
     } else {
-        ref = ({
+        ref = {
             acceptedPrivacyVersion: 0,
             acceptedTOSVersion: 0,
             accountDeletionDate: null,
@@ -962,7 +929,7 @@ export function applyCurrentUser(json: import('@/types/vrcx').Json<import('vrcha
             $location_at: Date.now(),
             $travelingToTime: Date.now(),
             $previousAvatarSwapTime: null,
-            $homeLocation: {},
+            $homeLocation: parseLocation(''),
             $isVRCPlus: false,
             $isModerator: false,
             $isTroll: false,
@@ -975,7 +942,7 @@ export function applyCurrentUser(json: import('@/types/vrcx').Json<import('vrcha
             $locationTag: '',
             $travelingToLocation: '',
             ...json
-        } as import('@/types/vrcx').VrcxCurrentUser);
+        } as VrcxCurrentUser;
         runFirstLoginFlow(ref);
     }
 
@@ -1076,7 +1043,7 @@ export function getCurrentUser() {
 /**
  * @param data
  */
-export function addCustomTag(data: { Tag: any; UserId: any; TagColour: any; }) {
+export function addCustomTag(data: { Tag: any; UserId: any; TagColour: any }) {
     const userStore = useUserStore();
     const sharedFeedStore = useSharedFeedStore();
 
@@ -1131,10 +1098,6 @@ export function updateAutoStateChange() {
     }
     if (
         generalSettingsStore.autoStateChangeInstanceTypes.length > 0 &&
-
-
-
-
         !generalSettingsStore.autoStateChangeInstanceTypes.includes(instanceType)
     ) {
         return;
@@ -1146,10 +1109,6 @@ export function updateAutoStateChange() {
         if (selectedGroups.length > 0) {
             const groupFriendIds = new Set();
             for (const ref of favoriteStore.cachedFavorites.values()) {
-
-
-
-
                 if (ref.type === 'friend' && selectedGroups.includes(ref.$groupKey)) {
                     groupFriendIds.add(ref.favoriteId);
                 }
@@ -1179,10 +1138,10 @@ export function updateAutoStateChange() {
 
     const currentStatus = userStore.currentUser.status;
     const newStatus = (
-        (withCompany
+        withCompany
             ? generalSettingsStore.autoStateChangeCompanyStatus
-            : generalSettingsStore.autoStateChangeAloneStatus) as import('vrchat').UserStatus
-    );
+            : generalSettingsStore.autoStateChangeAloneStatus
+    ) as UserStatus;
 
     if (currentStatus === newStatus) {
         return;
@@ -1200,9 +1159,6 @@ export function updateAutoStateChange() {
         if (AppDebug.errorNoty) {
             toast.dismiss(AppDebug.errorNoty);
         }
-
-
-
 
         AppDebug.errorNoty = toast.info(text);
         console.log(text);

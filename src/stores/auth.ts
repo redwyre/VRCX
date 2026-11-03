@@ -1,4 +1,5 @@
 import { reactive, ref, watch } from 'vue';
+import type { Ref } from 'vue';
 import { defineStore } from 'pinia';
 import { toast } from 'vue-sonner';
 import { useI18n } from 'vue-i18n';
@@ -66,8 +67,8 @@ export const useAuthStore = defineStore('Auth', () => {
 
     const twoFactorAuthDialogVisible = ref(false);
 
-    /** @type {import('vue').Ref<any>} */
-    const cachedConfig: import('vue').Ref<any> = ref({});
+    /** @type {Ref<any>} */
+    const cachedConfig: Ref<any> = ref({});
 
     // fallback defaults
     const cachedPermissions = ref({
@@ -96,7 +97,7 @@ export const useAuthStore = defineStore('Auth', () => {
             twoFactorAuthDialogVisible.value = false;
             if (isLoggedIn) {
                 resetLoginNetworkIssueHintState();
-                updateStoredUser(currentUser);
+                updateStoredUser(currentUser as any);
                 new Noty({
                     type: 'success',
                     text: t('message.auth.login_greeting', {
@@ -258,7 +259,9 @@ export const useAuthStore = defineStore('Auth', () => {
      * @param {{ username?: string; password?: string; endpoint?: string; websocket?: string }} [params]
      * @returns {string}
      */
-    function buildLoginNetworkIssueAttemptFingerprint(params: { username?: string; password?: string; endpoint?: string; websocket?: string; } = {}) {
+    function buildLoginNetworkIssueAttemptFingerprint(
+        params: { username?: string; password?: string; endpoint?: string; websocket?: string } = {}
+    ) {
         return [params.username ?? '', params.password ?? '', params.endpoint ?? '', params.websocket ?? ''].join(
             '\u0000'
         );
@@ -267,7 +270,12 @@ export const useAuthStore = defineStore('Auth', () => {
     /**
      * @param {{ username?: string; password?: string; endpoint?: string; websocket?: string }} params
      */
-    function resetLoginNetworkIssueHintStateIfCredentialsChanged(params: { username?: string; password?: string; endpoint?: string; websocket?: string; }) {
+    function resetLoginNetworkIssueHintStateIfCredentialsChanged(params: {
+        username?: string;
+        password?: string;
+        endpoint?: string;
+        websocket?: string;
+    }) {
         const fingerprint = buildLoginNetworkIssueAttemptFingerprint(params);
         if (
             loginNetworkIssueHintState.lastAttemptFingerprint &&
@@ -282,16 +290,13 @@ export const useAuthStore = defineStore('Auth', () => {
      * @param {Error & { status?: number; endpoint?: string }} err
      * @returns {boolean}
      */
-    function shouldCountLoginFailureForNetworkHint(err: Error & { status?: number; endpoint?: string; }) {
+    function shouldCountLoginFailureForNetworkHint(err: Error & { status?: number; endpoint?: string }) {
         if (!err || err.endpoint !== 'auth/user') {
             return false;
         }
         if (typeof err.message === 'string' && err.message.includes('Invalid Username/Email or Password')) {
             return false;
         }
-
-
-
 
         return [401].includes(err.status);
     }
@@ -302,9 +307,6 @@ export const useAuthStore = defineStore('Auth', () => {
             (timestamp) => timestamp > now - loginNetworkIssueHintWindowMs
         );
 
-
-
-
         loginNetworkIssueHintState.timestamps.push(now);
         if (
             loginNetworkIssueHintState.hinted ||
@@ -314,17 +316,14 @@ export const useAuthStore = defineStore('Auth', () => {
         }
         loginNetworkIssueHintState.hinted = true;
 
-
-
-
         loginNetworkIssueHintToastId.value = toast.warning(t('message.auth.login_network_issue_hint_title'), {
-    description: t('message.auth.login_network_issue_hint_description'),
-    duration: Infinity,
-    action: {
-        label: t('common.actions.open'),
-        onClick: () => (AppApi as any).OpenLink(links.troubleshootingAuthUserConnectionIssues)
-    }
-});
+            description: t('message.auth.login_network_issue_hint_description'),
+            duration: Infinity,
+            action: {
+                label: t('common.actions.open'),
+                onClick: () => (AppApi as any).OpenLink(links.troubleshootingAuthUserConnectionIssues)
+            }
+        });
     }
 
     function enablePrimaryPasswordChange() {
@@ -355,10 +354,6 @@ export const useAuthStore = defineStore('Auth', () => {
                         security
                             .decrypt(savedCredentials[userId].loginParams.password, value)
                             .then(async (pt) => {
-
-
-
-
                                 credentialsToSave.value = {
                                     username: savedCredentials[userId].loginParams.username,
                                     password: pt
@@ -388,16 +383,12 @@ export const useAuthStore = defineStore('Auth', () => {
             for (const userId in savedCredentials) {
                 if (!(savedCredentials as any)[userId].loginParams.password) continue;
                 security.encrypt((savedCredentials as any)[userId].loginParams.password, key).then((ct) => {
-
-
-
-
-    credentialsToSave.value = {
-        username: (savedCredentials as any)[userId].loginParams.username,
-        password: ct
-    };
-    updateStoredUser((savedCredentials as any)[userId].user);
-});
+                    credentialsToSave.value = {
+                        username: (savedCredentials as any)[userId].loginParams.username,
+                        password: ct
+                    };
+                    updateStoredUser((savedCredentials as any)[userId].user);
+                });
             }
         }
     }
@@ -405,24 +396,148 @@ export const useAuthStore = defineStore('Auth', () => {
     /**
      * @param user
      */
-    async function updateStoredUser(user: { acceptedPrivacyVersion: number; acceptedTOSVersion: number; accountDeletionDate: null; accountDeletionLog: null; accountStanding: string; activeFriends: any[]; ageVerificationStatus: string; ageVerified: boolean; allowAvatarCopying: boolean; appleDetails: any; appleId: string; badges: any[]; bannerColor: string; bannerType: string; bannerUrl: string; bio: string; bioLinks: any[]; completedTutorials: any[]; currentAvatar: string; currentAvatarImageUrl: string; currentAvatarTags: any[]; currentAvatarThumbnailImageUrl: string; date_joined: string; developerType: string; discordDetails: { global_name: string; id: string; }; discordId: string; displayName: string; emailVerified: boolean; fallbackAvatar: string; friendGroupNames: any[]; friendKey: string; friends: any[]; googleDetails: any; googleId: string; hasAcceptedDiscordSocialSDKPerms: boolean; hasBirthday: boolean; hasDiscordFriendsOptOut: boolean; hasEmail: boolean; hasLoggedInFromClient: boolean; hasPendingEmail: boolean; hasSharedConnectionsOptOut: boolean; hideContentFilterSettings: boolean; homeLocation: string; id: string; isAdult: boolean; isBoopingEnabled: boolean; isEconomyCreator: boolean; isFriend: boolean; isTemporary: boolean; iconFrame: string; iconUrl: string; last_activity: string; last_login: string; last_mobile: null; last_platform: string; nameplateEffect: string; obfuscatedEmail: string; obfuscatedPendingEmail: string; oculusId: string; offlineFriends: any[]; onlineFriends: any[]; pastDisplayNames: any[]; picoId: string; platform_history: any[]; presence: { avatarThumbnail: string; currentAvatarTags: string; debugflag: string; displayName: string; groups: any[]; id: string; instance: string; instanceType: string; platform: string; profilePicOverride: string; status: string; travelingToInstance: string; travelingToWorld: string; userIcon: string; world: string; }; profileEffect: string; profilePicOverride: string; profilePicOverrideThumbnail: string; pronouns: string; pronounsHistory: any[]; queuedInstance: string; receiveMobileInvitations: boolean; state: string; status: string; statusDescription: string; statusFirstTime: boolean; statusHistory: any[]; steamDetails: any; steamId: string; tags: any[]; temporaryExpiryDate: null; twitchDetails: { display_name: string; id: string; login: string; profile_image_url: string; }; twitchId: string; twoFactorAuthEnabled: boolean; twoFactorAuthEnabledDate: null; unsubscribe: boolean; updated_at: string; userIcon: string; userLanguage: string; userLanguageCode: string; username: string; usesGeneratedPassword: boolean; viveId: string; $online_for: number; $offline_for: null; $location_at: number; $travelingToTime: number; $previousAvatarSwapTime: null; $homeLocation: any; $isVRCPlus: boolean; $isModerator: boolean; $isTroll: boolean; $isProbableTroll: boolean; $trustLevel: string; $trustClass: string; $userColour: string; $trustSortNum: number; $languages: any[]; $locationTag: string; $travelingToLocation: string; }) {
+    async function updateStoredUser(user: {
+        acceptedPrivacyVersion: number;
+        acceptedTOSVersion: number;
+        accountDeletionDate: null;
+        accountDeletionLog: null;
+        accountStanding: string;
+        activeFriends: any[];
+        ageVerificationStatus: string;
+        ageVerified: boolean;
+        allowAvatarCopying: boolean;
+        appleDetails: any;
+        appleId: string;
+        badges: any[];
+        bannerColor: string;
+        bannerType: string;
+        bannerUrl: string;
+        bio: string;
+        bioLinks: any[];
+        completedTutorials: any[];
+        currentAvatar: string;
+        currentAvatarImageUrl: string;
+        currentAvatarTags: any[];
+        currentAvatarThumbnailImageUrl: string;
+        date_joined: string;
+        developerType: string;
+        discordDetails: { global_name: string; id: string };
+        discordId: string;
+        displayName: string;
+        emailVerified: boolean;
+        fallbackAvatar: string;
+        friendGroupNames: any[];
+        friendKey: string;
+        friends: any[];
+        googleDetails: any;
+        googleId: string;
+        hasAcceptedDiscordSocialSDKPerms: boolean;
+        hasBirthday: boolean;
+        hasDiscordFriendsOptOut: boolean;
+        hasEmail: boolean;
+        hasLoggedInFromClient: boolean;
+        hasPendingEmail: boolean;
+        hasSharedConnectionsOptOut: boolean;
+        hideContentFilterSettings: boolean;
+        homeLocation: string;
+        id: string;
+        isAdult: boolean;
+        isBoopingEnabled: boolean;
+        isEconomyCreator: boolean;
+        isFriend: boolean;
+        isTemporary: boolean;
+        iconFrame: string;
+        iconUrl: string;
+        last_activity: string;
+        last_login: string;
+        last_mobile: null;
+        last_platform: string;
+        nameplateEffect: string;
+        obfuscatedEmail: string;
+        obfuscatedPendingEmail: string;
+        oculusId: string;
+        offlineFriends: any[];
+        onlineFriends: any[];
+        pastDisplayNames: any[];
+        picoId: string;
+        platform_history: any[];
+        presence: {
+            avatarThumbnail: string;
+            currentAvatarTags: string;
+            debugflag: string;
+            displayName: string;
+            groups: any[];
+            id: string;
+            instance: string;
+            instanceType: string;
+            platform: string;
+            profilePicOverride: string;
+            status: string;
+            travelingToInstance: string;
+            travelingToWorld: string;
+            userIcon: string;
+            world: string;
+        };
+        profileEffect: string;
+        profilePicOverride: string;
+        profilePicOverrideThumbnail: string;
+        pronouns: string;
+        pronounsHistory: any[];
+        queuedInstance: string;
+        receiveMobileInvitations: boolean;
+        state: string;
+        status: string;
+        statusDescription: string;
+        statusFirstTime: boolean;
+        statusHistory: any[];
+        steamDetails: any;
+        steamId: string;
+        tags: any[];
+        temporaryExpiryDate: null;
+        twitchDetails: { display_name: string; id: string; login: string; profile_image_url: string };
+        twitchId: string;
+        twoFactorAuthEnabled: boolean;
+        twoFactorAuthEnabledDate: null;
+        unsubscribe: boolean;
+        updated_at: string;
+        userIcon: string;
+        userLanguage: string;
+        userLanguageCode: string;
+        username: string;
+        usesGeneratedPassword: boolean;
+        viveId: string;
+        $online_for: number;
+        $offline_for: null;
+        $location_at: number;
+        $travelingToTime: number;
+        $previousAvatarSwapTime: null;
+        $homeLocation: any;
+        $isVRCPlus: boolean;
+        $isModerator: boolean;
+        $isTroll: boolean;
+        $isProbableTroll: boolean;
+        $trustLevel: string;
+        $trustClass: string;
+        $userColour: string;
+        $trustSortNum: number;
+        $languages: any[];
+        $locationTag: string;
+        $travelingToLocation: string;
+    }) {
         const savedCredentials = await getAllSavedCredentials();
         if (credentialsToSave.value) {
             (savedCredentials as any)[user.id] = {
-    user,
-    loginParams: {
-        username: '',
-        password: '',
-        endpoint: '',
-        websocket: '',
-        ...(savedCredentials as any)[user.id]?.loginParams,
+                user,
+                loginParams: {
+                    username: '',
+                    password: '',
+                    endpoint: '',
+                    websocket: '',
+                    ...(savedCredentials as any)[user.id]?.loginParams,
 
-
-
-
-        ...credentialsToSave.value
-    }
-};
+                    ...credentialsToSave.value
+                }
+            };
             credentialsToSave.value = null;
         } else if (typeof (savedCredentials as any)[user.id] !== 'undefined') {
             (savedCredentials as any)[user.id].user = user;
@@ -436,10 +551,6 @@ export const useAuthStore = defineStore('Auth', () => {
 
     function queueSaveCredentials() {
         if (loginForm.value.saveCredentials) {
-
-
-
-
             credentialsToSave.value = {};
         }
     }
@@ -459,7 +570,7 @@ export const useAuthStore = defineStore('Auth', () => {
     /**
      * @param args
      */
-    function checkPrimaryPassword(args: { password: unknown; }) {
+    function checkPrimaryPassword(args: { password: unknown }) {
         return new Promise((resolve, reject) => {
             if (!advancedSettingsStore.enablePrimaryPassword) {
                 resolve(args.password);
@@ -499,10 +610,6 @@ export const useAuthStore = defineStore('Auth', () => {
                 if (!ok) return;
                 const existingStyle = document.getElementById('login-container-style');
                 if (existingStyle) {
-
-
-
-
                     existingStyle.parentNode.removeChild(existingStyle);
                 }
                 handleLogoutEvent();
@@ -513,7 +620,10 @@ export const useAuthStore = defineStore('Auth', () => {
     /**
      * @param user
      */
-    async function relogin(user: { cookies?: any; user?: any; loginParams?: any; }, { shouldTrackLoginNetworkIssueHint = !attemptingAutoLogin.value } = {}) {
+    async function relogin(
+        user: { cookies?: any; user?: any; loginParams?: any },
+        { shouldTrackLoginNetworkIssueHint = !attemptingAutoLogin.value } = {}
+    ) {
         const { loginParams } = user;
         if (user.cookies) {
             await webApiService.setCookies(user.cookies);
@@ -566,10 +676,6 @@ export const useAuthStore = defineStore('Auth', () => {
                     }
                 }
             } catch (err) {
-
-
-
-
                 if (shouldTrackLoginNetworkIssueHint && shouldCountLoginFailureForNetworkHint(err)) {
                     maybeShowLoginNetworkIssueHint();
                 }
@@ -636,7 +742,9 @@ export const useAuthStore = defineStore('Auth', () => {
                         });
                         if (ok) {
                             const savedCredentials = JSON.parse(await configRepository.getString('savedCredentials'));
-                            const saveCredential = Object.values(savedCredentials).find((credential) => (credential as any).loginParams.password);
+                            const saveCredential = Object.values(savedCredentials).find(
+                                (credential) => (credential as any).loginParams.password
+                            );
                             if (saveCredential) {
                                 await security.decrypt((saveCredential as any).loginParams.password, value);
                             }
@@ -651,10 +759,6 @@ export const useAuthStore = defineStore('Auth', () => {
                                     cipher: pwd
                                 });
                             } catch (err) {
-
-
-
-
                                 if (shouldCountLoginFailureForNetworkHint(err)) {
                                     maybeShowLoginNetworkIssueHint();
                                 }
@@ -674,10 +778,6 @@ export const useAuthStore = defineStore('Auth', () => {
                             saveCredentials: loginForm.value.saveCredentials
                         });
                     } catch (err) {
-
-
-
-
                         if (shouldCountLoginFailureForNetworkHint(err)) {
                             maybeShowLoginNetworkIssueHint();
                         }
@@ -824,7 +924,14 @@ export const useAuthStore = defineStore('Auth', () => {
      *   credential to login
      * @returns {Promise<{ origin: boolean; json: any }>}
      */
-    function authLogin(params: { username: string; password: string; endpoint: string; websocket: string; saveCredentials?: any; cipher?: string; }) {
+    function authLogin(params: {
+        username: string;
+        password: string;
+        endpoint: string;
+        websocket: string;
+        saveCredentials?: any;
+        cipher?: string;
+    }) {
         let { username, password, endpoint, websocket, saveCredentials, cipher } = params;
         const auth = btoa(`${encodeURIComponent(username)}:${encodeURIComponent(password)}`);
         if (saveCredentials) {
@@ -832,9 +939,6 @@ export const useAuthStore = defineStore('Auth', () => {
             if (cipher) {
                 password = cipher;
             }
-
-
-
 
             credentialsToSave.value = {
                 username,
@@ -917,7 +1021,7 @@ export const useAuthStore = defineStore('Auth', () => {
         advancedSettingsStore.runAvatarAutoCleanup(userStore.currentUser.id);
         watchState.isLoggedIn = true;
         (AppApi as any).CheckGameRunning(); // restore state from hot-reload
- // restore state from hot-reload
+        // restore state from hot-reload
 
         activityStore.startFullCacheBuild(userStore.currentUser.id);
     }
@@ -940,28 +1044,33 @@ export const useAuthStore = defineStore('Auth', () => {
         const permissions = await authRequest.getPermissions();
 
         if ((permissions['permission-user-stickers' as keyof typeof permissions] as any)?.max) {
-
-            cachedPermissions.value.maxUserStickers = (permissions['permission-user-stickers' as keyof typeof permissions] as any).max;
+            cachedPermissions.value.maxUserStickers = (
+                permissions['permission-user-stickers' as keyof typeof permissions] as any
+            ).max;
         }
 
         if ((permissions['permission-user-emoji' as keyof typeof permissions] as any)?.max) {
-
-            cachedPermissions.value.maxUserEmoji = (permissions['permission-user-emoji' as keyof typeof permissions] as any).max;
+            cachedPermissions.value.maxUserEmoji = (
+                permissions['permission-user-emoji' as keyof typeof permissions] as any
+            ).max;
         }
 
         if ((permissions['permission-user-gallery' as keyof typeof permissions] as any)?.max) {
-
-            cachedPermissions.value.maxUserGallery = (permissions['permission-user-gallery' as keyof typeof permissions] as any).max;
+            cachedPermissions.value.maxUserGallery = (
+                permissions['permission-user-gallery' as keyof typeof permissions] as any
+            ).max;
         }
 
         if ((permissions['permission-user-icons' as keyof typeof permissions] as any)?.max) {
-
-            cachedPermissions.value.maxUserIcons = (permissions['permission-user-icons' as keyof typeof permissions] as any).max;
+            cachedPermissions.value.maxUserIcons = (
+                permissions['permission-user-icons' as keyof typeof permissions] as any
+            ).max;
         }
 
         if ((permissions['permission-user-prints' as keyof typeof permissions] as any)?.max) {
-
-            cachedPermissions.value.maxUserPrints = (permissions['permission-user-prints' as keyof typeof permissions] as any).max;
+            cachedPermissions.value.maxUserPrints = (
+                permissions['permission-user-prints' as keyof typeof permissions] as any
+            ).max;
         }
     }
 

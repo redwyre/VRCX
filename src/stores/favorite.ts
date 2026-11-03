@@ -10,7 +10,7 @@ import { processBulk } from '../services/request';
 import { useAppearanceSettingsStore } from './settings/appearance';
 import { watchState } from '../services/watchState';
 import { onLoginStateChanged } from '../coordinators/favoriteCoordinator';
-import { FavoriteType, UserId } from "vrchat";
+import { FavoriteType, UserId } from 'vrchat';
 
 export const useFavoriteStore = defineStore('Favorite', () => {
     const appearanceSettingsStore = useAppearanceSettingsStore();
@@ -80,7 +80,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         loading: false,
         type: '',
         objectId: '',
-        currentGroup: {}
+        currentGroup: {} as { key?: string; displayName?: string; count?: number; capacity?: number }
     });
 
     const favoritesSortOrder = ref([]);
@@ -134,13 +134,17 @@ export const useFavoriteStore = defineStore('Favorite', () => {
 
     const localWorldFavoriteGroups = computed(() => Object.keys(localWorldFavorites).sort());
 
-    const localWorldFavoritesList = computed(() => Object.values(localWorldFavorites)
-    .flat()
-    .map((fav) => (fav as any).id));
+    const localWorldFavoritesList = computed(() =>
+        Object.values(localWorldFavorites)
+            .flat()
+            .map((fav) => (fav as any).id)
+    );
 
-    const localAvatarFavoritesList = computed(() => Object.values(localAvatarFavorites)
-    .flat()
-    .map((fav) => (fav as any).id));
+    const localAvatarFavoritesList = computed(() =>
+        Object.values(localAvatarFavorites)
+            .flat()
+            .map((fav) => (fav as any).id)
+    );
 
     const localFriendFavoritesList = computed(() =>
         Object.values(localFriendFavorites)
@@ -277,13 +281,17 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         }
         isFavoriteGroupLoading.value = true;
         processBulk({
-            fn: (params: { n?: number; offset?: number; type?: FavoriteType; userId?: UserId; ownerId?: string; } | undefined) => favoriteRequest.getFavoriteGroups(params),
+            fn: (
+                params:
+                    | { n?: number; offset?: number; type?: FavoriteType; userId?: UserId; ownerId?: string }
+                    | undefined
+            ) => favoriteRequest.getFavoriteGroups(params),
             N: -1,
             params: {
                 n: 50,
                 offset: 0
             },
-            handle: (args: { json: any; }) => {
+            handle: (args: { json: any }) => {
                 for (const json of args.json) {
                     handleFavoriteGroup({
                         json,
@@ -309,10 +317,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         // 450 = ['group_0', 'group_1', 'group_2'] x 150
         favoriteFriendGroups.value = [];
         for (i = 0; i < favoriteLimits.value.maxFavoriteGroups.friend; ++i) {
-
-
-
-
             favoriteFriendGroups.value.push({
                 assign: false,
                 key: `friend:group_${i}`,
@@ -327,10 +331,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         // 400 = ['worlds1', 'worlds2', 'worlds3', 'worlds4'] x 100
         favoriteWorldGroups.value = [];
         for (i = 0; i < favoriteLimits.value.maxFavoriteGroups.world; ++i) {
-
-
-
-
             favoriteWorldGroups.value.push({
                 assign: false,
                 key: `world:worlds${i + 1}`,
@@ -344,10 +344,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         }
         // 400 = ['vrcPlusWorlds1', 'vrcPlusWorlds2', 'vrcPlusWorlds3', 'vrcPlusWorlds4'] x 100
         for (i = 0; i < favoriteLimits.value.maxFavoriteGroups.vrcPlusWorld; ++i) {
-
-
-
-
             favoriteWorldGroups.value.push({
                 assign: false,
                 key: `vrcPlusWorld:vrcPlusWorlds${i + 1}`,
@@ -364,10 +360,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
         // VRC+ Group 1..5 (0/50)
         favoriteAvatarGroups.value = [];
         for (i = 0; i < favoriteLimits.value.maxFavoriteGroups.avatar; ++i) {
-
-
-
-
             favoriteAvatarGroups.value.push({
                 assign: false,
                 key: `avatar:avatars${i + 1}`,
@@ -503,7 +495,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     /**
      * @param avatarRef
      */
-    function syncLocalAvatarFavoriteRef(avatarRef: { id: any; }) {
+    function syncLocalAvatarFavoriteRef(avatarRef: { id: any }) {
         if (!avatarRef?.id) {
             return;
         }
@@ -705,15 +697,8 @@ export const useFavoriteStore = defineStore('Favorite', () => {
      * @param a
      * @param b
      */
-    function compareByFavoriteSortOrder(a: { id: any; }, b: { id: any; }) {
-
-
-
-
+    function compareByFavoriteSortOrder(a: { id: any }, b: { id: any }) {
         const indexA = favoritesSortOrder.value.indexOf(a.id);
-
-
-
 
         const indexB = favoritesSortOrder.value.indexOf(b.id);
         return indexA - indexB;
@@ -729,11 +714,7 @@ export const useFavoriteStore = defineStore('Favorite', () => {
     /**
      * @param {object} value
      */
-    function setFavoriteLimits(value: object) {
-
-
-
-
+    function setFavoriteLimits(value: typeof favoriteLimits.value) {
         favoriteLimits.value = value;
     }
 
@@ -741,10 +722,6 @@ export const useFavoriteStore = defineStore('Favorite', () => {
      * @param {Array} value
      */
     function setFavoritesSortOrder(value: Array<any>) {
-
-
-
-
         favoritesSortOrder.value = value;
     }
 

@@ -28,7 +28,7 @@ const sortButton = ({ column, label, descFirst = false }: any) => (
     </Button>
 );
 
-const resolveBool = (maybeRef: { value: any; }) => {
+const resolveBool = (maybeRef: { value: any }) => {
     if (maybeRef && typeof maybeRef === 'object' && 'value' in maybeRef) {
         return !!maybeRef.value;
     }
@@ -37,7 +37,7 @@ const resolveBool = (maybeRef: { value: any; }) => {
 
 const baseDateColumn = () => ({
     id: 'created_at',
-    accessorFn: (row: { created_at: string; }) => (row?.created_at ? Date.parse(row.created_at) : 0),
+    accessorFn: (row: { created_at: string }) => (row?.created_at ? Date.parse(row.created_at) : 0),
     size: 170,
     header: ({ column }: any) =>
         sortButton({
@@ -46,20 +46,14 @@ const baseDateColumn = () => ({
             descFirst: true
         }),
 
-
-
-
     cell: ({ row }: any) => <span>{formatDateFilter(row.original?.created_at, 'long')}</span>
 });
 
 const timeColumn = () => ({
     id: 'time',
-    accessorFn: (row: { time: any; }) => row?.time ?? 0,
+    accessorFn: (row: { time: any }) => row?.time ?? 0,
     size: 100,
     header: ({ column }: any) => sortButton({ column, label: t('table.previous_instances.time') }),
-
-
-
 
     cell: ({ row }: any) => <span>{row.original?.timer ?? ''}</span>
 });
@@ -78,17 +72,13 @@ const actionsColumn = ({ shiftHeld, onShowInfo, onDelete, onDeletePrompt, onLaun
         const isShiftHeld = resolveBool(shiftHeld);
 
         return (
-
-
-
-
             <div class="inline-flex items-center justify-end gap-1">
                 {onLaunch ? (
                     <Button
                         size="icon-sm"
                         variant="ghost"
                         class="w-6 h-6 text-xs"
-                        onClick={(event: { stopPropagation: () => void; }) => {
+                        onClick={(event: { stopPropagation: () => void }) => {
                             event.stopPropagation();
                             onLaunch?.(original?.location);
                         }}
@@ -101,7 +91,7 @@ const actionsColumn = ({ shiftHeld, onShowInfo, onDelete, onDeletePrompt, onLaun
                     size="icon-sm"
                     variant="ghost"
                     class="w-6 h-6 text-xs"
-                    onClick={(event: { stopPropagation: () => void; }) => {
+                    onClick={(event: { stopPropagation: () => void }) => {
                         event.stopPropagation();
                         onShowInfo?.(original?.$location?.tag);
                     }}
@@ -114,7 +104,7 @@ const actionsColumn = ({ shiftHeld, onShowInfo, onDelete, onDeletePrompt, onLaun
                     variant="ghost"
                     class="w-6 h-6 text-xs"
                     style={isShiftHeld ? { color: '#f56c6c' } : undefined}
-                    onClick={(event: { stopPropagation: () => void; }) => {
+                    onClick={(event: { stopPropagation: () => void }) => {
                         event.stopPropagation();
                         if (isShiftHeld) {
                             onDelete?.(original);
@@ -125,22 +115,29 @@ const actionsColumn = ({ shiftHeld, onShowInfo, onDelete, onDeletePrompt, onLaun
                 >
                     <Trash2 class="h-4 w-4" />
                 </Button>
-
-
-
-
             </div>
         );
     }
 });
 
-export const createPreviousInstancesColumns = (variant: string, config: { shiftHeld: any; onLaunch: any; onShowInfo: any; onDelete: any; onDeletePrompt: any; currentUserId: any; forceUpdateKey: any; }) => {
+export const createPreviousInstancesColumns = (
+    variant: string,
+    config: {
+        shiftHeld: any;
+        onLaunch: any;
+        onShowInfo: any;
+        onDelete: any;
+        onDeletePrompt: any;
+        currentUserId: any;
+        forceUpdateKey?: any;
+    }
+) => {
     if (variant === 'user') {
         return [
             baseDateColumn(),
             {
                 id: 'world',
-                accessorFn: (row: { worldName: any; name: any; }) => row?.worldName ?? row?.name ?? '',
+                accessorFn: (row: { worldName: any; name: any }) => row?.worldName ?? row?.name ?? '',
                 header: ({ column }: any) =>
                     sortButton({
                         column,
@@ -159,7 +156,7 @@ export const createPreviousInstancesColumns = (variant: string, config: { shiftH
             },
             {
                 id: 'creator',
-                accessorFn: (row: { $location: { userId: any; }; }) => row?.$location?.userId ?? '',
+                accessorFn: (row: { $location: { userId: any } }) => row?.$location?.userId ?? '',
                 size: 170,
                 header: () => t('table.previous_instances.instance_creator'),
                 cell: ({ row }: any) => (
@@ -182,7 +179,8 @@ export const createPreviousInstancesColumns = (variant: string, config: { shiftH
             baseDateColumn(),
             {
                 id: 'instance',
-                accessorFn: (row: { $location: { tag: any; }; location: any; }) => row?.$location?.tag ?? row?.location ?? '',
+                accessorFn: (row: { $location: { tag: any }; location: any }) =>
+                    row?.$location?.tag ?? row?.location ?? '',
                 header: () => t('table.previous_instances.instance_name'),
                 meta: {
                     stretch: true
@@ -198,7 +196,7 @@ export const createPreviousInstancesColumns = (variant: string, config: { shiftH
             },
             {
                 id: 'creator',
-                accessorFn: (row: { $location: { userId: any; }; }) => row?.$location?.userId ?? '',
+                accessorFn: (row: { $location: { userId: any } }) => row?.$location?.userId ?? '',
                 size: 170,
                 header: () => t('table.previous_instances.instance_creator'),
                 cell: ({ row }: any) => (
@@ -223,7 +221,7 @@ export const createPreviousInstancesColumns = (variant: string, config: { shiftH
         baseDateColumn(),
         {
             id: 'instance',
-            accessorFn: (row: { worldName: any; name: any; }) => row?.worldName ?? row?.name ?? '',
+            accessorFn: (row: { worldName: any; name: any }) => row?.worldName ?? row?.name ?? '',
             header: () => t('table.previous_instances.instance_name'),
             meta: {
                 stretch: true

@@ -1,20 +1,22 @@
 import { ref, watch } from 'vue';
+import type { Ref } from 'vue';
 import { storeToRefs } from 'pinia';
 
-import { buildLegacyInstanceTag, getLaunchURL, isRealInstance, parseLocation } from '../../../shared/utils';
-import { useGroupStore, useInstanceStore, useUserStore } from '../../../stores';
-import { groupRequest } from '../../../api';
-import { handleGroupPermissions } from '../../../coordinators/groupCoordinator';
+import { buildLegacyInstanceTag, getLaunchURL, isRealInstance, parseLocation } from '@/shared/utils';
+import { useGroupStore, useInstanceStore, useUserStore } from '@/stores';
+import { groupRequest } from '@/api';
+import { handleGroupPermissions } from '@/coordinators/groupCoordinator';
 
-import configRepository from '../../../services/config';
+import configRepository from '@/services/config';
+import type { VrcxGroup } from '@/types/vrcx';
 
 /**
  * Instance builder composable for NewInstanceDialog.
  * Manages instance state, config persistence, and build logic for Normal/Legacy tabs.
  *
- * @param {import('vue').Ref<string>} locationTagRef - Reactive location tag from props
+ * @param {Ref<string>} locationTagRef - Reactive location tag from props
  */
-export function useNewInstanceBuilder(locationTagRef: import('vue').Ref<string>) {
+export function useNewInstanceBuilder(locationTagRef: Ref<string>) {
     const { cachedGroups } = useGroupStore();
     const { currentUser, isLocalUserVrcPlusSupporter } = storeToRefs(useUserStore());
     const { createNewInstance } = useInstanceStore();
@@ -45,7 +47,7 @@ export function useNewInstanceBuilder(locationTagRef: import('vue').Ref<string>)
         lastSelectedGroupId: '',
         selectedGroupRoles: [],
         roleIds: [],
-        groupRef: {},
+        groupRef: {} as VrcxGroup,
         minimumAvatarPerformance: ''
     });
 
@@ -131,14 +133,14 @@ export function useNewInstanceBuilder(locationTagRef: import('vue').Ref<string>)
                 (D as any).groupRef = ref;
                 (D as any).selectedGroupRoles = ref.roles;
                 groupRequest
-    .getGroupRoles({
-    groupId: (D as any).groupId
-})
-    .then((args) => {
-    (D as any).lastSelectedGroupId = (D as any).groupId;
-    (D as any).selectedGroupRoles = args.json;
-    ref.roles = args.json;
-});
+                    .getGroupRoles({
+                        groupId: (D as any).groupId
+                    })
+                    .then((args) => {
+                        (D as any).lastSelectedGroupId = (D as any).groupId;
+                        (D as any).selectedGroupRoles = args.json;
+                        ref.roles = args.json;
+                    });
             }
         }
         if (!(D as any).groupId) {
@@ -232,7 +234,7 @@ export function useNewInstanceBuilder(locationTagRef: import('vue').Ref<string>)
         D.instanceCreated = false;
         D.lastSelectedGroupId = '';
         D.selectedGroupRoles = [];
-        D.groupRef = {};
+        D.groupRef = {} as VrcxGroup;
         D.roleIds = [];
         D.strict = false;
         D.shortName = '';
@@ -278,9 +280,6 @@ export function useNewInstanceBuilder(locationTagRef: import('vue').Ref<string>)
      */
     function handleRoleIdsChange(value: any) {
         const next = Array.isArray(value) ? value.map((v) => String(v ?? '')).filter(Boolean) : [];
-
-
-
 
         newInstanceDialog.value.roleIds = next;
         buildInstance();

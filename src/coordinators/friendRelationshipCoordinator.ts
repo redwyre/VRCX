@@ -141,9 +141,6 @@ export function addFriendship(id: string) {
                     friendNumber: ref.$friendNumber
                 };
 
-
-
-
                 friendLogTable.value.data.push(friendLogHistory);
                 database.addFriendLogHistory(friendLogHistory);
                 notificationStore.queueFriendLogNoty(friendLogHistory);
@@ -192,33 +189,30 @@ export function updateFriendship(ref: object) {
     }
     if (!(ref as any).$friendNumber) {
         (ref as any).$friendNumber = 0; // no null
- // no null
+        // no null
     }
     if (ctx.displayName !== (ref as any).displayName) {
         if (ctx.displayName) {
             const friendLogHistoryDisplayName = {
-    created_at: new Date().toJSON(),
-    type: 'DisplayName',
-    userId: (ref as any).id,
-    displayName: (ref as any).displayName,
-    previousDisplayName: ctx.displayName,
-    friendNumber: (ref as any).$friendNumber
-};
+                created_at: new Date().toJSON(),
+                type: 'DisplayName',
+                userId: (ref as any).id,
+                displayName: (ref as any).displayName,
+                previousDisplayName: ctx.displayName,
+                friendNumber: (ref as any).$friendNumber
+            };
             // Sentry: VRCX-WEB-2A7
-
-
-
 
             friendLogTable.value?.data.push(friendLogHistoryDisplayName);
             database.addFriendLogHistory(friendLogHistoryDisplayName);
             notificationStore.queueFriendLogNoty(friendLogHistoryDisplayName);
             sharedFeedStore.addEntry(friendLogHistoryDisplayName);
             const friendLogCurrent = {
-    userId: (ref as any).id,
-    displayName: (ref as any).displayName,
-    trustLevel: (ref as any).$trustLevel,
-    friendNumber: (ref as any).$friendNumber
-};
+                userId: (ref as any).id,
+                displayName: (ref as any).displayName,
+                trustLevel: (ref as any).$trustLevel,
+                friendNumber: (ref as any).$friendNumber
+            };
             friendLog.set((ref as any).id, friendLogCurrent);
             database.setFriendLogCurrent(friendLogCurrent);
             ctx.displayName = (ref as any).displayName;
@@ -228,41 +222,38 @@ export function updateFriendship(ref: object) {
     if ((ref as any).$trustLevel && ctx.trustLevel && ctx.trustLevel !== (ref as any).$trustLevel) {
         if (
             (ctx.trustLevel === 'Trusted User' && (ref as any).$trustLevel === 'Veteran User') ||
-    (ctx.trustLevel === 'Veteran User' && (ref as any).$trustLevel === 'Trusted User')
+            (ctx.trustLevel === 'Veteran User' && (ref as any).$trustLevel === 'Trusted User')
         ) {
             const friendLogCurrent3 = {
-    userId: (ref as any).id,
-    displayName: (ref as any).displayName,
-    trustLevel: (ref as any).$trustLevel,
-    friendNumber: (ref as any).$friendNumber
-};
+                userId: (ref as any).id,
+                displayName: (ref as any).displayName,
+                trustLevel: (ref as any).$trustLevel,
+                friendNumber: (ref as any).$friendNumber
+            };
             friendLog.set((ref as any).id, friendLogCurrent3);
             database.setFriendLogCurrent(friendLogCurrent3);
             return;
         }
         const friendLogHistoryTrustLevel = {
-    created_at: new Date().toJSON(),
-    type: 'TrustLevel',
-    userId: (ref as any).id,
-    displayName: (ref as any).displayName,
-    trustLevel: (ref as any).$trustLevel,
-    previousTrustLevel: ctx.trustLevel,
-    friendNumber: (ref as any).$friendNumber
-};
-
-
-
+            created_at: new Date().toJSON(),
+            type: 'TrustLevel',
+            userId: (ref as any).id,
+            displayName: (ref as any).displayName,
+            trustLevel: (ref as any).$trustLevel,
+            previousTrustLevel: ctx.trustLevel,
+            friendNumber: (ref as any).$friendNumber
+        };
 
         friendLogTable.value.data.push(friendLogHistoryTrustLevel);
         database.addFriendLogHistory(friendLogHistoryTrustLevel);
         notificationStore.queueFriendLogNoty(friendLogHistoryTrustLevel);
         sharedFeedStore.addEntry(friendLogHistoryTrustLevel);
         const friendLogCurrent2 = {
-    userId: (ref as any).id,
-    displayName: (ref as any).displayName,
-    trustLevel: (ref as any).$trustLevel,
-    friendNumber: (ref as any).$friendNumber
-};
+            userId: (ref as any).id,
+            displayName: (ref as any).displayName,
+            trustLevel: (ref as any).$trustLevel,
+            friendNumber: (ref as any).$friendNumber
+        };
         friendLog.set((ref as any).id, friendLogCurrent2);
         database.setFriendLogCurrent(friendLogCurrent2);
         uiStore.notifyMenu('friend-log');
@@ -301,9 +292,9 @@ export function userOnFriend(ref: object) {
     updateFriendship(ref);
     if (
         watchState.isFriendsLoaded &&
-    (ref as any).isFriend &&
-    !friendStore.friendLog.has((ref as any).id) &&
-    (ref as any).id !== userStore.currentUser.id
+        (ref as any).isFriend &&
+        !friendStore.friendLog.has((ref as any).id) &&
+        (ref as any).id !== userStore.currentUser.id
     ) {
         addFriendship((ref as any).id);
     }
@@ -345,13 +336,14 @@ export function updateUserCurrentStatus(ref: object) {
  * @param {object} [options] Test seams.
  * @param {function} [options.nowIso] ISO timestamp provider.
  */
-export function runDeleteFriendshipFlow(id: string, { nowIso = () => new Date().toJSON() }: {
-
-
-
-
-    nowIso?: function;
-} = {}) {
+export function runDeleteFriendshipFlow(
+    id: string,
+    {
+        nowIso = () => new Date().toJSON()
+    }: {
+        nowIso?: () => string;
+    } = {}
+) {
     const friendStore = useFriendStore();
     const userStore = useUserStore();
     const notificationStore = useNotificationStore();
@@ -385,9 +377,6 @@ export function runDeleteFriendshipFlow(id: string, { nowIso = () => new Date().
                     displayName: ctx.displayName || id
                 };
 
-
-
-
                 friendLogTable.value.data.push(friendLogHistory);
                 database.addFriendLogHistory(friendLogHistory);
                 notificationStore.queueFriendLogNoty(friendLogHistory);
@@ -411,13 +400,14 @@ export function runDeleteFriendshipFlow(id: string, { nowIso = () => new Date().
  * @param {object} [options] Test seams.
  * @param {function} [options.nowIso] ISO timestamp provider.
  */
-export function runUpdateFriendshipsFlow(ref: object, { nowIso = () => new Date().toJSON() }: {
-
-
-
-
-    nowIso?: function;
-} = {}) {
+export function runUpdateFriendshipsFlow(
+    ref: object,
+    {
+        nowIso = () => new Date().toJSON()
+    }: {
+        nowIso?: () => string;
+    } = {}
+) {
     const friendStore = useFriendStore();
     const userStore = useUserStore();
     const { friendLog } = friendStore;

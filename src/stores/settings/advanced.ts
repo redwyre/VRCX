@@ -164,9 +164,6 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
             configRepository.getString('VRCX_userGeneratedContentPath', ''),
             configRepository.getBool('VRCX_autoDeleteOldPrints', false),
 
-
-
-
             configRepository.getFloat('VRCX_notificationOpacity', 100),
             configRepository.getBool('VRCX_saveInstanceEmoji', false),
             configRepository.getBool('VRCX_vrcRegistryAutoBackup', true),
@@ -210,9 +207,6 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         avatarAutoCleanup.value = avatarAutoCleanupConfig;
         ugcFolderPath.value = ugcFolderPathConfig;
         autoDeleteOldPrints.value = autoDeleteOldPrintsConfig;
-
-
-
 
         notificationOpacity.value = notificationOpacityConfig;
         saveInstanceEmoji.value = saveInstanceEmojiConfig;
@@ -402,7 +396,7 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
 
             if (data.data && Array.isArray(data.data)) {
                 return data.data
-                    .map((model: { id: any; }) => model.id)
+                    .map((model: { id: any }) => model.id)
                     .filter((id: any) => id && typeof id === 'string')
                     .sort();
             }
@@ -649,7 +643,11 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
     }
 
     function handleSetAppLauncherSettings() {
-        (AppApi as any).SetAppLauncherSettings(enableAppLauncher.value, enableAppLauncherAutoClose.value, enableAppLauncherRunProcessOnce.value);
+        (AppApi as any).SetAppLauncherSettings(
+            enableAppLauncher.value,
+            enableAppLauncherAutoClose.value,
+            enableAppLauncherRunProcessOnce.value
+        );
     }
 
     /**
@@ -689,7 +687,11 @@ export const useAdvancedSettingsStore = defineStore('AdvancedSettings', () => {
         return data;
     }
 
-    async function translateText(text: any, targetLang: any, overrides: { type: any; key: string; endpoint: any; model: any; prompt: any; }) {
+    async function translateText(
+        text: any,
+        targetLang: any,
+        overrides?: { type: any; key: string; endpoint: any; model: any; prompt: any }
+    ) {
         if (!translationApi.value) {
             toast.warning('Translation API disabled');
             return null;

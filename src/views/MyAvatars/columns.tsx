@@ -51,432 +51,391 @@ const sortButton = ({ column, label, descFirst = false }: any) => {
 
 export function getColumns({ onShowAvatarDialog, onContextMenuAction, currentAvatarId }: any) {
     return [
-    {
-        id: 'active',
-        header: () => null,
-        size: 40,
-        enableSorting: false,
-        enableResizing: false,
-        cell: ({ row }: any) => {
-            const ref = row.original;
-            const isActive = ref.id === currentAvatarId.value;
+        {
+            id: 'active',
+            header: () => null,
+            size: 40,
+            enableSorting: false,
+            enableResizing: false,
+            cell: ({ row }: any) => {
+                const ref = row.original;
+                const isActive = ref.id === currentAvatarId.value;
 
+                return (
+                    <div class="flex items-center justify-center">
+                        <Check class={['h-4 w-4', isActive ? 'text-primary' : 'text-muted-foreground/0']} />
+                    </div>
+                );
+            }
+        },
+        {
+            id: 'thumbnail',
+            header: () => null,
+            size: 64,
+            enableSorting: false,
+            enableResizing: false,
+            cell: ({ row }: any) => {
+                const ref = row.original;
 
+                return (
+                    <div class="flex items-center">
+                        <img
+                            src={ref.thumbnailImageUrl}
+                            class="avatar-table-thumbnail cursor-pointer rounded-sm object-cover"
+                            style="width: 34px; height: 22px;"
+                            loading="lazy"
+                            onClick={() => onShowAvatarDialog(ref.id)}
+                            onError={(e: Event) => {
+                                const img = e.target as HTMLImageElement;
+                                img.style.display = 'none';
+                                (img.nextElementSibling as HTMLElement).style.display = '';
+                            }}
+                        />
 
-
-            return (<div class="flex items-center justify-center">
-                        <Check class={['h-4 w-4', isActive ? 'text-primary' : 'text-muted-foreground/0']}/>
-
-
-
-
-                    </div>);
-        }
-    },
-    {
-        id: 'thumbnail',
-        header: () => null,
-        size: 64,
-        enableSorting: false,
-        enableResizing: false,
-        cell: ({ row }: any) => {
-            const ref = row.original;
-
-
-
-
-            return (<div class="flex items-center">
-
-
-
-
-                        <img src={ref.thumbnailImageUrl} class="avatar-table-thumbnail cursor-pointer rounded-sm object-cover" style="width: 34px; height: 22px;" loading="lazy" onClick={() => onShowAvatarDialog(ref.id)} onError={(e: {
-                    target: HTMLElement;
-                }) => {
-                    const img = (e.target as HTMLElement);
-                    img.style.display = 'none';
-                    (img.nextElementSibling as HTMLElement).style.display = '';
-                }}/>
-
-
-
-
-                        <div class="rounded-sm bg-muted flex items-center justify-center cursor-pointer" style="width: 34px; height: 22px; display: none" onClick={() => onShowAvatarDialog(ref.id)}>
-                            <Image class="h-3 w-3 text-muted-foreground"/>
-
-
-
-
+                        <div
+                            class="rounded-sm bg-muted flex items-center justify-center cursor-pointer"
+                            style="width: 34px; height: 22px; display: none"
+                            onClick={() => onShowAvatarDialog(ref.id)}
+                        >
+                            <Image class="h-3 w-3 text-muted-foreground" />
                         </div>
+                    </div>
+                );
+            }
+        },
+        {
+            id: 'name',
+            accessorKey: 'Name',
+            header: ({ column }: any) =>
+                sortButton({
+                    column,
+                    label: () => t('dialog.avatar.info.name')
+                }),
+            size: 200,
+            meta: { label: () => t('dialog.avatar.info.name') },
+            cell: ({ row }: any) => {
+                const ref = row.original;
 
-
-
-
-                    </div>);
-        }
-    },
-    {
-        id: 'name',
-        accessorKey: 'Name',
-        header: ({ column }: any) => sortButton({
-            column,
-            label: () => t('dialog.avatar.info.name')
-        }),
-        size: 200,
-        meta: { label: () => t('dialog.avatar.info.name') },
-        cell: ({ row }: any) => {
-            const ref = row.original;
-
-
-
-
-            return (<span class="cursor-pointer" onClick={(e: {
-                    stopPropagation: () => void;
-                }) => {
-                    e.stopPropagation();
-                    onShowAvatarDialog(ref.id);
-                }}>
+                return (
+                    <span
+                        class="cursor-pointer"
+                        onClick={(e: { stopPropagation: () => void }) => {
+                            e.stopPropagation();
+                            onShowAvatarDialog(ref.id);
+                        }}
+                    >
                         {ref.name}
+                    </span>
+                );
+            }
+        },
+        {
+            id: 'customTags',
+            accessorFn: (row: { $tags: any }) => (row.$tags || []).map((t: { tag: any }) => t.tag).join(', '),
+            header: () => t('dialog.avatar.info.tags'),
+            size: 150,
+            enableSorting: false,
+            meta: { label: () => t('dialog.avatar.info.tags') },
+            cell: ({ row }: any) => {
+                const tags = row.original.$tags || [];
+                if (!tags.length) return null;
 
-
-
-
-                    </span>);
-        }
-    },
-    {
-        id: 'customTags',
-        accessorFn: (row: {
-            $tags: any;
-        }) => (row.$tags || []).map((t: {
-            tag: any;
-        }) => t.tag).join(', '),
-        header: () => t('dialog.avatar.info.tags'),
-        size: 150,
-        enableSorting: false,
-        meta: { label: () => t('dialog.avatar.info.tags') },
-        cell: ({ row }: any) => {
-            const tags = row.original.$tags || [];
-            if (!tags.length)
-                return null;
-
-
-
-
-            return (<div class="flex flex-nowrap gap-1 overflow-hidden">
-                        {tags.map((entry: {
-                    tag: string;
-                    color: any;
-                }) => {
-                    const hashColor = getTagColor(entry.tag);
-                    const storedColor = typeof entry.color === 'string' ? entry.color : null;
-                    const bg = storedColor || hashColor.bg;
-                    const text = storedColor ? storedColor.replace(/\/ [\d.]+\)$/, ')') : hashColor.text;
-                    return (<Badge key={entry.tag} variant="secondary" class="text-xs" style={{
-                            backgroundColor: bg,
-                            color: text
-                        }}>
+                return (
+                    <div class="flex flex-nowrap gap-1 overflow-hidden">
+                        {tags.map((entry: { tag: string; color: any }) => {
+                            const hashColor = getTagColor(entry.tag);
+                            const storedColor = typeof entry.color === 'string' ? entry.color : null;
+                            const bg = storedColor || hashColor.bg;
+                            const text = storedColor ? storedColor.replace(/\/ [\d.]+\)$/, ')') : hashColor.text;
+                            return (
+                                <Badge
+                                    key={entry.tag}
+                                    variant="secondary"
+                                    class="text-xs"
+                                    style={{
+                                        backgroundColor: bg,
+                                        color: text
+                                    }}
+                                >
                                     {entry.tag}
-                                </Badge>);
-                })}
+                                </Badge>
+                            );
+                        })}
+                    </div>
+                );
+            }
+        },
+        {
+            id: 'platforms',
+            header: () => t('dialog.avatar.info.platform'),
+            size: 120,
+            enableSorting: false,
+            meta: { label: () => t('dialog.avatar.info.platform') },
+            cell: ({ row }: any) => {
+                const ref = row.original;
+                const platforms = getAvailablePlatforms(ref.unityPackages);
 
-
-
-
-                    </div>);
-        }
-    },
-    {
-        id: 'platforms',
-        header: () => t('dialog.avatar.info.platform'),
-        size: 120,
-        enableSorting: false,
-        meta: { label: () => t('dialog.avatar.info.platform') },
-        cell: ({ row }: any) => {
-            const ref = row.original;
-            const platforms = getAvailablePlatforms(ref.unityPackages);
-
-
-
-
-            return (<div class="flex items-center gap-1">
-                        {platforms.isPC && (<Badge class="x-tag-platform-pc" variant="outline">
-                                <Monitor class="h-3.5 w-3.5"/>
-                            </Badge>)}
-                        {platforms.isQuest && (<Badge class="x-tag-platform-quest" variant="outline">
-                                <Smartphone class="h-3.5 w-3.5"/>
-                            </Badge>)}
-                        {platforms.isIos && (<Badge class="text-platform-ios border-platform-ios" variant="outline">
-                                <Apple class="h-3.5 w-3.5"/>
-                            </Badge>)}
-
-
-
-
-                    </div>);
-        }
-    },
-    {
-        id: 'visibility',
-        accessorKey: 'releaseStatus',
-        header: () => t('dialog.avatar.info.visibility'),
-        size: 120,
-        meta: { label: () => t('dialog.avatar.info.visibility') },
-        cell: ({ row }: any) => {
-            const ref = row.original;
-            return (<Badge variant="outline">
+                return (
+                    <div class="flex items-center gap-1">
+                        {platforms.isPC && (
+                            <Badge class="x-tag-platform-pc" variant="outline">
+                                <Monitor class="h-3.5 w-3.5" />
+                            </Badge>
+                        )}
+                        {platforms.isQuest && (
+                            <Badge class="x-tag-platform-quest" variant="outline">
+                                <Smartphone class="h-3.5 w-3.5" />
+                            </Badge>
+                        )}
+                        {platforms.isIos && (
+                            <Badge class="text-platform-ios border-platform-ios" variant="outline">
+                                <Apple class="h-3.5 w-3.5" />
+                            </Badge>
+                        )}
+                    </div>
+                );
+            }
+        },
+        {
+            id: 'visibility',
+            accessorKey: 'releaseStatus',
+            header: () => t('dialog.avatar.info.visibility'),
+            size: 120,
+            meta: { label: () => t('dialog.avatar.info.visibility') },
+            cell: ({ row }: any) => {
+                const ref = row.original;
+                return (
+                    <Badge variant="outline">
                         {ref.releaseStatus === 'public'
-                    ? t('dialog.avatar.tags.public')
-                    : t('dialog.avatar.tags.private')}
-                    </Badge>);
-        }
-    },
-    {
-        id: 'timeSpent',
-        accessorFn: (row: {
-            $timeSpent: any;
-        }) => row?.$timeSpent ?? 0,
-        header: ({ column }: any) => sortButton({
-            column,
-            label: () => t('dialog.avatar.info.time_spent'),
-            descFirst: true
-        }),
-        size: 140,
-        meta: {
-            class: 'text-right',
-            label: () => t('dialog.avatar.info.time_spent')
-        },
-        cell: ({ row }: any) => {
-            const time = row.original?.$timeSpent;
-
-
-
-
-            return time ? <span>{timeToText(time)}</span> : <span>-</span>;
-        }
-    },
-    {
-        id: 'version',
-        accessorKey: 'version',
-        header: ({ column }: any) => sortButton({
-            column,
-            label: () => t('dialog.avatar.info.version'),
-            descFirst: true
-        }),
-        size: 90,
-        meta: {
-            class: 'text-right',
-            label: () => t('dialog.avatar.info.version')
-        },
-
-
-
-
-        cell: ({ row }: any) => <span>{row.original.version ?? '-'}</span>
-    },
-    {
-        id: 'impostor',
-        accessorFn: (row: {
-            unityPackages: string | any[];
-        }) => {
-            if (!Array.isArray(row.unityPackages)) {
-                return '';
+                            ? t('dialog.avatar.tags.public')
+                            : t('dialog.avatar.tags.private')}
+                    </Badge>
+                );
             }
-            for (let i = row.unityPackages.length - 1; i > -1; i--) {
-                const unityPackage = row.unityPackages[i];
-                if (unityPackage.variant === 'impostor') {
-                    return unityPackage.impostorizerVersion ?? '';
+        },
+        {
+            id: 'timeSpent',
+            accessorFn: (row: { $timeSpent: any }) => row?.$timeSpent ?? 0,
+            header: ({ column }: any) =>
+                sortButton({
+                    column,
+                    label: () => t('dialog.avatar.info.time_spent'),
+                    descFirst: true
+                }),
+            size: 140,
+            meta: {
+                class: 'text-right',
+                label: () => t('dialog.avatar.info.time_spent')
+            },
+            cell: ({ row }: any) => {
+                const time = row.original?.$timeSpent;
+
+                return time ? <span>{timeToText(time)}</span> : <span>-</span>;
+            }
+        },
+        {
+            id: 'version',
+            accessorKey: 'version',
+            header: ({ column }: any) =>
+                sortButton({
+                    column,
+                    label: () => t('dialog.avatar.info.version'),
+                    descFirst: true
+                }),
+            size: 90,
+            meta: {
+                class: 'text-right',
+                label: () => t('dialog.avatar.info.version')
+            },
+
+            cell: ({ row }: any) => <span>{row.original.version ?? '-'}</span>
+        },
+        {
+            id: 'impostor',
+            accessorFn: (row: { unityPackages: string | any[] }) => {
+                if (!Array.isArray(row.unityPackages)) {
+                    return '';
                 }
+                for (let i = row.unityPackages.length - 1; i > -1; i--) {
+                    const unityPackage = row.unityPackages[i];
+                    if (unityPackage.variant === 'impostor') {
+                        return unityPackage.impostorizerVersion ?? '';
+                    }
+                }
+                return '';
+            },
+            header: ({ column }: any) =>
+                sortButton({
+                    column,
+                    label: () => t('dialog.avatar.tags.impostor')
+                }),
+            size: 100,
+            meta: {
+                class: 'text-right',
+                label: () => t('dialog.avatar.tags.impostor')
+            },
+            cell: ({ row }: any) => {
+                const version = row.getValue('impostor');
+
+                return <span>{version ? `v${version}` : '-'}</span>;
             }
-            return '';
         },
-        header: ({ column }: any) => sortButton({
-            column,
-            label: () => t('dialog.avatar.tags.impostor')
-        }),
-        size: 100,
-        meta: {
-            class: 'text-right',
-            label: () => t('dialog.avatar.tags.impostor')
+        {
+            id: 'pcPerf',
+            accessorFn: (row: { unityPackages: object }) =>
+                (getPlatformInfo(row.unityPackages)?.pc as any)?.performanceRating ?? '',
+            header: ({ column }: any) =>
+                sortButton({
+                    column,
+                    label: () => t('dialog.avatar.info.pc_performance')
+                }),
+            size: 140,
+            meta: { label: () => t('dialog.avatar.info.pc_performance') },
+            cell: ({ row }: any) => {
+                const perf = (getPlatformInfo(row.original.unityPackages)?.pc as any)?.performanceRating;
+
+                return perf ? <span>{perf}</span> : <span class="text-muted-foreground">-</span>;
+            }
         },
-        cell: ({ row }: any) => {
-            const version = row.getValue('impostor');
+        {
+            id: 'androidPerf',
+            accessorFn: (row: { unityPackages: object }) =>
+                (getPlatformInfo(row.unityPackages)?.android as any)?.performanceRating ?? '',
+            header: ({ column }: any) =>
+                sortButton({
+                    column,
+                    label: () => t('dialog.avatar.info.android_performance')
+                }),
+            size: 140,
+            meta: { label: () => t('dialog.avatar.info.android_performance') },
+            cell: ({ row }: any) => {
+                const perf = (getPlatformInfo(row.original.unityPackages)?.android as any)?.performanceRating;
 
+                return perf ? <span>{perf}</span> : <span class="text-muted-foreground">-</span>;
+            }
+        },
+        {
+            id: 'iosPerf',
+            accessorFn: (row: { unityPackages: object }) =>
+                (getPlatformInfo(row.unityPackages)?.ios as any)?.performanceRating ?? '',
+            header: ({ column }: any) =>
+                sortButton({
+                    column,
+                    label: () => t('dialog.avatar.info.ios_performance')
+                }),
+            size: 140,
+            meta: { label: () => t('dialog.avatar.info.ios_performance') },
+            cell: ({ row }: any) => {
+                const perf = (getPlatformInfo(row.original.unityPackages)?.ios as any)?.performanceRating;
 
+                return perf ? <span>{perf}</span> : <span class="text-muted-foreground">-</span>;
+            }
+        },
+        {
+            id: 'updated_at',
+            accessorKey: 'updated_at',
+            header: ({ column }: any) =>
+                sortButton({
+                    column,
+                    label: () => t('dialog.avatar.info.last_updated'),
+                    descFirst: true
+                }),
+            size: 160,
+            meta: { label: () => t('dialog.avatar.info.last_updated') },
+            cell: ({ row }: any) => {
+                const ref = row.original;
 
+                return <span>{formatDateFilter(ref.updated_at, 'long')}</span>;
+            }
+        },
+        {
+            id: 'created_at',
+            accessorKey: 'created_at',
+            header: ({ column }: any) =>
+                sortButton({
+                    column,
+                    label: () => t('dialog.avatar.info.created_at'),
+                    descFirst: true
+                }),
+            size: 160,
+            meta: { label: () => t('dialog.avatar.info.created_at') },
+            cell: ({ row }: any) => {
+                const ref = row.original;
 
-            return <span>{version ? `v${version}` : '-'}</span>;
-        }
-    },
-    {
-        id: 'pcPerf',
-        accessorFn: (row: {
-            unityPackages: object;
-        }) => (getPlatformInfo(row.unityPackages)?.pc as any)?.performanceRating ?? '',
-        header: ({ column }: any) => sortButton({
-            column,
-            label: () => t('dialog.avatar.info.pc_performance')
-        }),
-        size: 140,
-        meta: { label: () => t('dialog.avatar.info.pc_performance') },
-        cell: ({ row }: any) => {
-            const perf = (getPlatformInfo(row.original.unityPackages)?.pc as any)?.performanceRating;
+                return <span>{formatDateFilter(ref.created_at, 'long')}</span>;
+            }
+        },
+        {
+            id: 'actions',
+            header: () => null,
+            size: 100,
+            enableSorting: false,
+            enableResizing: false,
+            cell: ({ row }: any) => {
+                const ref = row.original;
 
-
-
-
-            return perf ? <span>{perf}</span> : <span class="text-muted-foreground">-</span>;
-        }
-    },
-    {
-        id: 'androidPerf',
-        accessorFn: (row: {
-            unityPackages: object;
-        }) => (getPlatformInfo(row.unityPackages)?.android as any)?.performanceRating ?? '',
-        header: ({ column }: any) => sortButton({
-            column,
-            label: () => t('dialog.avatar.info.android_performance')
-        }),
-        size: 140,
-        meta: { label: () => t('dialog.avatar.info.android_performance') },
-        cell: ({ row }: any) => {
-            const perf = (getPlatformInfo(row.original.unityPackages)?.android as any)?.performanceRating;
-
-
-
-
-            return perf ? <span>{perf}</span> : <span class="text-muted-foreground">-</span>;
-        }
-    },
-    {
-        id: 'iosPerf',
-        accessorFn: (row: {
-            unityPackages: object;
-        }) => (getPlatformInfo(row.unityPackages)?.ios as any)?.performanceRating ?? '',
-        header: ({ column }: any) => sortButton({
-            column,
-            label: () => t('dialog.avatar.info.ios_performance')
-        }),
-        size: 140,
-        meta: { label: () => t('dialog.avatar.info.ios_performance') },
-        cell: ({ row }: any) => {
-            const perf = (getPlatformInfo(row.original.unityPackages)?.ios as any)?.performanceRating;
-
-
-
-
-            return perf ? <span>{perf}</span> : <span class="text-muted-foreground">-</span>;
-        }
-    },
-    {
-        id: 'updated_at',
-        accessorKey: 'updated_at',
-        header: ({ column }: any) => sortButton({
-            column,
-            label: () => t('dialog.avatar.info.last_updated'),
-            descFirst: true
-        }),
-        size: 160,
-        meta: { label: () => t('dialog.avatar.info.last_updated') },
-        cell: ({ row }: any) => {
-            const ref = row.original;
-
-
-
-
-            return <span>{formatDateFilter(ref.updated_at, 'long')}</span>;
-        }
-    },
-    {
-        id: 'created_at',
-        accessorKey: 'created_at',
-        header: ({ column }: any) => sortButton({
-            column,
-            label: () => t('dialog.avatar.info.created_at'),
-            descFirst: true
-        }),
-        size: 160,
-        meta: { label: () => t('dialog.avatar.info.created_at') },
-        cell: ({ row }: any) => {
-            const ref = row.original;
-
-
-
-
-            return <span>{formatDateFilter(ref.created_at, 'long')}</span>;
-        }
-    },
-    {
-        id: 'actions',
-        header: () => null,
-        size: 100,
-        enableSorting: false,
-        enableResizing: false,
-        cell: ({ row }: any) => {
-            const ref = row.original;
-
-
-
-
-            return (<div class="flex items-center gap-1" onClick={(e: {
-                stopPropagation: () => any;
-            }) => e.stopPropagation()}>
+                return (
+                    <div
+                        class="flex items-center gap-1"
+                        onClick={(e: { stopPropagation: () => any }) => e.stopPropagation()}
+                    >
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button class="rounded-full h-6 w-6" size="icon" variant="ghost">
-                                    <Ellipsis class="h-4 w-4"/>
+                                    <Ellipsis class="h-4 w-4" />
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent>
                                 <DropdownMenuItem onClick={() => onShowAvatarDialog(ref.id)}>
-                                    <Eye class="size-4"/>
+                                    <Eye class="size-4" />
                                     {t('dialog.avatar.actions.view_details')}
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem onClick={() => onContextMenuAction('manageTags', ref)}>
-                                    <Tag class="size-4"/>
+                                    <Tag class="size-4" />
                                     {t('dialog.avatar.actions.manage_tags')}
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator />
-                                {ref.releaseStatus === 'public' ? (<DropdownMenuItem onClick={() => onContextMenuAction('makePrivate', ref)}>
-                                        <User class="size-4"/>
+                                {ref.releaseStatus === 'public' ? (
+                                    <DropdownMenuItem onClick={() => onContextMenuAction('makePrivate', ref)}>
+                                        <User class="size-4" />
                                         {t('dialog.avatar.actions.make_private')}
-                                    </DropdownMenuItem>) : (<DropdownMenuItem onClick={() => onContextMenuAction('makePublic', ref)}>
-                                        <User class="size-4"/>
+                                    </DropdownMenuItem>
+                                ) : (
+                                    <DropdownMenuItem onClick={() => onContextMenuAction('makePublic', ref)}>
+                                        <User class="size-4" />
                                         {t('dialog.avatar.actions.make_public')}
-                                    </DropdownMenuItem>)}
+                                    </DropdownMenuItem>
+                                )}
                                 <DropdownMenuItem onClick={() => onContextMenuAction('rename', ref)}>
-                                    <Pencil class="size-4"/>
+                                    <Pencil class="size-4" />
                                     {t('dialog.avatar.actions.rename')}
                                 </DropdownMenuItem>
                                 <DropdownMenuItem onClick={() => onContextMenuAction('changeDescription', ref)}>
-                                    <Pencil class="size-4"/>
+                                    <Pencil class="size-4" />
                                     {t('dialog.avatar.actions.change_description')}
                                 </DropdownMenuItem>
                                 <DropdownMenuItem onClick={() => onContextMenuAction('changeTags', ref)}>
-                                    <Pencil class="size-4"/>
+                                    <Pencil class="size-4" />
                                     {t('dialog.avatar.actions.change_content_tags')}
                                 </DropdownMenuItem>
                                 <DropdownMenuItem onClick={() => onContextMenuAction('changeStyles', ref)}>
-                                    <Pencil class="size-4"/>
+                                    <Pencil class="size-4" />
                                     {t('dialog.avatar.actions.change_styles_author_tags')}
                                 </DropdownMenuItem>
                                 <DropdownMenuItem onClick={() => onContextMenuAction('changeImage', ref)}>
-                                    <Image class="size-4"/>
+                                    <Image class="size-4" />
                                     {t('dialog.avatar.actions.change_image')}
                                 </DropdownMenuItem>
                                 <DropdownMenuItem onClick={() => onContextMenuAction('createImpostor', ref)}>
-                                    <RefreshCw class="size-4"/>
+                                    <RefreshCw class="size-4" />
                                     {t('dialog.avatar.actions.create_impostor')}
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
-
-
-
-
-                    </div>);
+                    </div>
+                );
+            }
         }
-    }
-];
+    ];
 }

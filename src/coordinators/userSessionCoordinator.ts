@@ -6,6 +6,7 @@ import { useGameStore } from '../stores/game';
 import { applyPresenceGroups } from './groupCoordinator';
 import { useInstanceStore } from '../stores/instance';
 import { useUserStore } from '../stores/user';
+import type { VrcxCurrentUser } from '../types/vrcx';
 
 /**
  * Runs avatar transition side effects for current user updates.
@@ -17,17 +18,22 @@ import { useUserStore } from '../stores/user';
  * @param {object} [options] Test seams.
  * @param {function} [options.now] Timestamp provider.
  */
-export function runAvatarSwapFlow({ json, ref, isLoggedIn }: {
-    json: object;
-    ref: object;
-    isLoggedIn: boolean;
-}, { now = Date.now }: {
-
-
-
-
-    now?: function;
-} = {}) {
+export function runAvatarSwapFlow(
+    {
+        json,
+        ref,
+        isLoggedIn
+    }: {
+        json: object;
+        ref: object;
+        isLoggedIn: boolean;
+    },
+    {
+        now = Date.now
+    }: {
+        now?: () => number;
+    } = {}
+) {
     const gameStore = useGameStore();
 
     if (!isLoggedIn) {
@@ -49,13 +55,14 @@ export function runAvatarSwapFlow({ json, ref, isLoggedIn }: {
  * @param {object} [options] Test seams.
  * @param {function} [options.now] Timestamp provider.
  */
-export function runFirstLoginFlow(ref: object, { now = Date.now }: {
-
-
-
-
-    now?: function;
-} = {}) {
+export function runFirstLoginFlow(
+    ref: VrcxCurrentUser,
+    {
+        now = Date.now
+    }: {
+        now?: () => number;
+    } = {}
+) {
     const gameStore = useGameStore();
     const authStore = useAuthStore();
     const userStore = useUserStore();

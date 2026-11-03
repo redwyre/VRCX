@@ -4,6 +4,8 @@ import Noty from 'noty';
 
 import { closeWebSocket, initWebsocket } from '../services/websocket';
 import { escapeTag } from '../shared/utils';
+import type { Json } from '../types/vrcx';
+import type { CurrentUser } from 'vrchat';
 import { queryClient } from '../queries';
 import { useAuthStore } from '../stores/auth';
 import { useNotificationStore } from '../stores/notification';
@@ -38,7 +40,7 @@ export async function runLogoutFlow() {
     watchState.isFriendsLoaded = false;
     watchState.isFavoritesLoaded = false;
     notificationStore.setNotificationInitStatus(false);
-    await authStore.updateStoredUser(userStore.currentUser);
+    await authStore.updateStoredUser(userStore.currentUser as any);
     webApiService.clearCookies();
     authStore.loginForm.lastUserLoggedIn = '';
     await configRepository.remove('lastUserLoggedIn');
@@ -53,7 +55,7 @@ export async function runLogoutFlow() {
  *
  * @param {object} json Current user payload from auth API.
  */
-export function runLoginSuccessFlow(json: object) {
+export function runLoginSuccessFlow(json: Json<CurrentUser>) {
     const updateLoopStore = useUpdateLoopStore();
     const authStore = useAuthStore();
 

@@ -1,4 +1,5 @@
 import { computed } from 'vue';
+import type { ComputedRef } from 'vue';
 
 /**
  * A composable that provides key-based selection for an options map.
@@ -11,7 +12,7 @@ import { computed } from 'vue';
  *   selected option value (e.g., `() => userDialog.value.worldSorting`).
  * @param {(option: any) => void} onSelect - Callback invoked when a new option is
  *   selected by key. Receives the full option object.
- * @returns {{ selectedKey: import('vue').ComputedRef<string>; selectByKey: (key: string) => void }}
+ * @returns {{ selectedKey: ComputedRef<string>; selectByKey: (key: string) => void }}
  */
 export function useOptionKeySelect(optionsMap: object, getCurrentValue: () => any, onSelect: (option: any) => void) {
     const selectedKey = computed(() => {

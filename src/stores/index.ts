@@ -41,6 +41,7 @@ import { useVrcStatusStore } from './vrcStatus';
 import { useVrcxStore } from './vrcx';
 import { useWorldStore } from './world';
 import { useWristOverlaySettingsStore } from './settings/wristOverlay';
+import type * as SentryVue from '@sentry/vue';
 
 export const pinia = createPinia();
 
@@ -48,13 +49,10 @@ async function registerSentryPiniaPlugin() {
     if (!NIGHTLY) return;
     if (!(await isSentryOptedIn())) return;
 
-    const Sentry = await getSentry();
+    const Sentry = (await getSentry()) as typeof SentryVue | null;
+    if (!Sentry) return;
 
     pinia.use(
-
-
-
-
         Sentry.createSentryPiniaPlugin({
             stateTransformer: (state) => ({
                 ...state,
@@ -63,80 +61,40 @@ async function registerSentryPiniaPlugin() {
                 Favorite: null,
                 Friend: null,
                 User: {
-
-
-
-
-
-                    ...state.User,
+                    ...(state.User as Record<string, any>),
                     currentUser: null,
                     subsetOfLanguages: null
                 },
                 GameLog: {
-
-
-
-
-
-                    ...state.GameLog,
+                    ...(state.GameLog as Record<string, any>),
                     gameLogTable: null
                 },
                 Notification: {
-
-
-
-
-
-                    ...state.Notification,
+                    ...(state.Notification as Record<string, any>),
                     notificationTable: null
                 },
                 Moderation: {
-
-
-
-
-
-                    ...state.Moderation,
+                    ...(state.Moderation as Record<string, any>),
                     playerModerationTable: null,
                     cachedPlayerModerations: null,
                     cachedPlayerModerationsUserIds: null
                 },
                 Photon: null,
                 SharedFeed: {
-
-
-
-
-
-                    ...state.SharedFeed,
+                    ...(state.SharedFeed as Record<string, any>),
                     sharedFeedData: null
                 },
                 Group: {
-
-
-
-
-
-                    ...state.Group,
+                    ...(state.Group as Record<string, any>),
                     groupInstances: null,
                     inGameGroupOrder: null
                 },
                 Avatar: {
-
-
-
-
-
-                    ...state.Avatar,
+                    ...(state.Avatar as Record<string, any>),
                     avatarHistory: null
                 },
                 Gallery: {
-
-
-
-
-
-                    ...state.Gallery,
+                    ...(state.Gallery as Record<string, any>),
                     emojiTable: null,
                     galleryTable: null,
                     instanceStickersCache: null,

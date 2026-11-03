@@ -17,12 +17,12 @@ export function withUploadTimeout(promise: Promise<unknown>) {
  * @returns {Promise<string>} Base64 encoded string
  */
 export function readFileAsBase64(blob: Blob | File) {
-    return new Promise((resolve, reject) => {
+    return new Promise<string>((resolve, reject) => {
         const r = new FileReader();
         r.onerror = reject;
         r.onabort = reject;
         r.onload = () => {
-            const bytes = new Uint8Array((r.result as ArrayBuffer));
+            const bytes = new Uint8Array(r.result as ArrayBuffer);
             let binary = '';
             for (let i = 0; i < bytes.length; i++) {
                 binary += String.fromCharCode(bytes[i]);

@@ -4,7 +4,7 @@ import { computed, ref } from 'vue';
 import configRepository from '../services/config';
 import { DASHBOARD_NAV_KEY_PREFIX, DASHBOARD_STORAGE_KEY, DEFAULT_DASHBOARD_ICON } from '../shared/constants/dashboard';
 
-function clonePanel(panel: { key: any; config: any; }) {
+function clonePanel(panel: { key: any; config: any }) {
     if (typeof panel === 'string' && panel) {
         return panel;
     }
@@ -33,7 +33,7 @@ function cloneRows(rows: any) {
         .filter(Boolean);
 }
 
-function sanitizeDashboard(dashboard: { id: any; name: string; icon: string; rows: any; }) {
+function sanitizeDashboard(dashboard: { id: any; name: string; icon: string; rows: any }) {
     if (!dashboard || typeof dashboard !== 'object') {
         return null;
     }
@@ -59,16 +59,14 @@ function sanitizeDashboard(dashboard: { id: any; name: string; icon: string; row
 export const useDashboardStore = defineStore('dashboard', () => {
     const dashboards = ref([]);
     const loaded = ref(false);
-    const editingDashboardId = ref(null);
+    const editingDashboardId = ref<string | null>(null);
 
-    const dashboardNavKeys = computed(() => new Set(dashboards.value.map((dashboard) => `${DASHBOARD_NAV_KEY_PREFIX}${(dashboard as any).id}`)));
+    const dashboardNavKeys = computed(
+        () => new Set(dashboards.value.map((dashboard) => `${DASHBOARD_NAV_KEY_PREFIX}${(dashboard as any).id}`))
+    );
 
     async function loadDashboards() {
         try {
-
-
-
-
             const stored = await configRepository.getString(DASHBOARD_STORAGE_KEY, null);
             if (!stored) {
                 dashboards.value = [];
@@ -99,9 +97,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
     function getDashboard(id: any, panel = null) {
         const dashboard = dashboards.value.find((dashboard) => (dashboard as any).id === id) || null;
         if (panel) {
-            return (dashboard as any)?.rows.find((row: {
-    panels: string | any[];
-}) => row.panels.includes(panel));
+            return (dashboard as any)?.rows.find((row: { panels: string | any[] }) => row.panels.includes(panel));
         }
         return dashboard;
     }
@@ -135,9 +131,6 @@ export const useDashboardStore = defineStore('dashboard', () => {
             rows: []
         };
 
-
-
-
         dashboards.value.push(dashboard);
         await saveDashboards();
         return dashboard;
@@ -150,10 +143,6 @@ export const useDashboardStore = defineStore('dashboard', () => {
         }
 
         const next = sanitizeDashboard({
-
-
-
-
             ...dashboards.value[index],
             ...updates,
             id
@@ -163,15 +152,11 @@ export const useDashboardStore = defineStore('dashboard', () => {
             return;
         }
 
-
-
-
-
         dashboards.value[index] = next;
         await saveDashboards();
     }
 
-    async function deleteDashboard(id: null) {
+    async function deleteDashboard(id: string) {
         dashboards.value = dashboards.value.filter((dashboard) => (dashboard as any).id !== id);
         if (editingDashboardId.value === id) {
             editingDashboardId.value = null;
@@ -179,7 +164,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
         await saveDashboards();
     }
 
-    function setEditingDashboardId(id: null) {
+    function setEditingDashboardId(id: string | null) {
         editingDashboardId.value = id || null;
     }
 
@@ -189,14 +174,14 @@ export const useDashboardStore = defineStore('dashboard', () => {
 
     function getDashboardNavDefinitions() {
         return dashboards.value.map((dashboard) => ({
-    key: `${DASHBOARD_NAV_KEY_PREFIX}${(dashboard as any).id}`,
-    icon: (dashboard as any).icon || DEFAULT_DASHBOARD_ICON,
-    tooltip: (dashboard as any).name,
-    labelKey: (dashboard as any).name,
-    routeName: 'dashboard',
-    routeParams: { id: (dashboard as any).id },
-    isDashboard: true
-}));
+            key: `${DASHBOARD_NAV_KEY_PREFIX}${(dashboard as any).id}`,
+            icon: (dashboard as any).icon || DEFAULT_DASHBOARD_ICON,
+            tooltip: (dashboard as any).name,
+            labelKey: (dashboard as any).name,
+            routeName: 'dashboard',
+            routeParams: { id: (dashboard as any).id },
+            isDashboard: true
+        }));
     }
 
     return {

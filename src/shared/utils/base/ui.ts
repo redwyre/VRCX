@@ -66,16 +66,9 @@ async function applyThemeColor(themeKey: any, { persist = true } = {}) {
     isApplyingThemeColor.value = true;
     applyThemeColorStyle(resolved);
 
-
-
-
     currentThemeColor.value = resolved.key;
     if (persist) {
         try {
-
-
-
-
             await configRepository.setString(THEME_COLOR_STORAGE_KEY, resolved.key);
         } catch (error) {
             console.warn('Failed to persist theme color', error);
@@ -89,9 +82,6 @@ async function initThemeColor() {
     const storedKey = await configRepository.getString(THEME_COLOR_STORAGE_KEY);
     const resolved = resolveThemeColor(storedKey || DEFAULT_THEME_COLOR_KEY);
     applyThemeColorStyle(resolved);
-
-
-
 
     currentThemeColor.value = resolved.key;
 }
@@ -319,10 +309,6 @@ function changeAppThemeStyle(themeMode: string) {
  */
 function updateTrustColorClasses(trustColor: object) {
     if (document.getElementById('trustColor') !== null) {
-
-
-
-
         document.getElementById('trustColor').outerHTML = '';
     }
     const style = document.createElement('style');
@@ -338,10 +324,6 @@ function updateTrustColorClasses(trustColor: object) {
 
 async function refreshCustomCss() {
     if (document.contains(document.getElementById('app-custom-style'))) {
-
-
-
-
         document.getElementById('app-custom-style').remove();
     }
     const customCss = await (AppApi as any).CustomCss();
@@ -358,10 +340,6 @@ async function refreshCustomCss() {
 
 async function refreshCustomScript() {
     if (document.contains(document.getElementById('app-custom-script'))) {
-
-
-
-
         document.getElementById('app-custom-script').remove();
     }
     const customScript = await (AppApi as any).CustomScript();
@@ -399,7 +377,6 @@ function HSVtoRGB(h: number, s: number, v: number) {
     let g = 0;
     let b = 0;
     if (arguments.length === 1) {
-
         s = (h as any).s;
 
         v = (h as any).v;
@@ -467,31 +444,21 @@ function formatJsonVars(ref: any) {
     if ('displayName' in sortedRef) {
         // add _hexDisplayName to top
         return {
-
-
-
-
-
-            _hexDisplayName: textToHex(sortedRef.displayName),
+            _hexDisplayName: textToHex(String(sortedRef.displayName ?? '')),
             ...sortedRef
         };
     }
     if ((sortedRef as any).user?.displayName) {
         // add _hexDisplayName to top
-return {
-    _hexDisplayName: textToHex((sortedRef as any).user.displayName),
-    ...sortedRef
-};
+        return {
+            _hexDisplayName: textToHex((sortedRef as any).user.displayName),
+            ...sortedRef
+        };
     }
     if ('name' in sortedRef) {
         // add _hexName to top
         return {
-
-
-
-
-
-            _hexName: textToHex(sortedRef.name),
+            _hexName: textToHex(String(sortedRef.name ?? '')),
             ...sortedRef
         };
     }

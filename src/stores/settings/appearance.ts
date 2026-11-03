@@ -75,7 +75,7 @@ export const useAppearanceSettingsStore = defineStore(
         const tablePageSizes = ref([...DEFAULT_TABLE_PAGE_SIZES]);
         const dtHour12 = ref(false);
         const dtIsoFormat = ref(false);
-        const weekStartsOn = ref((1 as 0 | 1 | 6));
+        const weekStartsOn = ref(1 as 0 | 1 | 6);
         const sidebarSortMethod1 = ref('Sort Private to Bottom');
         const sidebarSortMethod2 = ref('Sort by Time in Instance');
         const sidebarSortMethod3 = ref('Sort by Last Active');
@@ -102,7 +102,7 @@ export const useAppearanceSettingsStore = defineStore(
             vip: '#FF2626',
             troll: '#782F2F'
         });
-        const trustColor = ref({ ...TRUST_COLOR_DEFAULTS });
+        const trustColor = ref<{ [K in keyof typeof TRUST_COLOR_DEFAULTS]: string }>({ ...TRUST_COLOR_DEFAULTS });
         const currentCulture = ref('');
         const notificationIconDot = ref(false);
         const isNavCollapsed = ref(true);
@@ -182,9 +182,6 @@ export const useAppearanceSettingsStore = defineStore(
                 configRepository.getBool('VRCX_displayVRCProfileThemes', true),
                 configRepository.getBool('VRCX_displayVRCProfileBackgrounds', false),
 
-
-
-
                 configRepository.getFloat('VRCX_profileBackgroundOpacity', 0.5),
                 configRepository.getBool('VRCX_displayVRCProfileCosmetics', false),
                 configRepository.getBool('VRCX_hideNicknames', false),
@@ -255,9 +252,6 @@ export const useAppearanceSettingsStore = defineStore(
             displayVRCProfileThemes.value = displayVRCProfileThemesConfig;
             displayVRCProfileBackgrounds.value = displayVRCProfileBackgroundsConfig;
 
-
-
-
             profileBackgroundOpacity.value = profileBackgroundOpacityConfig;
             displayVRCProfileCosmetics.value = displayVRCProfileCosmeticsConfig;
             hideNicknames.value = hideNicknamesConfig;
@@ -273,9 +267,7 @@ export const useAppearanceSettingsStore = defineStore(
 
             dtHour12.value = dtHour12Config;
             dtIsoFormat.value = dtIsoFormatConfig;
-            weekStartsOn.value = (
-                ([0, 1, 6].includes(weekStartsOnConfig) ? weekStartsOnConfig : 1) as 0 | 1 | 6
-            );
+            weekStartsOn.value = ([0, 1, 6].includes(weekStartsOnConfig) ? weekStartsOnConfig : 1) as 0 | 1 | 6;
 
             currentCulture.value = await (AppApi as any).CurrentCulture();
 
@@ -411,16 +403,11 @@ export const useAppearanceSettingsStore = defineStore(
                 return;
             }
             if (LINUX) {
-
                 dictObject = Object.fromEntries(dictObject);
             }
             for (const [userId, hue] of Object.entries(dictObject)) {
                 const ref = userStore.cachedUsers.get(userId);
-                if (typeof ref !== 'undefined') {
-
-
-
-
+                if (typeof ref !== 'undefined' && typeof hue === 'number') {
                     ref.$userColour = HueToHex(hue, isDarkMode.value);
                 }
             }
@@ -440,8 +427,8 @@ export const useAppearanceSettingsStore = defineStore(
             if (randomUserColours.value && watchState.isFriendsLoaded) {
                 if (!(ref as any).$userColour) {
                     getNameColour((ref as any).id, isDarkMode.value).then((colour) => {
-    (ref as any).$userColour = colour;
-});
+                        (ref as any).$userColour = colour;
+                    });
                 }
             } else {
                 (ref as any).$userColour = (trustColor.value as any)[trust.trustColorKey];
@@ -477,9 +464,6 @@ export const useAppearanceSettingsStore = defineStore(
             const { isDark } = changeAppThemeStyle(mode);
             isDarkMode.value = isDark;
             vrStore.updateVRConfigVars();
-
-
-
 
             updateTrustColor(undefined, undefined);
         }
@@ -627,7 +611,7 @@ export const useAppearanceSettingsStore = defineStore(
          * @param {number} value - 0 (Sunday), 1 (Monday), or 6 (Saturday)
          */
         function setWeekStartsOn(value: number) {
-            const v = (([0, 1, 6].includes(value) ? value : 1) as 0 | 1 | 6);
+            const v = ([0, 1, 6].includes(value) ? value : 1) as 0 | 1 | 6;
             weekStartsOn.value = v;
             configRepository.setInt('VRCX_weekStartsOn', v);
         }
@@ -706,10 +690,6 @@ export const useAppearanceSettingsStore = defineStore(
          * @param {string[]} value
          */
         function setSidebarFavoriteGroups(value: string[]) {
-
-
-
-
             sidebarFavoriteGroups.value = value;
             configRepository.setString('VRCX_sidebarFavoriteGroups', JSON.stringify(value));
         }
@@ -717,10 +697,6 @@ export const useAppearanceSettingsStore = defineStore(
          * @param {string[]} value
          */
         function setSidebarFavoriteGroupOrder(value: string[]) {
-
-
-
-
             sidebarFavoriteGroupOrder.value = value;
             configRepository.setString('VRCX_sidebarFavoriteGroupOrder', JSON.stringify(value));
         }
@@ -792,12 +768,7 @@ export const useAppearanceSettingsStore = defineStore(
         /**
          * @param {object} color
          */
-        function setTrustColor(color: object) {
-
-
-
-
-
+        function setTrustColor(color: { [K in keyof typeof TRUST_COLOR_DEFAULTS]: string }) {
             trustColor.value = color;
             configRepository.setString('VRCX_trustColor', JSON.stringify(trustColor.value));
         }

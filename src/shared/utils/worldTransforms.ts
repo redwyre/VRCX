@@ -1,15 +1,14 @@
+import type { VrcxWorld } from '@/types/vrcx';
+
 /**
  * Create a default world ref object.
  *
- * @param {Partial<import('@/types/vrcx').VrcxWorld>} json - API response to merge
- * @returns {import('@/types/vrcx').VrcxWorld}
+ * @param {Partial<VrcxWorld>} json - API response to merge
+ * @returns {VrcxWorld}
  */
 
-
-
-
-export function createDefaultWorldRef(json: Partial<import('@/types/vrcx').VrcxWorld>) {
-    return ({
+export function createDefaultWorldRef(json: Partial<VrcxWorld>) {
+    return {
         id: '',
         name: '',
         description: '',
@@ -56,5 +55,5 @@ export function createDefaultWorldRef(json: Partial<import('@/types/vrcx').VrcxW
         $isLabs: false,
         //
         ...json
-    } as import('@/types/vrcx').VrcxWorld);
+    } as VrcxWorld;
 }

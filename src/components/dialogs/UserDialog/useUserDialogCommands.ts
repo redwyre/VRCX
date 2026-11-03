@@ -1,4 +1,5 @@
 import { ref } from 'vue';
+import type { Ref } from 'vue';
 
 import {
     favoriteRequest,
@@ -15,7 +16,7 @@ import { recordRecentAction } from '../../../composables/useRecentActions';
  * Composable for UserDialog command dispatch.
  * Uses a command map pattern instead of if-else/switch-case chains.
  *
- * @param {import('vue').Ref} userDialog - Reactive ref to the user dialog state
+ * @param {Ref} userDialog - Reactive ref to the user dialog state
  * @param {object} deps - External dependencies
  * @param deps.t
  * @param deps.toast
@@ -46,34 +47,62 @@ import { recordRecentAction } from '../../../composables/useRecentActions';
  * @returns {object} Command composable API
  */
 export function useUserDialogCommands(
-    userDialog: import('vue').Ref, { t, toast, modalStore, currentUser, cachedUsers, friendLogTable, lastLocation, lastLocationDestination, inviteGroupDialog, showUserDialog, showFavoriteDialog, showAvatarDialog, showAvatarAuthorDialog, showModerateGroupDialog, showSendBoopDialog, showModerationReportDialog, showGalleryPage, getFriendRequest, handleFriendDelete, applyPlayerModeration, handlePlayerModerationDelete, refreshInviteMessageTableData, clearInviteImageUpload, instanceStore, useNotificationStore, showEditProfileDialog }: {
-    t: any;
-    toast: any;
-    modalStore: any;
-    currentUser: any;
-    cachedUsers: any;
-    friendLogTable: any;
-    lastLocation: any;
-    lastLocationDestination: any;
-    inviteGroupDialog: any;
-    showUserDialog: any;
-    showFavoriteDialog: any;
-    showAvatarDialog: any;
-    showAvatarAuthorDialog: any;
-    showModerateGroupDialog: any;
-    showSendBoopDialog: any;
-    showModerationReportDialog: any;
-    showGalleryPage: any;
-    getFriendRequest: any;
-    handleFriendDelete: any;
-    applyPlayerModeration: any;
-    handlePlayerModerationDelete: any;
-    refreshInviteMessageTableData: any;
-    clearInviteImageUpload: any;
-    instanceStore: any;
-    useNotificationStore: any;
-    showEditProfileDialog: any;
-}
+    userDialog: Ref,
+    {
+        t,
+        toast,
+        modalStore,
+        currentUser,
+        cachedUsers,
+        friendLogTable,
+        lastLocation,
+        lastLocationDestination,
+        inviteGroupDialog,
+        showUserDialog,
+        showFavoriteDialog,
+        showAvatarDialog,
+        showAvatarAuthorDialog,
+        showModerateGroupDialog,
+        showSendBoopDialog,
+        showModerationReportDialog,
+        showGalleryPage,
+        getFriendRequest,
+        handleFriendDelete,
+        applyPlayerModeration,
+        handlePlayerModerationDelete,
+        refreshInviteMessageTableData,
+        clearInviteImageUpload,
+        instanceStore,
+        useNotificationStore,
+        showEditProfileDialog
+    }: {
+        t: any;
+        toast: any;
+        modalStore: any;
+        currentUser: any;
+        cachedUsers: any;
+        friendLogTable: any;
+        lastLocation: any;
+        lastLocationDestination: any;
+        inviteGroupDialog: any;
+        showUserDialog: any;
+        showFavoriteDialog: any;
+        showAvatarDialog: any;
+        showAvatarAuthorDialog: any;
+        showModerateGroupDialog: any;
+        showSendBoopDialog: any;
+        showModerationReportDialog: any;
+        showGalleryPage: any;
+        getFriendRequest: any;
+        handleFriendDelete: any;
+        applyPlayerModeration: any;
+        handlePlayerModerationDelete: any;
+        refreshInviteMessageTableData: any;
+        clearInviteImageUpload: any;
+        instanceStore: any;
+        useNotificationStore: any;
+        showEditProfileDialog: any;
+    }
 ) {
     // --- Invite dialog state ---
     const sendInviteDialogVisible = ref(false);
@@ -165,24 +194,21 @@ export function useUserDialogCommands(
     function setPlayerModeration(userId: string, type: number) {
         const D = userDialog.value;
         (AppApi as any).SetVRChatUserModeration(currentUser.value.id, userId, type).then((result: any) => {
-    if (result) {
-        if (type === 4) {
-            D.isShowAvatar = false;
-            D.isHideAvatar = true;
-        }
-        else if (type === 5) {
-            D.isShowAvatar = true;
-            D.isHideAvatar = false;
-        }
-        else {
-            D.isShowAvatar = false;
-            D.isHideAvatar = false;
-        }
-    }
-    else {
-        toast.error(t('message.avatar.change_moderation_failed'));
-    }
-});
+            if (result) {
+                if (type === 4) {
+                    D.isShowAvatar = false;
+                    D.isHideAvatar = true;
+                } else if (type === 5) {
+                    D.isShowAvatar = true;
+                    D.isHideAvatar = false;
+                } else {
+                    D.isShowAvatar = false;
+                    D.isHideAvatar = false;
+                }
+            } else {
+                toast.error(t('message.avatar.change_moderation_failed'));
+            }
+        });
     }
 
     /**
@@ -265,11 +291,14 @@ export function useUserDialogCommands(
                         worldId: L.worldId
                     })
                     .then((args) => {
-                        showSendInviteDialogFn({
-    instanceId: lastLocation.value.location,
-    worldId: lastLocation.value.location,
-    worldName: (args as any).ref.name
-}, D().id);
+                        showSendInviteDialogFn(
+                            {
+                                instanceId: lastLocation.value.location,
+                                worldId: lastLocation.value.location,
+                                worldName: (args as any).ref.name
+                            },
+                            D().id
+                        );
                     });
             },
             'Request Invite Message': () => {
@@ -292,16 +321,19 @@ export function useUserDialogCommands(
                     })
                     .then((args) => {
                         notificationRequest
-    .sendInvite({
-    instanceId: L.tag,
-    worldId: L.tag,
-    worldName: (args as any).ref.name
-}, D().id)
-    .then((_args) => {
-    toast(t('message.invite.sent'));
-    recordRecentAction(D().id, 'Invite');
-    return _args;
-});
+                            .sendInvite(
+                                {
+                                    instanceId: L.tag,
+                                    worldId: L.tag,
+                                    worldName: (args as any).ref.name
+                                },
+                                D().id
+                            )
+                            .then((_args) => {
+                                toast(t('message.invite.sent'));
+                                recordRecentAction(D().id, 'Invite');
+                                return _args;
+                            });
                     });
             },
             'Show Avatar Author': () => {

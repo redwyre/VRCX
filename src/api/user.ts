@@ -34,15 +34,15 @@ const userReq = {
     getUser(params: { userId: string }): Promise<{ json: Json<User>; ref: VrcxUser; params: { userId: string } }> {
         return request(`users/${params.userId}`, {
             method: 'GET'
-        }).then((json: { $lastFetch: number; }) => {
+        }).then((json: Json<User>) => {
             if (!json) {
                 throw new Error(`getUser missing user data for: ${params.userId}`);
             }
-            json.$lastFetch = Date.now(); // todo: make this not suck
+            const userJson = { ...json, $lastFetch: Date.now() };
             const args = {
-                json,
+                json: userJson,
                 params,
-                ref: applyUser(json)
+                ref: applyUser(userJson)
             };
             return args;
         });
@@ -188,7 +188,7 @@ const userReq = {
     }> {
         return request(`profile/${params.userId}`, {
             method: 'GET'
-        }).then((json: { $lastFetch: number; }) => {
+        }).then((json: { $lastFetch: number }) => {
             json.$lastFetch = Date.now();
             const args = {
                 json,

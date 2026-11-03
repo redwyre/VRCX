@@ -1,4 +1,5 @@
 import { replaceBioSymbols } from './base/string';
+import type { UnityPackage } from 'vrchat';
 
 /**
  * @param {object} args
@@ -6,10 +7,7 @@ import { replaceBioSymbols } from './base/string';
  * @returns
  */
 
-
-
-
-function storeAvatarImage(args: object, cachedAvatarNames: Map) {
+function storeAvatarImage(args: object, cachedAvatarNames: Map<string, any>) {
     const refCreatedAt = (args as any).json.versions[0];
     const fileCreatedAt = refCreatedAt.created_at;
     const fileId = (args as any).params.fileId;
@@ -44,19 +42,15 @@ function parseAvatarUrl(avatar: string) {
 }
 
 /**
- * @param {object} unityPackages
- * @returns
+ * @param {unknown} unityPackages
+ * @returns {Record<'pc' | 'android' | 'ios', Partial<UnityPackage>>}
  */
-function getPlatformInfo(unityPackages: object) {
-    let pc = {};
-    let android = {};
-    let ios = {};
-    if (typeof unityPackages === 'object') {
-
-
-
-
-        for (const unityPackage of unityPackages) {
+function getPlatformInfo(unityPackages: unknown): Record<'pc' | 'android' | 'ios', Partial<UnityPackage>> {
+    let pc: Partial<UnityPackage> = {};
+    let android: Partial<UnityPackage> = {};
+    let ios: Partial<UnityPackage> = {};
+    if (Array.isArray(unityPackages)) {
+        for (const unityPackage of unityPackages as UnityPackage[]) {
             if (unityPackage.variant && unityPackage.variant !== 'standard' && unityPackage.variant !== 'security') {
                 continue;
             }
@@ -86,7 +80,7 @@ function getPlatformInfo(unityPackages: object) {
  * @param {string} [sdkUnityVersion]
  * @returns {boolean}
  */
-function compareUnityVersion(unitySortNumber: string, sdkUnityVersion?: string) {
+function compareUnityVersion(unitySortNumber: string | number, sdkUnityVersion?: string) {
     if (!sdkUnityVersion) {
         console.error('No sdkUnityVersion provided');
         return false;
@@ -122,7 +116,7 @@ function compareUnityVersion(unitySortNumber: string, sdkUnityVersion?: string) 
     // just in case
     currentUnityVersion = currentUnityVersion.replace(/\D/g, '');
 
-    if (parseInt(unitySortNumber, 10) <= parseInt(currentUnityVersion, 10)) {
+    if (parseInt(String(unitySortNumber), 10) <= parseInt(currentUnityVersion, 10)) {
         return true;
     }
     return false;

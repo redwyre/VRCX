@@ -321,13 +321,13 @@
         groupMembersKick({ onComplete: () => loadAllGroupMembers() });
     }
     function handleSaveNote() {
-        groupMembersSaveNote(note.value);
+        groupMembersSaveNote(note.value, {});
     }
     function handleAddRoles() {
-        groupMembersAddRoles(selectedRoles.value);
+        groupMembersAddRoles(selectedRoles.value, {});
     }
     function handleRemoveRoles() {
-        groupMembersRemoveRoles(selectedRoles.value);
+        groupMembersRemoveRoles(selectedRoles.value, {});
     }
     function handleDeleteSentInvite() {
         groupMembersDeleteSentInvite({

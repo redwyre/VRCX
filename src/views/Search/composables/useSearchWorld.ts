@@ -4,8 +4,9 @@ import { storeToRefs } from 'pinia';
 import { replaceBioSymbols } from '../../../shared/utils';
 import { useAuthStore, useSearchStore, useWorldStore } from '../../../stores';
 import { worldRequest } from '../../../api';
+import type { SearchWorlds } from 'vrchat';
 
-/** @returns {import('vrchat').SearchWorlds['query']} */
+/** @returns {SearchWorlds['query']} */
 function createDefaultSearchWorldParams() {
     return {
         n: 60,
@@ -32,7 +33,15 @@ export function useSearchWorld() {
     /**
      * @param ref
      */
-    function searchWorld(ref: { index: null; sortHeading: any; sortOrder: string; sortOwnership: string; tag: any; }) {
+    function searchWorld(
+        ref: {
+            index?: string | null;
+            sortHeading?: string;
+            sortOrder?: string;
+            sortOwnership?: string;
+            tag?: string;
+        } = {}
+    ) {
         searchWorldOption.value = '';
         searchWorldCategoryIndex.value = ref?.index ?? null;
         const params = createDefaultSearchWorldParams();
@@ -101,9 +110,9 @@ export function useSearchWorld() {
     /**
      * @param index
      */
-    function handleSearchWorldCategorySelect(index: null) {
+    function handleSearchWorldCategorySelect(index: string | null) {
         searchWorldCategoryIndex.value = index;
-        const row = cachedConfig.value?.dynamicWorldRows?.find((r: { index: any; }) => r.index === index);
+        const row = cachedConfig.value?.dynamicWorldRows?.find((r: { index: any }) => r.index === index);
         searchWorld(row || {});
     }
 
@@ -132,9 +141,6 @@ export function useSearchWorld() {
                         map.set(ref.id, ref);
                     }
                 }
-
-
-
 
                 searchWorldResults.value = Array.from(map.values());
                 return args;

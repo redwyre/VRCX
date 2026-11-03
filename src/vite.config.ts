@@ -3,7 +3,9 @@ import { resolve } from 'node:path';
 import fs from 'node:fs';
 
 import { defineConfig, loadEnv } from 'vite';
+import type { Plugin, UserConfig } from 'vite';
 import { browserslistToTargets } from 'lightningcss';
+import type { PreRenderedAsset } from 'rolldown';
 
 import browserslist from 'browserslist';
 import tailwindcss from '@tailwindcss/vite';
@@ -19,9 +21,9 @@ import { languageCodes } from './localization/locales';
  * Chrome 144 picks woff2 from the multi-format @font-face src list and
  * never requests the other formats, so deleting them is safe.
  *
- * @returns {import('vite').Plugin}
+ * @returns {Plugin}
  */
-function remixiconWoff2Only(): import('vite').Plugin {
+function remixiconWoff2Only(): Plugin {
     return {
         name: 'remixicon-woff2-only',
         generateBundle(_: any, bundle: { [x: string]: any }) {
@@ -81,9 +83,9 @@ function isFont(name: string) {
 }
 
 /**
- * @param {import('rolldown').PreRenderedAsset} assetInfo
+ * @param {PreRenderedAsset} assetInfo
  */
-function getAssetFilename({ name }: import('rolldown').PreRenderedAsset) {
+function getAssetFilename({ name }: PreRenderedAsset) {
     const language = getAssetLanguage(name);
     if (!name || !language) return `assets/${defaultAssetName}`;
 
@@ -93,9 +95,9 @@ function getAssetFilename({ name }: import('rolldown').PreRenderedAsset) {
 
 /**
  * @param ConfigEnv ConfigEnv
- * @returns {import('vite').UserConfig}
+ * @returns {UserConfig}
  */
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ mode }): UserConfig => {
     const { SENTRY_AUTH_TOKEN: sentryAuthToken } = loadEnv(mode, process.cwd(), '');
 
     const buildAndUploadSourceMaps = !!sentryAuthToken;
@@ -104,7 +106,7 @@ export default defineConfig(({ mode }) => {
 
     const nightly = mode === 'development' || version.split('-').at(-1)?.length === 7;
 
-    /** @type {import('vite').UserConfig} */
+    /** @type {UserConfig} */
     return {
         base: '',
         plugins: [

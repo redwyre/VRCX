@@ -26,6 +26,7 @@ import { useModalStore } from './modal';
 import { syncFriendSearchIndex } from '../coordinators/searchIndexCoordinator';
 import { useUiStore } from './ui';
 import { watchState } from '../services/watchState';
+import type { VrcxCurrentUser, VrcxLocation, VrcxUser, VrcxWorld } from '../types/vrcx';
 
 import * as workerTimers from 'worker-timers';
 
@@ -38,8 +39,8 @@ export const useUserStore = defineStore('User', () => {
     const uiStore = useUiStore();
     const { t } = useI18n();
 
-    const currentUser = ref(
-        /** @type {import('@/types/vrcx').VrcxCurrentUser} */ {
+    const currentUser = ref<VrcxCurrentUser>(
+        /** @type {VrcxCurrentUser} */ {
             acceptedPrivacyVersion: 0,
             acceptedTOSVersion: 0,
             accountDeletionDate: null,
@@ -163,7 +164,7 @@ export const useUserStore = defineStore('User', () => {
             $location_at: Date.now(),
             $travelingToTime: Date.now(),
             $previousAvatarSwapTime: null,
-            $homeLocation: {},
+            $homeLocation: parseLocation(''),
             $isVRCPlus: false,
             $isModerator: false,
             $isTroll: false,
@@ -186,8 +187,8 @@ export const useUserStore = defineStore('User', () => {
         activeTab: 'Info',
         lastActiveTab: 'Info',
         id: '',
-        ref: {},
-        publicProfileRef: {},
+        ref: {} as VrcxUser,
+        publicProfileRef: {} as Record<string, any>,
         theme: {
             iconColor: '',
             buttonColor: '',
@@ -205,17 +206,17 @@ export const useUserStore = defineStore('User', () => {
         isInteractOff: false,
         isMuteChat: false,
         isFavorite: false,
-        $location: {},
+        $location: parseLocation('') as VrcxLocation,
         $homeLocationName: '',
         users: [],
         instance: {
             id: '',
             tag: '',
-            $location: {},
+            $location: parseLocation('') as VrcxLocation,
             friendCount: 0,
             users: [],
             shortName: '',
-            ref: {}
+            ref: {} as Record<string, any>
         },
         worlds: [],
         avatars: [],
@@ -321,7 +322,7 @@ export const useUserStore = defineStore('User', () => {
     });
 
     const currentTravelers = reactive(new Map());
-    const subsetOfLanguages = ref([]);
+    const subsetOfLanguages = ref<Record<string, string>>({});
     const sendBoopDialog = ref({
         visible: false,
         userId: ''
@@ -353,7 +354,11 @@ export const useUserStore = defineStore('User', () => {
     const ownedListingIds = computed(() => new Set(activePurchases.value.map((purchase) => purchase.listingId)));
     const ownedProductIds = computed(
         () =>
-            new Set(activePurchases.value.flatMap((purchase) => (purchase.products ?? []).map((product: { id: any; }) => product.id)))
+            new Set(
+                activePurchases.value.flatMap((purchase) =>
+                    (purchase.products ?? []).map((product: { id: any }) => product.id)
+                )
+            )
     );
 
     const currentUserClientConfig = ref({
@@ -387,7 +392,7 @@ export const useUserStore = defineStore('User', () => {
         }
     }
 
-    function syncCachedUserDisplayName(ref: { id: any; displayName: string; }, previousDisplayName = '') {
+    function syncCachedUserDisplayName(ref: { id: any; displayName: string }, previousDisplayName = '') {
         if (!ref?.id) {
             return;
         }
@@ -469,7 +474,7 @@ export const useUserStore = defineStore('User', () => {
                 state.instancePlayerCount.clear();
                 customUserTags.clear();
                 state.notes.clear();
-                subsetOfLanguages.value = [];
+                subsetOfLanguages.value = {};
                 uiStore.clearDialogCrumbs();
             }
         },
@@ -534,7 +539,7 @@ export const useUserStore = defineStore('User', () => {
      */
     function applyUserDialogLocation(updateInstanceOccupants: boolean = false) {
         let addUser;
-        let friend: { userId: any; ref: { location: string; $location: { tag: string; }; }; state: string; name: any; };
+        let friend: { userId: any; ref: { location: string; $location: { tag: string } }; state: string; name: any };
         let ref;
         const D = userDialog.value;
         if (!D.visible) {
@@ -626,9 +631,6 @@ export const useUserStore = defineStore('User', () => {
             users.sort(compareByLocationAt);
         }
 
-
-
-
         D.users = users;
         if ((L.worldId && currentLocation === L.tag && playersInInstance.size > 0) || !L.isRealInstance) {
             D.instance = {
@@ -669,10 +671,6 @@ export const useUserStore = defineStore('User', () => {
     }
 
     async function initUserNotes() {
-
-
-
-
         state.lastNoteCheck = new Date();
         state.lastDbNoteDate = null;
         state.notes.clear();
@@ -700,10 +698,6 @@ export const useUserStore = defineStore('User', () => {
     }
 
     async function getLatestUserNotes() {
-
-
-
-
         state.lastNoteCheck = new Date();
         const params = {
             offset: 0,
@@ -716,22 +710,11 @@ export const useUserStore = defineStore('User', () => {
                 params.offset = i * params.n;
                 const args = await userRequest.getUserNotes(params);
                 for (const note of args.json) {
-
-
-
-
                     if (state.lastDbNoteDate && state.lastDbNoteDate > note.createdAt) {
                         done = true;
                     }
 
-
-
-
                     if (!state.lastDbNoteDate || state.lastDbNoteDate < note.createdAt) {
-
-
-
-
                         state.lastDbNoteDate = note.createdAt;
                     }
                     note.note = replaceBioSymbols(note.note);
@@ -832,7 +815,11 @@ export const useUserStore = defineStore('User', () => {
      * @param {string} travelingToLocation
      * @param {number} timestamp
      */
-    function setCurrentUserLocationState(location: string, travelingToLocation: string, timestamp: number = Date.now()) {
+    function setCurrentUserLocationState(
+        location: string,
+        travelingToLocation: string,
+        timestamp: number = Date.now()
+    ) {
         currentUser.value.$location_at = timestamp;
         currentUser.value.$travelingToTime = timestamp;
         currentUser.value.$locationTag = location;
@@ -849,11 +836,7 @@ export const useUserStore = defineStore('User', () => {
     /**
      * @param {object} value
      */
-    function setCurrentUser(value: object) {
-
-
-
-
+    function setCurrentUser(value: VrcxCurrentUser) {
         currentUser.value = value;
     }
 
@@ -861,21 +844,13 @@ export const useUserStore = defineStore('User', () => {
      * @param {number | null} value
      */
     function setCurrentUserCredits(value: number | null) {
-
-
-
-
         currentUserCredits.value = value;
     }
 
     /**
      * @param {object} value
      */
-    function setSubsetOfLanguages(value: object) {
-
-
-
-
+    function setSubsetOfLanguages(value: Record<string, string>) {
         subsetOfLanguages.value = value;
     }
 
@@ -889,9 +864,6 @@ export const useUserStore = defineStore('User', () => {
                 status: statusHistory[i]
             });
         }
-
-
-
 
         D.socialStatusHistoryTable = statusHistoryArray;
 
@@ -914,108 +886,46 @@ export const useUserStore = defineStore('User', () => {
             const ref = args.json;
             D.selfProfileRef = ref;
 
-
-
-
-
             D.status = ref.status;
-
-
-
 
             D.statusDescription = ref.statusDescription;
 
-
-
-
             D.pronouns = ref.pronouns;
-
-
-
 
             D.bio = ref.bio;
 
-
-
-
             D.bioLinks = ref.bioLinks.slice();
 
-
-
-
             D.bannerColor = ref.bannerColor;
-
-
-
 
             D.bannerUrl = ref.bannerUrl;
             D.bannerType = ref.bannerType || 'color';
 
-
-
-
             D.userIcon = ref.userIcon;
-
-
-
-
 
             D.themes = ref.themes;
 
-
-
-
             D.themeId = ref.themeId;
-
-
-
 
             const selectedTheme = ref.themes.find((theme) => theme.id === ref.themeId);
             D.themeName = selectedTheme?.name ?? '';
 
-
-
-
             D.themeButtonColor = ref.themeButtonColor;
 
-
-
-
             D.themeIconColor = ref.themeIconColor;
-
-
-
 
             D.themeSubtextColor = ref.themeSubtextColor;
             D.backgroundType = ref.backgroundType || 'default';
 
-
-
-
             D.backgroundTextureId = ref.backgroundTextureId;
-
-
-
 
             D.backgroundGradientBottom = ref.backgroundGradientBottom;
 
-
-
-
             D.backgroundGradientTop = ref.backgroundGradientTop;
-
-
-
 
             D.nameplateEffect = ref.nameplateEffect;
 
-
-
-
             D.profileEffect = ref.profileEffect;
-
-
-
 
             D.iconFrame = ref.iconFrame;
         });
@@ -1027,17 +937,11 @@ export const useUserStore = defineStore('User', () => {
         currentUser.value.$online_for = Date.now();
         currentUser.value.$offline_for = null;
 
-
-
-
         currentUser.value.$previousAvatarSwapTime = Date.now();
     }
 
     function markCurrentUserGameStopped() {
         currentUser.value.$online_for = 0;
-
-
-
 
         currentUser.value.$offline_for = Date.now();
         currentUser.value.$previousAvatarSwapTime = null;

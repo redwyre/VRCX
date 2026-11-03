@@ -1,4 +1,5 @@
 // requires binding of WebApi
+import type { WebApiOptions } from '../types/vrcx';
 
 class WebApiService {
     clearCookies() {
@@ -14,14 +15,11 @@ class WebApiService {
     }
 
     /**
-     * @param {import('@/types/vrcx').WebApiOptions} options
+     * @param {WebApiOptions} options
      * @returns {Promise<{ status: number; data?: string }>}
      */
 
-
-
-
-    async execute(options: import('@/types/vrcx').WebApiOptions) {
+    async execute(options: WebApiOptions) {
         if (!options) {
             throw new Error('options is required');
         }

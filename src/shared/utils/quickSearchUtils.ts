@@ -55,10 +55,7 @@ export function isPrefixMatch(name: string, query: string, comparer: Intl.Collat
  * @returns {{ id: string; name: string; type: string; imageUrl: string; ref: object }[]}
  */
 
-
-
-
-export function searchFriends(query: string, friends: Map, comparer: Intl.Collator, limit: number = 10) {
+export function searchFriends(query: string, friends: Map<string, any>, comparer: Intl.Collator, limit: number = 10) {
     if (!query || !friends) {
         return [];
     }
@@ -116,10 +113,13 @@ export function searchFriends(query: string, friends: Map, comparer: Intl.Collat
  * @returns {{ id: string; name: string; type: string; imageUrl: string }[]}
  */
 
-
-
-
-export function searchAvatars(query: string, avatarMap: Map, comparer: Intl.Collator, authorId: string | null = null, limit: number = 10) {
+export function searchAvatars(
+    query: string,
+    avatarMap: Map<string, any>,
+    comparer: Intl.Collator,
+    authorId: string | null = null,
+    limit: number = 10
+) {
     if (!query || !avatarMap) {
         return [];
     }
@@ -164,10 +164,13 @@ export function searchAvatars(query: string, avatarMap: Map, comparer: Intl.Coll
  * @returns {{ id: string; name: string; type: string; imageUrl: string }[]}
  */
 
-
-
-
-export function searchWorlds(query: string, worldMap: Map, comparer: Intl.Collator, ownerId: string | null = null, limit: number = 10) {
+export function searchWorlds(
+    query: string,
+    worldMap: Map<string, any>,
+    comparer: Intl.Collator,
+    ownerId: string | null = null,
+    limit: number = 10
+) {
     if (!query || !worldMap) {
         return [];
     }
@@ -212,10 +215,13 @@ export function searchWorlds(query: string, worldMap: Map, comparer: Intl.Collat
  * @returns {{ id: string; name: string; type: string; imageUrl: string }[]}
  */
 
-
-
-
-export function searchGroups(query: string, groupMap: Map, comparer: Intl.Collator, ownerId: string | null = null, limit: number = 10) {
+export function searchGroups(
+    query: string,
+    groupMap: Map<string, any>,
+    comparer: Intl.Collator,
+    ownerId: string | null = null,
+    limit: number = 10
+) {
     if (!query || !groupMap) {
         return [];
     }
@@ -258,7 +264,12 @@ export function searchGroups(query: string, groupMap: Map, comparer: Intl.Collat
  * @param {number} [limit]
  * @returns {{ id: string; name: string; type: string; imageUrl: string }[]}
  */
-export function searchFavoriteAvatars(query: string, favoriteAvatars: Array<any>, comparer: Intl.Collator, limit: number = 10) {
+export function searchFavoriteAvatars(
+    query: string,
+    favoriteAvatars: Array<any>,
+    comparer: Intl.Collator,
+    limit: number = 10
+) {
     if (!query || !favoriteAvatars) {
         return [];
     }
@@ -298,7 +309,12 @@ export function searchFavoriteAvatars(query: string, favoriteAvatars: Array<any>
  * @param {number} [limit]
  * @returns {{ id: string; name: string; type: string; imageUrl: string }[]}
  */
-export function searchFavoriteWorlds(query: string, favoriteWorlds: Array<any>, comparer: Intl.Collator, limit: number = 10) {
+export function searchFavoriteWorlds(
+    query: string,
+    favoriteWorlds: Array<any>,
+    comparer: Intl.Collator,
+    limit: number = 10
+) {
     if (!query || !favoriteWorlds) {
         return [];
     }

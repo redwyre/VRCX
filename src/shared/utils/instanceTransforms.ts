@@ -1,3 +1,5 @@
+import type { VrcxInstance } from '@/types/vrcx';
+
 /**
  * Compute which content settings are disabled for an instance.
  *
@@ -22,15 +24,12 @@ export function computeDisabledContentSettings(contentSettings: object, settings
 /**
  * Create a default instance ref object.
  *
- * @param {Partial<import('@/types/vrcx').VrcxInstance>} json - API response to merge
- * @returns {import('@/types/vrcx').VrcxInstance}
+ * @param {Partial<VrcxInstance>} json - API response to merge
+ * @returns {VrcxInstance}
  */
 
-
-
-
-export function createDefaultInstanceRef(json: Partial<import('@/types/vrcx').VrcxInstance>) {
-    return ({
+export function createDefaultInstanceRef(json: Partial<VrcxInstance>) {
+    return {
         id: '',
         location: '',
         instanceId: '',
@@ -92,5 +91,5 @@ export function createDefaultInstanceRef(json: Partial<import('@/types/vrcx').Vr
         $fetchedAt: '',
         $disabledContentSettings: [],
         ...json
-    } as import('@/types/vrcx').VrcxInstance);
+    } as VrcxInstance;
 }

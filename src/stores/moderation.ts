@@ -1,5 +1,6 @@
 import { reactive, ref, watch } from 'vue';
 import { defineStore } from 'pinia';
+import type { TableFilter } from '../types/vrcx';
 
 import { runRefreshPlayerModerationsFlow } from '../coordinators/moderationCoordinator';
 import { useUserStore } from './user';
@@ -21,7 +22,7 @@ export const useModerationStore = defineStore('Moderation', () => {
         data: [],
         search: '',
         loading: false,
-        filters: ([
+        filters: [
             {
                 prop: 'type',
                 value: []
@@ -30,7 +31,7 @@ export const useModerationStore = defineStore('Moderation', () => {
                 prop: ['sourceDisplayName', 'targetDisplayName'],
                 value: ''
             }
-        ] as import('@/types/vrcx').TableFilter[]),
+        ] as TableFilter[],
         pageSize: 20,
         pageSizeLinked: true
     });
@@ -49,7 +50,10 @@ export const useModerationStore = defineStore('Moderation', () => {
         { flush: 'sync' }
     );
 
-    function handlePlayerModerationAtDelete(args: { ref: any; params?: { playerModerationId: any; } | { playerModerationId: any; }; }) {
+    function handlePlayerModerationAtDelete(args: {
+        ref: any;
+        params?: { playerModerationId: any } | { playerModerationId: any };
+    }) {
         const { ref } = args;
 
         let hasModeration = false;
@@ -94,7 +98,7 @@ export const useModerationStore = defineStore('Moderation', () => {
         }
     }
 
-    function handlePlayerModerationDelete(args: { params: { type: any; moderated: any; }; }) {
+    function handlePlayerModerationDelete(args: { params: { type: any; moderated: any } }) {
         let { type, moderated } = args.params;
         const userId = userStore.currentUser.id;
         for (let ref of cachedPlayerModerations.values()) {
@@ -142,16 +146,8 @@ export const useModerationStore = defineStore('Moderation', () => {
         const array = playerModerationTable.value.data;
         const index = array.findIndex((item) => (item as any).id === ref.id);
         if (index !== -1) {
-
-
-
-
             array[index] = ref;
         } else {
-
-
-
-
             array.push(ref);
         }
         const userRef = userStore.cachedUsers.get(ref.targetUserId);
@@ -224,15 +220,22 @@ export const useModerationStore = defineStore('Moderation', () => {
     /**
      * @param {{ type: string; contentId: string; contentName?: string; details?: object }} params
      */
-    function showModerationReportDialog({ type, contentId, contentName = '', details = undefined }: { type: string; contentId: string; contentName?: string; details?: object; }) {
+    function showModerationReportDialog({
+        type,
+        contentId,
+        contentName = '',
+        details = undefined
+    }: {
+        type: string;
+        contentId: string;
+        contentName?: string;
+        details?: object;
+    }) {
         moderationReportDialog.value = {
             visible: true,
             type,
             contentId,
             contentName,
-
-
-
 
             details
         };

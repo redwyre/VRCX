@@ -1,4 +1,5 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
+import type { RouteRecordRaw } from 'vue-router';
 
 import { watchState } from '../services/watchState';
 
@@ -24,7 +25,7 @@ import Settings from './../views/Settings/Settings.vue';
 import Tools from './../views/Tools/Tools.vue';
 import { App } from 'vue';
 
-const routes = [
+const routes: RouteRecordRaw[] = [
     {
         path: '/login',
         name: 'login',

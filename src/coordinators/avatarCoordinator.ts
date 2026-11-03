@@ -47,7 +47,11 @@ export function applyAvatar(json: object) {
     } else {
         const { unityPackages } = ref;
         Object.assign(ref, json);
-        if ((json as any).unityPackages?.length > 0 && unityPackages.length > 0 && !(json as any).unityPackages[0].assetUrl) {
+        if (
+            (json as any).unityPackages?.length > 0 &&
+            unityPackages.length > 0 &&
+            !(json as any).unityPackages[0].assetUrl
+        ) {
             ref.unityPackages = unityPackages;
         }
     }
@@ -105,7 +109,7 @@ export function showAvatarDialog(avatarId: string, options = {}) {
     D.isIos = false;
     D.hasImposter = false;
     D.imposterVersion = '';
-    D.platformInfo = {};
+    D.platformInfo = getPlatformInfo(undefined);
     D.galleryImages = [];
     D.galleryLoading = true;
     D.isFavorite =
@@ -150,9 +154,6 @@ export function showAvatarDialog(avatarId: string, options = {}) {
         })
         .catch((err) => {
             D.loading = false;
-
-
-
 
             D.id = null;
             D.visible = false;
@@ -211,10 +212,6 @@ export function addAvatarToHistory(avatarId: string) {
                     historyArray.splice(i, 1);
                 }
             }
-
-
-
-
 
             avatarStore.avatarHistory.unshift(ref);
         })
@@ -301,7 +298,7 @@ export async function lookupAvatars(type: string, search: string | number | bool
             const json = JSON.parse(response.data);
             logWebRequest('[EXTERNAL GET]', url, `(${response.status})`, json);
             if (response.status === 200 && typeof json === 'object') {
-                json.forEach((avatar: { Id: any; }) => {
+                json.forEach((avatar: { Id: any }) => {
                     if (!avatars.has(avatar.Id)) {
                         const ref = {
                             authorId: '',
@@ -332,7 +329,7 @@ export async function lookupAvatars(type: string, search: string | number | bool
         for (let i = 0; i < length; ++i) {
             const url = avatarProviderStore.avatarRemoteDatabaseProviderList[i];
             const avatarArray = await lookupAvatarsByAuthor(url, search);
-            avatarArray.forEach((avatar: { id: any; }) => {
+            avatarArray.forEach((avatar: { id: any }) => {
                 if (!avatars.has(avatar.id)) {
                     avatars.set(avatar.id, avatar);
                 }
@@ -526,10 +523,6 @@ export async function checkAvatarCacheRemote(fileId: string, ownerUserId: any) {
 
     if (advancedSettingsStore.avatarRemoteDatabase) {
         try {
-
-
-
-
             toast.dismiss(avatarStore.loadingToastId);
             avatarStore.setLoadingToastId(toast.loading(t('message.avatar_lookup.loading')));
             const avatarId = await lookupAvatarByImageFileId(ownerUserId, fileId);
@@ -537,10 +530,6 @@ export async function checkAvatarCacheRemote(fileId: string, ownerUserId: any) {
         } catch (err) {
             console.error('Failed to lookup avatar by image file id:', err);
         } finally {
-
-
-
-
             toast.dismiss(avatarStore.loadingToastId);
         }
     }
@@ -617,7 +606,7 @@ export async function preloadOwnAvatars() {
         fn: avatarRequest.getAvatars,
         N: -1,
         params,
-        handle: (args: { json: any; }) => {
+        handle: (args: { json: any }) => {
             for (const json of args.json) {
                 applyAvatar(json);
             }

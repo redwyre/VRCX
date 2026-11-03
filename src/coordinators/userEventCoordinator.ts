@@ -21,18 +21,18 @@ import { useWorldStore } from '../stores/world';
  * @param {function} [options.nowIso] ISO timestamp provider.
  * @returns {Promise<void>}
  */
-export async function runHandleUserUpdateFlow(ref: object, props: object, { now = Date.now, nowIso = () => new Date().toJSON() }: {
+export async function runHandleUserUpdateFlow(
+    ref: object,
+    props: object,
+    {
+        now = Date.now,
+        nowIso = () => new Date().toJSON()
+    }: {
+        now?: () => number;
 
-
-
-
-    now?: function;
-
-
-
-
-    nowIso?: function;
-} = {}) {
+        nowIso?: () => string;
+    } = {}
+) {
     const friendStore = useFriendStore();
     const userStore = useUserStore();
     const worldStore = useWorldStore();
@@ -53,7 +53,7 @@ export async function runHandleUserUpdateFlow(ref: object, props: object, { now 
     }
     if ((props as any).location) {
         // update instancePlayerCount
-previousLocation = (props as any).location[1];
+        previousLocation = (props as any).location[1];
         newLocation = (props as any).location[0];
         let oldCount = state.instancePlayerCount.get(previousLocation);
         if (typeof oldCount !== 'undefined') {
@@ -73,7 +73,10 @@ previousLocation = (props as any).location[1];
 
         const previousLocationL = parseLocation(previousLocation);
         const newLocationL = parseLocation(newLocation);
-        if (previousLocationL.tag === (userDialog.$location as any).tag || newLocationL.tag === (userDialog.$location as any).tag) {
+        if (
+            previousLocationL.tag === (userDialog.$location as any).tag ||
+            newLocationL.tag === (userDialog.$location as any).tag
+        ) {
             // update user dialog instance occupants
             applyUserDialogLocation(true);
         }
@@ -92,15 +95,15 @@ previousLocation = (props as any).location[1];
     }
     if (
         !(props as any).state &&
-    (props as any).location &&
-    (props as any).location[0] !== 'offline' &&
-    (props as any).location[0] !== '' &&
-    (props as any).location[1] !== 'offline' &&
-    (props as any).location[1] !== '' &&
-    (props as any).location[0] !== 'traveling'
+        (props as any).location &&
+        (props as any).location[0] !== 'offline' &&
+        (props as any).location[0] !== '' &&
+        (props as any).location[1] !== 'offline' &&
+        (props as any).location[1] !== '' &&
+        (props as any).location[0] !== 'traveling'
     ) {
         // skip GPS if user is offline or traveling
-previousLocation = (props as any).location[1];
+        previousLocation = (props as any).location[1];
         newLocation = (props as any).location[0];
         let time = (props as any).location[2];
         if (previousLocation === 'traveling' && (ref as any).$previousLocation) {
@@ -124,21 +127,21 @@ previousLocation = (props as any).location[1];
             }
         } else if ((ref as any).$previousLocation === newLocation) {
             // location traveled to is the same
-(ref as any).$location_at = now() - time;
+            (ref as any).$location_at = now() - time;
         } else {
             const worldName = await getWorldName(newLocation);
             const groupName = await getGroupName(newLocation);
             feed = {
-    created_at: nowIso(),
-    type: 'GPS',
-    userId: (ref as any).id,
-    displayName: (ref as any).displayName,
-    location: newLocation,
-    worldName,
-    groupName,
-    previousLocation,
-    time
-};
+                created_at: nowIso(),
+                type: 'GPS',
+                userId: (ref as any).id,
+                displayName: (ref as any).displayName,
+                location: newLocation,
+                worldName,
+                groupName,
+                previousLocation,
+                time
+            };
             notificationStore.queueFeedNoty(feed);
             sharedFeedStore.addEntry(feed);
             const persistedFeed = await database.addGPSToDatabase(feed);
@@ -146,13 +149,17 @@ previousLocation = (props as any).location[1];
                 feedStore.addFeedEntry(persistedFeed);
             }
             // clear previousLocation after GPS
-(ref as any).$previousLocation = '';
+            (ref as any).$previousLocation = '';
             (ref as any).$travelingToTime = now();
         }
     }
-    if ((props as any).location && (props as any).location[0] === 'traveling' && (props as any).location[1] !== 'traveling') {
+    if (
+        (props as any).location &&
+        (props as any).location[0] === 'traveling' &&
+        (props as any).location[1] !== 'traveling'
+    ) {
         // store previous location when user is traveling
-(ref as any).$previousLocation = (props as any).location[1];
+        (ref as any).$previousLocation = (props as any).location[1];
         (ref as any).$travelingToTime = now();
     }
     if ((ref as any).bannerType === 'avatarBanner' && (props as any).bannerUrl && (props as any).bannerUrl[0]) {
@@ -178,19 +185,19 @@ previousLocation = (props as any).location[1];
                 console.log(err);
             }
             feed = {
-    created_at: nowIso(),
-    type: 'Avatar',
-    userId: (ref as any).id,
-    displayName: (ref as any).displayName,
-    ownerId: avatarInfo.ownerId,
-    previousOwnerId: previousAvatarInfo.ownerId,
-    avatarName: avatarInfo.avatarName,
-    previousAvatarName: previousAvatarInfo.avatarName,
-    currentAvatarImageUrl: avatarInfo.ownerId ? currentBannerUrl : '',
-    currentAvatarThumbnailImageUrl: avatarInfo.ownerId ? currentBannerUrl : '',
-    previousCurrentAvatarImageUrl: previousAvatarInfo.ownerId ? previousBannerUrl : '',
-    previousCurrentAvatarThumbnailImageUrl: previousAvatarInfo.ownerId ? previousBannerUrl : ''
-};
+                created_at: nowIso(),
+                type: 'Avatar',
+                userId: (ref as any).id,
+                displayName: (ref as any).displayName,
+                ownerId: avatarInfo.ownerId,
+                previousOwnerId: previousAvatarInfo.ownerId,
+                avatarName: avatarInfo.avatarName,
+                previousAvatarName: previousAvatarInfo.avatarName,
+                currentAvatarImageUrl: avatarInfo.ownerId ? currentBannerUrl : '',
+                currentAvatarThumbnailImageUrl: avatarInfo.ownerId ? currentBannerUrl : '',
+                previousCurrentAvatarImageUrl: previousAvatarInfo.ownerId ? previousBannerUrl : '',
+                previousCurrentAvatarThumbnailImageUrl: previousAvatarInfo.ownerId ? previousBannerUrl : ''
+            };
             notificationStore.queueFeedNoty(feed);
             sharedFeedStore.addEntry(feed);
             const persistedFeed = await database.addAvatarToDatabase(feed);
@@ -221,19 +228,19 @@ previousLocation = (props as any).location[1];
                 console.log(err);
             }
             feed = {
-    created_at: nowIso(),
-    type: 'Avatar',
-    userId: (ref as any).id,
-    displayName: (ref as any).displayName,
-    ownerId: avatarInfo.ownerId,
-    previousOwnerId: previousAvatarInfo.ownerId,
-    avatarName: avatarInfo.avatarName,
-    previousAvatarName: previousAvatarInfo.avatarName,
-    currentAvatarImageUrl: avatarInfo.ownerId ? currentIconUrl : '',
-    currentAvatarThumbnailImageUrl: avatarInfo.ownerId ? currentIconUrl : '',
-    previousCurrentAvatarImageUrl: previousAvatarInfo.ownerId ? previousIconUrl : '',
-    previousCurrentAvatarThumbnailImageUrl: previousAvatarInfo.ownerId ? previousIconUrl : ''
-};
+                created_at: nowIso(),
+                type: 'Avatar',
+                userId: (ref as any).id,
+                displayName: (ref as any).displayName,
+                ownerId: avatarInfo.ownerId,
+                previousOwnerId: previousAvatarInfo.ownerId,
+                avatarName: avatarInfo.avatarName,
+                previousAvatarName: previousAvatarInfo.avatarName,
+                currentAvatarImageUrl: avatarInfo.ownerId ? currentIconUrl : '',
+                currentAvatarThumbnailImageUrl: avatarInfo.ownerId ? currentIconUrl : '',
+                previousCurrentAvatarImageUrl: previousAvatarInfo.ownerId ? previousIconUrl : '',
+                previousCurrentAvatarThumbnailImageUrl: previousAvatarInfo.ownerId ? previousIconUrl : ''
+            };
             notificationStore.queueFeedNoty(feed);
             sharedFeedStore.addEntry(feed);
             const persistedFeed = await database.addAvatarToDatabase(feed);
@@ -245,7 +252,7 @@ previousLocation = (props as any).location[1];
     // if status is offline, ignore status and statusDescription
     if (
         ((props as any).status && (props as any).status[0] !== 'offline' && (props as any).status[1] !== 'offline') ||
-    (!(props as any).status && (props as any).statusDescription)
+        (!(props as any).status && (props as any).statusDescription)
     ) {
         let status = '';
         let previousStatus = '';
@@ -274,15 +281,15 @@ previousLocation = (props as any).location[1];
             previousStatusDescription = (ref as any).statusDescription;
         }
         feed = {
-    created_at: nowIso(),
-    type: 'Status',
-    userId: (ref as any).id,
-    displayName: (ref as any).displayName,
-    status,
-    statusDescription,
-    previousStatus,
-    previousStatusDescription
-};
+            created_at: nowIso(),
+            type: 'Status',
+            userId: (ref as any).id,
+            displayName: (ref as any).displayName,
+            status,
+            statusDescription,
+            previousStatus,
+            previousStatusDescription
+        };
         notificationStore.queueFeedNoty(feed);
         sharedFeedStore.addEntry(feed);
         const persistedFeed = await database.addStatusToDatabase(feed);

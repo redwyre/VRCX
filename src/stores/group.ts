@@ -5,6 +5,7 @@ import { replaceBioSymbols } from '../shared/utils';
 import { groupRequest } from '../api';
 import { initUserGroups } from '../coordinators/groupCoordinator';
 import { watchState } from '../services/watchState';
+import type { VrcxGroup, VrcxGroupPost, VrcxUser } from '../types/vrcx';
 
 export const useGroupStore = defineStore('Group', () => {
     let cachedGroups = new Map();
@@ -18,9 +19,9 @@ export const useGroupStore = defineStore('Group', () => {
         id: '',
         inGroup: false,
         ownerDisplayName: '',
-        ref: {},
-        announcement: {},
-        posts: [],
+        ref: {} as VrcxGroup,
+        announcement: {} as VrcxGroupPost,
+        posts: [] as VrcxGroupPost[],
         postsFiltered: [],
         calendar: [],
         members: [],
@@ -72,7 +73,7 @@ export const useGroupStore = defineStore('Group', () => {
         mode: 'create',
         groupId: '',
         eventId: '',
-        groupRef: {},
+        groupRef: {} as VrcxGroup,
         startsAt: '',
         endsAt: '',
         title: '',
@@ -116,14 +117,14 @@ export const useGroupStore = defineStore('Group', () => {
         groupId: '',
         groupName: '',
         userId: '',
-        userObject: {}
+        userObject: {} as VrcxUser
     });
 
     const groupMemberModeration = ref({
         visible: false,
         loading: false,
         id: '',
-        groupRef: {},
+        groupRef: {} as VrcxGroup,
         auditLogTypes: [],
         openWithUserId: '',
         activeTab: '',
@@ -170,7 +171,7 @@ export const useGroupStore = defineStore('Group', () => {
         visible: false,
         loading: false,
         id: '',
-        groupRef: {},
+        groupRef: {} as VrcxGroup,
         roles: [],
         permissions: [],
         selectedRoleId: ''
@@ -206,7 +207,7 @@ export const useGroupStore = defineStore('Group', () => {
      * @param {{ groupId: string }} params
      * @returns {Promise<{ posts: any; params }>}
      */
-    async function getAllGroupPosts(params: { groupId: string; }) {
+    async function getAllGroupPosts(params: { groupId: string }) {
         const n = 100;
         const posts = [];
         let offset = 0;
@@ -234,21 +235,11 @@ export const useGroupStore = defineStore('Group', () => {
         const D = groupDialog.value;
         if (D.id === params.groupId) {
             for (const post of posts) {
-
-
-
-
                 post.title = replaceBioSymbols(post.title);
-
-
-
 
                 post.text = replaceBioSymbols(post.text);
             }
             D.announcement = posts[0] ?? {};
-
-
-
 
             D.posts = posts;
             updateGroupPostSearch();
@@ -260,7 +251,7 @@ export const useGroupStore = defineStore('Group', () => {
     /**
      * @param event
      */
-    function applyGroupEvent(event: { title: string; description: string; }) {
+    function applyGroupEvent(event: { title: string; description: string }) {
         return {
             userInterest: {
                 createdAt: null,
@@ -277,15 +268,8 @@ export const useGroupStore = defineStore('Group', () => {
      * @param a
      * @param b
      */
-    function sortGroupInstancesByInGame(a: { group: { id: any; }; }, b: { group: { id: any; }; }) {
-
-
-
-
+    function sortGroupInstancesByInGame(a: { group: { id: any } }, b: { group: { id: any } }) {
         const aIndex = inGameGroupOrder.value.indexOf(a?.group?.id);
-
-
-
 
         const bIndex = inGameGroupOrder.value.indexOf(b?.group?.id);
         if (aIndex === -1 && bIndex === -1) {
@@ -344,10 +328,6 @@ export const useGroupStore = defineStore('Group', () => {
         }
         // add new post
         if (!hasPost) {
-
-
-
-
             D.posts.unshift(newPost);
         }
         updateGroupPostSearch();
@@ -370,7 +350,7 @@ export const useGroupStore = defineStore('Group', () => {
     function showModerateGroupDialog(userId: string) {
         const D = moderateGroupDialog.value;
         D.userId = userId;
-        D.userObject = {};
+        D.userObject = {} as VrcxUser;
         D.visible = true;
     }
 
@@ -399,10 +379,6 @@ export const useGroupStore = defineStore('Group', () => {
      * @param {Array} value
      */
     function setInGameGroupOrder(value: Array<any>) {
-
-
-
-
         inGameGroupOrder.value = value;
     }
 
@@ -410,10 +386,6 @@ export const useGroupStore = defineStore('Group', () => {
      * @param {Array} value
      */
     function setGroupInstances(value: Array<any>) {
-
-
-
-
         groupInstances.value = value;
     }
 
@@ -450,9 +422,6 @@ export const useGroupStore = defineStore('Group', () => {
         try {
             const args = await groupRequest.getRoleTemplates();
 
-
-
-
             D.roleTemplates = Array.isArray(args.json)
                 ? args.json
                 : Object.entries(args.json ?? {}).map(([value, template]) => ({
@@ -470,39 +439,30 @@ export const useGroupStore = defineStore('Group', () => {
     function showEditGroupDialog(group: object) {
         resetGroupEditDialog();
         groupEditDialog.value = {
-    visible: true,
-    loading: false,
-    roleTemplatesLoading: false,
-    mode: 'edit',
-    groupId: (group as any).id,
-    name: (group as any).name,
-    shortCode: (group as any).shortCode,
-    description: (group as any).description,
-    joinState: (group as any).joinState ?? 'open',
-    privacy: (group as any).privacy ?? 'default',
-    roleTemplate: (group as any).roleTemplate ?? 'default',
+            visible: true,
+            loading: false,
+            roleTemplatesLoading: false,
+            mode: 'edit',
+            groupId: (group as any).id,
+            name: (group as any).name,
+            shortCode: (group as any).shortCode,
+            description: (group as any).description,
+            joinState: (group as any).joinState ?? 'open',
+            privacy: (group as any).privacy ?? 'default',
+            roleTemplate: (group as any).roleTemplate ?? 'default',
 
+            roleTemplates: Array.isArray((group as any).roleTemplates) ? [...(group as any).roleTemplates] : [],
 
+            languages: Array.isArray((group as any).languages) ? [...(group as any).languages] : [],
+            rules: (group as any).rules,
 
-
-    roleTemplates: Array.isArray((group as any).roleTemplates) ? [...(group as any).roleTemplates] : [],
-
-
-
-
-    languages: Array.isArray((group as any).languages) ? [...(group as any).languages] : [],
-    rules: (group as any).rules,
-
-
-
-
-    links: Array.isArray((group as any).links) ? [...(group as any).links] : [],
-    bannerId: (group as any).bannerId,
-    bannerUrl: (group as any).bannerUrl,
-    iconId: (group as any).iconId,
-    iconUrl: (group as any).iconUrl,
-    allowGroupJoinPrompt: !!(group as any).allowGroupJoinPrompt
-};
+            links: Array.isArray((group as any).links) ? [...(group as any).links] : [],
+            bannerId: (group as any).bannerId,
+            bannerUrl: (group as any).bannerUrl,
+            iconId: (group as any).iconId,
+            iconUrl: (group as any).iconUrl,
+            allowGroupJoinPrompt: !!(group as any).allowGroupJoinPrompt
+        };
     }
 
     function resetGroupEventEditDialog() {
@@ -517,7 +477,7 @@ export const useGroupStore = defineStore('Group', () => {
             mode: 'create',
             groupId: '',
             eventId: '',
-            groupRef: {},
+            groupRef: {} as VrcxGroup,
             startsAt: startsAt.toISOString(),
             endsAt: endsAt.toISOString(),
             title: '',
@@ -546,11 +506,11 @@ export const useGroupStore = defineStore('Group', () => {
     function showCreateGroupEventDialog(group: object) {
         resetGroupEventEditDialog();
         groupEventEditDialog.value = {
-    ...groupEventEditDialog.value,
-    visible: true,
-    groupId: (group as any).id,
-    groupRef: group
-};
+            ...groupEventEditDialog.value,
+            visible: true,
+            groupId: (group as any).id,
+            groupRef: group as VrcxGroup
+        };
     }
 
     /**
@@ -560,48 +520,36 @@ export const useGroupStore = defineStore('Group', () => {
     function showEditGroupEventDialog(event: object, group: object) {
         resetGroupEventEditDialog();
         groupEventEditDialog.value = {
-    visible: true,
-    loading: false,
-    mode: 'edit',
-    groupId: (event as any).ownerId,
-    eventId: (event as any).id,
-    groupRef: group,
-    startsAt: (event as any).startsAt,
-    endsAt: (event as any).endsAt,
-    title: (event as any).title ?? '',
-    accessType: (event as any).accessType ?? 'group',
-    description: (event as any).description ?? '',
-    category: (event as any).category ?? 'other',
+            visible: true,
+            loading: false,
+            mode: 'edit',
+            groupId: (event as any).ownerId,
+            eventId: (event as any).id,
+            groupRef: group as VrcxGroup,
+            startsAt: (event as any).startsAt,
+            endsAt: (event as any).endsAt,
+            title: (event as any).title ?? '',
+            accessType: (event as any).accessType ?? 'group',
+            description: (event as any).description ?? '',
+            category: (event as any).category ?? 'other',
 
+            tags: Array.isArray((event as any).tags) ? [...(event as any).tags] : [],
+            imageId: (event as any).imageId ?? '',
+            imageUrl: (event as any).imageUrl ?? '',
 
+            roleIds: Array.isArray((event as any).roleIds) ? [...(event as any).roleIds] : [],
+            parentId: null,
 
+            platforms: Array.isArray((event as any).platforms) ? [...(event as any).platforms] : [],
 
-    tags: Array.isArray((event as any).tags) ? [...(event as any).tags] : [],
-    imageId: (event as any).imageId ?? '',
-    imageUrl: (event as any).imageUrl ?? '',
-
-
-
-
-    roleIds: Array.isArray((event as any).roleIds) ? [...(event as any).roleIds] : [],
-    parentId: null,
-
-
-
-
-    platforms: Array.isArray((event as any).platforms) ? [...(event as any).platforms] : [],
-
-
-
-
-    languages: Array.isArray((event as any).languages) ? [...(event as any).languages] : [],
-    sendCreationNotification: false,
-    hostEarlyJoinMinutes: (event as any).hostEarlyJoinMinutes ?? 60,
-    guestEarlyJoinMinutes: (event as any).guestEarlyJoinMinutes ?? 5,
-    closeInstanceAfterEndMinutes: (event as any).closeInstanceAfterEndMinutes ?? 5,
-    seriesId: (event as any).seriesId,
-    recurrence: (event as any).recurrence
-};
+            languages: Array.isArray((event as any).languages) ? [...(event as any).languages] : [],
+            sendCreationNotification: false,
+            hostEarlyJoinMinutes: (event as any).hostEarlyJoinMinutes ?? 60,
+            guestEarlyJoinMinutes: (event as any).guestEarlyJoinMinutes ?? 5,
+            closeInstanceAfterEndMinutes: (event as any).closeInstanceAfterEndMinutes ?? 5,
+            seriesId: (event as any).seriesId,
+            recurrence: (event as any).recurrence
+        };
     }
 
     function markGroupEventMutation() {

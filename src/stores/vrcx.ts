@@ -88,11 +88,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
             if (LINUX) {
                 try {
                     window.electron.ipcRenderer.on('launch-command', (command) => {
-                        if (command) {
-
-
-
-
+                        if (typeof command === 'string' && command) {
                             eventLaunchCommand(command);
                         }
                     });
@@ -343,17 +339,18 @@ export const useVrcxStore = defineStore('Vrcx', () => {
                 players: []
             };
             for (const user of locationStore.lastLocation.playerList.values()) {
-
-
-
-
                 metadata.players.push({
                     id: user.userId,
                     displayName: user.displayName
                 });
             }
             try {
-                newPath = await (AppApi as any).AddScreenshotMetadata(path, JSON.stringify(metadata), location.worldId, advancedSettingsStore.screenshotHelperModifyFilename);
+                newPath = await (AppApi as any).AddScreenshotMetadata(
+                    path,
+                    JSON.stringify(metadata),
+                    location.worldId,
+                    advancedSettingsStore.screenshotHelperModifyFilename
+                );
             } catch (e) {
                 console.error('Failed to add screenshot metadata', e);
                 if ((e as any).message?.includes('UnauthorizedAccessException')) {
@@ -501,10 +498,6 @@ export const useVrcxStore = defineStore('Vrcx', () => {
      * @param {string} filePath - The full path to the file being dragged into the window
      */
     function dragEnterCef(filePath: string) {
-
-
-
-
         currentlyDroppingFile.value = filePath;
     }
 
@@ -683,7 +676,7 @@ export const useVrcxStore = defineStore('Vrcx', () => {
         }
 
         // check for auto restore
-const hasVRChatRegistryFolder = await (AppApi as any).HasVRChatRegistryFolder();
+        const hasVRChatRegistryFolder = await (AppApi as any).HasVRChatRegistryFolder();
         if (!hasVRChatRegistryFolder) {
             const lastBackupDate = await configRepository.getString('VRCX_VRChatRegistryLastBackupDate');
             const lastRestoreCheck = await configRepository.getString('VRCX_VRChatRegistryLastRestoreCheck');
